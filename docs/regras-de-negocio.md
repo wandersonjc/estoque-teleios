@@ -5,7 +5,9 @@
 ## 0. Como a IA deve trabalhar neste projeto
 
 - Siga estas regras à risca e **não crie regras novas** por conta própria.
-- Trabalhe **uma etapa por vez** (seção 10). Não adiantar etapas futuras.
+- Trabalhe **um módulo e um item por vez** (seção 10). Não adiantar itens futuros.
+- **Ordem dos módulos (definida pelo usuário):** 1) Estoque, 2) Fornecedores, 3) Pedidos.
+- **Stack:** Next.js, TypeScript, Prisma 7, PostgreSQL (Aiven), hospedagem na Vercel.
 - Entregue código **completo e pronto para usar**, com **comentários explicativos em português**.
 - Use TypeScript em modo `strict`. Nomes de tabelas e campos em português, sem acento (ex.: `pedido_compra`, `estoque_minimo`).
 - Valores em dinheiro: **nunca usar `float`**. Usar `Decimal` (ou inteiro em centavos).
@@ -49,7 +51,7 @@ Existem exatamente 3, cadastrados de início:
 - **RN-04. Entradas por recebimento:** quando um pedido é recebido, a quantidade recebida **soma** ao estoque do local de entrada (padrão: Galpão).
 - **RN-05. Estoque mínimo:** cada produto tem **um estoque mínimo único**, comparado com o **total** (soma dos 3 locais), e não com cada local.
 - **RN-06. Produto baixo:** um produto está **baixo** quando seu total é menor ou igual ao estoque mínimo.
-- **RN-07. Pedido a caminho:** quantidades de pedidos com status *Enviado* (ainda não recebidos) contam como **"a caminho"**. Para decidir se um produto precisa de novo pedido, considerar `total + a caminho`. O painel mostra a quantidade a caminho ao lado do total.
+- **RN-07. Pedido a caminho:** quantidades de pedidos com status *Enviado* (ainda não recebidos) contam como **"a caminho"**. Para decidir se um produto precisa de novo pedido, considerar `total + a caminho`. O painel mostra a quantidade a caminho ao lado do total. **Só passa a valer no Módulo 3**, quando existirem pedidos. Antes disso, o painel de produtos baixos usa apenas o total.
 - **RN-08. Estoque do ERP não é usado:** os números de estoque do ERP não são confiáveis. O sistema **nunca importa quantidade de estoque** do ERP.
 
 ## 5. Regras de fornecedores e preços
@@ -89,39 +91,63 @@ Campos obrigatórios: **comprador** (usuário logado), **data da compra** (data 
 ## 8. Regras do catálogo de produtos
 
 - **RN-22.** O produto tem um campo opcional **`codigo_erp`**, **único** quando preenchido. Será a chave para importar e atualizar produtos do ERP no futuro, sem duplicar.
-- **RN-23.** No início, produtos são **cadastrados à mão** (testes com 20 a 30 itens de 1 ou 2 fornecedores principais).
-- **RN-24.** A importação de planilha do ERP (Superus) é **etapa futura**. Ela importa **somente cadastro** (código, descrição, unidade, código de barras, custo), nunca estoque.
+- **RN-23.** No início, produtos são **cadastrados à mão** (testes com 20 a 30 itens).
+- **RN-24.** A importação de planilha do ERP (Superus) faz parte do **Módulo 1** e deve estar pronta **antes do uso real** pelo estoquista, para o catálogo completo estar cadastrado. Ela importa **somente cadastro** (código, descrição, unidade, código de barras, custo), nunca estoque.
 
 ## 9. Modelo de dados conceitual
 
-| Entidade | Campos principais |
-|---|---|
-| `usuario` | nome, e-mail, senha (hash), perfil |
-| `produto` | nome, unidade, codigo_barras, codigo_erp (opcional, único), estoque_minimo, ativo |
-| `fornecedor` | nome, contato, prazo_entrega_dias, valor_minimo_pedido, frete (opcionais), ativo |
-| `produto_fornecedor` | produto, fornecedor, codigo_no_fornecedor, ativo |
-| `local_estoque` | nome (Loja Nova Iguaçu, Loja Mesquita, Galpão) |
-| `estoque` | produto, local, quantidade, data_ultima_contagem |
-| `contagem_estoque` | produto, local, quantidade, usuario, data_hora (histórico) |
-| `historico_preco` | produto, fornecedor, preco_unitario, data, origem (pago ou cotado), pedido (opcional) |
-| `pedido_compra` | comprador, fornecedor, data_compra, previsao_entrega, status, observacao |
-| `item_pedido` | pedido, produto, quantidade, preco_unitario, quantidade_recebida |
+| Entidade | Módulo | Campos principais |
+|---|---|---|
+| `usuario` | 1 | nome, e-mail, senha (hash), perfil |
+| `produto` | 1 | nome, unidade, codigo_barras, codigo_erp (opcional, único), estoque_minimo, ativo |
+| `local_estoque` | 1 | nome (Loja Nova Iguaçu, Loja Mesquita, Galpão) |
+| `estoque` | 1 | produto, local, quantidade, data_ultima_contagem |
+| `contagem_estoque` | 1 | produto, local, quantidade, usuario, data_hora (histórico) |
+| `fornecedor` | 2 | nome, contato, prazo_entrega_dias, valor_minimo_pedido, frete (opcionais), ativo |
+| `produto_fornecedor` | 2 | produto, fornecedor, codigo_no_fornecedor, ativo |
+| `historico_preco` | 2 e 3 | produto, fornecedor, preco_unitario, data, origem (pago ou cotado), pedido (opcional). Módulo 2 grava os preços *cotados*; o Módulo 3 grava os *pagos* |
+| `pedido_compra` | 3 | comprador, fornecedor, data_compra, previsao_entrega, status, observacao |
+| `item_pedido` | 3 | pedido, produto, quantidade, preco_unitario, quantidade_recebida |
 
-## 10. Etapas de construção (uma por vez)
+> As tabelas `usuario`, `local_estoque`, `produto`, `fornecedor` e `produto_fornecedor` já existem no banco (criadas na primeira etapa). As tabelas `fornecedor` e `produto_fornecedor` ficam sem uso até o Módulo 2.
 
-1. **Cadastros:** usuários e perfis, locais de estoque, fornecedores, produtos e vínculo produto x fornecedor.
-2. **Contagem e alerta:** tela de contagem por local, total calculado, painel de produtos baixos.
-3. **Comparativo e pedido:** comparação de preços, divisão por fornecedor, aviso de pedido mínimo, gravação do preço ao confirmar.
-4. **Acompanhamento:** status do pedido, previsão de entrega, recebimento com entrada no estoque.
-5. **Futuro:** importação de planilha do ERP, relatório de vendas, correção de preço no recebimento.
+## 10. Módulos e itens de construção (um por vez)
+
+Ordem definida pelo usuário: primeiro o estoque, depois os fornecedores, depois os pedidos. Só avançar para o item seguinte quando o atual estiver testado e aprovado.
+
+### Módulo 1: Estoque
+
+1. **Cadastro de produtos:** nome, unidade, código de barras, estoque mínimo e código do ERP (opcional).
+2. **Tela de contagem por local**, pensada para o celular (RN-02 e RN-03).
+3. **Total calculado e painel de produtos baixos**, como lista simples (RN-01, RN-05 e RN-06).
+4. **Histórico de contagens.**
+5. **Login e perfis** (estoquista e comprador) e **deploy na Vercel**, para o estoquista usar de verdade.
+
+Também no Módulo 1: **importação da planilha de produtos do ERP** (RN-24), antes do uso real pelo estoquista.
+
+### Módulo 2: Fornecedores
+
+1. **Cadastro de fornecedores:** prazo de entrega, pedido mínimo e frete.
+2. **Vínculo produto x fornecedor** (RN-09).
+3. **Preços cotados**, digitados pelo comprador sem pedido (RN-10, origem *cotado*).
+
+### Módulo 3: Pedidos
+
+1. **Comparativo de preços e divisão por fornecedor**, com aviso de pedido mínimo (RN-13 a RN-18).
+2. **Confirmação do pedido**, gravando o preço pago no histórico (RN-19).
+3. **Status, previsão de entrega e pedido a caminho** (RN-07 e seção 7).
+4. **Recebimento**, com entrada no estoque (RN-04, RN-20 e RN-21).
+
+### Futuro
+
+Relatório de vendas e correção de preço no recebimento.
 
 ## 11. Decisões pendentes (perguntar ao usuário antes de implementar)
 
-- **Quantidade sugerida no pedido:** hoje não existe regra. Proposta: campo opcional `estoque_ideal` por produto, e a sugestão seria `estoque_ideal - (total + a caminho)`. Sem esse campo, o comprador digita a quantidade.
+- **Quantidade sugerida no pedido** (decidir no Módulo 3): hoje não existe regra. Proposta: campo opcional `estoque_ideal` por produto, e a sugestão seria `estoque_ideal - (total + a caminho)`. Sem esse campo, o comprador digita a quantidade.
 - **Quantidades decimais:** alguns produtos podem ser vendidos por peso (kg). Proposta: aceitar decimais com 3 casas (`Decimal(12,3)`).
 - **"Baixo" é menor ou igual ao mínimo** (RN-06). Confirmar se o correto é "menor que".
 - **Quem cadastra produtos e fornecedores:** assumido o comprador (seção 2). Confirmar.
-- **Banco de dados:** PostgreSQL (recomendado) ou MySQL.
 
 ## 12. Fora do escopo da primeira versão
 
