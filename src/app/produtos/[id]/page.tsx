@@ -14,6 +14,7 @@ import { notFound } from "next/navigation";
 
 import BotaoAcao from "@/components/BotaoAcao";
 
+import AbasProduto from "../AbasProduto";
 import MovimentacaoEstoque from "../MovimentacaoEstoque";
 import ProdutoForm from "../ProdutoForm";
 import FormularioPrecoCotado from "@/app/fornecedores/FormularioPrecoCotado";
@@ -48,7 +49,8 @@ export default async function EditarProdutoPage({
   const podeCotar = atual.permissoes.has("fornecedores.preco.cotar");
 
   const { id } = await params;
-  const { salvo, mov, vinculo, preco } = await searchParams;
+  const { salvo, mov, vinculo, preco, aba } = await searchParams;
+  const abaInicial = Array.isArray(aba) ? aba[0] : aba;
 
   const numero = Number(id);
   if (!Number.isInteger(numero) || numero <= 0) notFound();
@@ -165,137 +167,180 @@ export default async function EditarProdutoPage({
         </p>
       )}
 
-      <p className="mt-4 rounded-lg border border-zinc-200 bg-white p-3 text-base text-zinc-800">
-        Total em estoque: <strong>{formatarQuantidade(total)}</strong>
-        {" · "}
-        {dataUltima ? (
-          <>
-            Última movimentação: {formatarDataBr(dataUltima)}
-            {contagemDesatualizada(dataUltima) && " (desatualizada)"}
-          </>
-        ) : (
-          "Sem movimentação registrada"
-        )}
-      </p>
+      <AbasProduto
+        abaInicial={abaInicial}
+        geral={
+          <div className="flex flex-col gap-4">
+            <p className="rounded-lg border border-zinc-200 bg-white p-3 text-base text-zinc-800">
+              Total em estoque: <strong>{formatarQuantidade(total)}</strong>
+              {" · "}
+              {dataUltima ? (
+                <>
+                  Última movimentação: {formatarDataBr(dataUltima)}
+                  {contagemDesatualizada(dataUltima) && " (desatualizada)"}
+                </>
+              ) : (
+                "Sem movimentação registrada"
+              )}
+            </p>
 
-      <div className="mt-4 rounded-xl border border-zinc-200 bg-white p-3">
-        <h2 className="text-base font-semibold text-zinc-900">
-          Estoque por local
-        </h2>
-        {locais.length === 0 ? (
-          <p className="mt-1 text-sm text-zinc-600">
-            Nenhum local de estoque cadastrado.
-          </p>
-        ) : (
-          <ul className="mt-2 flex flex-col gap-1">
-            {locais.map((local) => (
-              <li
-                key={local.id}
-                className="flex items-center justify-between gap-3 text-base text-zinc-800"
-              >
-                <span>{local.nome}</span>
-                <strong>{saldos[String(local.id)] ?? "0"}</strong>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-
-      {podeMovimentar && (
-        <div className="mt-4">
-          <MovimentacaoEstoque
-            produtoId={produto.id}
-            locais={locais}
-            saldos={saldos}
-          />
-        </div>
-      )}
-
-      <section className="mt-6 border-t border-zinc-200 pt-4">
-        <h2 className="text-base font-semibold text-zinc-900">
-          Fornecedores deste produto
-        </h2>
-        <p className="mt-1 text-sm text-zinc-600">
-          Quem vende este produto, o código no fornecedor e o preço atual
-          (o mais recente do histórico).
-        </p>
-
-        {podeVincular && (
-          <div className="mt-4 rounded-xl border border-zinc-200 bg-white p-3">
-            <h3 className="text-base font-semibold text-zinc-900">
-              Vincular fornecedor
-            </h3>
-            <div className="mt-3">
-              <FormularioVinculo
-                produtoId={produto.id}
-                opcoes={fornecedoresParaVincular}
-                retorno={`${retornoProduto}?vinculo=1`}
-              />
+            <div className="rounded-xl border border-zinc-200 bg-white p-3">
+              <h2 className="text-base font-semibold text-zinc-900">
+                Dados do produto
+              </h2>
+              {podeEditar ? (
+                <div className="mt-3">
+                  <ProdutoForm
+                    acao={atualizarProduto}
+                    textoBotao="Salvar alterações"
+                    id={produto.id}
+                    valoresIniciais={{
+                      nome: produto.nome,
+                      unidade: produto.unidade,
+                      estoqueMinimo: formatarDecimalBr(
+                        produto.estoqueMinimo.toString()
+                      ),
+                      codigoBarras: produto.codigoBarras ?? "",
+                      codigoErp: produto.codigoErp ?? "",
+                    }}
+                  />
+                </div>
+              ) : (
+                <dl className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <div>
+                    <dt className="text-sm text-zinc-600">Nome</dt>
+                    <dd className="text-base text-zinc-900">{produto.nome}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm text-zinc-600">Unidade</dt>
+                    <dd className="text-base text-zinc-900">
+                      {produto.unidade}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm text-zinc-600">Estoque mínimo</dt>
+                    <dd className="text-base text-zinc-900">
+                      {formatarDecimalBr(produto.estoqueMinimo.toString())}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm text-zinc-600">Código de barras</dt>
+                    <dd className="text-base text-zinc-900">
+                      {produto.codigoBarras || "Não informado"}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm text-zinc-600">Código do ERP</dt>
+                    <dd className="text-base text-zinc-900">
+                      {produto.codigoErp || "Não informado"}
+                    </dd>
+                  </div>
+                </dl>
+              )}
             </div>
           </div>
-        )}
+        }
+        estoque={
+          <div className="flex flex-col gap-4">
+            <div className="rounded-xl border border-zinc-200 bg-white p-3">
+              <h2 className="text-base font-semibold text-zinc-900">
+                Estoque por local
+              </h2>
+              {locais.length === 0 ? (
+                <p className="mt-1 text-sm text-zinc-600">
+                  Nenhum local de estoque cadastrado.
+                </p>
+              ) : (
+                <ul className="mt-2 flex flex-col gap-1">
+                  {locais.map((local) => (
+                    <li
+                      key={local.id}
+                      className="flex items-center justify-between gap-3 text-base text-zinc-800"
+                    >
+                      <span>{local.nome}</span>
+                      <strong>{saldos[String(local.id)] ?? "0"}</strong>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
 
-        {podeCotar && (
-          <div className="mt-4 rounded-xl border border-zinc-200 bg-white p-3">
-            <h3 className="text-base font-semibold text-zinc-900">
-              Registrar preço cotado
-            </h3>
-            <div className="mt-3">
-              <FormularioPrecoCotado
+            {podeMovimentar && (
+              <MovimentacaoEstoque
                 produtoId={produto.id}
-                opcoes={fornecedoresParaPreco}
-                retorno={`${retornoProduto}?preco=1`}
+                locais={locais}
+                saldos={saldos}
+                retorno={`${retornoProduto}?mov=1&aba=estoque`}
+              />
+            )}
+          </div>
+        }
+        fornecedores={
+          <section>
+            <h2 className="text-base font-semibold text-zinc-900">
+              Fornecedores deste produto
+            </h2>
+            <p className="mt-1 text-sm text-zinc-600">
+              Quem vende este produto, o código no fornecedor e o preço atual
+              (o mais recente do histórico).
+            </p>
+
+            {podeVincular && (
+              <div className="mt-4 rounded-xl border border-zinc-200 bg-white p-3">
+                <h3 className="text-base font-semibold text-zinc-900">
+                  Vincular fornecedor
+                </h3>
+                <div className="mt-3">
+                  <FormularioVinculo
+                    produtoId={produto.id}
+                    opcoes={fornecedoresParaVincular}
+                    retorno={`${retornoProduto}?vinculo=1&aba=fornecedores`}
+                  />
+                </div>
+              </div>
+            )}
+
+            {podeCotar && (
+              <div className="mt-4 rounded-xl border border-zinc-200 bg-white p-3">
+                <h3 className="text-base font-semibold text-zinc-900">
+                  Registrar preço cotado
+                </h3>
+                <div className="mt-3">
+                  <FormularioPrecoCotado
+                    produtoId={produto.id}
+                    opcoes={fornecedoresParaPreco}
+                    retorno={`${retornoProduto}?preco=1&aba=fornecedores`}
+                  />
+                </div>
+              </div>
+            )}
+
+            <div className="mt-4">
+              <ListaVinculos
+                podeGerenciarVinculo={podeVincular}
+                precosAtuais={mapaPrecos}
+                vinculos={vinculos.map((item) => ({
+                  id: item.id,
+                  ativo: item.ativo,
+                  codigoNoFornecedor: item.codigoNoFornecedor,
+                  produtoId: item.produtoId,
+                  fornecedorId: item.fornecedorId,
+                  nome: item.fornecedor.nome,
+                }))}
+                historico={historico.map((item) => ({
+                  id: item.id,
+                  produtoId: item.produtoId,
+                  fornecedorId: item.fornecedorId,
+                  precoUnitario: item.precoUnitario.toString(),
+                  data: item.data,
+                  origem: item.origem,
+                  nomePar: item.fornecedor.nome,
+                }))}
               />
             </div>
-          </div>
-        )}
-
-        <div className="mt-4">
-          <ListaVinculos
-            podeGerenciarVinculo={podeVincular}
-            precosAtuais={mapaPrecos}
-            vinculos={vinculos.map((item) => ({
-              id: item.id,
-              ativo: item.ativo,
-              codigoNoFornecedor: item.codigoNoFornecedor,
-              produtoId: item.produtoId,
-              fornecedorId: item.fornecedorId,
-              nome: item.fornecedor.nome,
-            }))}
-            historico={historico.map((item) => ({
-              id: item.id,
-              produtoId: item.produtoId,
-              fornecedorId: item.fornecedorId,
-              precoUnitario: item.precoUnitario.toString(),
-              data: item.data,
-              origem: item.origem,
-              nomePar: item.fornecedor.nome,
-            }))}
-          />
-        </div>
-      </section>
-
-      {podeEditar && (
-        <div className="mt-6 border-t border-zinc-200 pt-4">
-          <h2 className="text-base font-semibold text-zinc-900">
-            Dados do produto
-          </h2>
-          <div className="mt-3">
-            <ProdutoForm
-              acao={atualizarProduto}
-              textoBotao="Salvar alterações"
-              id={produto.id}
-              valoresIniciais={{
-                nome: produto.nome,
-                unidade: produto.unidade,
-                estoqueMinimo: formatarDecimalBr(produto.estoqueMinimo.toString()),
-                codigoBarras: produto.codigoBarras ?? "",
-                codigoErp: produto.codigoErp ?? "",
-              }}
-            />
-          </div>
-        </div>
-      )}
+          </section>
+        }
+      />
 
       {podeDesativar && (
         <form
