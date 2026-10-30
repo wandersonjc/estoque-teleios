@@ -54,8 +54,8 @@ model Usuario {
 // gerenciados pelas telas em /locais (criar, renomear e excluir).
 // ------------------------------------------------------------
 model LocalEstoque {
-  id   Int    @id @default(autoincrement())
-  nome String @unique
+  id   Int     @id @default(autoincrement())
+  nome String  @unique
 
   estoques   Estoque[]
   movimentos MovimentoEstoque[]

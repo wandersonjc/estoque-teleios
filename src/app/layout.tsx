@@ -40,6 +40,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             >
               Locais
             </Link>
+            <Link
+              href="/usuarios"
+              className="text-base font-semibold text-zinc-900"
+            >
+              Usuários
+            </Link>
           </nav>
         </header>
         {children}

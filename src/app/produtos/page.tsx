@@ -7,6 +7,13 @@
 // Tipo de filtro do Prisma (o client.ts não reexporta os tipos de entrada,
 // então importamos do arquivo de modelos gerado)
 import type { ProdutoWhereInput } from "@/generated/prisma/models";
+import {
+  IconeBarras,
+  IconeCaixa,
+  IconeCalendario,
+  IconeDocumento,
+  IconeEditar,
+} from "@/components/icones";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 
@@ -15,7 +22,6 @@ import {
   TAMANHOS_PAGINA,
   TAMANHO_PAGINA_PADRAO,
   calcularTotalEstoque,
-  contagemDesatualizada,
   formatarDataBr,
   formatarDecimalBr,
   formatarQuantidade,
@@ -174,67 +180,119 @@ export default async function ProdutosPage({
             return (
               <li
                 key={produto.id}
-                className="rounded-xl border border-zinc-200 bg-white p-3"
+                className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm"
               >
-                <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0">
-                    <p className="text-base font-semibold text-zinc-900">
-                      {produto.nome}
-                    </p>
-                    <p className="text-sm text-zinc-600">
-                      Unidade: {produto.unidade} · Estoque mínimo:{" "}
-                      {formatarDecimalBr(produto.estoqueMinimo.toString())}
-                    </p>
-                    <p className="text-sm text-zinc-600">
-                      Total em estoque: {formatarQuantidade(totalEstoque)}
-                      {" · "}
-                      {dataUltima ? (
-                        <>
-                          Última contagem: {formatarDataBr(dataUltima)}
-                          {contagemDesatualizada(dataUltima) &&
-                            " (desatualizada)"}
-                        </>
-                      ) : (
-                        "Sem contagem"
-                      )}
-                    </p>
-                    {produto.codigoBarras && (
-                      <p className="text-sm text-zinc-600">
-                        Código de barras: {produto.codigoBarras}
-                      </p>
-                    )}
-                    {produto.codigoErp && (
-                      <p className="text-sm text-zinc-600">
-                        Código do ERP: {produto.codigoErp}
-                      </p>
+                <div className="flex flex-col sm:flex-row gap-4 sm:gap-5">
+                  <div className="flex gap-4 sm:gap-5 flex-1">
+                    {/* Imagem do produto (placeholder realista) */}
+                    <div className="h-24 w-24 sm:h-32 sm:w-32 shrink-0 overflow-hidden rounded-2xl bg-zinc-100">
+                      <img
+                        src={`https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=${encodeURIComponent(
+                          "clean minimalist product packaging white box " +
+                            produto.nome
+                        )}&image_size=square`}
+                        alt={produto.nome}
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+
+                    {/* Conteúdo central */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-lg sm:text-xl font-bold text-[#002855] truncate">
+                        {produto.nome}
+                      </h3>
+
+                      {/* Badge Estoque Mínimo */}
+                      <div className="mt-1 sm:mt-2 flex w-fit items-center gap-1.5 rounded-full bg-[#eef6ff] px-3 py-0.5 text-xs sm:text-sm font-medium text-[#0061d5]">
+                        <IconeCaixa className="h-3 w-3 sm:h-4 sm:w-4" />
+                        <span>
+                          Mínimo:{" "}
+                          {formatarDecimalBr(produto.estoqueMinimo.toString())}
+                        </span>
+                      </div>
+
+                      {/* Grid de informações - Oculto em mobile, visível em sm+ */}
+                      <div className="hidden sm:grid mt-5 grid-cols-2 gap-x-10 gap-y-5">
+                        {/* Unidade */}
+                        <div className="flex items-center gap-3">
+                          <div className="text-zinc-400">
+                            <IconeCaixa className="h-5 w-5" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-xs font-medium text-zinc-500 uppercase tracking-wide">
+                              Unidade
+                            </p>
+                            <p className="text-sm font-bold text-zinc-900">
+                              {produto.unidade}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Estoque e Última Contagem */}
+                        <div className="flex items-center gap-3">
+                          <div className="text-zinc-400">
+                            <IconeCalendario className="h-5 w-5" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-xs font-medium text-zinc-500 uppercase tracking-wide">
+                              Estoque
+                            </p>
+                            <p className="text-sm text-zinc-900">
+                              <span className="font-bold">
+                                {formatarQuantidade(totalEstoque)}
+                              </span>
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Resumo mobile: visível apenas em mobile */}
+                  <div className="flex sm:hidden items-center justify-between py-2 border-y border-zinc-50">
+                    <div className="text-xs font-medium text-zinc-500">
+                      Estoque: <span className="text-zinc-900 font-bold">{formatarQuantidade(totalEstoque)}</span> {produto.unidade}
+                    </div>
+                    {dataUltima && (
+                      <div className="text-[10px] text-zinc-400">
+                        Contagem: {formatarDataBr(dataUltima)}
+                      </div>
                     )}
                   </div>
-                  {!produto.ativo && (
-                    <span className="shrink-0 rounded-full bg-zinc-200 px-2 py-1 text-xs font-medium text-zinc-700">
-                      Inativo
-                    </span>
-                  )}
-                </div>
 
-                <div className="mt-3 flex items-center gap-3">
-                  <Link
-                    href={`/produtos/${produto.id}`}
-                    className="flex h-11 items-center rounded-lg border border-zinc-300 px-4 text-base font-medium text-zinc-900"
-                  >
-                    Editar
-                  </Link>
-
-                  <form
-                    action={produto.ativo ? desativarProduto : reativarProduto}
-                  >
-                    <input type="hidden" name="id" value={produto.id} />
-                    <button
-                      type="submit"
-                      className="h-11 rounded-lg border border-zinc-300 px-4 text-base font-medium text-zinc-900"
+                  {/* Coluna da direita: Status e Editar */}
+                  <div className="flex items-center justify-between sm:flex-col sm:items-end sm:justify-between py-1 gap-3">
+                    {/* Status Pill */}
+                    <form
+                      action={produto.ativo ? desativarProduto : reativarProduto}
                     >
-                      {produto.ativo ? "Desativar" : "Reativar"}
-                    </button>
-                  </form>
+                      <input type="hidden" name="id" value={produto.id} />
+                      <button
+                        type="submit"
+                        title={produto.ativo ? "Desativar" : "Reativar"}
+                        className="transition-opacity hover:opacity-80"
+                      >
+                        {produto.ativo ? (
+                          <div className="flex items-center gap-1.5 rounded-full bg-[#22c55e] px-3 sm:px-4 py-1 sm:py-1.5 text-xs sm:text-sm font-bold text-white shadow-sm">
+                            Ativo
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-1.5 rounded-full bg-[#ef4444] px-3 sm:px-4 py-1 sm:py-1.5 text-xs sm:text-sm font-bold text-white shadow-sm">
+                            Inativo
+                          </div>
+                        )}
+                      </button>
+                    </form>
+
+                    {/* Botão Editar quadrado */}
+                    <Link
+                      href={`/produtos/${produto.id}`}
+                      title="Editar"
+                      className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-900 shadow-sm transition-colors hover:bg-zinc-50"
+                    >
+                      <IconeEditar className="h-5 w-5 sm:h-6 sm:w-6" />
+                    </Link>
+                  </div>
                 </div>
               </li>
             );

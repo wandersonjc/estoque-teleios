@@ -35,6 +35,8 @@ O sistema deve:
 
 Todo registro importante (movimentação de estoque, pedido, preço) guarda **quem fez** e **quando** (data e hora).
 
+- **RN-27. Gestão de usuários:** na tela `/usuarios` o comprador **cadastra, altera, desativa/reativa e exclui** usuários (nome, e-mail, perfil e senha). O usuário **só pode ser excluído quando não tem nenhuma movimentação nem registro no log**; se tiver, a exclusão é bloqueada e ele só pode ser desativado, para não perder o histórico. O **e-mail é único**. A **senha é guardada como hash** (nunca em texto puro) e nunca aparece nas telas nem no log do sistema. Na edição, o campo de senha em branco **mantém a senha atual**.
+
 ## 3. Locais de estoque
 
 Começam cadastrados os 3 locais abaixo, criados pelo script `scripts/seed.ts`:
@@ -129,7 +131,7 @@ Ordem definida pelo usuário: primeiro o estoque, depois os fornecedores, depois
 2. **Tela de movimentação de estoque por local** (entrada, saída e contagem), pensada para o celular (RN-02 e RN-03).
 3. **Total calculado e painel de produtos baixos**, como lista simples (RN-01, RN-05 e RN-06).
 4. **Histórico de movimentações e histórico geral de ações (log)** (RN-02 e RN-26).
-5. **Login e perfis** (estoquista e comprador) e **deploy na Vercel**, para o estoquista usar de verdade.
+5. **Gestão de usuários** (cadastro, perfis e ativar/desativar — RN-27) e **tela de login e perfis** (estoquista e comprador), com **deploy na Vercel**, para o estoquista usar de verdade.
 
 Também no Módulo 1: **importação da planilha de produtos do ERP** (RN-24), antes do uso real pelo estoquista.
 

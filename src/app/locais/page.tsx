@@ -8,8 +8,8 @@
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 
-// A lista precisa mostrar o banco no estado atual, sem cache
-export const dynamic = "force-dynamic";
+import { IconeArmazem, IconeCaixa, IconeExcluir, IconeLapis, IconePin } from "@/components/icones";
+import { excluirLocal } from "./actions";
 
 export default async function LocaisPage() {
   // _count mostra em quantos produtos o local tem estoque e quantas
@@ -30,7 +30,7 @@ export default async function LocaisPage() {
         </h1>
         <Link
           href="/locais/novo"
-          className="flex h-12 items-center rounded-lg bg-zinc-900 px-4 text-base font-medium text-white"
+          className="flex h-12 items-center justify-center rounded-lg bg-zinc-900 px-4 text-base font-medium text-white shadow-sm transition-all hover:bg-zinc-800 active:scale-95"
         >
           Novo local
         </Link>
@@ -43,38 +43,83 @@ export default async function LocaisPage() {
       </p>
 
       {locais.length === 0 && (
-        <p className="mt-3 rounded-lg bg-amber-50 p-3 text-base text-amber-800">
-          Cadastre pelo menos um local para poder informar a quantidade em
-          estoque no cadastro dos produtos.
-        </p>
+        <div className="rounded-2xl border-2 border-dashed border-slate-200 p-12 text-center">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-slate-50 text-slate-400">
+            <IconeArmazem className="h-8 w-8" />
+          </div>
+          <h3 className="mt-4 text-lg font-semibold text-slate-900">Nenhum local</h3>
+          <p className="mt-2 text-slate-500">
+            Cadastre pelo menos um local para gerenciar seu estoque.
+          </p>
+          <Link
+            href="/locais/novo"
+            className="mt-6 inline-flex text-sm font-semibold text-blue-600 hover:text-blue-500"
+          >
+            Adicionar primeiro local &rarr;
+          </Link>
+        </div>
       )}
 
       {locais.length > 0 && (
         <ul className="mt-3 flex flex-col gap-3">
           {locais.map((local) => {
-            const emUso = local._count.movimentos > 0;
-
             return (
               <li
                 key={local.id}
-                className="rounded-xl border border-zinc-200 bg-white p-3"
+                className="group flex flex-col sm:flex-row sm:items-center justify-between rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm"
               >
-                <p className="text-base font-semibold text-zinc-900">
-                  {local.nome}
-                </p>
-                <p className="text-sm text-zinc-600">
-                  {emUso
-                    ? `Em uso: ${local._count.estoques} produto(s) com estoque e ${local._count.movimentos} movimentação(ões)`
-                    : "Ainda sem estoque e sem movimentações"}
-                </p>
+                <div className="flex items-center gap-4 sm:gap-6">
+                  {/* Ícone ilustrativo */}
+                  <div className="flex h-16 w-16 sm:h-20 sm:w-20 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
+                    <IconeArmazem className="h-8 w-8 sm:h-12 sm:w-12" />
+                  </div>
 
-                <div className="mt-3">
-                  <Link
-                    href={`/locais/${local.id}`}
-                    className="flex h-11 w-fit items-center rounded-lg border border-zinc-300 px-4 text-base font-medium text-zinc-900"
-                  >
-                    Editar
-                  </Link>
+                  {/* Informações principais */}
+                  <div className="flex flex-col gap-1 sm:gap-2 min-w-0 flex-1">
+                    <h2 className="text-xl sm:text-2xl font-bold text-[#002855] truncate">
+                      {local.nome}
+                    </h2>
+                    
+                    <div className="flex w-fit items-center gap-1.5 rounded-full bg-blue-50/80 px-3 py-1 text-[#007bff]">
+                      <IconePin className="h-4 w-4" />
+                      <span className="text-xs sm:text-sm font-bold">Local de estoque</span>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-slate-500">
+                      <IconeCaixa className="h-4 w-4 sm:h-5 sm:w-5 text-slate-400 shrink-0" />
+                      <p className="text-xs sm:text-sm font-medium line-clamp-2">
+                        {local._count.movimentos > 0 
+                          ? `Em uso: ${local._count.estoques} produto(s) com estoque e ${local._count.movimentos} movimentação(ões)`
+                          : "Ainda sem estoque e sem movimentações"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center sm:gap-6 mt-4 sm:mt-0 pt-4 sm:pt-0 border-t sm:border-t-0 sm:border-l border-zinc-100 w-full sm:w-auto">
+                  {/* Ações */}
+                  <div className="flex items-center justify-end gap-2 sm:gap-3 w-full sm:w-auto sm:pl-6">
+                    <Link
+                      href={`/locais/${local.id}`}
+                      aria-label={`Editar ${local.nome}`}
+                      className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-900 shadow-sm transition-colors hover:bg-zinc-50"
+                    >
+                      <IconeLapis className="h-5 w-5" />
+                    </Link>
+
+                    {local._count.estoques === 0 && local._count.movimentos === 0 && (
+                      <form action={excluirLocal}>
+                        <input type="hidden" name="id" value={local.id} />
+                        <button
+                          type="submit"
+                          title="Excluir"
+                          className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl border border-zinc-200 bg-white text-red-700 shadow-sm transition-colors hover:bg-red-50"
+                        >
+                          <IconeExcluir className="h-5 w-5" />
+                        </button>
+                      </form>
+                    )}
+                  </div>
                 </div>
               </li>
             );
