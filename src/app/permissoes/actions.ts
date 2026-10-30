@@ -10,6 +10,7 @@
 // ============================================================
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 import { MENSAGEM_SEM_PERMISSAO, verificarPermissao } from "@/lib/autorizacao";
 import { registrarLog } from "@/lib/log";
@@ -156,5 +157,6 @@ export async function salvarPermissoes(
   revalidatePath("/permissoes");
   revalidatePath("/", "layout");
 
-  return { sucesso: "Permissões salvas com sucesso." };
+  // Recarrega a tela sem usuário selecionado
+  redirect("/permissoes");
 }

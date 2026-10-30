@@ -252,15 +252,6 @@ function FormularioPermissoes({
           </p>
         )}
 
-        {estado.sucesso && (
-          <p
-            role="status"
-            className="rounded-lg bg-green-50 p-3 text-base text-green-800"
-          >
-            {estado.sucesso}
-          </p>
-        )}
-
         {!podeConceder && (
           <p className="rounded-lg bg-amber-50 p-3 text-base text-amber-800">
             Você pode consultar as permissões, mas não tem permissão para

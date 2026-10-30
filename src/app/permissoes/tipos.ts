@@ -39,6 +39,5 @@ export type ModuloDaMatriz = {
 
 // Estado devolvido pela ação de salvar
 export type EstadoPermissoes = {
-  sucesso?: string;
   erroGeral?: string;
 };
