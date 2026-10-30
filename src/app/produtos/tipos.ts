@@ -182,6 +182,20 @@ export function formatarDataBr(data: Date): string {
   return FORMATO_DATA.format(data);
 }
 
+const FORMATO_DATA_HORA = new Intl.DateTimeFormat("pt-BR", {
+  timeZone: "America/Sao_Paulo",
+  day: "2-digit",
+  month: "2-digit",
+  year: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+});
+
+// Data e hora em dd/mm/aaaa hh:mm
+export function formatarDataHoraBr(data: Date): string {
+  return FORMATO_DATA_HORA.format(data);
+}
+
 // RN-03: movimentação antiga (mais de DIAS_CONTAGEM_ANTIGA dias)
 export function contagemDesatualizada(data: Date): boolean {
   const limite = Date.now() - DIAS_CONTAGEM_ANTIGA * 24 * 60 * 60 * 1000;

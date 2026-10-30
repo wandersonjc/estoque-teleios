@@ -175,6 +175,16 @@ export const CATALOGO_DE_PERMISSOES: PermissaoCatalogo[] = [
     descricao: "Conceder e revogar permissões dos usuários",
     ordem: 520,
   },
+
+  // Módulo Auditoria
+  {
+    codigo: "auditoria.log.consultar",
+    modulo: "Auditoria",
+    funcionalidade: "Histórico de Ações",
+    operacao: "Consultar",
+    descricao: "Ver o histórico completo de ações e auditoria do sistema",
+    ordem: 610,
+  },
 ];
 
 // Códigos válidos hoje (útil para validar o que chega do formulário)
@@ -202,6 +212,11 @@ export const MENU_PRINCIPAL: ItemMenu[] = [
     href: "/permissoes",
     rotulo: "Permissões",
     permissao: "permissoes.permissao.consultar",
+  },
+  {
+    href: "/historico",
+    rotulo: "Histórico",
+    permissao: "auditoria.log.consultar",
   },
 ];
 
