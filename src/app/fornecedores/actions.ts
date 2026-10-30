@@ -147,6 +147,23 @@ function caminhoInternoValido(valor: string): string | null {
   return valor;
 }
 
+function retornoPrecoComAviso(
+  valor: string,
+  fornecedorId: number,
+  aviso: string
+): string {
+  const destino =
+    caminhoInternoValido(valor) ?? `/fornecedores/${fornecedorId}?aba=precos`;
+  const separador = destino.indexOf("?");
+  const caminho = separador === -1 ? destino : destino.slice(0, separador);
+  const parametros = new URLSearchParams(
+    separador === -1 ? "" : destino.slice(separador + 1)
+  );
+  parametros.set("aba", "precos");
+  parametros.set(aviso, "1");
+  return `${caminho}?${parametros.toString()}`;
+}
+
 // ------------------------------------------------------------
 // Cadastro de fornecedor
 // ------------------------------------------------------------
@@ -608,4 +625,124 @@ export async function registrarPrecoCotado(
     caminhoInternoValido(String(formData.get("retorno") ?? "")) ??
     `/fornecedores/${vinculo.fornecedorId}?preco=1`;
   redirect(retorno);
+}
+
+export async function atualizarPrecoHistorico(
+  formData: FormData
+): Promise<void> {
+  const atual = await verificarPermissao("fornecedores.preco.cotar");
+  if (!atual) return;
+
+  const id = idPositivo(texto(formData, "id"));
+  const fornecedorId = idPositivo(texto(formData, "fornecedorId"));
+  if (!id || !fornecedorId) return;
+
+  const retorno = texto(formData, "retorno");
+  const preco = normalizarMoeda(texto(formData, "precoUnitario"), false);
+  if (preco === null || Number(preco) <= 0) {
+    redirect(retornoPrecoComAviso(retorno, fornecedorId, "precoErro"));
+  }
+
+  const registro = await prisma.historicoPreco.findUnique({
+    where: { id },
+    include: {
+      produto: { select: { nome: true } },
+      fornecedor: { select: { nome: true } },
+    },
+  });
+  if (
+    !registro ||
+    registro.fornecedorId !== fornecedorId ||
+    registro.origem !== "COTADO"
+  ) {
+    redirect(retornoPrecoComAviso(retorno, fornecedorId, "precoErro"));
+  }
+
+  try {
+    await prisma.$transaction(async (tx) => {
+      await tx.historicoPreco.update({
+        where: { id },
+        data: { precoUnitario: preco },
+      });
+      await registrarLog(
+        {
+          modulo: "FORNECEDORES",
+          acao: "ALTERAR",
+          descricao: `Alterou preço cotado de ${formatarMoeda(registro.precoUnitario.toString())} para ${formatarMoeda(preco)} de "${registro.produto.nome}" no fornecedor "${registro.fornecedor.nome}"`,
+          registroId: id,
+          usuarioId: atual.id,
+          dados: {
+            produtoId: registro.produtoId,
+            fornecedorId,
+            origem: registro.origem,
+            precoAnterior: registro.precoUnitario.toString(),
+            precoNovo: preco,
+          },
+        },
+        tx
+      );
+    });
+  } catch (erro) {
+    console.error("Erro ao atualizar preço cotado:", erro);
+    redirect(retornoPrecoComAviso(retorno, fornecedorId, "precoErro"));
+  }
+
+  revalidarFornecedores(registro.produtoId, fornecedorId);
+  redirect(retornoPrecoComAviso(retorno, fornecedorId, "precoAtualizado"));
+}
+
+export async function excluirPrecoHistorico(
+  formData: FormData
+): Promise<void> {
+  const atual = await verificarPermissao("fornecedores.preco.cotar");
+  if (!atual) return;
+
+  const id = idPositivo(texto(formData, "id"));
+  const fornecedorId = idPositivo(texto(formData, "fornecedorId"));
+  if (!id || !fornecedorId) return;
+
+  const retorno = texto(formData, "retorno");
+  const registro = await prisma.historicoPreco.findUnique({
+    where: { id },
+    include: {
+      produto: { select: { nome: true } },
+      fornecedor: { select: { nome: true } },
+    },
+  });
+  if (
+    !registro ||
+    registro.fornecedorId !== fornecedorId ||
+    registro.origem !== "COTADO"
+  ) {
+    redirect(retornoPrecoComAviso(retorno, fornecedorId, "precoErro"));
+  }
+
+  try {
+    await prisma.$transaction(async (tx) => {
+      await tx.historicoPreco.delete({ where: { id } });
+      await registrarLog(
+        {
+          modulo: "FORNECEDORES",
+          acao: "EXCLUIR",
+          descricao: `Excluiu preço cotado de ${formatarMoeda(registro.precoUnitario.toString())} de "${registro.produto.nome}" no fornecedor "${registro.fornecedor.nome}"`,
+          registroId: id,
+          usuarioId: atual.id,
+          dados: {
+            produtoId: registro.produtoId,
+            fornecedorId,
+            origem: registro.origem,
+            precoUnitario: registro.precoUnitario.toString(),
+            data: registro.data.toISOString(),
+          },
+        },
+        tx
+      );
+    });
+  } catch (erro) {
+    console.error("Erro ao excluir preço cotado:", erro);
+    redirect(retornoPrecoComAviso(retorno, fornecedorId, "precoErro"));
+  }
+
+  revalidarFornecedores(registro.produtoId, fornecedorId);
+  redirect(retornoPrecoComAviso(retorno, fornecedorId, "precoExcluido"));
 }

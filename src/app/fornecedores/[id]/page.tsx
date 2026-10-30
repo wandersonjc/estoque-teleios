@@ -11,7 +11,12 @@ import { notFound } from "next/navigation";
 
 import BotaoAcao from "@/components/BotaoAcao";
 import { formatarDecimalBr } from "@/app/produtos/tipos";
+import { TAMANHOS_PAGINA } from "@/app/produtos/tipos";
 
+import {
+  BotaoExcluirPrecoHistorico,
+  CelulaPrecoHistorico,
+} from "../AcoesPrecoHistorico";
 import AbasFornecedor from "../AbasFornecedor";
 import FormularioFornecedor from "../FormularioFornecedor";
 import FormularioPrecoCotado from "../FormularioPrecoCotado";
@@ -32,6 +37,13 @@ import {
 
 export const dynamic = "force-dynamic";
 
+const COLUNAS_PRECOS = ["produto", "precoUnitario", "origem", "data"] as const;
+type ColunaPreco = (typeof COLUNAS_PRECOS)[number];
+
+function valorUnico(valor: string | string[] | undefined): string | undefined {
+  return Array.isArray(valor) ? valor[0] : valor;
+}
+
 export default async function PaginaEditarFornecedor({
   params,
   searchParams,
@@ -40,7 +52,7 @@ export default async function PaginaEditarFornecedor({
 
   const { id } = await params;
   const avisos = await searchParams;
-  const abaInicial = Array.isArray(avisos.aba) ? avisos.aba[0] : avisos.aba;
+  const abaInicial = valorUnico(avisos.aba);
   const numero = Number(id);
   if (!Number.isInteger(numero) || numero <= 0) notFound();
 
@@ -83,8 +95,105 @@ export default async function PaginaEditarFornecedor({
     nome: item.produto.nome,
   }));
 
+  const produtoPedido = valorUnico(avisos.produto);
+  const idProdutoPedido = Number(produtoPedido);
+  const produtoSelecionado =
+    Number.isInteger(idProdutoPedido) &&
+    produtosParaPreco.some((produto) => produto.id === idProdutoPedido)
+      ? String(idProdutoPedido)
+      : "todos";
+  const tamanhoPedido = Number(valorUnico(avisos.tamanho));
+  const tamanhoHistorico = (TAMANHOS_PAGINA as readonly number[]).includes(
+    tamanhoPedido
+  )
+    ? tamanhoPedido
+    : 25;
+  const ordenacaoPedido = valorUnico(avisos.ordenacao);
+  const ordenacaoHistorico: ColunaPreco = COLUNAS_PRECOS.includes(
+    ordenacaoPedido as ColunaPreco
+  )
+    ? (ordenacaoPedido as ColunaPreco)
+    : "data";
+  const direcaoHistorico = valorUnico(avisos.direcao) === "asc" ? "asc" : "desc";
+  const historicoFiltrado = historico.filter(
+    (item) =>
+      produtoSelecionado === "todos" ||
+      item.produtoId === Number(produtoSelecionado)
+  );
+  const historicoOrdenado = [...historicoFiltrado].sort((a, b) => {
+    let comparacao: number;
+    switch (ordenacaoHistorico) {
+      case "produto":
+        comparacao = a.produto.nome.localeCompare(b.produto.nome, "pt-BR", {
+          sensitivity: "base",
+        });
+        break;
+      case "precoUnitario":
+        comparacao =
+          Number(a.precoUnitario.toString()) -
+          Number(b.precoUnitario.toString());
+        break;
+      case "origem":
+        comparacao = ROTULO_ORIGEM_PRECO[a.origem].localeCompare(
+          ROTULO_ORIGEM_PRECO[b.origem],
+          "pt-BR"
+        );
+        break;
+      case "data":
+        comparacao = a.data.getTime() - b.data.getTime();
+        break;
+    }
+    return (comparacao || b.id - a.id) * (direcaoHistorico === "asc" ? 1 : -1);
+  });
+  const totalPaginasHistorico = Math.max(
+    1,
+    Math.ceil(historicoOrdenado.length / tamanhoHistorico)
+  );
+  const paginaPedido = Number(valorUnico(avisos.pagina));
+  const paginaHistorico = Math.min(
+    Number.isInteger(paginaPedido) && paginaPedido > 0 ? paginaPedido : 1,
+    totalPaginasHistorico
+  );
+  const movimentosInicio = (paginaHistorico - 1) * tamanhoHistorico;
+  const historicoDaPagina = historicoOrdenado.slice(
+    movimentosInicio,
+    movimentosInicio + tamanhoHistorico
+  );
+
   const mapaPrecos = precosAtuais(historico);
   const retorno = `/fornecedores/${fornecedor.id}`;
+  const parametrosRetornoPreco = new URLSearchParams({
+    aba: "precos",
+    ordenacao: ordenacaoHistorico,
+    direcao: direcaoHistorico,
+    tamanho: String(tamanhoHistorico),
+    pagina: String(paginaHistorico),
+  });
+  if (produtoSelecionado !== "todos") {
+    parametrosRetornoPreco.set("produto", produtoSelecionado);
+  }
+  const retornoPreco = `${retorno}?${parametrosRetornoPreco.toString()}`;
+  const parametrosNovaCotacao = new URLSearchParams(parametrosRetornoPreco);
+  parametrosNovaCotacao.set("preco", "1");
+  const retornoNovaCotacao = `${retorno}?${parametrosNovaCotacao.toString()}`;
+
+  function urlHistorico(opcoes: {
+    pagina?: number;
+    ordenacao?: ColunaPreco;
+    direcao?: "asc" | "desc";
+  } = {}) {
+    const parametros = new URLSearchParams({
+      aba: "precos",
+      ordenacao: opcoes.ordenacao ?? ordenacaoHistorico,
+      direcao: opcoes.direcao ?? direcaoHistorico,
+      tamanho: String(tamanhoHistorico),
+      pagina: String(opcoes.pagina ?? paginaHistorico),
+    });
+    if (produtoSelecionado !== "todos") {
+      parametros.set("produto", produtoSelecionado);
+    }
+    return `${retorno}?${parametros.toString()}`;
+  }
 
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-5">
@@ -119,6 +228,21 @@ export default async function PaginaEditarFornecedor({
           className="mt-4 rounded-lg bg-green-50 p-3 text-base text-green-800"
         >
           Preço cotado registrado.
+        </p>
+      )}
+      {avisos.precoAtualizado === "1" && (
+        <p role="status" className="mt-4 rounded-lg bg-green-50 p-3 text-base text-green-800">
+          Preço cotado atualizado.
+        </p>
+      )}
+      {avisos.precoExcluido === "1" && (
+        <p role="status" className="mt-4 rounded-lg bg-green-50 p-3 text-base text-green-800">
+          Registro de preço excluído.
+        </p>
+      )}
+      {avisos.precoErro === "1" && (
+        <p role="alert" className="mt-4 rounded-lg bg-red-50 p-3 text-base text-red-700">
+          Não foi possível alterar ou excluir este preço. Verifique o valor e a origem do registro.
         </p>
       )}
 
@@ -257,39 +381,136 @@ export default async function PaginaEditarFornecedor({
                   <FormularioPrecoCotado
                     fornecedorId={fornecedor.id}
                     opcoes={produtosParaPreco}
-                    retorno={`${retorno}?preco=1&aba=precos`}
+                    retorno={retornoNovaCotacao}
                   />
                 </div>
               </div>
             )}
 
+            <form
+              action={retorno}
+              method="get"
+              className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end"
+            >
+              <input type="hidden" name="aba" value="precos" />
+              <input
+                type="hidden"
+                name="ordenacao"
+                value={ordenacaoHistorico}
+              />
+              <input type="hidden" name="direcao" value={direcaoHistorico} />
+              <input type="hidden" name="pagina" value="1" />
+              <div className="flex flex-1 flex-col gap-1">
+                <label htmlFor="filtro-produto-preco" className="text-sm font-medium text-zinc-700">
+                  Produto
+                </label>
+                <select
+                  id="filtro-produto-preco"
+                  name="produto"
+                  defaultValue={produtoSelecionado}
+                  className="h-11 w-full rounded-lg border border-zinc-300 bg-white px-3 text-base text-zinc-900"
+                >
+                  <option value="todos">Todos</option>
+                  {produtosParaPreco.map((produto) => (
+                    <option key={produto.id} value={produto.id}>
+                      {produto.nome}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex flex-col gap-1">
+                <label htmlFor="tamanho-historico-precos" className="text-sm font-medium text-zinc-700">
+                  Resultados por página
+                </label>
+                <select
+                  id="tamanho-historico-precos"
+                  name="tamanho"
+                  defaultValue={tamanhoHistorico}
+                  className="h-11 rounded-lg border border-zinc-300 bg-white px-3 text-base text-zinc-900"
+                >
+                  {TAMANHOS_PAGINA.map((tamanho) => (
+                    <option key={tamanho} value={tamanho}>
+                      {tamanho}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <button
+                type="submit"
+                className="h-11 rounded-lg bg-zinc-900 px-4 text-base font-medium text-white"
+              >
+                Aplicar
+              </button>
+            </form>
+
+            <p className="mt-3 text-sm text-zinc-600" role="status">
+              {historicoOrdenado.length === 0
+                ? "Nenhum preço encontrado para este produto."
+                : `${historicoOrdenado.length} registro(s) · página ${paginaHistorico} de ${totalPaginasHistorico}`}
+            </p>
+
             <div className="mt-4 overflow-x-auto rounded-xl border border-zinc-200 bg-white">
-              <table className="w-full min-w-140 border-collapse text-left text-sm">
+              <table className="w-full min-w-180 border-collapse text-left text-sm">
                 <thead>
                   <tr className="border-b border-zinc-200 text-zinc-700">
-                    <th scope="col" className="px-3 py-3 font-semibold">
-                      Produto
-                    </th>
-                    <th scope="col" className="px-3 py-3 font-semibold">
-                      Preço
-                    </th>
-                    <th scope="col" className="px-3 py-3 font-semibold">
-                      Origem
-                    </th>
-                    <th scope="col" className="px-3 py-3 font-semibold">
-                      Data
+                    {(
+                      [
+                        ["produto", "Produto"],
+                        ["precoUnitario", "Preço"],
+                        ["origem", "Origem"],
+                        ["data", "Data"],
+                      ] as const
+                    ).map(([coluna, rotulo]) => {
+                      const ariaSort =
+                        ordenacaoHistorico !== coluna
+                          ? "none"
+                          : direcaoHistorico === "asc"
+                            ? "ascending"
+                            : "descending";
+                      const novaDirecao =
+                        ordenacaoHistorico === coluna &&
+                        direcaoHistorico === "asc"
+                          ? "desc"
+                          : "asc";
+                      return (
+                        <th
+                          key={coluna}
+                          scope="col"
+                          aria-sort={ariaSort}
+                          className="px-3 py-2 font-semibold"
+                        >
+                          <Link
+                            href={urlHistorico({
+                              pagina: 1,
+                              ordenacao: coluna,
+                              direcao: novaDirecao,
+                            })}
+                            className="inline-flex min-h-10 items-center gap-1 hover:text-black"
+                          >
+                            {rotulo}
+                            {ordenacaoHistorico === coluna && (
+                              <span aria-hidden="true">
+                                {direcaoHistorico === "asc" ? "↑" : "↓"}
+                              </span>
+                            )}
+                          </Link>
+                        </th>
+                      );
+                    })}
+                    <th scope="col" className="w-14 px-2 py-2">
+                      <span className="sr-only">Ações</span>
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {historico.length === 0 ? (
+                  {historicoDaPagina.length === 0 ? (
                     <tr>
-                      <td colSpan={4} className="px-3 py-5 text-center text-zinc-600">
+                      <td colSpan={5} className="px-3 py-5 text-center text-zinc-600">
                         Nenhum preço registrado para este fornecedor.
                       </td>
                     </tr>
                   ) : (
-                    historico.map((item) => (
+                    historicoDaPagina.map((item) => (
                       <tr
                         key={item.id}
                         className="border-b border-zinc-100 last:border-0"
@@ -298,7 +519,15 @@ export default async function PaginaEditarFornecedor({
                           {item.produto.nome}
                         </td>
                         <td className="whitespace-nowrap px-3 py-3 text-zinc-800">
-                          {formatarMoeda(item.precoUnitario.toString())}
+                          <CelulaPrecoHistorico
+                            id={item.id}
+                            fornecedorId={fornecedor.id}
+                            precoUnitario={item.precoUnitario.toString()}
+                            origem={item.origem}
+                            precoFormatado={formatarMoeda(item.precoUnitario.toString())}
+                            retorno={retornoPreco}
+                            podeGerenciar={podeCotar}
+                          />
                         </td>
                         <td className="px-3 py-3 text-zinc-800">
                           {ROTULO_ORIGEM_PRECO[item.origem]}
@@ -306,12 +535,49 @@ export default async function PaginaEditarFornecedor({
                         <td className="whitespace-nowrap px-3 py-3 text-zinc-800">
                           {formatarDataPreco(item.data)}
                         </td>
+                        <td className="px-2 py-2">
+                          <BotaoExcluirPrecoHistorico
+                            id={item.id}
+                            fornecedorId={fornecedor.id}
+                            origem={item.origem}
+                            retorno={retornoPreco}
+                            podeGerenciar={podeCotar}
+                          />
+                        </td>
                       </tr>
                     ))
                   )}
                 </tbody>
               </table>
             </div>
+
+            {totalPaginasHistorico > 1 && (
+              <nav
+                aria-label="Paginação do histórico de preços"
+                className="mt-3 flex items-center justify-between gap-3"
+              >
+                {paginaHistorico > 1 ? (
+                  <Link
+                    href={urlHistorico({ pagina: paginaHistorico - 1 })}
+                    className="min-h-11 rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-900"
+                  >
+                    Anterior
+                  </Link>
+                ) : (
+                  <span />
+                )}
+                {paginaHistorico < totalPaginasHistorico ? (
+                  <Link
+                    href={urlHistorico({ pagina: paginaHistorico + 1 })}
+                    className="min-h-11 rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-900"
+                  >
+                    Próxima
+                  </Link>
+                ) : (
+                  <span />
+                )}
+              </nav>
+            )}
           </section>
         }
       />
