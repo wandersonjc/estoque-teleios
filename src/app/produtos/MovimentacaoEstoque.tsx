@@ -27,6 +27,9 @@ type Props = {
   locais: LocalDeEstoque[];
   // Estoque atual de cada local já formatado (ex.: "1,5"); chave = id do local
   saldos: Record<string, string>;
+  // Para onde ir depois de registrar. Quando vazio, a ação volta
+  // para a tela de edição do produto.
+  retorno?: string;
 };
 
 // Campos altos (48px) e com fonte de 16px: uso em pé, no celular
@@ -43,7 +46,12 @@ const AJUDA: Record<TipoMovimento, string> = {
     "Informe a quantidade contada em cada local. O valor substitui o estoque atual. Deixe em branco o local que não foi contado.",
 };
 
-export default function MovimentacaoEstoque({ produtoId, locais, saldos }: Props) {
+export default function MovimentacaoEstoque({
+  produtoId,
+  locais,
+  saldos,
+  retorno,
+}: Props) {
   const [tipoAberto, setTipoAberto] = useState<TipoMovimento | null>(null);
 
   if (locais.length === 0) {
@@ -87,6 +95,7 @@ export default function MovimentacaoEstoque({ produtoId, locais, saldos }: Props
           produtoId={produtoId}
           locais={locais}
           saldos={saldos}
+          retorno={retorno}
           aoFechar={() => setTipoAberto(null)}
         />
       )}
@@ -99,6 +108,7 @@ type PropsPopup = {
   produtoId: number;
   locais: LocalDeEstoque[];
   saldos: Record<string, string>;
+  retorno?: string;
   aoFechar: () => void;
 };
 
@@ -107,6 +117,7 @@ function PopupMovimento({
   produtoId,
   locais,
   saldos,
+  retorno,
   aoFechar,
 }: PropsPopup) {
   const [estado, enviarFormulario, enviando] = useActionState<
@@ -148,6 +159,7 @@ function PopupMovimento({
         <form action={enviarFormulario} className="mt-4 flex flex-col gap-4">
           <input type="hidden" name="produtoId" value={produtoId} />
           <input type="hidden" name="tipo" value={tipo} />
+          {retorno && <input type="hidden" name="retorno" value={retorno} />}
 
           {estado.erroGeral && (
             <p

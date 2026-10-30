@@ -21,6 +21,7 @@ import prisma from "@/lib/prisma";
 import Link from "next/link";
 
 import { desativarProduto, reativarProduto } from "./actions";
+import MovimentacaoEstoque from "./MovimentacaoEstoque";
 import {
   TAMANHOS_PAGINA,
   TAMANHO_PAGINA_PADRAO,
@@ -49,11 +50,13 @@ export default async function ProdutosPage({
   const podeCriar = atual.permissoes.has("produtos.produto.criar");
   const podeEditar = atual.permissoes.has("produtos.produto.editar");
   const podeDesativar = atual.permissoes.has("produtos.produto.desativar");
+  const podeMovimentar = atual.permissoes.has("estoque.movimento.registrar");
 
   const parametros = await searchParams;
 
   const busca = textoDoParametro(parametros.busca).trim();
   const mostrarInativos = textoDoParametro(parametros.inativos) === "1";
+  const movRegistrado = textoDoParametro(parametros.mov) === "1";
 
   const tamanhoPedido = Number(textoDoParametro(parametros.tamanho));
   const tamanho = (TAMANHOS_PAGINA as readonly number[]).includes(tamanhoPedido)
@@ -77,7 +80,13 @@ export default async function ProdutosPage({
     ];
   }
 
-  const total = await prisma.produto.count({ where: filtro });
+  const [total, locais] = await Promise.all([
+    prisma.produto.count({ where: filtro }),
+    prisma.localEstoque.findMany({
+      select: { id: true, nome: true },
+      orderBy: { id: "asc" },
+    }),
+  ]);
   const totalPaginas = Math.max(1, Math.ceil(total / tamanho));
   const pagina = Math.min(paginaInicial, totalPaginas);
 
@@ -89,22 +98,38 @@ export default async function ProdutosPage({
     // RN-01: o total é a soma destas linhas, calculado na tela
     include: {
       estoques: {
-        select: { quantidade: true, dataUltimaContagem: true },
+        select: {
+          localEstoqueId: true,
+          quantidade: true,
+          dataUltimaContagem: true,
+        },
       },
     },
   });
 
   // Monta o endereço da lista mantendo os filtros atuais
-  function urlDaPagina(numero: number): string {
+  function urlDaLista(extras: Record<string, string>): string {
     const parametrosUrl = new URLSearchParams();
     if (busca !== "") parametrosUrl.set("busca", busca);
     if (mostrarInativos) parametrosUrl.set("inativos", "1");
     if (tamanho !== TAMANHO_PAGINA_PADRAO) {
       parametrosUrl.set("tamanho", String(tamanho));
     }
-    parametrosUrl.set("pagina", String(numero));
+    for (const [chave, valor] of Object.entries(extras)) {
+      parametrosUrl.set(chave, valor);
+    }
     return `/produtos?${parametrosUrl.toString()}`;
   }
+
+  function urlDaPagina(numero: number): string {
+    return urlDaLista({ pagina: String(numero) });
+  }
+
+  // Depois de registrar uma movimentação a partir da lista, voltar
+  // para esta mesma lista (mesmos filtros e página)
+  const urlRetorno = urlDaLista(
+    pagina > 1 ? { pagina: String(pagina), mov: "1" } : { mov: "1" }
+  );
 
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-5">
@@ -176,6 +201,15 @@ export default async function ProdutosPage({
         </div>
       </form>
 
+      {movRegistrado && (
+        <p
+          role="status"
+          className="mt-4 rounded-lg bg-green-50 p-3 text-base text-green-800"
+        >
+          Movimentação registrada com sucesso.
+        </p>
+      )}
+
       <p className="mt-4 text-sm text-zinc-600" role="status">
         {total === 0
           ? "Nenhum produto encontrado."
@@ -188,6 +222,15 @@ export default async function ProdutosPage({
             // RN-01: o total é sempre calculado; RN-03: data da contagem
             const totalEstoque = calcularTotalEstoque(produto.estoques);
             const dataUltima = ultimaContagem(produto.estoques);
+
+            // Saldo de cada local, em texto no padrão brasileiro,
+            // para o popup de movimentação mostrar o estoque atual
+            const saldos: Record<string, string> = {};
+            for (const estoque of produto.estoques) {
+              saldos[String(estoque.localEstoqueId)] = formatarDecimalBr(
+                estoque.quantidade.toString()
+              );
+            }
 
             return (
               <li
@@ -360,6 +403,18 @@ export default async function ProdutosPage({
                     )}
                   </div>
                 </div>
+
+                {/* Movimentação de estoque sem precisar abrir a edição */}
+                {podeMovimentar && locais.length > 0 && (
+                  <div className="mt-3 border-t border-zinc-100 pt-3">
+                    <MovimentacaoEstoque
+                      produtoId={produto.id}
+                      locais={locais}
+                      saldos={saldos}
+                      retorno={urlRetorno}
+                    />
+                  </div>
+                )}
               </li>
             );
           })}

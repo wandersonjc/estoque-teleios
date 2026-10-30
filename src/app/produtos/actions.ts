@@ -378,6 +378,15 @@ type LinhaMovimento = {
   quantidadeRegistrada: string;
 };
 
+// Aceita apenas um caminho interno (ex.: "/produtos?..."). Serve
+// para o formulário dizer de qual tela veio (a lista ou a edição),
+// sem permitir que o usuário redirecione para um site de fora.
+function caminhoInternoValido(valor: string): string | null {
+  if (!valor.startsWith("/")) return null;
+  if (valor.startsWith("//") || valor.includes("\\")) return null;
+  return valor;
+}
+
 export async function registrarMovimento(
   _estadoAnterior: EstadoMovimento,
   formData: FormData
@@ -570,7 +579,11 @@ export async function registrarMovimento(
     };
   }
 
+  // Para onde voltar: a lista manda a própria URL; sem ela, a
+  // movimentação volta para a tela de edição do produto.
+  const retorno = caminhoInternoValido(String(formData.get("retorno") ?? ""));
+
   revalidatePath("/produtos");
   revalidatePath(`/produtos/${produtoId}`);
-  redirect(`/produtos/${produtoId}?mov=1`);
+  redirect(retorno ?? `/produtos/${produtoId}?mov=1`);
 }
