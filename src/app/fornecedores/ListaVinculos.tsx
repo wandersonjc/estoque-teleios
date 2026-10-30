@@ -41,6 +41,7 @@ type Props = {
   precosAtuais: Map<string, PrecoAtual>;
   historico: ItemHistoricoPreco[];
   podeGerenciarVinculo: boolean;
+  mostrarHistoricoPreco?: boolean;
 };
 
 export default function ListaVinculos({
@@ -48,6 +49,7 @@ export default function ListaVinculos({
   precosAtuais,
   historico,
   podeGerenciarVinculo,
+  mostrarHistoricoPreco = true,
 }: Props) {
   if (vinculos.length === 0) {
     return (
@@ -153,7 +155,7 @@ export default function ListaVinculos({
               )
             )}
 
-            {historicoDoPar.length > 0 && (
+            {mostrarHistoricoPreco && historicoDoPar.length > 0 && (
               <details className="mt-3">
                 <summary className="cursor-pointer text-sm font-medium text-zinc-700">
                   Histórico de preços ({historicoDoPar.length})
