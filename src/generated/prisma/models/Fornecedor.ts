@@ -280,10 +280,10 @@ export type FornecedorOrderByWithRelationInput = {
 
 export type FornecedorWhereUniqueInput = Prisma.AtLeast<{
   id?: number
-  nome?: string
   AND?: Prisma.FornecedorWhereInput | Prisma.FornecedorWhereInput[]
   OR?: Prisma.FornecedorWhereInput[]
   NOT?: Prisma.FornecedorWhereInput | Prisma.FornecedorWhereInput[]
+  nome?: Prisma.StringFilter<"Fornecedor"> | string
   contato?: Prisma.StringNullableFilter<"Fornecedor"> | string | null
   prazoEntregaDias?: Prisma.IntNullableFilter<"Fornecedor"> | number | null
   valorMinimoPedido?: Prisma.DecimalNullableFilter<"Fornecedor"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -293,7 +293,7 @@ export type FornecedorWhereUniqueInput = Prisma.AtLeast<{
   atualizadoEm?: Prisma.DateTimeFilter<"Fornecedor"> | Date | string
   produtos?: Prisma.ProdutoFornecedorListRelationFilter
   historicoPrecos?: Prisma.HistoricoPrecoListRelationFilter
-}, "id" | "nome">
+}, "id">
 
 export type FornecedorOrderByWithAggregationInput = {
   id?: Prisma.SortOrder

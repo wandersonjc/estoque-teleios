@@ -39,10 +39,23 @@ const adapter = new PrismaPg({
 
 // Guarda a instância em "global" no ambiente de desenvolvimento para o
 // hot reload do Next.js não abrir uma conexão nova a cada alteração.
-const globalForPrisma = global as unknown as { prisma?: PrismaClient };
+// A "versao" força a recriação quando o schema do Prisma muda (ex.:
+// tabela historico_preco), porque o hot reload sozinho reusa o cliente velho.
+const VERSAO_DO_CLIENTE_PRISMA = 2;
+const globalForPrisma = global as unknown as {
+  prisma?: PrismaClient;
+  prismaVersao?: number;
+};
 
-const prisma = globalForPrisma.prisma ?? new PrismaClient({ adapter });
+const prisma =
+  globalForPrisma.prisma &&
+  globalForPrisma.prismaVersao === VERSAO_DO_CLIENTE_PRISMA
+    ? globalForPrisma.prisma
+    : new PrismaClient({ adapter });
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.prisma = prisma;
+  globalForPrisma.prismaVersao = VERSAO_DO_CLIENTE_PRISMA;
+}
 
 export default prisma;

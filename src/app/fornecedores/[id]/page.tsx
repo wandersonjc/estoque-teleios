@@ -43,23 +43,19 @@ export default async function PaginaEditarFornecedor({
   const podeVincular = atual.permissoes.has("fornecedores.vinculo.gerenciar");
   const podeCotar = atual.permissoes.has("fornecedores.preco.cotar");
 
-  const [fornecedor, produtosAtivos] = await Promise.all([
-    prisma.fornecedor.findUnique({
-      where: { id: numero },
+  const [fornecedor, vinculos, historico, produtosAtivos] = await Promise.all([
+    prisma.fornecedor.findUnique({ where: { id: numero } }),
+    prisma.produtoFornecedor.findMany({
+      where: { fornecedorId: numero },
       include: {
-        produtos: {
-          include: {
-            produto: { select: { id: true, nome: true, ativo: true } },
-          },
-          orderBy: { produto: { nome: "asc" } },
-        },
-        historicoPrecos: {
-          orderBy: [{ data: "desc" }, { id: "desc" }],
-          include: {
-            produto: { select: { nome: true } },
-          },
-        },
+        produto: { select: { id: true, nome: true, ativo: true } },
       },
+      orderBy: { id: "asc" },
+    }),
+    prisma.historicoPreco.findMany({
+      where: { fornecedorId: numero },
+      include: { produto: { select: { nome: true } } },
+      orderBy: [{ data: "desc" }, { id: "desc" }],
     }),
     prisma.produto.findMany({
       where: { ativo: true },
@@ -70,18 +66,16 @@ export default async function PaginaEditarFornecedor({
 
   if (!fornecedor) notFound();
 
-  const idsVinculados = new Set(
-    fornecedor.produtos.map((vinculo) => vinculo.produtoId)
-  );
+  const idsVinculados = new Set(vinculos.map((item) => item.produtoId));
   const produtosParaVincular = produtosAtivos.filter(
     (produto) => !idsVinculados.has(produto.id)
   );
-  const produtosParaPreco = fornecedor.produtos.map((vinculo) => ({
-    id: vinculo.produtoId,
-    nome: vinculo.produto.nome,
+  const produtosParaPreco = vinculos.map((item) => ({
+    id: item.produtoId,
+    nome: item.produto.nome,
   }));
 
-  const mapaPrecos = precosAtuais(fornecedor.historicoPrecos);
+  const mapaPrecos = precosAtuais(historico);
   const retorno = `/fornecedores/${fornecedor.id}`;
 
   return (
@@ -220,15 +214,15 @@ export default async function PaginaEditarFornecedor({
           <ListaVinculos
             podeGerenciarVinculo={podeVincular}
             precosAtuais={mapaPrecos}
-            vinculos={fornecedor.produtos.map((vinculo) => ({
-              id: vinculo.id,
-              ativo: vinculo.ativo,
-              codigoNoFornecedor: vinculo.codigoNoFornecedor,
-              produtoId: vinculo.produtoId,
-              fornecedorId: vinculo.fornecedorId,
-              nome: vinculo.produto.nome,
+            vinculos={vinculos.map((item) => ({
+              id: item.id,
+              ativo: item.ativo,
+              codigoNoFornecedor: item.codigoNoFornecedor,
+              produtoId: item.produtoId,
+              fornecedorId: item.fornecedorId,
+              nome: item.produto.nome,
             }))}
-            historico={fornecedor.historicoPrecos.map((item) => ({
+            historico={historico.map((item) => ({
               id: item.id,
               produtoId: item.produtoId,
               fornecedorId: item.fornecedorId,

@@ -53,36 +53,37 @@ export default async function EditarProdutoPage({
   const numero = Number(id);
   if (!Number.isInteger(numero) || numero <= 0) notFound();
 
-  // RN-01: o produto e os locais vêm em consultas separadas
-  const [produto, locais, fornecedoresAtivos] = await Promise.all([
-    prisma.produto.findUnique({
-      where: { id: numero },
-      include: {
-        estoques: true,
-        fornecedores: {
-          include: {
-            fornecedor: { select: { id: true, nome: true, ativo: true } },
-          },
-          orderBy: { fornecedor: { nome: "asc" } },
+  // RN-01: o produto e os locais vêm em consultas separadas.
+  // Vínculos e preços (RN-09 e RN-10) vêm das tabelas
+  // produto_fornecedor e historico_preco.
+  const [produto, locais, vinculos, historico, fornecedoresAtivos] =
+    await Promise.all([
+      prisma.produto.findUnique({
+        where: { id: numero },
+        include: { estoques: true },
+      }),
+      prisma.localEstoque.findMany({
+        select: { id: true, nome: true },
+        orderBy: { id: "asc" },
+      }),
+      prisma.produtoFornecedor.findMany({
+        where: { produtoId: numero },
+        include: {
+          fornecedor: { select: { id: true, nome: true, ativo: true } },
         },
-        historicoPrecos: {
-          orderBy: [{ data: "desc" }, { id: "desc" }],
-          include: {
-            fornecedor: { select: { nome: true } },
-          },
-        },
-      },
-    }),
-    prisma.localEstoque.findMany({
-      select: { id: true, nome: true },
-      orderBy: { id: "asc" },
-    }),
-    prisma.fornecedor.findMany({
-      where: { ativo: true },
-      select: { id: true, nome: true },
-      orderBy: { nome: "asc" },
-    }),
-  ]);
+        orderBy: { id: "asc" },
+      }),
+      prisma.historicoPreco.findMany({
+        where: { produtoId: numero },
+        include: { fornecedor: { select: { nome: true } } },
+        orderBy: [{ data: "desc" }, { id: "desc" }],
+      }),
+      prisma.fornecedor.findMany({
+        where: { ativo: true },
+        select: { id: true, nome: true },
+        orderBy: { nome: "asc" },
+      }),
+    ]);
 
   if (!produto) notFound();
 
@@ -100,16 +101,16 @@ export default async function EditarProdutoPage({
   const dataUltima = ultimaContagem(produto.estoques);
 
   const idsFornecedoresVinculados = new Set(
-    produto.fornecedores.map((item) => item.fornecedorId)
+    vinculos.map((item) => item.fornecedorId)
   );
   const fornecedoresParaVincular = fornecedoresAtivos.filter(
     (fornecedor) => !idsFornecedoresVinculados.has(fornecedor.id)
   );
-  const fornecedoresParaPreco = produto.fornecedores.map((item) => ({
+  const fornecedoresParaPreco = vinculos.map((item) => ({
     id: item.fornecedorId,
     nome: item.fornecedor.nome,
   }));
-  const mapaPrecos = precosAtuais(produto.historicoPrecos);
+  const mapaPrecos = precosAtuais(historico);
   const retornoProduto = `/produtos/${produto.id}`;
 
   return (
@@ -253,7 +254,7 @@ export default async function EditarProdutoPage({
           <ListaVinculos
             podeGerenciarVinculo={podeVincular}
             precosAtuais={mapaPrecos}
-            vinculos={produto.fornecedores.map((item) => ({
+            vinculos={vinculos.map((item) => ({
               id: item.id,
               ativo: item.ativo,
               codigoNoFornecedor: item.codigoNoFornecedor,
@@ -261,7 +262,7 @@ export default async function EditarProdutoPage({
               fornecedorId: item.fornecedorId,
               nome: item.fornecedor.nome,
             }))}
-            historico={produto.historicoPrecos.map((item) => ({
+            historico={historico.map((item) => ({
               id: item.id,
               produtoId: item.produtoId,
               fornecedorId: item.fornecedorId,

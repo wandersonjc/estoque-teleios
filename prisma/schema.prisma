@@ -90,7 +90,7 @@ model Produto {
 // ------------------------------------------------------------
 model Fornecedor {
   id               Int      @id @default(autoincrement())
-  nome             String   @unique
+  nome             String
   contato          String? // Telefone, e-mail, nome do vendedor etc.
   prazoEntregaDias Int?     @map("prazo_entrega_dias") // Prazo médio de entrega
   // Valor mínimo de pedido e frete (RN-17). Opcionais.
