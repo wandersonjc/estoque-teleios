@@ -9,12 +9,14 @@
 
 import { exigirPermissao } from "@/lib/autorizacao";
 import prisma from "@/lib/prisma";
+import { Prisma } from "@/generated/prisma/client";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import BotaoAcao from "@/components/BotaoAcao";
 
 import AbasProduto from "../AbasProduto";
+import HistoricoMovimentacoes from "../HistoricoMovimentacoes";
 import MovimentacaoEstoque from "../MovimentacaoEstoque";
 import ProdutoForm from "../ProdutoForm";
 import FormularioPrecoCotado from "@/app/fornecedores/FormularioPrecoCotado";
@@ -30,7 +32,15 @@ import {
   formatarDecimalBr,
   formatarQuantidade,
   ultimaContagem,
+  TAMANHOS_PAGINA,
 } from "../tipos";
+
+const COLUNAS_HISTORICO = ["tipo", "dataHora", "quantidade", "usuario"] as const;
+type ColunaHistorico = (typeof COLUNAS_HISTORICO)[number];
+
+function valorUnico(valor: string | string[] | undefined): string | undefined {
+  return Array.isArray(valor) ? valor[0] : valor;
+}
 
 // A tela precisa mostrar o produto e o estoque como estão no banco agora
 export const dynamic = "force-dynamic";
@@ -49,8 +59,19 @@ export default async function EditarProdutoPage({
   const podeCotar = atual.permissoes.has("fornecedores.preco.cotar");
 
   const { id } = await params;
-  const { salvo, mov, vinculo, preco, aba } = await searchParams;
-  const abaInicial = Array.isArray(aba) ? aba[0] : aba;
+  const {
+    salvo,
+    mov,
+    vinculo,
+    preco,
+    aba,
+    local,
+    pagina: paginaParam,
+    tamanho,
+    ordenacao,
+    direcao,
+  } = await searchParams;
+  const abaInicial = valorUnico(aba);
 
   const numero = Number(id);
   if (!Number.isInteger(numero) || numero <= 0) notFound();
@@ -88,6 +109,57 @@ export default async function EditarProdutoPage({
     ]);
 
   if (!produto) notFound();
+
+  const localPedido = valorUnico(local);
+  const idLocalPedido = Number(localPedido);
+  const localSelecionado =
+    localPedido !== undefined &&
+    localPedido !== "todos" &&
+    Number.isInteger(idLocalPedido) &&
+    locais.some((item) => item.id === idLocalPedido)
+      ? String(idLocalPedido)
+      : "todos";
+  const tamanhoPedido = Number(valorUnico(tamanho));
+  const tamanhoHistorico = (TAMANHOS_PAGINA as readonly number[]).includes(
+    tamanhoPedido
+  )
+    ? tamanhoPedido
+    : 25;
+  const paginaPedido = Number(valorUnico(paginaParam));
+  const paginaInicial =
+    Number.isInteger(paginaPedido) && paginaPedido > 0 ? paginaPedido : 1;
+  const ordenacaoPedido = valorUnico(ordenacao);
+  const ordenacaoHistorico: ColunaHistorico = COLUNAS_HISTORICO.includes(
+    ordenacaoPedido as ColunaHistorico
+  )
+    ? (ordenacaoPedido as ColunaHistorico)
+    : "dataHora";
+  const direcaoHistorico = valorUnico(direcao) === "asc" ? "asc" : "desc";
+  const ordemHistorico: Prisma.MovimentoEstoqueOrderByWithRelationInput =
+    ordenacaoHistorico === "usuario"
+      ? { usuario: { nome: direcaoHistorico } }
+      : { [ordenacaoHistorico]: direcaoHistorico };
+  const whereMovimento = {
+    produtoId: numero,
+    ...(localSelecionado !== "todos"
+      ? { localEstoqueId: Number(localSelecionado) }
+      : {}),
+  };
+  const totalMovimentos = await prisma.movimentoEstoque.count({
+    where: whereMovimento,
+  });
+  const totalPaginasHistorico = Math.max(
+    1,
+    Math.ceil(totalMovimentos / tamanhoHistorico)
+  );
+  const paginaHistorico = Math.min(paginaInicial, totalPaginasHistorico);
+  const movimentos = await prisma.movimentoEstoque.findMany({
+    where: whereMovimento,
+    orderBy: [ordemHistorico, { id: "desc" }],
+    skip: (paginaHistorico - 1) * tamanhoHistorico,
+    take: tamanhoHistorico,
+    include: { usuario: { select: { nome: true } } },
+  });
 
   // Estoque atual de cada local, já em texto no padrão brasileiro
   // (o Decimal do Prisma nunca vai para o componente de cliente)
@@ -264,6 +336,25 @@ export default async function EditarProdutoPage({
                 </ul>
               )}
             </div>
+
+            <HistoricoMovimentacoes
+              produtoId={produto.id}
+              locais={locais}
+              localSelecionado={localSelecionado}
+              movimentos={movimentos.map((movimento) => ({
+                id: movimento.id,
+                tipo: movimento.tipo,
+                dataHora: movimento.dataHora,
+                quantidade: movimento.quantidade.toString(),
+                usuarioNome: movimento.usuario?.nome ?? "Sistema",
+              }))}
+              pagina={paginaHistorico}
+              tamanho={tamanhoHistorico}
+              total={totalMovimentos}
+              totalPaginas={totalPaginasHistorico}
+              ordenacao={ordenacaoHistorico}
+              direcao={direcaoHistorico}
+            />
 
             {podeMovimentar && (
               <MovimentacaoEstoque
