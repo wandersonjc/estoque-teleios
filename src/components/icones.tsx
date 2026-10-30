@@ -222,6 +222,36 @@ export function IconeCheck({ className = "h-5 w-5" }: Props) {
   );
 }
 
+export function IconeEntrada({ className = "h-5 w-5" }: Props) {
+  return (
+    <svg {...TRACO} className={className} aria-hidden="true">
+      <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+      <polyline points="10 17 15 12 10 7" />
+      <line x1="15" x2="3" y1="12" y2="12" />
+    </svg>
+  );
+}
+
+export function IconeSaida({ className = "h-5 w-5" }: Props) {
+  return (
+    <svg {...TRACO} className={className} aria-hidden="true">
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+      <polyline points="16 17 21 12 16 7" />
+      <line x1="21" x2="9" y1="12" y2="12" />
+    </svg>
+  );
+}
+
+export function IconeClipboardCheck({ className = "h-5 w-5" }: Props) {
+  return (
+    <svg {...TRACO} className={className} aria-hidden="true">
+      <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
+      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+      <path d="m9 14 2 2 4-4" />
+    </svg>
+  );
+}
+
 // Roda de carregamento (usada nas telas e nos botões durante o
 // envio). A animação de giro vem do CSS (classe "animate-spin").
 export function IconeCarregando({ className = "h-5 w-5" }: Props) {

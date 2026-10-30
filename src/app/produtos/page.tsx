@@ -14,7 +14,7 @@ import {
   IconeCalendario,
   IconeCheck,
   IconeDocumento,
-  IconeEditar,
+  IconeLapis,
 } from "@/components/icones";
 import { exigirPermissao } from "@/lib/autorizacao";
 import prisma from "@/lib/prisma";
@@ -237,9 +237,9 @@ export default async function ProdutosPage({
                 key={produto.id}
                 className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm"
               >
-                <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
-                  {/* Coluna 1: Imagem */}
-                  <div className="h-24 w-24 sm:h-32 sm:w-32 shrink-0 overflow-hidden rounded-2xl bg-zinc-100">
+                <div className="flex gap-4 sm:gap-6">
+                  {/* Coluna da Esquerda: Apenas Imagem */}
+                  <div className="h-24 w-24 sm:h-28 sm:w-28 shrink-0 overflow-hidden rounded-2xl bg-zinc-100">
                     <img
                       src={`https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=${encodeURIComponent(
                         "clean minimalist product packaging white box " +
@@ -250,34 +250,83 @@ export default async function ProdutosPage({
                     />
                   </div>
 
-                  {/* Coluna 2: Conteúdo Central */}
-                  <div className="flex-1 min-w-0 flex flex-col justify-between">
-                    <div>
-                      <h3 className="text-xl font-bold text-[#002855] truncate">
-                        {produto.nome}
-                      </h3>
-                      {/* Badge Estoque Mínimo */}
-                      <div className="mt-1 flex w-fit items-center gap-1.5 rounded-full bg-[#eef6ff] px-3 py-0.5 text-sm font-medium text-[#0061d5]">
-                        <IconeCaixa className="h-4 w-4" />
-                        <span>
-                          Estoque mínimo:{" "}
-                          {formatarDecimalBr(produto.estoqueMinimo.toString())}
-                        </span>
+                  {/* Coluna da Direita: Todo o conteúdo (Título, Status, Grid, Ações) */}
+                  <div className="flex-1 min-w-0">
+                    {/* Topo: Nome e Status */}
+                    <div className="flex justify-between items-start gap-4">
+                      <div className="min-w-0">
+                        <h3 className="text-2xl font-bold text-[#002855] truncate">
+                          {produto.nome}
+                        </h3>
+                        {/* Badge Estoque Mínimo */}
+                        <div className="mt-2 flex w-fit items-center gap-1.5 rounded-full bg-[#eef6ff] px-3 py-1 text-sm font-medium text-[#0061d5]">
+                          <IconeCaixa className="h-4 w-4" />
+                          <span>
+                            Estoque mínimo:{" "}
+                            {formatarDecimalBr(
+                              produto.estoqueMinimo.toString()
+                            )}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Status Pill */}
+                      <div className="shrink-0">
+                        {podeDesativar ? (
+                          <form
+                            action={
+                              produto.ativo ? desativarProduto : reativarProduto
+                            }
+                          >
+                            <input type="hidden" name="id" value={produto.id} />
+                            <BotaoAcao
+                              title={produto.ativo ? "Desativar" : "Reativar"}
+                              className="transition-opacity hover:opacity-80"
+                            >
+                              <div
+                                className={`flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-bold text-white shadow-sm ${
+                                  produto.ativo
+                                    ? "bg-[#22c55e]"
+                                    : "bg-[#ef4444]"
+                                }`}
+                              >
+                                {produto.ativo && (
+                                  <IconeCheck className="h-3.5 w-3.5" />
+                                )}
+                                {produto.ativo ? "Ativo" : "Inativo"}
+                              </div>
+                            </BotaoAcao>
+                          </form>
+                        ) : (
+                          <div
+                            className={`flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-bold text-white shadow-sm ${
+                              produto.ativo ? "bg-[#22c55e]" : "bg-[#ef4444]"
+                            }`}
+                          >
+                            {produto.ativo && (
+                              <IconeCheck className="h-3.5 w-3.5" />
+                            )}
+                            {produto.ativo ? "Ativo" : "Inativo"}
+                          </div>
+                        )}
                       </div>
                     </div>
 
-                    {/* Grid de informações - Oculto em mobile, visível em sm+ */}
-                    <div className="hidden sm:grid mt-4 grid-cols-2 gap-x-8 gap-y-4 border-t border-zinc-100 pt-4">
+                    {/* Linha divisória suave apenas no lado direito */}
+                    <div className="mt-4 border-t border-zinc-100" />
+
+                    {/* Grid de informações centrais */}
+                    <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-6 px-1">
                       {/* Unidade */}
                       <div className="flex items-center gap-3">
-                        <div className="text-zinc-400">
-                          <IconeCaixa className="h-5 w-5" />
+                        <div className="text-zinc-300">
+                          <IconeCaixa className="h-6 w-6" />
                         </div>
                         <div className="min-w-0">
-                          <p className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">
-                            Unidade
+                          <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
+                            UNIDADE
                           </p>
-                          <p className="text-sm font-bold text-zinc-900">
+                          <p className="text-base font-bold text-[#002855] leading-tight">
                             {produto.unidade}
                           </p>
                         </div>
@@ -285,20 +334,19 @@ export default async function ProdutosPage({
 
                       {/* Estoque e Última Contagem */}
                       <div className="flex items-center gap-3">
-                        <div className="text-zinc-400">
-                          <IconeCalendario className="h-5 w-5" />
+                        <div className="text-zinc-300">
+                          <IconeCalendario className="h-6 w-6" />
                         </div>
                         <div className="min-w-0">
-                          <p className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">
-                            Total em estoque
+                          <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
+                            TOTAL EM ESTOQUE
                           </p>
-                          <p className="text-sm text-zinc-900">
+                          <p className="text-base text-[#002855] leading-tight">
                             <span className="font-bold">
                               {formatarQuantidade(totalEstoque)}
                             </span>
                             {dataUltima && (
-                              <span className="text-zinc-500 font-normal">
-                                {" "}
+                              <span className="text-zinc-400 font-medium text-xs ml-1 block sm:inline">
                                 - Última contagem: {formatarDataBr(dataUltima)}
                               </span>
                             )}
@@ -308,14 +356,14 @@ export default async function ProdutosPage({
 
                       {/* Código de barras */}
                       <div className="flex items-center gap-3">
-                        <div className="text-zinc-400">
-                          <IconeBarras className="h-5 w-5" />
+                        <div className="text-zinc-300">
+                          <IconeBarras className="h-6 w-6" />
                         </div>
                         <div className="min-w-0">
-                          <p className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">
-                            Código de barras
+                          <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
+                            CÓDIGO DE BARRAS
                           </p>
-                          <p className="text-sm font-bold text-zinc-900">
+                          <p className="text-base font-bold text-[#002855] leading-tight">
                             {produto.codigoBarras || "-"}
                           </p>
                         </div>
@@ -323,98 +371,44 @@ export default async function ProdutosPage({
 
                       {/* Código do ERP */}
                       <div className="flex items-center gap-3">
-                        <div className="text-zinc-400">
-                          <IconeDocumento className="h-5 w-5" />
+                        <div className="text-zinc-300">
+                          <IconeDocumento className="h-6 w-6" />
                         </div>
                         <div className="min-w-0">
-                          <p className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">
-                            Código do ERP
+                          <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
+                            CÓDIGO DO ERP
                           </p>
-                          <p className="text-sm font-bold text-zinc-900">
+                          <p className="text-base font-bold text-[#002855] leading-tight">
                             {produto.codigoErp}
                           </p>
                         </div>
                       </div>
                     </div>
 
-                    {/* Resumo mobile: visível apenas em mobile */}
-                    <div className="flex sm:hidden items-center justify-between mt-3 py-2 border-t border-zinc-100">
-                      <div className="text-xs font-medium text-zinc-500">
-                        Estoque:{" "}
-                        <span className="text-zinc-900 font-bold">
-                          {formatarQuantidade(totalEstoque)}
-                        </span>{" "}
-                        {produto.unidade}
-                      </div>
-                      <div className="text-[10px] text-zinc-400">
-                        ERP: {produto.codigoErp}
-                      </div>
+                    {/* Ações na base, também alinhadas à direita da imagem */}
+                    <div className="mt-5 flex items-center gap-3">
+                      {podeEditar && (
+                        <Link
+                          href={`/produtos/${produto.id}`}
+                          title="Editar"
+                          className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#0061d5]/10 bg-[#f0f7ff] text-[#0061d5] shadow-sm transition-colors hover:bg-[#e0efff]"
+                        >
+                          <IconeLapis className="h-5 w-5" />
+                        </Link>
+                      )}
+
+                      {podeMovimentar && locais.length > 0 && (
+                        <MovimentacaoEstoque
+                          produtoId={produto.id}
+                          locais={locais}
+                          saldos={saldos}
+                          retorno={urlRetorno}
+                          layout="horizontal"
+                        />
+                      )}
                     </div>
                   </div>
-
-                  {/* Coluna da direita: Status e Editar */}
-                  <div className="flex items-center justify-between sm:flex-col sm:items-end sm:justify-between py-1 shrink-0 gap-3">
-                    {/* Status Pill */}
-                    {podeDesativar ? (
-                      <form
-                        action={
-                          produto.ativo ? desativarProduto : reativarProduto
-                        }
-                      >
-                        <input type="hidden" name="id" value={produto.id} />
-                        <BotaoAcao
-                          title={produto.ativo ? "Desativar" : "Reativar"}
-                          className="transition-opacity hover:opacity-80"
-                        >
-                          <div
-                            className={`flex items-center gap-1.5 rounded-full px-3 sm:px-4 py-1.5 text-xs sm:text-sm font-bold text-white shadow-sm ${
-                              produto.ativo ? "bg-[#22c55e]" : "bg-[#ef4444]"
-                            }`}
-                          >
-                            {produto.ativo && (
-                              <IconeCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                            )}
-                            {produto.ativo ? "Ativo" : "Inativo"}
-                          </div>
-                        </BotaoAcao>
-                      </form>
-                    ) : (
-                      <div
-                        className={`flex items-center gap-1.5 rounded-full px-3 sm:px-4 py-1.5 text-xs sm:text-sm font-bold text-white shadow-sm ${
-                          produto.ativo ? "bg-[#22c55e]" : "bg-[#ef4444]"
-                        }`}
-                      >
-                        {produto.ativo && (
-                          <IconeCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                        )}
-                        {produto.ativo ? "Ativo" : "Inativo"}
-                      </div>
-                    )}
-
-                    {/* Botão Editar */}
-                    {podeEditar && (
-                      <Link
-                        href={`/produtos/${produto.id}`}
-                        title="Editar"
-                        className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl border border-zinc-200 bg-white text-[#0061d5] shadow-sm transition-colors hover:bg-zinc-50"
-                      >
-                        <IconeEditar className="h-5 w-5 sm:h-6 sm:w-6" />
-                      </Link>
-                    )}
-                  </div>
                 </div>
-
-                {/* Movimentação de estoque sem precisar abrir a edição */}
-                {podeMovimentar && locais.length > 0 && (
-                  <div className="mt-3 border-t border-zinc-100 pt-3">
-                    <MovimentacaoEstoque
-                      produtoId={produto.id}
-                      locais={locais}
-                      saldos={saldos}
-                      retorno={urlRetorno}
-                    />
-                  </div>
-                )}
               </li>
             );
           })}

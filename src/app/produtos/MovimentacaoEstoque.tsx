@@ -11,6 +11,11 @@
 import Link from "next/link";
 import { useActionState, useState } from "react";
 
+import {
+  IconeClipboardCheck,
+  IconeEntrada,
+  IconeSaida,
+} from "@/components/icones";
 import { registrarMovimento } from "./actions";
 import {
   ESTADO_MOVIMENTO_VAZIO,
@@ -30,6 +35,10 @@ type Props = {
   // Para onde ir depois de registrar. Quando vazio, a ação volta
   // para a tela de edição do produto.
   retorno?: string;
+  // "bloco" = título e botões horizontais (padrão);
+  // "lateral" = apenas os 3 ícones em coluna (usado na lista)
+  // "horizontal" = apenas os 3 ícones em linha (novo layout da lista)
+  layout?: "bloco" | "lateral" | "horizontal";
 };
 
 // Campos altos (48px) e com fonte de 16px: uso em pé, no celular
@@ -51,20 +60,71 @@ export default function MovimentacaoEstoque({
   locais,
   saldos,
   retorno,
+  layout = "bloco",
 }: Props) {
   const [tipoAberto, setTipoAberto] = useState<TipoMovimento | null>(null);
 
   if (locais.length === 0) {
+    if (layout === "lateral") return null;
     return (
       <div className="rounded-xl border border-zinc-200 bg-white p-3">
         <p className="text-base text-zinc-700">
           Nenhum local de estoque cadastrado.{" "}
           <Link href="/locais" className="underline">
-           Cadastrar locais de estoque
-          </Link>
-          {" "}para poder movimentar o estoque.
+            Cadastrar locais de estoque
+          </Link>{" "}
+          para poder movimentar o estoque.
         </p>
       </div>
+    );
+  }
+
+  if (layout === "lateral" || layout === "horizontal") {
+    return (
+      <>
+        <div
+          className={`flex ${
+            layout === "lateral" ? "flex-col" : "flex-row"
+          } gap-3`}
+        >
+          <button
+            type="button"
+            title="Entrada de estoque"
+            onClick={() => setTipoAberto("ENTRADA")}
+            className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#22c55e]/10 bg-[#eefcf4] text-[#22c55e] shadow-sm transition-colors hover:bg-[#dcfce7]"
+          >
+            <IconeEntrada className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            title="Saída de estoque"
+            onClick={() => setTipoAberto("SAIDA")}
+            className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#ef4444]/10 bg-[#fff5f5] text-[#ef4444] shadow-sm transition-colors hover:bg-[#fee2e2]"
+          >
+            <IconeSaida className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            title="Contagem de estoque"
+            onClick={() => setTipoAberto("CONTAGEM")}
+            className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#6366f1]/10 bg-[#f5f5ff] text-[#6366f1] shadow-sm transition-colors hover:bg-[#e0e7ff]"
+          >
+            <IconeClipboardCheck className="h-5 w-5" />
+          </button>
+        </div>
+
+        {tipoAberto && (
+          <PopupMovimento
+            key={tipoAberto}
+            tipo={tipoAberto}
+            produtoId={produtoId}
+            locais={locais}
+            saldos={saldos}
+            retorno={retorno}
+            aoFechar={() => setTipoAberto(null)}
+          />
+        )}
+      </>
     );
   }
 
