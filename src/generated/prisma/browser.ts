@@ -43,6 +43,11 @@ export type Fornecedor = Prisma.FornecedorModel
  */
 export type ProdutoFornecedor = Prisma.ProdutoFornecedorModel
 /**
+ * Model HistoricoPreco
+ * 
+ */
+export type HistoricoPreco = Prisma.HistoricoPrecoModel
+/**
  * Model Estoque
  * 
  */

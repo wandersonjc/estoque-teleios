@@ -9,6 +9,14 @@
 * 🟢 You can import this file directly.
 */
 
+export const OrigemPreco = {
+  COTADO: 'COTADO',
+  PAGO: 'PAGO'
+} as const
+
+export type OrigemPreco = (typeof OrigemPreco)[keyof typeof OrigemPreco]
+
+
 export const TipoMovimento = {
   ENTRADA: 'ENTRADA',
   SAIDA: 'SAIDA',

@@ -185,6 +185,56 @@ export const CATALOGO_DE_PERMISSOES: PermissaoCatalogo[] = [
     descricao: "Ver o histórico completo de ações e auditoria do sistema",
     ordem: 610,
   },
+
+  // Módulo Fornecedores
+  {
+    codigo: "fornecedores.fornecedor.consultar",
+    modulo: "Fornecedores",
+    funcionalidade: "Fornecedor",
+    operacao: "Consultar",
+    descricao: "Ver a lista de fornecedores e seus dados de contato",
+    ordem: 710,
+  },
+  {
+    codigo: "fornecedores.fornecedor.criar",
+    modulo: "Fornecedores",
+    funcionalidade: "Fornecedor",
+    operacao: "Cadastrar",
+    descricao: "Cadastrar novos fornecedores",
+    ordem: 720,
+  },
+  {
+    codigo: "fornecedores.fornecedor.editar",
+    modulo: "Fornecedores",
+    funcionalidade: "Fornecedor",
+    operacao: "Alterar",
+    descricao: "Alterar dados de contato e condições comerciais do fornecedor",
+    ordem: 730,
+  },
+  {
+    codigo: "fornecedores.fornecedor.desativar",
+    modulo: "Fornecedores",
+    funcionalidade: "Fornecedor",
+    operacao: "Desativar/Reativar",
+    descricao: "Desativar e reativar fornecedores",
+    ordem: 740,
+  },
+  {
+    codigo: "fornecedores.vinculo.gerenciar",
+    modulo: "Fornecedores",
+    funcionalidade: "Vínculo produto",
+    operacao: "Gerenciar",
+    descricao: "Vincular produtos a fornecedores, informar o código no fornecedor e ativar/desativar o vínculo",
+    ordem: 750,
+  },
+  {
+    codigo: "fornecedores.preco.cotar",
+    modulo: "Fornecedores",
+    funcionalidade: "Preço cotado",
+    operacao: "Registrar",
+    descricao: "Registrar preço cotado de um produto em um fornecedor, sem pedido",
+    ordem: 760,
+  },
 ];
 
 // Códigos válidos hoje (útil para validar o que chega do formulário)
@@ -207,6 +257,11 @@ export type ItemMenu = {
 export const MENU_PRINCIPAL: ItemMenu[] = [
   { href: "/produtos", rotulo: "Produtos", permissao: "produtos.produto.consultar" },
   { href: "/locais", rotulo: "Locais", permissao: "locais.local.consultar" },
+  {
+    href: "/fornecedores",
+    rotulo: "Fornecedores",
+    permissao: "fornecedores.fornecedor.consultar",
+  },
   { href: "/usuarios", rotulo: "Usuários", permissao: "usuarios.usuario.consultar" },
   {
     href: "/permissoes",

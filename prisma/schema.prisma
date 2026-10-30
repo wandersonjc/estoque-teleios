@@ -77,9 +77,10 @@ model Produto {
   criadoEm      DateTime @default(now()) @map("criado_em")
   atualizadoEm  DateTime @updatedAt @map("atualizado_em")
 
-  fornecedores ProdutoFornecedor[]
-  estoques     Estoque[]
-  movimentos   MovimentoEstoque[]
+  fornecedores    ProdutoFornecedor[]
+  historicoPrecos HistoricoPreco[]
+  estoques        Estoque[]
+  movimentos      MovimentoEstoque[]
 
   @@map("produto")
 }
@@ -88,10 +89,10 @@ model Produto {
 // Fornecedor
 // ------------------------------------------------------------
 model Fornecedor {
-  id                Int      @id @default(autoincrement())
-  nome              String
-  contato           String? // Telefone, e-mail, nome do vendedor etc.
-  prazoEntregaDias  Int?     @map("prazo_entrega_dias") // Prazo médio de entrega
+  id               Int      @id @default(autoincrement())
+  nome             String   @unique
+  contato          String? // Telefone, e-mail, nome do vendedor etc.
+  prazoEntregaDias Int?     @map("prazo_entrega_dias") // Prazo médio de entrega
   // Valor mínimo de pedido e frete (RN-17). Opcionais.
   valorMinimoPedido Decimal? @map("valor_minimo_pedido") @db.Decimal(12, 2)
   frete             Decimal? @db.Decimal(12, 2)
@@ -99,7 +100,8 @@ model Fornecedor {
   criadoEm          DateTime @default(now()) @map("criado_em")
   atualizadoEm      DateTime @updatedAt @map("atualizado_em")
 
-  produtos ProdutoFornecedor[]
+  produtos        ProdutoFornecedor[]
+  historicoPrecos HistoricoPreco[]
 
   @@map("fornecedor")
 }
@@ -122,6 +124,36 @@ model ProdutoFornecedor {
   @@unique([produtoId, fornecedorId])
   @@index([fornecedorId])
   @@map("produto_fornecedor")
+}
+
+// ------------------------------------------------------------
+// Histórico de preços (RN-10 e RN-11).
+// Módulo 2 grava origem COTADO (digitado pelo comprador, sem pedido).
+// Módulo 3 grava origem PAGO ao confirmar o pedido (pedido_id).
+// O preço atual de um produto num fornecedor é o registro mais
+// recente (por data, depois por id).
+// ------------------------------------------------------------
+enum OrigemPreco {
+  COTADO
+  PAGO
+}
+
+model HistoricoPreco {
+  id            Int         @id @default(autoincrement())
+  produtoId     Int         @map("produto_id")
+  fornecedorId  Int         @map("fornecedor_id")
+  precoUnitario Decimal     @map("preco_unitario") @db.Decimal(12, 2)
+  data          DateTime
+  origem        OrigemPreco
+  // Preenchido no Módulo 3, quando o preço vier de um pedido confirmado
+  pedidoId      Int?        @map("pedido_id")
+
+  produto    Produto    @relation(fields: [produtoId], references: [id])
+  fornecedor Fornecedor @relation(fields: [fornecedorId], references: [id])
+
+  @@index([produtoId, fornecedorId, data])
+  @@index([fornecedorId])
+  @@map("historico_preco")
 }
 
 // ------------------------------------------------------------

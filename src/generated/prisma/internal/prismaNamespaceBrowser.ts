@@ -56,6 +56,7 @@ export const ModelName = {
   Produto: 'Produto',
   Fornecedor: 'Fornecedor',
   ProdutoFornecedor: 'ProdutoFornecedor',
+  HistoricoPreco: 'HistoricoPreco',
   Estoque: 'Estoque',
   MovimentoEstoque: 'MovimentoEstoque',
   LogSistema: 'LogSistema',
@@ -140,6 +141,19 @@ export const ProdutoFornecedorScalarFieldEnum = {
 } as const
 
 export type ProdutoFornecedorScalarFieldEnum = (typeof ProdutoFornecedorScalarFieldEnum)[keyof typeof ProdutoFornecedorScalarFieldEnum]
+
+
+export const HistoricoPrecoScalarFieldEnum = {
+  id: 'id',
+  produtoId: 'produtoId',
+  fornecedorId: 'fornecedorId',
+  precoUnitario: 'precoUnitario',
+  data: 'data',
+  origem: 'origem',
+  pedidoId: 'pedidoId'
+} as const
+
+export type HistoricoPrecoScalarFieldEnum = (typeof HistoricoPrecoScalarFieldEnum)[keyof typeof HistoricoPrecoScalarFieldEnum]
 
 
 export const EstoqueScalarFieldEnum = {

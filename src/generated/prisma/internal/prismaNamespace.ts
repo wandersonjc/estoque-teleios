@@ -402,6 +402,7 @@ export const ModelName = {
   Produto: 'Produto',
   Fornecedor: 'Fornecedor',
   ProdutoFornecedor: 'ProdutoFornecedor',
+  HistoricoPreco: 'HistoricoPreco',
   Estoque: 'Estoque',
   MovimentoEstoque: 'MovimentoEstoque',
   LogSistema: 'LogSistema',
@@ -423,7 +424,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "usuario" | "localEstoque" | "produto" | "fornecedor" | "produtoFornecedor" | "estoque" | "movimentoEstoque" | "logSistema" | "permissao" | "permissaoUsuario" | "sessao"
+    modelProps: "usuario" | "localEstoque" | "produto" | "fornecedor" | "produtoFornecedor" | "historicoPreco" | "estoque" | "movimentoEstoque" | "logSistema" | "permissao" | "permissaoUsuario" | "sessao"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -794,6 +795,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.ProdutoFornecedorCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.ProdutoFornecedorCountAggregateOutputType> | number
+        }
+      }
+    }
+    HistoricoPreco: {
+      payload: Prisma.$HistoricoPrecoPayload<ExtArgs>
+      fields: Prisma.HistoricoPrecoFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.HistoricoPrecoFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HistoricoPrecoPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.HistoricoPrecoFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HistoricoPrecoPayload>
+        }
+        findFirst: {
+          args: Prisma.HistoricoPrecoFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HistoricoPrecoPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.HistoricoPrecoFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HistoricoPrecoPayload>
+        }
+        findMany: {
+          args: Prisma.HistoricoPrecoFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HistoricoPrecoPayload>[]
+        }
+        create: {
+          args: Prisma.HistoricoPrecoCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HistoricoPrecoPayload>
+        }
+        createMany: {
+          args: Prisma.HistoricoPrecoCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.HistoricoPrecoCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HistoricoPrecoPayload>[]
+        }
+        delete: {
+          args: Prisma.HistoricoPrecoDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HistoricoPrecoPayload>
+        }
+        update: {
+          args: Prisma.HistoricoPrecoUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HistoricoPrecoPayload>
+        }
+        deleteMany: {
+          args: Prisma.HistoricoPrecoDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.HistoricoPrecoUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.HistoricoPrecoUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HistoricoPrecoPayload>[]
+        }
+        upsert: {
+          args: Prisma.HistoricoPrecoUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HistoricoPrecoPayload>
+        }
+        aggregate: {
+          args: Prisma.HistoricoPrecoAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateHistoricoPreco>
+        }
+        groupBy: {
+          args: Prisma.HistoricoPrecoGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.HistoricoPrecoGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.HistoricoPrecoCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.HistoricoPrecoCountAggregateOutputType> | number
         }
       }
     }
@@ -1342,6 +1417,19 @@ export const ProdutoFornecedorScalarFieldEnum = {
 export type ProdutoFornecedorScalarFieldEnum = (typeof ProdutoFornecedorScalarFieldEnum)[keyof typeof ProdutoFornecedorScalarFieldEnum]
 
 
+export const HistoricoPrecoScalarFieldEnum = {
+  id: 'id',
+  produtoId: 'produtoId',
+  fornecedorId: 'fornecedorId',
+  precoUnitario: 'precoUnitario',
+  data: 'data',
+  origem: 'origem',
+  pedidoId: 'pedidoId'
+} as const
+
+export type HistoricoPrecoScalarFieldEnum = (typeof HistoricoPrecoScalarFieldEnum)[keyof typeof HistoricoPrecoScalarFieldEnum]
+
+
 export const EstoqueScalarFieldEnum = {
   id: 'id',
   produtoId: 'produtoId',
@@ -1524,6 +1612,20 @@ export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
  * Reference to a field of type 'Decimal[]'
  */
 export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
+    
+
+
+/**
+ * Reference to a field of type 'OrigemPreco'
+ */
+export type EnumOrigemPrecoFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrigemPreco'>
+    
+
+
+/**
+ * Reference to a field of type 'OrigemPreco[]'
+ */
+export type ListEnumOrigemPrecoFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrigemPreco[]'>
     
 
 
@@ -1752,6 +1854,7 @@ export type GlobalOmitConfig = {
   produto?: Prisma.ProdutoOmit
   fornecedor?: Prisma.FornecedorOmit
   produtoFornecedor?: Prisma.ProdutoFornecedorOmit
+  historicoPreco?: Prisma.HistoricoPrecoOmit
   estoque?: Prisma.EstoqueOmit
   movimentoEstoque?: Prisma.MovimentoEstoqueOmit
   logSistema?: Prisma.LogSistemaOmit

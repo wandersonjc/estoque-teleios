@@ -231,6 +231,23 @@ export type DecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedDecimalNullableFilter<$PrismaModel>
 }
 
+export type EnumOrigemPrecoFilter<$PrismaModel = never> = {
+  equals?: $Enums.OrigemPreco | Prisma.EnumOrigemPrecoFieldRefInput<$PrismaModel>
+  in?: $Enums.OrigemPreco[] | Prisma.ListEnumOrigemPrecoFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OrigemPreco[] | Prisma.ListEnumOrigemPrecoFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOrigemPrecoFilter<$PrismaModel> | $Enums.OrigemPreco
+}
+
+export type EnumOrigemPrecoWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.OrigemPreco | Prisma.EnumOrigemPrecoFieldRefInput<$PrismaModel>
+  in?: $Enums.OrigemPreco[] | Prisma.ListEnumOrigemPrecoFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OrigemPreco[] | Prisma.ListEnumOrigemPrecoFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOrigemPrecoWithAggregatesFilter<$PrismaModel> | $Enums.OrigemPreco
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumOrigemPrecoFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumOrigemPrecoFilter<$PrismaModel>
+}
+
 export type EnumTipoMovimentoFilter<$PrismaModel = never> = {
   equals?: $Enums.TipoMovimento | Prisma.EnumTipoMovimentoFieldRefInput<$PrismaModel>
   in?: $Enums.TipoMovimento[] | Prisma.ListEnumTipoMovimentoFieldRefInput<$PrismaModel>
@@ -561,6 +578,23 @@ export type NestedDecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
   _sum?: Prisma.NestedDecimalNullableFilter<$PrismaModel>
   _min?: Prisma.NestedDecimalNullableFilter<$PrismaModel>
   _max?: Prisma.NestedDecimalNullableFilter<$PrismaModel>
+}
+
+export type NestedEnumOrigemPrecoFilter<$PrismaModel = never> = {
+  equals?: $Enums.OrigemPreco | Prisma.EnumOrigemPrecoFieldRefInput<$PrismaModel>
+  in?: $Enums.OrigemPreco[] | Prisma.ListEnumOrigemPrecoFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OrigemPreco[] | Prisma.ListEnumOrigemPrecoFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOrigemPrecoFilter<$PrismaModel> | $Enums.OrigemPreco
+}
+
+export type NestedEnumOrigemPrecoWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.OrigemPreco | Prisma.EnumOrigemPrecoFieldRefInput<$PrismaModel>
+  in?: $Enums.OrigemPreco[] | Prisma.ListEnumOrigemPrecoFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OrigemPreco[] | Prisma.ListEnumOrigemPrecoFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOrigemPrecoWithAggregatesFilter<$PrismaModel> | $Enums.OrigemPreco
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumOrigemPrecoFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumOrigemPrecoFilter<$PrismaModel>
 }
 
 export type NestedEnumTipoMovimentoFilter<$PrismaModel = never> = {

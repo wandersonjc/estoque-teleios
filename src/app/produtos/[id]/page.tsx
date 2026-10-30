@@ -16,6 +16,11 @@ import BotaoAcao from "@/components/BotaoAcao";
 
 import MovimentacaoEstoque from "../MovimentacaoEstoque";
 import ProdutoForm from "../ProdutoForm";
+import FormularioPrecoCotado from "@/app/fornecedores/FormularioPrecoCotado";
+import FormularioVinculo from "@/app/fornecedores/FormularioVinculo";
+import ListaVinculos from "@/app/fornecedores/ListaVinculos";
+import { precosAtuais } from "@/app/fornecedores/tipos";
+
 import { atualizarProduto, desativarProduto, reativarProduto } from "../actions";
 import {
   calcularTotalEstoque,
@@ -39,22 +44,43 @@ export default async function EditarProdutoPage({
   const podeEditar = atual.permissoes.has("produtos.produto.editar");
   const podeDesativar = atual.permissoes.has("produtos.produto.desativar");
   const podeMovimentar = atual.permissoes.has("estoque.movimento.registrar");
+  const podeVincular = atual.permissoes.has("fornecedores.vinculo.gerenciar");
+  const podeCotar = atual.permissoes.has("fornecedores.preco.cotar");
 
   const { id } = await params;
-  const { salvo, mov } = await searchParams;
+  const { salvo, mov, vinculo, preco } = await searchParams;
 
   const numero = Number(id);
   if (!Number.isInteger(numero) || numero <= 0) notFound();
 
   // RN-01: o produto e os locais vêm em consultas separadas
-  const [produto, locais] = await Promise.all([
+  const [produto, locais, fornecedoresAtivos] = await Promise.all([
     prisma.produto.findUnique({
       where: { id: numero },
-      include: { estoques: true },
+      include: {
+        estoques: true,
+        fornecedores: {
+          include: {
+            fornecedor: { select: { id: true, nome: true, ativo: true } },
+          },
+          orderBy: { fornecedor: { nome: "asc" } },
+        },
+        historicoPrecos: {
+          orderBy: [{ data: "desc" }, { id: "desc" }],
+          include: {
+            fornecedor: { select: { nome: true } },
+          },
+        },
+      },
     }),
     prisma.localEstoque.findMany({
       select: { id: true, nome: true },
       orderBy: { id: "asc" },
+    }),
+    prisma.fornecedor.findMany({
+      where: { ativo: true },
+      select: { id: true, nome: true },
+      orderBy: { nome: "asc" },
     }),
   ]);
 
@@ -72,6 +98,19 @@ export default async function EditarProdutoPage({
   // RN-01: o total é a soma dos locais, sempre calculado
   const total = calcularTotalEstoque(produto.estoques);
   const dataUltima = ultimaContagem(produto.estoques);
+
+  const idsFornecedoresVinculados = new Set(
+    produto.fornecedores.map((item) => item.fornecedorId)
+  );
+  const fornecedoresParaVincular = fornecedoresAtivos.filter(
+    (fornecedor) => !idsFornecedoresVinculados.has(fornecedor.id)
+  );
+  const fornecedoresParaPreco = produto.fornecedores.map((item) => ({
+    id: item.fornecedorId,
+    nome: item.fornecedor.nome,
+  }));
+  const mapaPrecos = precosAtuais(produto.historicoPrecos);
+  const retornoProduto = `/produtos/${produto.id}`;
 
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-5">
@@ -97,6 +136,24 @@ export default async function EditarProdutoPage({
           className="mt-4 rounded-lg bg-green-50 p-3 text-base text-green-800"
         >
           Movimentação registrada com sucesso.
+        </p>
+      )}
+
+      {vinculo === "1" && (
+        <p
+          role="status"
+          className="mt-4 rounded-lg bg-green-50 p-3 text-base text-green-800"
+        >
+          Vínculo salvo com sucesso.
+        </p>
+      )}
+
+      {preco === "1" && (
+        <p
+          role="status"
+          className="mt-4 rounded-lg bg-green-50 p-3 text-base text-green-800"
+        >
+          Preço cotado registrado.
         </p>
       )}
 
@@ -152,6 +209,70 @@ export default async function EditarProdutoPage({
           />
         </div>
       )}
+
+      <section className="mt-6 border-t border-zinc-200 pt-4">
+        <h2 className="text-base font-semibold text-zinc-900">
+          Fornecedores deste produto
+        </h2>
+        <p className="mt-1 text-sm text-zinc-600">
+          Quem vende este produto, o código no fornecedor e o preço atual
+          (o mais recente do histórico).
+        </p>
+
+        {podeVincular && (
+          <div className="mt-4 rounded-xl border border-zinc-200 bg-white p-3">
+            <h3 className="text-base font-semibold text-zinc-900">
+              Vincular fornecedor
+            </h3>
+            <div className="mt-3">
+              <FormularioVinculo
+                produtoId={produto.id}
+                opcoes={fornecedoresParaVincular}
+                retorno={`${retornoProduto}?vinculo=1`}
+              />
+            </div>
+          </div>
+        )}
+
+        {podeCotar && (
+          <div className="mt-4 rounded-xl border border-zinc-200 bg-white p-3">
+            <h3 className="text-base font-semibold text-zinc-900">
+              Registrar preço cotado
+            </h3>
+            <div className="mt-3">
+              <FormularioPrecoCotado
+                produtoId={produto.id}
+                opcoes={fornecedoresParaPreco}
+                retorno={`${retornoProduto}?preco=1`}
+              />
+            </div>
+          </div>
+        )}
+
+        <div className="mt-4">
+          <ListaVinculos
+            podeGerenciarVinculo={podeVincular}
+            precosAtuais={mapaPrecos}
+            vinculos={produto.fornecedores.map((item) => ({
+              id: item.id,
+              ativo: item.ativo,
+              codigoNoFornecedor: item.codigoNoFornecedor,
+              produtoId: item.produtoId,
+              fornecedorId: item.fornecedorId,
+              nome: item.fornecedor.nome,
+            }))}
+            historico={produto.historicoPrecos.map((item) => ({
+              id: item.id,
+              produtoId: item.produtoId,
+              fornecedorId: item.fornecedorId,
+              precoUnitario: item.precoUnitario.toString(),
+              data: item.data,
+              origem: item.origem,
+              nomePar: item.fornecedor.nome,
+            }))}
+          />
+        </div>
+      </section>
 
       {podeEditar && (
         <div className="mt-6 border-t border-zinc-200 pt-4">
