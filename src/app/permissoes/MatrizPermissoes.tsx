@@ -168,7 +168,7 @@ function FormularioPermissoes({
   const [selecionadas, setSelecionadas] = useState(
     () => new Set(codigosConcedidos)
   );
-  const [abertos, setAbertos] = useState<Record<string, boolean>>({});
+  const [moduloAberto, setModuloAberto] = useState<string | null>(null);
   const [copiarAberto, setCopiarAberto] = useState(false);
   const [avisoCopia, setAvisoCopia] = useState<string | null>(null);
 
@@ -192,10 +192,7 @@ function FormularioPermissoes({
   );
 
   function alternarModulo(nome: string) {
-    setAbertos((anterior) => ({
-      ...anterior,
-      [nome]: !(anterior[nome] ?? true),
-    }));
+    setModuloAberto((anterior) => (anterior === nome ? null : nome));
   }
 
   function alternarOperacao(codigo: string, marcado: boolean) {
@@ -261,7 +258,7 @@ function FormularioPermissoes({
 
         <div className="flex flex-col gap-3">
           {modulos.map((modulo) => {
-            const aberto = abertos[modulo.nome] ?? true;
+            const aberto = moduloAberto === modulo.nome;
             const concedidasNoModulo = modulo.funcionalidades.reduce(
               (soma, funcionalidade) =>
                 soma +
