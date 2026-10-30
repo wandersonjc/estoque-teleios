@@ -63,6 +63,9 @@ export default async function EditarProdutoPage({
     salvo,
     mov,
     vinculo,
+    vinculoExcluido,
+    vinculoBloqueado,
+    vinculoErro,
     preco,
     aba,
     local,
@@ -220,6 +223,21 @@ export default async function EditarProdutoPage({
           className="mt-4 rounded-lg bg-green-50 p-3 text-base text-green-800"
         >
           Vínculo salvo com sucesso.
+        </p>
+      )}
+      {vinculoExcluido === "1" && (
+        <p role="status" className="mt-4 rounded-lg bg-green-50 p-3 text-base text-green-800">
+          Vínculo excluído com sucesso.
+        </p>
+      )}
+      {vinculoBloqueado === "1" && (
+        <p role="alert" className="mt-4 rounded-lg bg-red-50 p-3 text-base text-red-700">
+          Este vínculo não pode ser excluído porque já possui histórico de preços ou compras. Você ainda pode desativá-lo.
+        </p>
+      )}
+      {vinculoErro === "1" && (
+        <p role="alert" className="mt-4 rounded-lg bg-red-50 p-3 text-base text-red-700">
+          Não foi possível excluir o vínculo. Atualize a tela e tente novamente.
         </p>
       )}
 
@@ -410,6 +428,7 @@ export default async function EditarProdutoPage({
               <ListaVinculos
                 podeGerenciarVinculo={podeVincular}
                 precosAtuais={mapaPrecos}
+                retorno={`${retornoProduto}?aba=fornecedores`}
                 vinculos={vinculos.map((item) => ({
                   id: item.id,
                   ativo: item.ativo,

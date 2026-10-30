@@ -147,6 +147,17 @@ function caminhoInternoValido(valor: string): string | null {
   return valor;
 }
 
+function caminhoComAviso(valor: string, parametro: string): string {
+  const destino = caminhoInternoValido(valor) ?? "/fornecedores";
+  const separador = destino.indexOf("?");
+  const caminho = separador === -1 ? destino : destino.slice(0, separador);
+  const parametros = new URLSearchParams(
+    separador === -1 ? "" : destino.slice(separador + 1)
+  );
+  parametros.set(parametro, "1");
+  return `${caminho}?${parametros.toString()}`;
+}
+
 function retornoPrecoComAviso(
   valor: string,
   fornecedorId: number,
@@ -525,6 +536,81 @@ export async function alternarAtivoVinculo(formData: FormData): Promise<void> {
   });
 
   revalidarFornecedores(vinculo.produtoId, vinculo.fornecedorId);
+}
+
+export async function excluirVinculoProdutoFornecedor(
+  formData: FormData
+): Promise<void> {
+  const atual = await verificarPermissao("fornecedores.vinculo.gerenciar");
+  if (!atual) return;
+
+  const id = idPositivo(texto(formData, "id"));
+  if (!id) return;
+
+  const retorno = texto(formData, "retorno");
+  let resultado:
+    | { status: "excluido"; produtoId: number; fornecedorId: number }
+    | { status: "bloqueado" | "inexistente" };
+
+  try {
+    resultado = await prisma.$transaction(
+      async (tx) => {
+        const vinculo = await tx.produtoFornecedor.findUnique({
+          where: { id },
+          include: {
+            produto: { select: { id: true, nome: true } },
+            fornecedor: { select: { id: true, nome: true } },
+          },
+        });
+        if (!vinculo) return { status: "inexistente" as const };
+
+        const precoHistorico = await tx.historicoPreco.findFirst({
+          where: {
+            produtoId: vinculo.produtoId,
+            fornecedorId: vinculo.fornecedorId,
+          },
+          select: { id: true },
+        });
+        if (precoHistorico) {
+          return { status: "bloqueado" as const };
+        }
+
+        await tx.produtoFornecedor.delete({ where: { id } });
+        await registrarLog(
+          {
+            modulo: "FORNECEDORES",
+            acao: "EXCLUIR",
+            descricao: `Excluiu o vínculo de "${vinculo.produto.nome}" com "${vinculo.fornecedor.nome}"`,
+            registroId: id,
+            usuarioId: atual.id,
+            dados: {
+              produtoId: vinculo.produtoId,
+              fornecedorId: vinculo.fornecedorId,
+              codigoNoFornecedor: vinculo.codigoNoFornecedor,
+              ativo: vinculo.ativo,
+            },
+          },
+          tx
+        );
+        return {
+          status: "excluido" as const,
+          produtoId: vinculo.produtoId,
+          fornecedorId: vinculo.fornecedorId,
+        };
+      },
+      { isolationLevel: Prisma.TransactionIsolationLevel.Serializable }
+    );
+  } catch (erro) {
+    console.error("Erro ao excluir vínculo produto-fornecedor:", erro);
+    redirect(caminhoComAviso(retorno, "vinculoErro"));
+  }
+
+  if (resultado.status !== "excluido") {
+    redirect(caminhoComAviso(retorno, "vinculoBloqueado"));
+  }
+
+  revalidarFornecedores(resultado.produtoId, resultado.fornecedorId);
+  redirect(caminhoComAviso(retorno, "vinculoExcluido"));
 }
 
 // ------------------------------------------------------------

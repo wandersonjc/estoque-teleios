@@ -7,7 +7,11 @@
 import BotaoAcao from "@/components/BotaoAcao";
 import { IconeCheck } from "@/components/icones";
 
-import { atualizarCodigoVinculo, alternarAtivoVinculo } from "./actions";
+import BotaoExcluirVinculo from "./BotaoExcluirVinculo";
+import {
+  atualizarCodigoVinculo,
+  alternarAtivoVinculo,
+} from "./actions";
 import {
   LIMITE_CODIGO_NO_FORNECEDOR,
   ROTULO_ORIGEM_PRECO,
@@ -42,6 +46,7 @@ type Props = {
   historico: ItemHistoricoPreco[];
   podeGerenciarVinculo: boolean;
   mostrarHistoricoPreco?: boolean;
+  retorno: string;
 };
 
 export default function ListaVinculos({
@@ -50,6 +55,7 @@ export default function ListaVinculos({
   historico,
   podeGerenciarVinculo,
   mostrarHistoricoPreco = true,
+  retorno,
 }: Props) {
   if (vinculos.length === 0) {
     return (
@@ -67,6 +73,7 @@ export default function ListaVinculos({
             item.produtoId === vinculo.produtoId &&
             item.fornecedorId === vinculo.fornecedorId
         );
+        const podeExcluirVinculo = historicoDoPar.length === 0;
 
         return (
           <li
@@ -92,22 +99,30 @@ export default function ListaVinculos({
               </div>
 
               {podeGerenciarVinculo ? (
-                <form action={alternarAtivoVinculo}>
-                  <input type="hidden" name="id" value={vinculo.id} />
-                  <BotaoAcao
-                    title={vinculo.ativo ? "Desativar vínculo" : "Reativar vínculo"}
-                    className="transition-opacity hover:opacity-80"
-                  >
-                    <div
-                      className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold text-white ${
-                        vinculo.ativo ? "bg-[#22c55e]" : "bg-[#ef4444]"
-                      }`}
+                <div className="flex shrink-0 items-center gap-2">
+                  <form action={alternarAtivoVinculo}>
+                    <input type="hidden" name="id" value={vinculo.id} />
+                    <BotaoAcao
+                      title={vinculo.ativo ? "Desativar vínculo" : "Reativar vínculo"}
+                      className="transition-opacity hover:opacity-80"
                     >
-                      {vinculo.ativo && <IconeCheck className="h-3.5 w-3.5" />}
-                      {vinculo.ativo ? "Ativo" : "Inativo"}
-                    </div>
-                  </BotaoAcao>
-                </form>
+                      <div
+                        className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold text-white ${
+                          vinculo.ativo ? "bg-[#22c55e]" : "bg-[#ef4444]"
+                        }`}
+                      >
+                        {vinculo.ativo && <IconeCheck className="h-3.5 w-3.5" />}
+                        {vinculo.ativo ? "Ativo" : "Inativo"}
+                      </div>
+                    </BotaoAcao>
+                  </form>
+                  <BotaoExcluirVinculo
+                    id={vinculo.id}
+                    nomeProduto={vinculo.nome}
+                    retorno={retorno}
+                    podeExcluir={podeExcluirVinculo}
+                  />
+                </div>
               ) : (
                 <div
                   className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold text-white ${

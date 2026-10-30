@@ -81,7 +81,7 @@ Começam cadastrados os 3 locais abaixo, criados pelo script `scripts/seed.ts`:
 
 ## 5. Regras de fornecedores e preços
 
-- **RN-09. Muitos para muitos:** um produto pode ter **um ou vários fornecedores**, e um fornecedor vende vários produtos. A ligação (`produto_fornecedor`) guarda o código do produto no fornecedor e se ele está ativo.
+- **RN-09. Muitos para muitos:** um produto pode ter **um ou vários fornecedores**, e um fornecedor vende vários produtos. A ligação (`produto_fornecedor`) guarda o código do produto no fornecedor e se ele está ativo. O vínculo só pode ser excluído permanentemente enquanto não houver preço registrado nem uso em compras; depois disso, pode ser desativado, mas deve ser mantido para preservar o histórico.
 - **RN-10. Histórico de preços:** todo preço fica em histórico, com: produto, fornecedor, preço unitário, data, **origem** e, se houver, o pedido de origem.
   - Origem **pago:** gravado automaticamente ao **confirmar um pedido** (RN-18).
   - Origem **cotado:** digitado manualmente pelo comprador numa consulta, **sem pedido**.
