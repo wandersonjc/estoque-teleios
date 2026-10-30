@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
 
+import BotaoAcao from "@/components/BotaoAcao";
 import { sair } from "./login/actions";
 import { usuarioAtual } from "@/lib/autorizacao";
 import { MENU_PRINCIPAL } from "@/lib/permissoes";
@@ -50,12 +51,12 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               ))}
 
               <form action={sair} className="ml-auto shrink-0">
-                <button
-                  type="submit"
+                <BotaoAcao
+                  carregando="Saindo..."
                   className="text-base font-medium text-zinc-600"
                 >
                   Sair
-                </button>
+                </BotaoAcao>
               </form>
             </nav>
           </header>

@@ -214,5 +214,28 @@ export function IconePin({ className = "h-5 w-5" }: Props) {
   );
 }
 
+// Roda de carregamento (usada nas telas e nos botões durante o
+// envio). A animação de giro vem do CSS (classe "animate-spin").
+export function IconeCarregando({ className = "h-5 w-5" }: Props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <circle
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        strokeWidth="3"
+        opacity="0.25"
+      />
+      <path
+        d="M22 12a10 10 0 0 0-10-10"
+        stroke="currentColor"
+        strokeWidth="3"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
 
 

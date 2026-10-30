@@ -7,6 +7,7 @@
 // Tipo de filtro do Prisma (o client.ts não reexporta os tipos de entrada,
 // então importamos do arquivo de modelos gerado)
 import type { ProdutoWhereInput } from "@/generated/prisma/models";
+import BotaoAcao from "@/components/BotaoAcao";
 import {
   IconeCaixa,
   IconeCalendario,
@@ -276,8 +277,7 @@ export default async function ProdutosPage({
                         action={produto.ativo ? desativarProduto : reativarProduto}
                       >
                         <input type="hidden" name="id" value={produto.id} />
-                        <button
-                          type="submit"
+                        <BotaoAcao
                           title={produto.ativo ? "Desativar" : "Reativar"}
                           className="transition-opacity hover:opacity-80"
                         >
@@ -290,7 +290,7 @@ export default async function ProdutosPage({
                               Inativo
                             </div>
                           )}
-                        </button>
+                        </BotaoAcao>
                       </form>
                     ) : (
                       <div

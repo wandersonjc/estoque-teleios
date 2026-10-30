@@ -11,6 +11,7 @@ import { exigirPermissao } from "@/lib/autorizacao";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 
+import BotaoAcao from "@/components/BotaoAcao";
 import {
   IconeEditar,
   IconeEmail,
@@ -138,8 +139,7 @@ export default async function UsuariosPage() {
                         action={usuario.ativo ? desativarUsuario : reativarUsuario}
                       >
                         <input type="hidden" name="id" value={usuario.id} />
-                        <button
-                          type="submit"
+                        <BotaoAcao
                           title={usuario.ativo ? "Desativar" : "Reativar"}
                           className={`flex h-11 w-11 items-center justify-center rounded-xl border transition-colors ${
                             usuario.ativo
@@ -151,7 +151,7 @@ export default async function UsuariosPage() {
                             ativo={usuario.ativo}
                             className="h-5 w-8"
                           />
-                        </button>
+                        </BotaoAcao>
                       </form>
                     )}
 
@@ -161,13 +161,12 @@ export default async function UsuariosPage() {
                       usuario._count.logs === 0 && (
                         <form action={excluirUsuario}>
                           <input type="hidden" name="id" value={usuario.id} />
-                          <button
-                            type="submit"
+                          <BotaoAcao
                             title="Excluir"
                             className="flex h-11 w-11 items-center justify-center rounded-xl border border-zinc-200 bg-white text-red-700 shadow-sm transition-colors hover:bg-red-50"
                           >
                             <IconeExcluir className="h-5 w-5" />
-                          </button>
+                          </BotaoAcao>
                         </form>
                       )}
                   </div>

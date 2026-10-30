@@ -12,6 +12,7 @@ import prisma from "@/lib/prisma";
 import Link from "next/link";
 
 import { IconeArmazem, IconeCaixa, IconeExcluir, IconeLapis, IconePin } from "@/components/icones";
+import BotaoAcao from "@/components/BotaoAcao";
 import { excluirLocal } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -130,13 +131,12 @@ export default async function LocaisPage() {
                       local._count.movimentos === 0 && (
                         <form action={excluirLocal}>
                           <input type="hidden" name="id" value={local.id} />
-                          <button
-                            type="submit"
+                          <BotaoAcao
                             title="Excluir"
                             className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl border border-zinc-200 bg-white text-red-700 shadow-sm transition-colors hover:bg-red-50"
                           >
                             <IconeExcluir className="h-5 w-5" />
-                          </button>
+                          </BotaoAcao>
                         </form>
                       )}
                   </div>
