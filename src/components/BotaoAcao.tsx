@@ -8,10 +8,11 @@
 // Use sempre DENTRO de um <form>, no lugar do <button type="submit">.
 // ============================================================
 
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { useFormStatus } from "react-dom";
 
 import { IconeCarregando } from "@/components/icones";
+import { useIndicadorCarregando } from "@/components/IndicadorCarregando";
 
 type Props = {
   // Conteúdo normal do botão (ícone, texto, pill, etc.)
@@ -32,6 +33,16 @@ export default function BotaoAcao({
   ariaLabel,
 }: Props) {
   const { pending } = useFormStatus();
+  const indicador = useIndicadorCarregando();
+
+  // Liga a barra global do topo enquanto a ação está sendo enviada.
+  // O retorno da função encerra a barra quando o envio termina (ou
+  // quando o botão sai da tela, por exemplo após recarregar a lista).
+  useEffect(() => {
+    if (!indicador || !pending) return;
+    indicador.iniciar();
+    return () => indicador.parar();
+  }, [pending, indicador]);
 
   return (
     <button

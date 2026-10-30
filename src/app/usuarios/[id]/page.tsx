@@ -11,6 +11,8 @@ import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import BotaoAcao from "@/components/BotaoAcao";
+
 import UsuarioForm from "../UsuarioForm";
 import {
   atualizarUsuario,
@@ -107,12 +109,9 @@ export default async function EditarUsuarioPage({
         className="mt-6"
       >
         <input type="hidden" name="id" value={usuario.id} />
-        <button
-          type="submit"
-          className="h-12 rounded-lg border border-zinc-300 px-4 text-base font-medium text-zinc-900"
-        >
+        <BotaoAcao className="h-12 rounded-lg border border-zinc-300 px-4 text-base font-medium text-zinc-900">
           {usuario.ativo ? "Desativar usuário" : "Reativar usuário"}
-        </button>
+        </BotaoAcao>
       </form>
 
       <div className="mt-6 border-t border-red-200 pt-4">
@@ -134,12 +133,9 @@ export default async function EditarUsuarioPage({
             </p>
             <form action={excluirUsuario} className="mt-3">
               <input type="hidden" name="id" value={usuario.id} />
-              <button
-                type="submit"
-                className="h-12 rounded-lg bg-red-700 px-4 text-base font-medium text-white"
-              >
+              <BotaoAcao className="h-12 rounded-lg bg-red-700 px-4 text-base font-medium text-white">
                 Excluir usuário
-              </button>
+              </BotaoAcao>
             </form>
           </>
         )}

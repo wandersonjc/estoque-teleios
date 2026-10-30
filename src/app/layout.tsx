@@ -4,6 +4,7 @@ import Link from "next/link";
 import "./globals.css";
 
 import BotaoAcao from "@/components/BotaoAcao";
+import IndicadorCarregando from "@/components/IndicadorCarregando";
 import { sair } from "./login/actions";
 import { usuarioAtual } from "@/lib/autorizacao";
 import { MENU_PRINCIPAL } from "@/lib/permissoes";
@@ -37,31 +38,33 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        {usuario && (
-          <header className="border-b border-zinc-200">
-            <nav className="mx-auto flex h-14 w-full max-w-3xl items-center gap-5 overflow-x-auto px-4">
-              {itensDoMenu.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="shrink-0 text-base font-semibold text-zinc-900"
-                >
-                  {item.rotulo}
-                </Link>
-              ))}
+        <IndicadorCarregando>
+          {usuario && (
+            <header className="border-b border-zinc-200">
+              <nav className="mx-auto flex h-14 w-full max-w-3xl items-center gap-5 overflow-x-auto px-4">
+                {itensDoMenu.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="shrink-0 text-base font-semibold text-zinc-900"
+                  >
+                    {item.rotulo}
+                  </Link>
+                ))}
 
-              <form action={sair} className="ml-auto shrink-0">
-                <BotaoAcao
-                  carregando="Saindo..."
-                  className="text-base font-medium text-zinc-600"
-                >
-                  Sair
-                </BotaoAcao>
-              </form>
-            </nav>
-          </header>
-        )}
-        {children}
+                <form action={sair} className="ml-auto shrink-0">
+                  <BotaoAcao
+                    carregando="Saindo..."
+                    className="text-base font-medium text-zinc-600"
+                  >
+                    Sair
+                  </BotaoAcao>
+                </form>
+              </nav>
+            </header>
+          )}
+          {children}
+        </IndicadorCarregando>
       </body>
     </html>
   );

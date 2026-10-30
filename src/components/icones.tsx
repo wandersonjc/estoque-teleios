@@ -214,6 +214,14 @@ export function IconePin({ className = "h-5 w-5" }: Props) {
   );
 }
 
+export function IconeCheck({ className = "h-5 w-5" }: Props) {
+  return (
+    <svg {...TRACO} className={className} aria-hidden="true">
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  );
+}
+
 // Roda de carregamento (usada nas telas e nos botões durante o
 // envio). A animação de giro vem do CSS (classe "animate-spin").
 export function IconeCarregando({ className = "h-5 w-5" }: Props) {

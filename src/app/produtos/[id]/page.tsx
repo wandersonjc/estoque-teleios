@@ -12,6 +12,8 @@ import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import BotaoAcao from "@/components/BotaoAcao";
+
 import MovimentacaoEstoque from "../MovimentacaoEstoque";
 import ProdutoForm from "../ProdutoForm";
 import { atualizarProduto, desativarProduto, reativarProduto } from "../actions";
@@ -179,12 +181,9 @@ export default async function EditarProdutoPage({
           className="mt-6"
         >
           <input type="hidden" name="id" value={produto.id} />
-          <button
-            type="submit"
-            className="h-12 rounded-lg border border-zinc-300 px-4 text-base font-medium text-zinc-900"
-          >
+          <BotaoAcao className="h-12 rounded-lg border border-zinc-300 px-4 text-base font-medium text-zinc-900">
             {produto.ativo ? "Desativar produto" : "Reativar produto"}
-          </button>
+          </BotaoAcao>
         </form>
       )}
     </main>

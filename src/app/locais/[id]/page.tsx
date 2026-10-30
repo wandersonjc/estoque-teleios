@@ -10,6 +10,8 @@ import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import BotaoAcao from "@/components/BotaoAcao";
+
 import LocalForm from "../LocalForm";
 import { atualizarLocal, excluirLocal } from "../actions";
 
@@ -97,12 +99,9 @@ export default async function EditarLocalPage({
 
             <form action={excluirLocal} className="mt-3">
               <input type="hidden" name="id" value={local.id} />
-              <button
-                type="submit"
-                className="h-12 rounded-lg border border-red-300 px-4 text-base font-medium text-red-700"
-              >
+              <BotaoAcao className="h-12 rounded-lg border border-red-300 px-4 text-base font-medium text-red-700">
                 Excluir local
-              </button>
+              </BotaoAcao>
             </form>
           </>
         )}

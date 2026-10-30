@@ -24,3 +24,14 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Barra de carregamento global: o trecho colorido atravessa a tela
+   da esquerda para a direita, indicando que algo está carregando. */
+@keyframes barra-carregando {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(400%);
+  }
+}

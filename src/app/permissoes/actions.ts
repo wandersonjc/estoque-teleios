@@ -19,6 +19,37 @@ import { type EstadoPermissoes } from "./tipos";
 
 // Permissão necessária para mexer nas permissões de alguém
 const CODIGO_CONCEDER = "permissoes.permissao.conceder";
+// Permissão necessária apenas para ler as permissões de alguém
+const CODIGO_CONSULTAR = "permissoes.permissao.consultar";
+
+// ------------------------------------------------------------
+// Lê os códigos das permissões de um usuário. Usado pelo botão
+// "Copiar permissões": o frontend busca as permissões do usuário
+// escolhido no popup e marca as mesmas caixas no formulário.
+// ------------------------------------------------------------
+export async function buscarPermissoesDeUsuario(
+  usuarioId: number
+): Promise<{ codigos: string[] } | { erro: string }> {
+  const atual = await verificarPermissao(CODIGO_CONSULTAR);
+  if (!atual) return { erro: MENSAGEM_SEM_PERMISSAO };
+
+  if (!Number.isInteger(usuarioId) || usuarioId <= 0) {
+    return { erro: "Usuário inválido." };
+  }
+
+  const usuario = await prisma.usuario.findUnique({
+    where: { id: usuarioId },
+    select: { nome: true },
+  });
+  if (!usuario) return { erro: "Usuário não encontrado." };
+
+  const concessoes = await prisma.permissaoUsuario.findMany({
+    where: { usuarioId },
+    select: { permissao: { select: { codigo: true } } },
+  });
+
+  return { codigos: concessoes.map((concessao) => concessao.permissao.codigo) };
+}
 
 export async function salvarPermissoes(
   _estadoAnterior: EstadoPermissoes,
