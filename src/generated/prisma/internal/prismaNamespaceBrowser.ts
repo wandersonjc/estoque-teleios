@@ -55,7 +55,10 @@ export const ModelName = {
   LocalEstoque: 'LocalEstoque',
   Produto: 'Produto',
   Fornecedor: 'Fornecedor',
-  ProdutoFornecedor: 'ProdutoFornecedor'
+  ProdutoFornecedor: 'ProdutoFornecedor',
+  Estoque: 'Estoque',
+  MovimentoEstoque: 'MovimentoEstoque',
+  LogSistema: 'LogSistema'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -137,12 +140,59 @@ export const ProdutoFornecedorScalarFieldEnum = {
 export type ProdutoFornecedorScalarFieldEnum = (typeof ProdutoFornecedorScalarFieldEnum)[keyof typeof ProdutoFornecedorScalarFieldEnum]
 
 
+export const EstoqueScalarFieldEnum = {
+  id: 'id',
+  produtoId: 'produtoId',
+  localEstoqueId: 'localEstoqueId',
+  quantidade: 'quantidade',
+  dataUltimaContagem: 'dataUltimaContagem',
+  atualizadoEm: 'atualizadoEm'
+} as const
+
+export type EstoqueScalarFieldEnum = (typeof EstoqueScalarFieldEnum)[keyof typeof EstoqueScalarFieldEnum]
+
+
+export const MovimentoEstoqueScalarFieldEnum = {
+  id: 'id',
+  produtoId: 'produtoId',
+  localEstoqueId: 'localEstoqueId',
+  usuarioId: 'usuarioId',
+  tipo: 'tipo',
+  quantidade: 'quantidade',
+  dataHora: 'dataHora'
+} as const
+
+export type MovimentoEstoqueScalarFieldEnum = (typeof MovimentoEstoqueScalarFieldEnum)[keyof typeof MovimentoEstoqueScalarFieldEnum]
+
+
+export const LogSistemaScalarFieldEnum = {
+  id: 'id',
+  modulo: 'modulo',
+  acao: 'acao',
+  usuarioId: 'usuarioId',
+  registroId: 'registroId',
+  descricao: 'descricao',
+  dados: 'dados',
+  criadoEm: 'criadoEm'
+} as const
+
+export type LogSistemaScalarFieldEnum = (typeof LogSistemaScalarFieldEnum)[keyof typeof LogSistemaScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const QueryMode = {
@@ -159,4 +209,13 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 

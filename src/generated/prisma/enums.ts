@@ -15,3 +15,38 @@ export const PerfilUsuario = {
 } as const
 
 export type PerfilUsuario = (typeof PerfilUsuario)[keyof typeof PerfilUsuario]
+
+
+export const TipoMovimento = {
+  ENTRADA: 'ENTRADA',
+  SAIDA: 'SAIDA',
+  CONTAGEM: 'CONTAGEM',
+  RECEBIMENTO: 'RECEBIMENTO'
+} as const
+
+export type TipoMovimento = (typeof TipoMovimento)[keyof typeof TipoMovimento]
+
+
+export const ModuloSistema = {
+  PRODUTOS: 'PRODUTOS',
+  ESTOQUE: 'ESTOQUE',
+  LOCAIS: 'LOCAIS',
+  FORNECEDORES: 'FORNECEDORES',
+  PEDIDOS: 'PEDIDOS',
+  USUARIOS: 'USUARIOS'
+} as const
+
+export type ModuloSistema = (typeof ModuloSistema)[keyof typeof ModuloSistema]
+
+
+export const AcaoSistema = {
+  CRIAR: 'CRIAR',
+  ALTERAR: 'ALTERAR',
+  EXCLUIR: 'EXCLUIR',
+  ENTRADA: 'ENTRADA',
+  SAIDA: 'SAIDA',
+  CONTAGEM: 'CONTAGEM',
+  RECEBIMENTO: 'RECEBIMENTO'
+} as const
+
+export type AcaoSistema = (typeof AcaoSistema)[keyof typeof AcaoSistema]

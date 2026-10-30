@@ -30,29 +30,36 @@ O sistema deve:
 
 | Perfil | Pode |
 |---|---|
-| **Estoquista** | Registrar contagem de estoque, consultar estoque e produtos baixos |
+| **Estoquista** | Registrar movimentação de estoque (entrada, saída e contagem), consultar estoque e produtos baixos |
 | **Comprador** | Tudo do estoquista (consulta), mais: cadastrar produtos e fornecedores, definir preços e mínimos, criar e acompanhar pedidos, registrar recebimento |
 
-Todo registro importante (contagem, pedido, preço) guarda **quem fez** e **quando** (data e hora).
+Todo registro importante (movimentação de estoque, pedido, preço) guarda **quem fez** e **quando** (data e hora).
 
 ## 3. Locais de estoque
 
-Existem exatamente 3, cadastrados de início:
+Começam cadastrados os 3 locais abaixo, criados pelo script `scripts/seed.ts`:
 
 - Loja Nova Iguaçu
 - Loja Mesquita
 - Galpão
 
+- **RN-25. Locais gerenciáveis:** o comprador pode **cadastrar, renomear e excluir** locais de estoque na tela `/locais`. Um local só pode ser excluído quando **não tem estoque nem movimentações**; se tiver, a exclusão é bloqueada para não perder o histórico. Renomear um local não altera as movimentações já gravadas.
+
 ## 4. Regras de estoque
 
-- **RN-01. Total calculado:** o estoque total de um produto é a **soma das quantidades nos 3 locais**. O total **não é gravado**, é sempre calculado.
-- **RN-02. Estoque por contagem:** a quantidade de um produto em um local é definida pela **contagem** feita pelo estoquista. Cada contagem **substitui** a quantidade atual daquele local e é guardada em histórico (produto, local, quantidade, usuário, data e hora).
-- **RN-03. Data da contagem visível:** em qualquer tela que mostre quantidade, mostrar também a **data da última contagem**, destacando contagens antigas (ex.: mais de 30 dias, valor configurável).
+- **RN-01. Total calculado:** o estoque total de um produto é a **soma das quantidades nos locais de estoque**. O total **não é gravado**, é sempre calculado.
+- **RN-02. Movimentação de estoque:** a quantidade de um produto em um local muda por **movimentação**, feita na tela do produto por um popup com um campo por local de estoque. Há três tipos de movimentação:
+  - **Entrada:** a quantidade informada é **somada** ao estoque atual do local.
+  - **Saída:** a quantidade informada é **subtraída** do estoque atual do local; a saída não pode deixar o local negativo.
+  - **Contagem:** a quantidade informada **substitui** o estoque atual do local.
+  Cada movimentação é guardada em histórico (`movimento_estoque`: produto, local, tipo, quantidade, usuário, data e hora). Os popups de movimentação só aparecem **depois que o produto é salvo**. A quantidade **não** é informada no cadastro do produto: ele nasce zerado. Enquanto não existir login (item 5), o usuário da movimentação fica em branco.
+- **RN-03. Data da movimentação visível:** em qualquer tela que mostre quantidade, mostrar também a **data da última movimentação**, destacando movimentações antigas (ex.: mais de 30 dias, valor configurável).
 - **RN-04. Entradas por recebimento:** quando um pedido é recebido, a quantidade recebida **soma** ao estoque do local de entrada (padrão: Galpão).
 - **RN-05. Estoque mínimo:** cada produto tem **um estoque mínimo único**, comparado com o **total** (soma dos 3 locais), e não com cada local.
 - **RN-06. Produto baixo:** um produto está **baixo** quando seu total é menor ou igual ao estoque mínimo.
 - **RN-07. Pedido a caminho:** quantidades de pedidos com status *Enviado* (ainda não recebidos) contam como **"a caminho"**. Para decidir se um produto precisa de novo pedido, considerar `total + a caminho`. O painel mostra a quantidade a caminho ao lado do total. **Só passa a valer no Módulo 3**, quando existirem pedidos. Antes disso, o painel de produtos baixos usa apenas o total.
 - **RN-08. Estoque do ERP não é usado:** os números de estoque do ERP não são confiáveis. O sistema **nunca importa quantidade de estoque** do ERP.
+- **RN-26. Histórico geral de ações (log):** toda ação relevante de qualquer módulo (produtos, estoque, locais, fornecedores, pedidos, usuários) grava uma linha na tabela `log_sistema`, com **módulo**, **ação** (criar, alterar, excluir, entrada, saída, contagem, recebimento), **descrição** legível, **registro afetado**, **detalhes** (JSON, guardando o "antes x depois" quando fizer sentido), **usuário** (em branco até existir login) e **data/hora**. O log é gravado na mesma transação da ação, para nunca ficar pela metade.
 
 ## 5. Regras de fornecedores e preços
 
@@ -102,14 +109,15 @@ Campos obrigatórios: **comprador** (usuário logado), **data da compra** (data 
 | `produto` | 1 | nome, unidade, codigo_barras, codigo_erp (opcional, único), estoque_minimo, ativo |
 | `local_estoque` | 1 | nome (Loja Nova Iguaçu, Loja Mesquita, Galpão) |
 | `estoque` | 1 | produto, local, quantidade, data_ultima_contagem |
-| `contagem_estoque` | 1 | produto, local, quantidade, usuario, data_hora (histórico) |
+| `movimento_estoque` | 1 | produto, local, tipo (entrada/saída/contagem/recebimento), quantidade, usuario, data_hora (histórico) |
+| `log_sistema` | 1 | módulo, ação, descrição, registro_id, dados (JSON), usuario, criado_em (histórico geral) |
 | `fornecedor` | 2 | nome, contato, prazo_entrega_dias, valor_minimo_pedido, frete (opcionais), ativo |
 | `produto_fornecedor` | 2 | produto, fornecedor, codigo_no_fornecedor, ativo |
 | `historico_preco` | 2 e 3 | produto, fornecedor, preco_unitario, data, origem (pago ou cotado), pedido (opcional). Módulo 2 grava os preços *cotados*; o Módulo 3 grava os *pagos* |
 | `pedido_compra` | 3 | comprador, fornecedor, data_compra, previsao_entrega, status, observacao |
 | `item_pedido` | 3 | pedido, produto, quantidade, preco_unitario, quantidade_recebida |
 
-> As tabelas `usuario`, `local_estoque`, `produto`, `fornecedor` e `produto_fornecedor` já existem no banco (criadas na primeira etapa). As tabelas `fornecedor` e `produto_fornecedor` ficam sem uso até o Módulo 2.
+> As tabelas `usuario`, `local_estoque`, `produto`, `fornecedor`, `produto_fornecedor`, `estoque`, `movimento_estoque` e `log_sistema` já existem no banco. As tabelas `fornecedor` e `produto_fornecedor` ficam sem uso até o Módulo 2.
 
 ## 10. Módulos e itens de construção (um por vez)
 
@@ -118,9 +126,9 @@ Ordem definida pelo usuário: primeiro o estoque, depois os fornecedores, depois
 ### Módulo 1: Estoque
 
 1. **Cadastro de produtos:** nome, unidade, código de barras, estoque mínimo e código do ERP (opcional).
-2. **Tela de contagem por local**, pensada para o celular (RN-02 e RN-03).
+2. **Tela de movimentação de estoque por local** (entrada, saída e contagem), pensada para o celular (RN-02 e RN-03).
 3. **Total calculado e painel de produtos baixos**, como lista simples (RN-01, RN-05 e RN-06).
-4. **Histórico de contagens.**
+4. **Histórico de movimentações e histórico geral de ações (log)** (RN-02 e RN-26).
 5. **Login e perfis** (estoquista e comprador) e **deploy na Vercel**, para o estoquista usar de verdade.
 
 Também no Módulo 1: **importação da planilha de produtos do ERP** (RN-24), antes do uso real pelo estoquista.

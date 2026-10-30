@@ -253,6 +253,8 @@ export type ProdutoWhereInput = {
   criadoEm?: Prisma.DateTimeFilter<"Produto"> | Date | string
   atualizadoEm?: Prisma.DateTimeFilter<"Produto"> | Date | string
   fornecedores?: Prisma.ProdutoFornecedorListRelationFilter
+  estoques?: Prisma.EstoqueListRelationFilter
+  movimentos?: Prisma.MovimentoEstoqueListRelationFilter
 }
 
 export type ProdutoOrderByWithRelationInput = {
@@ -266,6 +268,8 @@ export type ProdutoOrderByWithRelationInput = {
   criadoEm?: Prisma.SortOrder
   atualizadoEm?: Prisma.SortOrder
   fornecedores?: Prisma.ProdutoFornecedorOrderByRelationAggregateInput
+  estoques?: Prisma.EstoqueOrderByRelationAggregateInput
+  movimentos?: Prisma.MovimentoEstoqueOrderByRelationAggregateInput
 }
 
 export type ProdutoWhereUniqueInput = Prisma.AtLeast<{
@@ -282,6 +286,8 @@ export type ProdutoWhereUniqueInput = Prisma.AtLeast<{
   criadoEm?: Prisma.DateTimeFilter<"Produto"> | Date | string
   atualizadoEm?: Prisma.DateTimeFilter<"Produto"> | Date | string
   fornecedores?: Prisma.ProdutoFornecedorListRelationFilter
+  estoques?: Prisma.EstoqueListRelationFilter
+  movimentos?: Prisma.MovimentoEstoqueListRelationFilter
 }, "id" | "codigoErp">
 
 export type ProdutoOrderByWithAggregationInput = {
@@ -326,6 +332,8 @@ export type ProdutoCreateInput = {
   criadoEm?: Date | string
   atualizadoEm?: Date | string
   fornecedores?: Prisma.ProdutoFornecedorCreateNestedManyWithoutProdutoInput
+  estoques?: Prisma.EstoqueCreateNestedManyWithoutProdutoInput
+  movimentos?: Prisma.MovimentoEstoqueCreateNestedManyWithoutProdutoInput
 }
 
 export type ProdutoUncheckedCreateInput = {
@@ -339,6 +347,8 @@ export type ProdutoUncheckedCreateInput = {
   criadoEm?: Date | string
   atualizadoEm?: Date | string
   fornecedores?: Prisma.ProdutoFornecedorUncheckedCreateNestedManyWithoutProdutoInput
+  estoques?: Prisma.EstoqueUncheckedCreateNestedManyWithoutProdutoInput
+  movimentos?: Prisma.MovimentoEstoqueUncheckedCreateNestedManyWithoutProdutoInput
 }
 
 export type ProdutoUpdateInput = {
@@ -351,6 +361,8 @@ export type ProdutoUpdateInput = {
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fornecedores?: Prisma.ProdutoFornecedorUpdateManyWithoutProdutoNestedInput
+  estoques?: Prisma.EstoqueUpdateManyWithoutProdutoNestedInput
+  movimentos?: Prisma.MovimentoEstoqueUpdateManyWithoutProdutoNestedInput
 }
 
 export type ProdutoUncheckedUpdateInput = {
@@ -364,6 +376,8 @@ export type ProdutoUncheckedUpdateInput = {
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fornecedores?: Prisma.ProdutoFornecedorUncheckedUpdateManyWithoutProdutoNestedInput
+  estoques?: Prisma.EstoqueUncheckedUpdateManyWithoutProdutoNestedInput
+  movimentos?: Prisma.MovimentoEstoqueUncheckedUpdateManyWithoutProdutoNestedInput
 }
 
 export type ProdutoCreateManyInput = {
@@ -478,6 +492,34 @@ export type ProdutoUpdateOneRequiredWithoutFornecedoresNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProdutoUpdateToOneWithWhereWithoutFornecedoresInput, Prisma.ProdutoUpdateWithoutFornecedoresInput>, Prisma.ProdutoUncheckedUpdateWithoutFornecedoresInput>
 }
 
+export type ProdutoCreateNestedOneWithoutEstoquesInput = {
+  create?: Prisma.XOR<Prisma.ProdutoCreateWithoutEstoquesInput, Prisma.ProdutoUncheckedCreateWithoutEstoquesInput>
+  connectOrCreate?: Prisma.ProdutoCreateOrConnectWithoutEstoquesInput
+  connect?: Prisma.ProdutoWhereUniqueInput
+}
+
+export type ProdutoUpdateOneRequiredWithoutEstoquesNestedInput = {
+  create?: Prisma.XOR<Prisma.ProdutoCreateWithoutEstoquesInput, Prisma.ProdutoUncheckedCreateWithoutEstoquesInput>
+  connectOrCreate?: Prisma.ProdutoCreateOrConnectWithoutEstoquesInput
+  upsert?: Prisma.ProdutoUpsertWithoutEstoquesInput
+  connect?: Prisma.ProdutoWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProdutoUpdateToOneWithWhereWithoutEstoquesInput, Prisma.ProdutoUpdateWithoutEstoquesInput>, Prisma.ProdutoUncheckedUpdateWithoutEstoquesInput>
+}
+
+export type ProdutoCreateNestedOneWithoutMovimentosInput = {
+  create?: Prisma.XOR<Prisma.ProdutoCreateWithoutMovimentosInput, Prisma.ProdutoUncheckedCreateWithoutMovimentosInput>
+  connectOrCreate?: Prisma.ProdutoCreateOrConnectWithoutMovimentosInput
+  connect?: Prisma.ProdutoWhereUniqueInput
+}
+
+export type ProdutoUpdateOneRequiredWithoutMovimentosNestedInput = {
+  create?: Prisma.XOR<Prisma.ProdutoCreateWithoutMovimentosInput, Prisma.ProdutoUncheckedCreateWithoutMovimentosInput>
+  connectOrCreate?: Prisma.ProdutoCreateOrConnectWithoutMovimentosInput
+  upsert?: Prisma.ProdutoUpsertWithoutMovimentosInput
+  connect?: Prisma.ProdutoWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProdutoUpdateToOneWithWhereWithoutMovimentosInput, Prisma.ProdutoUpdateWithoutMovimentosInput>, Prisma.ProdutoUncheckedUpdateWithoutMovimentosInput>
+}
+
 export type ProdutoCreateWithoutFornecedoresInput = {
   nome: string
   unidade: string
@@ -487,6 +529,8 @@ export type ProdutoCreateWithoutFornecedoresInput = {
   ativo?: boolean
   criadoEm?: Date | string
   atualizadoEm?: Date | string
+  estoques?: Prisma.EstoqueCreateNestedManyWithoutProdutoInput
+  movimentos?: Prisma.MovimentoEstoqueCreateNestedManyWithoutProdutoInput
 }
 
 export type ProdutoUncheckedCreateWithoutFornecedoresInput = {
@@ -499,6 +543,8 @@ export type ProdutoUncheckedCreateWithoutFornecedoresInput = {
   ativo?: boolean
   criadoEm?: Date | string
   atualizadoEm?: Date | string
+  estoques?: Prisma.EstoqueUncheckedCreateNestedManyWithoutProdutoInput
+  movimentos?: Prisma.MovimentoEstoqueUncheckedCreateNestedManyWithoutProdutoInput
 }
 
 export type ProdutoCreateOrConnectWithoutFornecedoresInput = {
@@ -526,6 +572,8 @@ export type ProdutoUpdateWithoutFornecedoresInput = {
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estoques?: Prisma.EstoqueUpdateManyWithoutProdutoNestedInput
+  movimentos?: Prisma.MovimentoEstoqueUpdateManyWithoutProdutoNestedInput
 }
 
 export type ProdutoUncheckedUpdateWithoutFornecedoresInput = {
@@ -538,6 +586,148 @@ export type ProdutoUncheckedUpdateWithoutFornecedoresInput = {
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estoques?: Prisma.EstoqueUncheckedUpdateManyWithoutProdutoNestedInput
+  movimentos?: Prisma.MovimentoEstoqueUncheckedUpdateManyWithoutProdutoNestedInput
+}
+
+export type ProdutoCreateWithoutEstoquesInput = {
+  nome: string
+  unidade: string
+  codigoBarras?: string | null
+  codigoErp?: string | null
+  estoqueMinimo?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  ativo?: boolean
+  criadoEm?: Date | string
+  atualizadoEm?: Date | string
+  fornecedores?: Prisma.ProdutoFornecedorCreateNestedManyWithoutProdutoInput
+  movimentos?: Prisma.MovimentoEstoqueCreateNestedManyWithoutProdutoInput
+}
+
+export type ProdutoUncheckedCreateWithoutEstoquesInput = {
+  id?: number
+  nome: string
+  unidade: string
+  codigoBarras?: string | null
+  codigoErp?: string | null
+  estoqueMinimo?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  ativo?: boolean
+  criadoEm?: Date | string
+  atualizadoEm?: Date | string
+  fornecedores?: Prisma.ProdutoFornecedorUncheckedCreateNestedManyWithoutProdutoInput
+  movimentos?: Prisma.MovimentoEstoqueUncheckedCreateNestedManyWithoutProdutoInput
+}
+
+export type ProdutoCreateOrConnectWithoutEstoquesInput = {
+  where: Prisma.ProdutoWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProdutoCreateWithoutEstoquesInput, Prisma.ProdutoUncheckedCreateWithoutEstoquesInput>
+}
+
+export type ProdutoUpsertWithoutEstoquesInput = {
+  update: Prisma.XOR<Prisma.ProdutoUpdateWithoutEstoquesInput, Prisma.ProdutoUncheckedUpdateWithoutEstoquesInput>
+  create: Prisma.XOR<Prisma.ProdutoCreateWithoutEstoquesInput, Prisma.ProdutoUncheckedCreateWithoutEstoquesInput>
+  where?: Prisma.ProdutoWhereInput
+}
+
+export type ProdutoUpdateToOneWithWhereWithoutEstoquesInput = {
+  where?: Prisma.ProdutoWhereInput
+  data: Prisma.XOR<Prisma.ProdutoUpdateWithoutEstoquesInput, Prisma.ProdutoUncheckedUpdateWithoutEstoquesInput>
+}
+
+export type ProdutoUpdateWithoutEstoquesInput = {
+  nome?: Prisma.StringFieldUpdateOperationsInput | string
+  unidade?: Prisma.StringFieldUpdateOperationsInput | string
+  codigoBarras?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  codigoErp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estoqueMinimo?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fornecedores?: Prisma.ProdutoFornecedorUpdateManyWithoutProdutoNestedInput
+  movimentos?: Prisma.MovimentoEstoqueUpdateManyWithoutProdutoNestedInput
+}
+
+export type ProdutoUncheckedUpdateWithoutEstoquesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  nome?: Prisma.StringFieldUpdateOperationsInput | string
+  unidade?: Prisma.StringFieldUpdateOperationsInput | string
+  codigoBarras?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  codigoErp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estoqueMinimo?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fornecedores?: Prisma.ProdutoFornecedorUncheckedUpdateManyWithoutProdutoNestedInput
+  movimentos?: Prisma.MovimentoEstoqueUncheckedUpdateManyWithoutProdutoNestedInput
+}
+
+export type ProdutoCreateWithoutMovimentosInput = {
+  nome: string
+  unidade: string
+  codigoBarras?: string | null
+  codigoErp?: string | null
+  estoqueMinimo?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  ativo?: boolean
+  criadoEm?: Date | string
+  atualizadoEm?: Date | string
+  fornecedores?: Prisma.ProdutoFornecedorCreateNestedManyWithoutProdutoInput
+  estoques?: Prisma.EstoqueCreateNestedManyWithoutProdutoInput
+}
+
+export type ProdutoUncheckedCreateWithoutMovimentosInput = {
+  id?: number
+  nome: string
+  unidade: string
+  codigoBarras?: string | null
+  codigoErp?: string | null
+  estoqueMinimo?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  ativo?: boolean
+  criadoEm?: Date | string
+  atualizadoEm?: Date | string
+  fornecedores?: Prisma.ProdutoFornecedorUncheckedCreateNestedManyWithoutProdutoInput
+  estoques?: Prisma.EstoqueUncheckedCreateNestedManyWithoutProdutoInput
+}
+
+export type ProdutoCreateOrConnectWithoutMovimentosInput = {
+  where: Prisma.ProdutoWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProdutoCreateWithoutMovimentosInput, Prisma.ProdutoUncheckedCreateWithoutMovimentosInput>
+}
+
+export type ProdutoUpsertWithoutMovimentosInput = {
+  update: Prisma.XOR<Prisma.ProdutoUpdateWithoutMovimentosInput, Prisma.ProdutoUncheckedUpdateWithoutMovimentosInput>
+  create: Prisma.XOR<Prisma.ProdutoCreateWithoutMovimentosInput, Prisma.ProdutoUncheckedCreateWithoutMovimentosInput>
+  where?: Prisma.ProdutoWhereInput
+}
+
+export type ProdutoUpdateToOneWithWhereWithoutMovimentosInput = {
+  where?: Prisma.ProdutoWhereInput
+  data: Prisma.XOR<Prisma.ProdutoUpdateWithoutMovimentosInput, Prisma.ProdutoUncheckedUpdateWithoutMovimentosInput>
+}
+
+export type ProdutoUpdateWithoutMovimentosInput = {
+  nome?: Prisma.StringFieldUpdateOperationsInput | string
+  unidade?: Prisma.StringFieldUpdateOperationsInput | string
+  codigoBarras?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  codigoErp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estoqueMinimo?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fornecedores?: Prisma.ProdutoFornecedorUpdateManyWithoutProdutoNestedInput
+  estoques?: Prisma.EstoqueUpdateManyWithoutProdutoNestedInput
+}
+
+export type ProdutoUncheckedUpdateWithoutMovimentosInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  nome?: Prisma.StringFieldUpdateOperationsInput | string
+  unidade?: Prisma.StringFieldUpdateOperationsInput | string
+  codigoBarras?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  codigoErp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estoqueMinimo?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fornecedores?: Prisma.ProdutoFornecedorUncheckedUpdateManyWithoutProdutoNestedInput
+  estoques?: Prisma.EstoqueUncheckedUpdateManyWithoutProdutoNestedInput
 }
 
 
@@ -547,10 +737,14 @@ export type ProdutoUncheckedUpdateWithoutFornecedoresInput = {
 
 export type ProdutoCountOutputType = {
   fornecedores: number
+  estoques: number
+  movimentos: number
 }
 
 export type ProdutoCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   fornecedores?: boolean | ProdutoCountOutputTypeCountFornecedoresArgs
+  estoques?: boolean | ProdutoCountOutputTypeCountEstoquesArgs
+  movimentos?: boolean | ProdutoCountOutputTypeCountMovimentosArgs
 }
 
 /**
@@ -570,6 +764,20 @@ export type ProdutoCountOutputTypeCountFornecedoresArgs<ExtArgs extends runtime.
   where?: Prisma.ProdutoFornecedorWhereInput
 }
 
+/**
+ * ProdutoCountOutputType without action
+ */
+export type ProdutoCountOutputTypeCountEstoquesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EstoqueWhereInput
+}
+
+/**
+ * ProdutoCountOutputType without action
+ */
+export type ProdutoCountOutputTypeCountMovimentosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MovimentoEstoqueWhereInput
+}
+
 
 export type ProdutoSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -582,6 +790,8 @@ export type ProdutoSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   criadoEm?: boolean
   atualizadoEm?: boolean
   fornecedores?: boolean | Prisma.Produto$fornecedoresArgs<ExtArgs>
+  estoques?: boolean | Prisma.Produto$estoquesArgs<ExtArgs>
+  movimentos?: boolean | Prisma.Produto$movimentosArgs<ExtArgs>
   _count?: boolean | Prisma.ProdutoCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["produto"]>
 
@@ -624,6 +834,8 @@ export type ProdutoSelectScalar = {
 export type ProdutoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nome" | "unidade" | "codigoBarras" | "codigoErp" | "estoqueMinimo" | "ativo" | "criadoEm" | "atualizadoEm", ExtArgs["result"]["produto"]>
 export type ProdutoInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   fornecedores?: boolean | Prisma.Produto$fornecedoresArgs<ExtArgs>
+  estoques?: boolean | Prisma.Produto$estoquesArgs<ExtArgs>
+  movimentos?: boolean | Prisma.Produto$movimentosArgs<ExtArgs>
   _count?: boolean | Prisma.ProdutoCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ProdutoIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -633,6 +845,8 @@ export type $ProdutoPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   name: "Produto"
   objects: {
     fornecedores: Prisma.$ProdutoFornecedorPayload<ExtArgs>[]
+    estoques: Prisma.$EstoquePayload<ExtArgs>[]
+    movimentos: Prisma.$MovimentoEstoquePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1039,6 +1253,8 @@ readonly fields: ProdutoFieldRefs;
 export interface Prisma__ProdutoClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   fornecedores<T extends Prisma.Produto$fornecedoresArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Produto$fornecedoresArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProdutoFornecedorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  estoques<T extends Prisma.Produto$estoquesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Produto$estoquesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EstoquePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  movimentos<T extends Prisma.Produto$movimentosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Produto$movimentosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MovimentoEstoquePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1491,6 +1707,54 @@ export type Produto$fornecedoresArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.ProdutoFornecedorScalarFieldEnum | Prisma.ProdutoFornecedorScalarFieldEnum[]
+}
+
+/**
+ * Produto.estoques
+ */
+export type Produto$estoquesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Estoque
+   */
+  select?: Prisma.EstoqueSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Estoque
+   */
+  omit?: Prisma.EstoqueOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EstoqueInclude<ExtArgs> | null
+  where?: Prisma.EstoqueWhereInput
+  orderBy?: Prisma.EstoqueOrderByWithRelationInput | Prisma.EstoqueOrderByWithRelationInput[]
+  cursor?: Prisma.EstoqueWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EstoqueScalarFieldEnum | Prisma.EstoqueScalarFieldEnum[]
+}
+
+/**
+ * Produto.movimentos
+ */
+export type Produto$movimentosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MovimentoEstoque
+   */
+  select?: Prisma.MovimentoEstoqueSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MovimentoEstoque
+   */
+  omit?: Prisma.MovimentoEstoqueOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MovimentoEstoqueInclude<ExtArgs> | null
+  where?: Prisma.MovimentoEstoqueWhereInput
+  orderBy?: Prisma.MovimentoEstoqueOrderByWithRelationInput | Prisma.MovimentoEstoqueOrderByWithRelationInput[]
+  cursor?: Prisma.MovimentoEstoqueWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MovimentoEstoqueScalarFieldEnum | Prisma.MovimentoEstoqueScalarFieldEnum[]
 }
 
 /**

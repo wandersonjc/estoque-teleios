@@ -66,3 +66,18 @@ export type Fornecedor = Prisma.FornecedorModel
  * 
  */
 export type ProdutoFornecedor = Prisma.ProdutoFornecedorModel
+/**
+ * Model Estoque
+ * 
+ */
+export type Estoque = Prisma.EstoqueModel
+/**
+ * Model MovimentoEstoque
+ * 
+ */
+export type MovimentoEstoque = Prisma.MovimentoEstoqueModel
+/**
+ * Model LogSistema
+ * 
+ */
+export type LogSistema = Prisma.LogSistemaModel
