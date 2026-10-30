@@ -26,16 +26,32 @@ O sistema deve:
 3. Comparar preços entre fornecedores e montar pedidos de compra.
 4. Registrar cada pedido: quem fez, data, fornecedor, previsão de entrega e produtos.
 
-## 2. Perfis de usuário
+## 2. Usuários, login e permissões
 
-| Perfil | Pode |
-|---|---|
-| **Estoquista** | Registrar movimentação de estoque (entrada, saída e contagem), consultar estoque e produtos baixos |
-| **Comprador** | Tudo do estoquista (consulta), mais: cadastrar produtos e fornecedores, definir preços e mínimos, criar e acompanhar pedidos, registrar recebimento |
+**Não existem perfis nem grupos.** O acesso de cada usuário é definido por **permissões individuais**, concedidas na tela `/permissoes` (Módulos e Permissões). Uma permissão que não foi concedida está **negada**.
 
-Todo registro importante (movimentação de estoque, pedido, preço) guarda **quem fez** e **quando** (data e hora).
+O catálogo de permissões é organizado em **módulo → funcionalidade → operação**. Cada permissão tem um **código único e estável** no formato `modulo.funcionalidade.operacao` (ex.: `produtos.produto.criar`).
 
-- **RN-27. Gestão de usuários:** na tela `/usuarios` o comprador **cadastra, altera, desativa/reativa e exclui** usuários (nome, e-mail, perfil e senha). O usuário **só pode ser excluído quando não tem nenhuma movimentação nem registro no log**; se tiver, a exclusão é bloqueada e ele só pode ser desativado, para não perder o histórico. O **e-mail é único**. A **senha é guardada como hash** (nunca em texto puro) e nunca aparece nas telas nem no log do sistema. Na edição, o campo de senha em branco **mantém a senha atual**.
+Exemplos de permissões já existentes: `produtos.produto.consultar`, `produtos.produto.criar`, `produtos.produto.editar`, `produtos.produto.desativar`, `estoque.movimento.registrar`, `locais.local.*`, `usuarios.usuario.*` e `permissoes.permissao.*`.
+
+- **RN-27. Gestão de usuários:** na tela `/usuarios` são **cadastrados, alterados, desativados/reativados e excluídos** os usuários (nome, e-mail e senha). O usuário **só pode ser excluído quando não tem nenhuma movimentação nem registro no log**; se tiver, a exclusão é bloqueada e ele só pode ser desativado, para não perder o histórico. O **e-mail é único**. A **senha é guardada como hash** (nunca em texto puro) e nunca aparece nas telas nem no log do sistema. Na edição, o campo de senha em branco **mantém a senha atual**.
+- **RN-28. Login e sessão:** o acesso ao sistema exige **e-mail e senha**. A sessão fica guardada no banco (tabela `sessao`) e é identificada por um token aleatório em cookie **httpOnly**, com validade de **7 dias**. Usuário **inativo não entra**. O botão **Sair** encerra a sessão.
+- **RN-29. Permissões por usuário:** a tela `/permissoes` (ver seção 2.1) mostra uma **matriz expansível** por módulo, funcionalidade e operação, com caixas de seleção para **conceder (marcar)** e **revogar (desmarcar)** as permissões de um usuário escolhido na busca do topo.
+- **RN-30. Autorização no servidor:** toda página e toda operação confere a permissão **no servidor** (funções `exigirPermissao` e `verificarPermissao` em `src/lib/autorizacao.ts`). Esconder um botão na tela **não** é suficiente: tentar executar a ação sem permissão é bloqueado no backend.
+- **RN-31. Permissões nascem negadas:** uma permissão nova (recem-registrada no catálogo) **não é concedida a ninguém** até que um administrador marque a caixa e salve.
+- **RN-32. Trava contra auto-bloqueio:** ninguém pode remover de si mesmo a permissão `permissoes.permissao.conceder`, para não trancar todos para fora da administração.
+
+Todo registro importante (movimentação de estoque, pedido, preço, ação administrativa) guarda **quem fez** e **quando** (data e hora).
+
+### 2.1 Como registrar uma permissão nova
+
+Este é o **mecanismo padronizado** para que a matriz da tela `/permissoes` cresça sozinha, **sem alterar o componente visual**. A **fonte de verdade** é o arquivo `src/lib/permissoes.ts` (a matriz é gerada a partir do catálogo gravado no banco, nunca de uma lista fixa no frontend).
+
+1. **Registre no catálogo:** acrescente um item em `CATALOGO_DE_PERMISSOES` (`src/lib/permissoes.ts`) com um `codigo` único e estável, o `modulo`, a `funcionalidade`, a `operacao`, uma `descricao` legível e a `ordem` de exibição.
+2. **Use o código:** no backend, proteja a operação com `exigirPermissao("novo.codigo")` (páginas) ou `verificarPermissao("novo.codigo")` (ações). No frontend, controle menus, páginas e botões com `usuario.permissoes.has("novo.codigo")` ou inclua o item em `MENU_PRINCIPAL`.
+3. **Sincronize:** rode `npm run db:seed` **ou** apenas abra a tela `/permissoes` — o **sincronizador** (`sincronizarCatalogoDePermissoes`) faz `upsert` de cada item do catálogo na tabela `permissao`.
+
+Resultado: a nova permissão aparece automaticamente na matriz, **negada para todos**, até ser concedida explicitamente. O sincronizador pode ser rodado quantas vezes quiser: não duplica nada e não apaga concessões já feitas.
 
 ## 3. Locais de estoque
 
@@ -107,7 +123,10 @@ Campos obrigatórios: **comprador** (usuário logado), **data da compra** (data 
 
 | Entidade | Módulo | Campos principais |
 |---|---|---|
-| `usuario` | 1 | nome, e-mail, senha (hash), perfil |
+| `usuario` | 1 | nome, e-mail, senha (hash), ativo |
+| `permissao` | 1 | codigo (único), modulo, funcionalidade, operacao, descricao, ordem (catálogo) |
+| `permissao_usuario` | 1 | usuario, permissao, concedido_em (concessão; único por usuario+permissao) |
+| `sessao` | 1 | id (token), usuario, criado_em, expira_em |
 | `produto` | 1 | nome, unidade, codigo_barras, codigo_erp (opcional, único), estoque_minimo, ativo |
 | `local_estoque` | 1 | nome (Loja Nova Iguaçu, Loja Mesquita, Galpão) |
 | `estoque` | 1 | produto, local, quantidade, data_ultima_contagem |
@@ -119,7 +138,7 @@ Campos obrigatórios: **comprador** (usuário logado), **data da compra** (data 
 | `pedido_compra` | 3 | comprador, fornecedor, data_compra, previsao_entrega, status, observacao |
 | `item_pedido` | 3 | pedido, produto, quantidade, preco_unitario, quantidade_recebida |
 
-> As tabelas `usuario`, `local_estoque`, `produto`, `fornecedor`, `produto_fornecedor`, `estoque`, `movimento_estoque` e `log_sistema` já existem no banco. As tabelas `fornecedor` e `produto_fornecedor` ficam sem uso até o Módulo 2.
+> As tabelas `usuario`, `local_estoque`, `produto`, `fornecedor`, `produto_fornecedor`, `estoque`, `movimento_estoque`, `log_sistema`, `permissao`, `permissao_usuario` e `sessao` já existem no banco. As tabelas `fornecedor` e `produto_fornecedor` ficam sem uso até o Módulo 2. O **catálogo de permissões** (`permissao`) é separado das **concessões aos usuários** (`permissao_usuario`).
 
 ## 10. Módulos e itens de construção (um por vez)
 
@@ -131,7 +150,7 @@ Ordem definida pelo usuário: primeiro o estoque, depois os fornecedores, depois
 2. **Tela de movimentação de estoque por local** (entrada, saída e contagem), pensada para o celular (RN-02 e RN-03).
 3. **Total calculado e painel de produtos baixos**, como lista simples (RN-01, RN-05 e RN-06).
 4. **Histórico de movimentações e histórico geral de ações (log)** (RN-02 e RN-26).
-5. **Gestão de usuários** (cadastro, perfis e ativar/desativar — RN-27) e **tela de login e perfis** (estoquista e comprador), com **deploy na Vercel**, para o estoquista usar de verdade.
+5. **Gestão de usuários** (cadastro, alteração e ativar/desativar — RN-27), **login e sessão** (RN-28) e **Módulos e Permissões** (matriz de permissões por usuário — RN-29 a RN-32), com **deploy na Vercel**, para o estoquista usar de verdade.
 
 Também no Módulo 1: **importação da planilha de produtos do ERP** (RN-24), antes do uso real pelo estoquista.
 
@@ -157,7 +176,7 @@ Relatório de vendas e correção de preço no recebimento.
 - **Quantidade sugerida no pedido** (decidir no Módulo 3): hoje não existe regra. Proposta: campo opcional `estoque_ideal` por produto, e a sugestão seria `estoque_ideal - (total + a caminho)`. Sem esse campo, o comprador digita a quantidade.
 - **Quantidades decimais:** alguns produtos podem ser vendidos por peso (kg). Proposta: aceitar decimais com 3 casas (`Decimal(12,3)`).
 - **"Baixo" é menor ou igual ao mínimo** (RN-06). Confirmar se o correto é "menor que".
-- **Quem cadastra produtos e fornecedores:** assumido o comprador (seção 2). Confirmar.
+- **Quem cadastra produtos e fornecedores:** definido pelas permissões concedidas a cada usuário (seção 2). Confirmar quem recebe cada permissão na operação real.
 
 ## 12. Fora do escopo da primeira versão
 

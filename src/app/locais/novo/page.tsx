@@ -1,13 +1,19 @@
 // ============================================================
 // Módulo 1 - Locais de estoque: tela de cadastro
+// Só entra quem tem a permissão de cadastrar locais.
 // ============================================================
 
+import { exigirPermissao } from "@/lib/autorizacao";
 import Link from "next/link";
 
 import LocalForm from "../LocalForm";
 import { criarLocal } from "../actions";
 
-export default function NovoLocalPage() {
+export const dynamic = "force-dynamic";
+
+export default async function NovoLocalPage() {
+  await exigirPermissao("locais.local.criar");
+
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-5">
       <div className="flex items-center justify-between gap-3">

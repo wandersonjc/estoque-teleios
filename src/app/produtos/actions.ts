@@ -5,6 +5,8 @@
 // Cadastro/edição de produto e movimentação de estoque
 // (entrada soma, saída subtrai e contagem substitui).
 // Toda a validação é feita aqui (a do navegador é só conveniência).
+// TODA ação confere a permissão no servidor: esconder o botão
+// não basta (ver src/lib/autorizacao.ts).
 // Regras: RN-01, RN-02, RN-03, RN-05, RN-22 e RN-23.
 // ============================================================
 
@@ -12,6 +14,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { Prisma } from "@/generated/prisma/client";
+import { MENSAGEM_SEM_PERMISSAO, verificarPermissao } from "@/lib/autorizacao";
 import { registrarLog } from "@/lib/log";
 import prisma from "@/lib/prisma";
 
@@ -162,6 +165,11 @@ export async function criarProduto(
   _estadoAnterior: EstadoFormularioProduto,
   formData: FormData
 ): Promise<EstadoFormularioProduto> {
+  const atual = await verificarPermissao("produtos.produto.criar");
+  if (!atual) {
+    return { erroGeral: MENSAGEM_SEM_PERMISSAO, valores: lerValores(formData) };
+  }
+
   const valores = lerValores(formData);
   const validacao = validarProduto(valores);
 
@@ -191,6 +199,7 @@ export async function criarProduto(
             unidade: produto.unidade,
             estoqueMinimo: produto.estoqueMinimo.toString(),
           },
+          usuarioId: atual.id,
         },
         tx
       );
@@ -210,6 +219,11 @@ export async function atualizarProduto(
   _estadoAnterior: EstadoFormularioProduto,
   formData: FormData
 ): Promise<EstadoFormularioProduto> {
+  const atual = await verificarPermissao("produtos.produto.editar");
+  if (!atual) {
+    return { erroGeral: MENSAGEM_SEM_PERMISSAO, valores: lerValores(formData) };
+  }
+
   const valores = lerValores(formData);
   const id = Number(formData.get("id"));
 
@@ -268,6 +282,7 @@ export async function atualizarProduto(
               codigoErp: validacao.dados.codigoErp,
             },
           },
+          usuarioId: atual.id,
         },
         tx
       );
@@ -284,6 +299,9 @@ export async function atualizarProduto(
 // RN-23: produto nunca é apagado, só desativado, porque depois
 // tem estoque, movimentações e pedidos ligados a ele.
 export async function desativarProduto(formData: FormData): Promise<void> {
+  const atual = await verificarPermissao("produtos.produto.desativar");
+  if (!atual) return;
+
   const id = Number(formData.get("id"));
   if (!Number.isInteger(id) || id <= 0) return;
 
@@ -301,6 +319,7 @@ export async function desativarProduto(formData: FormData): Promise<void> {
         acao: "ALTERAR",
         registroId: id,
         descricao: `Produto "${produto.nome}" desativado`,
+        usuarioId: atual.id,
       },
       tx
     );
@@ -312,6 +331,9 @@ export async function desativarProduto(formData: FormData): Promise<void> {
 
 // Reativa um produto desativado
 export async function reativarProduto(formData: FormData): Promise<void> {
+  const atual = await verificarPermissao("produtos.produto.desativar");
+  if (!atual) return;
+
   const id = Number(formData.get("id"));
   if (!Number.isInteger(id) || id <= 0) return;
 
@@ -329,6 +351,7 @@ export async function reativarProduto(formData: FormData): Promise<void> {
         acao: "ALTERAR",
         registroId: id,
         descricao: `Produto "${produto.nome}" reativado`,
+        usuarioId: atual.id,
       },
       tx
     );
@@ -359,6 +382,11 @@ export async function registrarMovimento(
   _estadoAnterior: EstadoMovimento,
   formData: FormData
 ): Promise<EstadoMovimento> {
+  const atual = await verificarPermissao("estoque.movimento.registrar");
+  if (!atual) {
+    return { erroGeral: MENSAGEM_SEM_PERMISSAO, valores: lerQuantidades(formData) };
+  }
+
   const valores = lerQuantidades(formData);
   const produtoId = Number(formData.get("produtoId"));
   const tipo = String(formData.get("tipo") ?? "");
@@ -504,6 +532,7 @@ export async function registrarMovimento(
           data: {
             produtoId,
             localEstoqueId: linha.localEstoqueId,
+            usuarioId: atual.id,
             tipo: tipoMovimento,
             quantidade: linha.quantidadeRegistrada,
             dataHora: agora,
@@ -527,6 +556,7 @@ export async function registrarMovimento(
               saldoAnterior: linha.saldoAnterior,
               saldoNovo: linha.saldoNovo,
             },
+            usuarioId: atual.id,
           },
           tx
         );

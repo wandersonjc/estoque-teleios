@@ -58,7 +58,10 @@ export const ModelName = {
   ProdutoFornecedor: 'ProdutoFornecedor',
   Estoque: 'Estoque',
   MovimentoEstoque: 'MovimentoEstoque',
-  LogSistema: 'LogSistema'
+  LogSistema: 'LogSistema',
+  Permissao: 'Permissao',
+  PermissaoUsuario: 'PermissaoUsuario',
+  Sessao: 'Sessao'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -82,7 +85,6 @@ export const UsuarioScalarFieldEnum = {
   nome: 'nome',
   email: 'email',
   senhaHash: 'senhaHash',
-  perfil: 'perfil',
   ativo: 'ativo',
   criadoEm: 'criadoEm',
   atualizadoEm: 'atualizadoEm'
@@ -177,6 +179,42 @@ export const LogSistemaScalarFieldEnum = {
 } as const
 
 export type LogSistemaScalarFieldEnum = (typeof LogSistemaScalarFieldEnum)[keyof typeof LogSistemaScalarFieldEnum]
+
+
+export const PermissaoScalarFieldEnum = {
+  id: 'id',
+  codigo: 'codigo',
+  modulo: 'modulo',
+  funcionalidade: 'funcionalidade',
+  operacao: 'operacao',
+  descricao: 'descricao',
+  ordem: 'ordem',
+  criadoEm: 'criadoEm',
+  atualizadoEm: 'atualizadoEm'
+} as const
+
+export type PermissaoScalarFieldEnum = (typeof PermissaoScalarFieldEnum)[keyof typeof PermissaoScalarFieldEnum]
+
+
+export const PermissaoUsuarioScalarFieldEnum = {
+  id: 'id',
+  usuarioId: 'usuarioId',
+  permissaoId: 'permissaoId',
+  concedidoEm: 'concedidoEm',
+  atualizadoEm: 'atualizadoEm'
+} as const
+
+export type PermissaoUsuarioScalarFieldEnum = (typeof PermissaoUsuarioScalarFieldEnum)[keyof typeof PermissaoUsuarioScalarFieldEnum]
+
+
+export const SessaoScalarFieldEnum = {
+  id: 'id',
+  usuarioId: 'usuarioId',
+  criadoEm: 'criadoEm',
+  expiraEm: 'expiraEm'
+} as const
+
+export type SessaoScalarFieldEnum = (typeof SessaoScalarFieldEnum)[keyof typeof SessaoScalarFieldEnum]
 
 
 export const SortOrder = {

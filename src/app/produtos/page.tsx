@@ -8,12 +8,11 @@
 // então importamos do arquivo de modelos gerado)
 import type { ProdutoWhereInput } from "@/generated/prisma/models";
 import {
-  IconeBarras,
   IconeCaixa,
   IconeCalendario,
-  IconeDocumento,
   IconeEditar,
 } from "@/components/icones";
+import { exigirPermissao } from "@/lib/autorizacao";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 
@@ -40,6 +39,13 @@ function textoDoParametro(valor: string | string[] | undefined): string {
 export default async function ProdutosPage({
   searchParams,
 }: PageProps<"/produtos">) {
+  // Bloqueia a tela para quem não pode consultar produtos
+  const atual = await exigirPermissao("produtos.produto.consultar");
+
+  const podeCriar = atual.permissoes.has("produtos.produto.criar");
+  const podeEditar = atual.permissoes.has("produtos.produto.editar");
+  const podeDesativar = atual.permissoes.has("produtos.produto.desativar");
+
   const parametros = await searchParams;
 
   const busca = textoDoParametro(parametros.busca).trim();
@@ -100,12 +106,14 @@ export default async function ProdutosPage({
     <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-5">
       <div className="flex items-center justify-between gap-3">
         <h1 className="text-xl font-semibold text-zinc-900">Produtos</h1>
-        <Link
-          href="/produtos/novo"
-          className="flex h-12 items-center rounded-lg bg-zinc-900 px-4 text-base font-medium text-white"
-        >
-          Novo produto
-        </Link>
+        {podeCriar && (
+          <Link
+            href="/produtos/novo"
+            className="flex h-12 items-center rounded-lg bg-zinc-900 px-4 text-base font-medium text-white"
+          >
+            Novo produto
+          </Link>
+        )}
       </div>
 
       {/* Filtros: envio por GET, então os filtros ficam na URL */}
@@ -263,35 +271,47 @@ export default async function ProdutosPage({
                   {/* Coluna da direita: Status e Editar */}
                   <div className="flex items-center justify-between sm:flex-col sm:items-end sm:justify-between py-1 gap-3">
                     {/* Status Pill */}
-                    <form
-                      action={produto.ativo ? desativarProduto : reativarProduto}
-                    >
-                      <input type="hidden" name="id" value={produto.id} />
-                      <button
-                        type="submit"
-                        title={produto.ativo ? "Desativar" : "Reativar"}
-                        className="transition-opacity hover:opacity-80"
+                    {podeDesativar ? (
+                      <form
+                        action={produto.ativo ? desativarProduto : reativarProduto}
                       >
-                        {produto.ativo ? (
-                          <div className="flex items-center gap-1.5 rounded-full bg-[#22c55e] px-3 sm:px-4 py-1 sm:py-1.5 text-xs sm:text-sm font-bold text-white shadow-sm">
-                            Ativo
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-1.5 rounded-full bg-[#ef4444] px-3 sm:px-4 py-1 sm:py-1.5 text-xs sm:text-sm font-bold text-white shadow-sm">
-                            Inativo
-                          </div>
-                        )}
-                      </button>
-                    </form>
+                        <input type="hidden" name="id" value={produto.id} />
+                        <button
+                          type="submit"
+                          title={produto.ativo ? "Desativar" : "Reativar"}
+                          className="transition-opacity hover:opacity-80"
+                        >
+                          {produto.ativo ? (
+                            <div className="flex items-center gap-1.5 rounded-full bg-[#22c55e] px-3 sm:px-4 py-1 sm:py-1.5 text-xs sm:text-sm font-bold text-white shadow-sm">
+                              Ativo
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-1.5 rounded-full bg-[#ef4444] px-3 sm:px-4 py-1 sm:py-1.5 text-xs sm:text-sm font-bold text-white shadow-sm">
+                              Inativo
+                            </div>
+                          )}
+                        </button>
+                      </form>
+                    ) : (
+                      <div
+                        className={`flex items-center gap-1.5 rounded-full px-3 sm:px-4 py-1 sm:py-1.5 text-xs sm:text-sm font-bold text-white shadow-sm ${
+                          produto.ativo ? "bg-[#22c55e]" : "bg-[#ef4444]"
+                        }`}
+                      >
+                        {produto.ativo ? "Ativo" : "Inativo"}
+                      </div>
+                    )}
 
                     {/* Botão Editar quadrado */}
-                    <Link
-                      href={`/produtos/${produto.id}`}
-                      title="Editar"
-                      className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-900 shadow-sm transition-colors hover:bg-zinc-50"
-                    >
-                      <IconeEditar className="h-5 w-5 sm:h-6 sm:w-6" />
-                    </Link>
+                    {podeEditar && (
+                      <Link
+                        href={`/produtos/${produto.id}`}
+                        title="Editar"
+                        className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-900 shadow-sm transition-colors hover:bg-zinc-50"
+                      >
+                        <IconeEditar className="h-5 w-5 sm:h-6 sm:w-6" />
+                      </Link>
+                    )}
                   </div>
                 </div>
               </li>

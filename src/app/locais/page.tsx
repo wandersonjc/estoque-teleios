@@ -3,15 +3,27 @@
 // Os 3 locais iniciais (Loja Nova Iguaçu, Loja Mesquita e Galpão)
 // são criados pelo script scripts/seed.ts, mas podem ser
 // renomeados e excluídos por aqui.
+// Os botões aparecem conforme as permissões de quem está logado,
+// mas a checagem de verdade é feita nas ações do servidor.
 // ============================================================
 
+import { exigirPermissao } from "@/lib/autorizacao";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 
 import { IconeArmazem, IconeCaixa, IconeExcluir, IconeLapis, IconePin } from "@/components/icones";
 import { excluirLocal } from "./actions";
 
+export const dynamic = "force-dynamic";
+
 export default async function LocaisPage() {
+  // Bloqueia a tela para quem não pode consultar locais
+  const atual = await exigirPermissao("locais.local.consultar");
+
+  const podeCriar = atual.permissoes.has("locais.local.criar");
+  const podeEditar = atual.permissoes.has("locais.local.editar");
+  const podeExcluir = atual.permissoes.has("locais.local.excluir");
+
   // _count mostra em quantos produtos o local tem estoque e quantas
   // movimentações existem, para explicar por que um local não pode
   // ser excluído
@@ -28,12 +40,14 @@ export default async function LocaisPage() {
         <h1 className="text-xl font-semibold text-zinc-900">
           Locais de estoque
         </h1>
-        <Link
-          href="/locais/novo"
-          className="flex h-12 items-center justify-center rounded-lg bg-zinc-900 px-4 text-base font-medium text-white shadow-sm transition-all hover:bg-zinc-800 active:scale-95"
-        >
-          Novo local
-        </Link>
+        {podeCriar && (
+          <Link
+            href="/locais/novo"
+            className="flex h-12 items-center justify-center rounded-lg bg-zinc-900 px-4 text-base font-medium text-white shadow-sm transition-all hover:bg-zinc-800 active:scale-95"
+          >
+            Novo local
+          </Link>
+        )}
       </div>
 
       <p className="mt-4 text-sm text-zinc-600" role="status">
@@ -51,12 +65,14 @@ export default async function LocaisPage() {
           <p className="mt-2 text-slate-500">
             Cadastre pelo menos um local para gerenciar seu estoque.
           </p>
-          <Link
-            href="/locais/novo"
-            className="mt-6 inline-flex text-sm font-semibold text-blue-600 hover:text-blue-500"
-          >
-            Adicionar primeiro local &rarr;
-          </Link>
+          {podeCriar && (
+            <Link
+              href="/locais/novo"
+              className="mt-6 inline-flex text-sm font-semibold text-blue-600 hover:text-blue-500"
+            >
+              Adicionar primeiro local &rarr;
+            </Link>
+          )}
         </div>
       )}
 
@@ -99,26 +115,30 @@ export default async function LocaisPage() {
                 <div className="flex items-center sm:gap-6 mt-4 sm:mt-0 pt-4 sm:pt-0 border-t sm:border-t-0 sm:border-l border-zinc-100 w-full sm:w-auto">
                   {/* Ações */}
                   <div className="flex items-center justify-end gap-2 sm:gap-3 w-full sm:w-auto sm:pl-6">
-                    <Link
-                      href={`/locais/${local.id}`}
-                      aria-label={`Editar ${local.nome}`}
-                      className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-900 shadow-sm transition-colors hover:bg-zinc-50"
-                    >
-                      <IconeLapis className="h-5 w-5" />
-                    </Link>
-
-                    {local._count.estoques === 0 && local._count.movimentos === 0 && (
-                      <form action={excluirLocal}>
-                        <input type="hidden" name="id" value={local.id} />
-                        <button
-                          type="submit"
-                          title="Excluir"
-                          className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl border border-zinc-200 bg-white text-red-700 shadow-sm transition-colors hover:bg-red-50"
-                        >
-                          <IconeExcluir className="h-5 w-5" />
-                        </button>
-                      </form>
+                    {podeEditar && (
+                      <Link
+                        href={`/locais/${local.id}`}
+                        aria-label={`Editar ${local.nome}`}
+                        className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-900 shadow-sm transition-colors hover:bg-zinc-50"
+                      >
+                        <IconeLapis className="h-5 w-5" />
+                      </Link>
                     )}
+
+                    {podeExcluir &&
+                      local._count.estoques === 0 &&
+                      local._count.movimentos === 0 && (
+                        <form action={excluirLocal}>
+                          <input type="hidden" name="id" value={local.id} />
+                          <button
+                            type="submit"
+                            title="Excluir"
+                            className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl border border-zinc-200 bg-white text-red-700 shadow-sm transition-colors hover:bg-red-50"
+                          >
+                            <IconeExcluir className="h-5 w-5" />
+                          </button>
+                        </form>
+                      )}
                   </div>
                 </div>
               </li>

@@ -12,8 +12,6 @@ import { useActionState } from "react";
 import {
   LIMITE_EMAIL,
   LIMITE_NOME_USUARIO,
-  PERFIS,
-  ROTULO_PERFIL,
   SENHA_MINIMA,
   VALORES_FORMULARIO_USUARIO_VAZIOS,
   type EstadoFormularioUsuario,
@@ -99,31 +97,6 @@ export default function UsuarioForm({
           className={CLASSE_CAMPO}
         />
         {erros.email && <p className="text-sm text-red-700">{erros.email}</p>}
-      </div>
-
-      <div className="flex flex-col gap-1">
-        <label htmlFor="perfil" className={CLASSE_ROTULO}>
-          Perfil <span className="text-red-700">*</span>
-        </label>
-        <select
-          id="perfil"
-          name="perfil"
-          required
-          defaultValue={valores.perfil}
-          aria-invalid={erros.perfil ? true : undefined}
-          className={CLASSE_CAMPO}
-        >
-          {PERFIS.map((perfil) => (
-            <option key={perfil} value={perfil}>
-              {ROTULO_PERFIL[perfil]}
-            </option>
-          ))}
-        </select>
-        <p className="text-sm text-zinc-500">
-          Estoquista movimenta o estoque; comprador também cadastra produtos e
-          fornecedores e monta pedidos.
-        </p>
-        {erros.perfil && <p className="text-sm text-red-700">{erros.perfil}</p>}
       </div>
 
       <div className="flex flex-col gap-1">

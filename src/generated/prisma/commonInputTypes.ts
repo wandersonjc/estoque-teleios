@@ -40,13 +40,6 @@ export type StringFilter<$PrismaModel = never> = {
   not?: Prisma.NestedStringFilter<$PrismaModel> | string
 }
 
-export type EnumPerfilUsuarioFilter<$PrismaModel = never> = {
-  equals?: $Enums.PerfilUsuario | Prisma.EnumPerfilUsuarioFieldRefInput<$PrismaModel>
-  in?: $Enums.PerfilUsuario[] | Prisma.ListEnumPerfilUsuarioFieldRefInput<$PrismaModel>
-  notIn?: $Enums.PerfilUsuario[] | Prisma.ListEnumPerfilUsuarioFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumPerfilUsuarioFilter<$PrismaModel> | $Enums.PerfilUsuario
-}
-
 export type BoolFilter<$PrismaModel = never> = {
   equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
   not?: Prisma.NestedBoolFilter<$PrismaModel> | boolean
@@ -95,16 +88,6 @@ export type StringWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedStringFilter<$PrismaModel>
   _max?: Prisma.NestedStringFilter<$PrismaModel>
-}
-
-export type EnumPerfilUsuarioWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.PerfilUsuario | Prisma.EnumPerfilUsuarioFieldRefInput<$PrismaModel>
-  in?: $Enums.PerfilUsuario[] | Prisma.ListEnumPerfilUsuarioFieldRefInput<$PrismaModel>
-  notIn?: $Enums.PerfilUsuario[] | Prisma.ListEnumPerfilUsuarioFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumPerfilUsuarioWithAggregatesFilter<$PrismaModel> | $Enums.PerfilUsuario
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumPerfilUsuarioFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumPerfilUsuarioFilter<$PrismaModel>
 }
 
 export type BoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -375,13 +358,6 @@ export type NestedStringFilter<$PrismaModel = never> = {
   not?: Prisma.NestedStringFilter<$PrismaModel> | string
 }
 
-export type NestedEnumPerfilUsuarioFilter<$PrismaModel = never> = {
-  equals?: $Enums.PerfilUsuario | Prisma.EnumPerfilUsuarioFieldRefInput<$PrismaModel>
-  in?: $Enums.PerfilUsuario[] | Prisma.ListEnumPerfilUsuarioFieldRefInput<$PrismaModel>
-  notIn?: $Enums.PerfilUsuario[] | Prisma.ListEnumPerfilUsuarioFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumPerfilUsuarioFilter<$PrismaModel> | $Enums.PerfilUsuario
-}
-
 export type NestedBoolFilter<$PrismaModel = never> = {
   equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
   not?: Prisma.NestedBoolFilter<$PrismaModel> | boolean
@@ -440,16 +416,6 @@ export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedStringFilter<$PrismaModel>
   _max?: Prisma.NestedStringFilter<$PrismaModel>
-}
-
-export type NestedEnumPerfilUsuarioWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.PerfilUsuario | Prisma.EnumPerfilUsuarioFieldRefInput<$PrismaModel>
-  in?: $Enums.PerfilUsuario[] | Prisma.ListEnumPerfilUsuarioFieldRefInput<$PrismaModel>
-  notIn?: $Enums.PerfilUsuario[] | Prisma.ListEnumPerfilUsuarioFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumPerfilUsuarioWithAggregatesFilter<$PrismaModel> | $Enums.PerfilUsuario
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumPerfilUsuarioFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumPerfilUsuarioFilter<$PrismaModel>
 }
 
 export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {

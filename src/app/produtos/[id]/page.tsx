@@ -3,8 +3,11 @@
 // RN-01 (total calculado), RN-02 (movimentação de estoque) e
 // RN-03 (data da última movimentação), RN-23 (produto não é
 // apagado, só desativado ou reativado).
+// Cada bloco aparece conforme as permissões de quem está logado,
+// mas a checagem de verdade é feita nas ações do servidor.
 // ============================================================
 
+import { exigirPermissao } from "@/lib/autorizacao";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -28,6 +31,13 @@ export default async function EditarProdutoPage({
   params,
   searchParams,
 }: PageProps<"/produtos/[id]">) {
+  // Bloqueia a tela para quem não pode consultar produtos
+  const atual = await exigirPermissao("produtos.produto.consultar");
+
+  const podeEditar = atual.permissoes.has("produtos.produto.editar");
+  const podeDesativar = atual.permissoes.has("produtos.produto.desativar");
+  const podeMovimentar = atual.permissoes.has("estoque.movimento.registrar");
+
   const { id } = await params;
   const { salvo, mov } = await searchParams;
 
@@ -131,46 +141,52 @@ export default async function EditarProdutoPage({
         )}
       </div>
 
-      <div className="mt-4">
-        <MovimentacaoEstoque
-          produtoId={produto.id}
-          locais={locais}
-          saldos={saldos}
-        />
-      </div>
-
-      <div className="mt-6 border-t border-zinc-200 pt-4">
-        <h2 className="text-base font-semibold text-zinc-900">
-          Dados do produto
-        </h2>
-        <div className="mt-3">
-          <ProdutoForm
-            acao={atualizarProduto}
-            textoBotao="Salvar alterações"
-            id={produto.id}
-            valoresIniciais={{
-              nome: produto.nome,
-              unidade: produto.unidade,
-              estoqueMinimo: formatarDecimalBr(produto.estoqueMinimo.toString()),
-              codigoBarras: produto.codigoBarras ?? "",
-              codigoErp: produto.codigoErp ?? "",
-            }}
+      {podeMovimentar && (
+        <div className="mt-4">
+          <MovimentacaoEstoque
+            produtoId={produto.id}
+            locais={locais}
+            saldos={saldos}
           />
         </div>
-      </div>
+      )}
 
-      <form
-        action={produto.ativo ? desativarProduto : reativarProduto}
-        className="mt-6"
-      >
-        <input type="hidden" name="id" value={produto.id} />
-        <button
-          type="submit"
-          className="h-12 rounded-lg border border-zinc-300 px-4 text-base font-medium text-zinc-900"
+      {podeEditar && (
+        <div className="mt-6 border-t border-zinc-200 pt-4">
+          <h2 className="text-base font-semibold text-zinc-900">
+            Dados do produto
+          </h2>
+          <div className="mt-3">
+            <ProdutoForm
+              acao={atualizarProduto}
+              textoBotao="Salvar alterações"
+              id={produto.id}
+              valoresIniciais={{
+                nome: produto.nome,
+                unidade: produto.unidade,
+                estoqueMinimo: formatarDecimalBr(produto.estoqueMinimo.toString()),
+                codigoBarras: produto.codigoBarras ?? "",
+                codigoErp: produto.codigoErp ?? "",
+              }}
+            />
+          </div>
+        </div>
+      )}
+
+      {podeDesativar && (
+        <form
+          action={produto.ativo ? desativarProduto : reativarProduto}
+          className="mt-6"
         >
-          {produto.ativo ? "Desativar produto" : "Reativar produto"}
-        </button>
-      </form>
+          <input type="hidden" name="id" value={produto.id} />
+          <button
+            type="submit"
+            className="h-12 rounded-lg border border-zinc-300 px-4 text-base font-medium text-zinc-900"
+          >
+            {produto.ativo ? "Desativar produto" : "Reativar produto"}
+          </button>
+        </form>
+      )}
     </main>
   );
 }

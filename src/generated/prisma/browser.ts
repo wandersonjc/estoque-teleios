@@ -57,3 +57,18 @@ export type MovimentoEstoque = Prisma.MovimentoEstoqueModel
  * 
  */
 export type LogSistema = Prisma.LogSistemaModel
+/**
+ * Model Permissao
+ * 
+ */
+export type Permissao = Prisma.PermissaoModel
+/**
+ * Model PermissaoUsuario
+ * 
+ */
+export type PermissaoUsuario = Prisma.PermissaoUsuarioModel
+/**
+ * Model Sessao
+ * 
+ */
+export type Sessao = Prisma.SessaoModel

@@ -4,7 +4,8 @@
 // Módulo 1 - Locais de estoque: ações do servidor
 // Cadastrar, renomear e excluir. A exclusão é bloqueada quando o
 // local já tem estoque ou movimentações, para não perder histórico.
-// Toda ação grava uma linha no log geral do sistema.
+// Toda ação grava uma linha no log geral do sistema e confere a
+// permissão no servidor (esconder o botão não basta).
 // Regras: docs/regras-de-negocio.md (seção 3)
 // ============================================================
 
@@ -12,6 +13,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { Prisma } from "@/generated/prisma/client";
+import { MENSAGEM_SEM_PERMISSAO, verificarPermissao } from "@/lib/autorizacao";
 import { registrarLog } from "@/lib/log";
 import prisma from "@/lib/prisma";
 
@@ -61,6 +63,11 @@ export async function criarLocal(
   _estadoAnterior: EstadoFormularioLocal,
   formData: FormData
 ): Promise<EstadoFormularioLocal> {
+  const atual = await verificarPermissao("locais.local.criar");
+  if (!atual) {
+    return { erroGeral: MENSAGEM_SEM_PERMISSAO, valores: lerValores(formData) };
+  }
+
   const valores = lerValores(formData);
 
   const erroNome = validarNome(valores);
@@ -79,6 +86,7 @@ export async function criarLocal(
           registroId: local.id,
           descricao: `Local de estoque "${local.nome}" cadastrado`,
           dados: { nome: local.nome },
+          usuarioId: atual.id,
         },
         tx
       );
@@ -97,6 +105,11 @@ export async function atualizarLocal(
   _estadoAnterior: EstadoFormularioLocal,
   formData: FormData
 ): Promise<EstadoFormularioLocal> {
+  const atual = await verificarPermissao("locais.local.editar");
+  if (!atual) {
+    return { erroGeral: MENSAGEM_SEM_PERMISSAO, valores: lerValores(formData) };
+  }
+
   const valores = lerValores(formData);
   const id = Number(formData.get("id"));
 
@@ -128,6 +141,7 @@ export async function atualizarLocal(
           registroId: id,
           descricao: `Local de estoque renomeado de "${antes.nome}" para "${valores.nome}"`,
           dados: { antes: { nome: antes.nome }, depois: { nome: valores.nome } },
+          usuarioId: atual.id,
         },
         tx
       );
@@ -145,6 +159,9 @@ export async function atualizarLocal(
 // Só exclui local que não tem estoque nem movimentações: o histórico
 // de movimentação nunca é apagado por causa de um cadastro.
 export async function excluirLocal(formData: FormData): Promise<void> {
+  const atual = await verificarPermissao("locais.local.excluir");
+  if (!atual) return;
+
   const id = Number(formData.get("id"));
   if (!Number.isInteger(id) || id <= 0) return;
 
@@ -175,6 +192,7 @@ export async function excluirLocal(formData: FormData): Promise<void> {
         registroId: id,
         descricao: `Local de estoque "${local.nome}" excluído`,
         dados: { nome: local.nome },
+        usuarioId: atual.id,
       },
       tx
     );

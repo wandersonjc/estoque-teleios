@@ -22,28 +22,24 @@ datasource db {
 }
 
 // ------------------------------------------------------------
-// Perfis de usuário (seção 2 das regras)
-// ------------------------------------------------------------
-enum PerfilUsuario {
-  ESTOQUISTA
-  COMPRADOR
-}
-
-// ------------------------------------------------------------
 // Usuário do sistema
+// O acesso NÃO vem mais de um "perfil" fixo: cada usuário recebe
+// permissões individuais (ver os modelos Permissao e
+// PermissaoUsuario), concedidas na tela /permissoes.
 // ------------------------------------------------------------
 model Usuario {
-  id           Int           @id @default(autoincrement())
+  id           Int      @id @default(autoincrement())
   nome         String
-  email        String        @unique
-  senhaHash    String        @map("senha_hash") // NUNCA guardar a senha pura
-  perfil       PerfilUsuario
-  ativo        Boolean       @default(true)
-  criadoEm     DateTime      @default(now()) @map("criado_em")
-  atualizadoEm DateTime      @updatedAt @map("atualizado_em")
+  email        String   @unique
+  senhaHash    String   @map("senha_hash") // NUNCA guardar a senha pura
+  ativo        Boolean  @default(true)
+  criadoEm     DateTime @default(now()) @map("criado_em")
+  atualizadoEm DateTime @updatedAt @map("atualizado_em")
 
   movimentos MovimentoEstoque[]
   logs       LogSistema[]
+  sessoes    Sessao[]
+  permissoes PermissaoUsuario[]
 
   @@map("usuario")
 }
@@ -201,6 +197,7 @@ enum ModuloSistema {
   FORNECEDORES
   PEDIDOS
   USUARIOS
+  PERMISSOES
 }
 
 enum AcaoSistema {
@@ -232,4 +229,74 @@ model LogSistema {
   @@index([usuarioId])
   @@index([criadoEm])
   @@map("log_sistema")
+}
+
+// ------------------------------------------------------------
+// Catálogo de permissões (a lista do que PODE ser concedido).
+// Separado das concessões: aqui fica apenas a definição de cada
+// permissão, gravada a partir do catálogo em código
+// (src/lib/permissoes.ts) pelo sincronizador. Um "codigo" único e
+// estável identifica a permissão (ex.: "produtos.produto.criar").
+// Módulo, funcionalidade e operação são texto livre para que novas
+// permissões possam ser registradas sem alterar o banco.
+// ------------------------------------------------------------
+model Permissao {
+  id             Int      @id @default(autoincrement())
+  // Identificador único e estável usado no código (nunca muda)
+  codigo         String   @unique
+  // Agrupamentos que montam a matriz na tela
+  modulo         String
+  funcionalidade String
+  operacao       String
+  // Texto legível mostrado ao usuário
+  descricao      String
+  // Ordem de exibição dentro do módulo/funcionalidade
+  ordem          Int      @default(0)
+  criadoEm       DateTime @default(now()) @map("criado_em")
+  atualizadoEm   DateTime @updatedAt @map("atualizado_em")
+
+  usuarios PermissaoUsuario[]
+
+  @@index([modulo])
+  @@map("permissao")
+}
+
+// ------------------------------------------------------------
+// Permissões concedidas a cada usuário (a concessão propriamente
+// dita). A ausência de linha significa "negado": novas permissões
+// nascem negadas até serem concedidas explicitamente.
+// @@unique impede conceder a mesma permissão duas vezes ao mesmo
+// usuário. Campos de auditoria registram quando foi concedida.
+// ------------------------------------------------------------
+model PermissaoUsuario {
+  id           Int      @id @default(autoincrement())
+  usuarioId    Int      @map("usuario_id")
+  permissaoId  Int      @map("permissao_id")
+  concedidoEm  DateTime @default(now()) @map("concedido_em")
+  atualizadoEm DateTime @updatedAt @map("atualizado_em")
+
+  usuario   Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  permissao Permissao @relation(fields: [permissaoId], references: [id], onDelete: Cascade)
+
+  // Um usuário só pode ter a mesma permissão uma vez
+  @@unique([usuarioId, permissaoId])
+  @@index([permissaoId])
+  @@map("permissao_usuario")
+}
+
+// ------------------------------------------------------------
+// Sessões de login. O navegador guarda apenas um token aleatório
+// (cookie httpOnly); a sessão de verdade fica no banco, o que
+// permite encerrá-la (logout) e expirá-la.
+// ------------------------------------------------------------
+model Sessao {
+  id        String   @id // token aleatório (hex), nunca sequencial
+  usuarioId Int      @map("usuario_id")
+  criadoEm  DateTime @default(now()) @map("criado_em")
+  expiraEm  DateTime @map("expira_em")
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId])
+  @@map("sessao")
 }

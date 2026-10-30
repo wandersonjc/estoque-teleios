@@ -6,6 +6,7 @@
 // Regras: docs/regras-de-negocio.md (seção 2)
 // ============================================================
 
+import { exigirPermissao } from "@/lib/autorizacao";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -25,6 +26,9 @@ export default async function EditarUsuarioPage({
   params,
   searchParams,
 }: PageProps<"/usuarios/[id]">) {
+  // Só entra quem pode consultar usuários
+  await exigirPermissao("usuarios.usuario.consultar");
+
   const { id } = await params;
   const { salvo, erro } = await searchParams;
 
@@ -37,7 +41,6 @@ export default async function EditarUsuarioPage({
       id: true,
       nome: true,
       email: true,
-      perfil: true,
       ativo: true,
       _count: { select: { movimentos: true, logs: true } },
     },
@@ -93,7 +96,6 @@ export default async function EditarUsuarioPage({
           valoresIniciais={{
             nome: usuario.nome,
             email: usuario.email,
-            perfil: usuario.perfil,
             // A senha nunca é preenchida: em branco mantém a atual
             senha: "",
           }}

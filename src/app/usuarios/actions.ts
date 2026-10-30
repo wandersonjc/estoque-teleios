@@ -6,6 +6,8 @@
 // A senha é sempre guardada como hash (nunca em texto puro) e
 // nunca aparece no log. O usuário nunca é excluído: só fica
 // inativo, para não quebrar movimentações e logs já gravados.
+// TODA ação confere a permissão no servidor: esconder o botão
+// não basta (ver src/lib/autorizacao.ts).
 // Regras: docs/regras-de-negocio.md (seção 2)
 // ============================================================
 
@@ -13,6 +15,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { Prisma } from "@/generated/prisma/client";
+import { MENSAGEM_SEM_PERMISSAO, verificarPermissao } from "@/lib/autorizacao";
 import { registrarLog } from "@/lib/log";
 import prisma from "@/lib/prisma";
 import { gerarHashSenha } from "@/lib/senha";
@@ -20,11 +23,9 @@ import { gerarHashSenha } from "@/lib/senha";
 import {
   LIMITE_EMAIL,
   LIMITE_NOME_USUARIO,
-  PERFIS,
   SENHA_MINIMA,
   type ErrosFormularioUsuario,
   type EstadoFormularioUsuario,
-  type Perfil,
   type ValoresFormularioUsuario,
 } from "./tipos";
 
@@ -47,7 +48,6 @@ function lerValores(formData: FormData): ValoresFormularioUsuario {
     nome: texto("nome"),
     // E-mail sempre em minúsculas, para a unicidade não depender do caso
     email: texto("email").toLowerCase(),
-    perfil: texto("perfil").toUpperCase(),
     senha: typeof senha === "string" ? senha : "",
   };
 }
@@ -58,7 +58,6 @@ const FORMATO_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 type UsuarioValidado = {
   nome: string;
   email: string;
-  perfil: Perfil;
   senha: string;
 };
 
@@ -88,10 +87,6 @@ function validarUsuario(
     erros.email = "Informe um e-mail válido (ex.: nome@empresa.com.br).";
   }
 
-  if (!PERFIS.includes(valores.perfil as Perfil)) {
-    erros.perfil = "Escolha um perfil válido.";
-  }
-
   if (exigirSenha && valores.senha === "") {
     erros.senha = "Informe a senha.";
   } else if (valores.senha !== "" && valores.senha.length < SENHA_MINIMA) {
@@ -107,7 +102,6 @@ function validarUsuario(
     dados: {
       nome: valores.nome,
       email: valores.email,
-      perfil: valores.perfil as Perfil,
       senha: valores.senha,
     },
   };
@@ -134,6 +128,14 @@ export async function criarUsuario(
   _estadoAnterior: EstadoFormularioUsuario,
   formData: FormData
 ): Promise<EstadoFormularioUsuario> {
+  const atual = await verificarPermissao("usuarios.usuario.criar");
+  if (!atual) {
+    return {
+      erroGeral: MENSAGEM_SEM_PERMISSAO,
+      valores: lerValores(formData),
+    };
+  }
+
   const valores = lerValores(formData);
   const validacao = validarUsuario(valores, true);
 
@@ -146,7 +148,6 @@ export async function criarUsuario(
           nome: validacao.dados.nome,
           email: validacao.dados.email,
           senhaHash: gerarHashSenha(validacao.dados.senha),
-          perfil: validacao.dados.perfil,
         },
       });
 
@@ -160,8 +161,8 @@ export async function criarUsuario(
           dados: {
             nome: usuario.nome,
             email: usuario.email,
-            perfil: usuario.perfil,
           },
+          usuarioId: atual.id,
         },
         tx
       );
@@ -175,12 +176,20 @@ export async function criarUsuario(
   redirect("/usuarios");
 }
 
-// Altera nome, e-mail e perfil. A senha só muda se o campo vier
+// Altera nome e e-mail. A senha só muda se o campo vier
 // preenchido (em branco = mantém a atual).
 export async function atualizarUsuario(
   _estadoAnterior: EstadoFormularioUsuario,
   formData: FormData
 ): Promise<EstadoFormularioUsuario> {
+  const atual = await verificarPermissao("usuarios.usuario.editar");
+  if (!atual) {
+    return {
+      erroGeral: MENSAGEM_SEM_PERMISSAO,
+      valores: lerValores(formData),
+    };
+  }
+
   const valores = lerValores(formData);
   const id = Number(formData.get("id"));
 
@@ -193,7 +202,7 @@ export async function atualizarUsuario(
 
   const antes = await prisma.usuario.findUnique({
     where: { id },
-    select: { nome: true, email: true, perfil: true },
+    select: { nome: true, email: true },
   });
   if (!antes) return { erroGeral: "Usuário não encontrado.", valores };
 
@@ -206,7 +215,6 @@ export async function atualizarUsuario(
         data: {
           nome: validacao.dados.nome,
           email: validacao.dados.email,
-          perfil: validacao.dados.perfil,
           // Só troca a senha quando uma nova foi digitada
           ...(senhaAlterada
             ? { senhaHash: gerarHashSenha(validacao.dados.senha) }
@@ -221,14 +229,14 @@ export async function atualizarUsuario(
           registroId: id,
           descricao: `Usuário "${validacao.dados.nome}" (${validacao.dados.email}) alterado`,
           dados: {
-            antes: { nome: antes.nome, email: antes.email, perfil: antes.perfil },
+            antes: { nome: antes.nome, email: antes.email },
             depois: {
               nome: validacao.dados.nome,
               email: validacao.dados.email,
-              perfil: validacao.dados.perfil,
             },
             senhaAlterada,
           },
+          usuarioId: atual.id,
         },
         tx
       );
@@ -245,6 +253,9 @@ export async function atualizarUsuario(
 // O usuário nunca é apagado: só desativado, para não quebrar as
 // movimentações e os logs que apontam para ele.
 export async function desativarUsuario(formData: FormData): Promise<void> {
+  const atual = await verificarPermissao("usuarios.usuario.desativar");
+  if (!atual) return;
+
   const id = Number(formData.get("id"));
   if (!Number.isInteger(id) || id <= 0) return;
 
@@ -263,6 +274,7 @@ export async function desativarUsuario(formData: FormData): Promise<void> {
         acao: "ALTERAR",
         registroId: id,
         descricao: `Usuário "${usuario.nome}" desativado`,
+        usuarioId: atual.id,
       },
       tx
     );
@@ -273,6 +285,9 @@ export async function desativarUsuario(formData: FormData): Promise<void> {
 }
 
 export async function reativarUsuario(formData: FormData): Promise<void> {
+  const atual = await verificarPermissao("usuarios.usuario.desativar");
+  if (!atual) return;
+
   const id = Number(formData.get("id"));
   if (!Number.isInteger(id) || id <= 0) return;
 
@@ -291,6 +306,7 @@ export async function reativarUsuario(formData: FormData): Promise<void> {
         acao: "ALTERAR",
         registroId: id,
         descricao: `Usuário "${usuario.nome}" reativado`,
+        usuarioId: atual.id,
       },
       tx
     );
@@ -304,6 +320,9 @@ export async function reativarUsuario(formData: FormData): Promise<void> {
 // histórico nunca é apagado por causa de um cadastro. Nos demais
 // casos, o usuário só pode ser desativado.
 export async function excluirUsuario(formData: FormData): Promise<void> {
+  const atual = await verificarPermissao("usuarios.usuario.excluir");
+  if (!atual) return;
+
   const id = Number(formData.get("id"));
   if (!Number.isInteger(id) || id <= 0) return;
 
@@ -332,6 +351,7 @@ export async function excluirUsuario(formData: FormData): Promise<void> {
         registroId: id,
         descricao: `Usuário "${usuario.nome}" (${usuario.email}) excluído`,
         dados: { nome: usuario.nome, email: usuario.email },
+        usuarioId: atual.id,
       },
       tx
     );

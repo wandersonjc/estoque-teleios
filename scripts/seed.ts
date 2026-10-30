@@ -1,12 +1,14 @@
 // ============================================================
-// Seed da etapa 1: cadastra os 3 locais de estoque (seção 3 das regras)
-// e serve de TESTE da conexão com o banco.
+// Seed da etapa 1: cadastra os 3 locais de estoque (seção 3 das regras),
+// sincroniza o catálogo de permissões e concede TODAS as permissões
+// ao primeiro usuário cadastrado (o administrador inicial).
 // Rodar com: npm run db:seed
 // Pode ser executado várias vezes: não duplica nada (usa upsert).
 // ============================================================
 
 import "dotenv/config"; // IMPORTANTE: precisa ser o primeiro import (carrega o .env)
 import prisma from "../src/lib/prisma";
+import { sincronizarCatalogoDePermissoes } from "../src/lib/permissoes";
 
 const LOCAIS_DE_ESTOQUE = ["Loja Nova Iguaçu", "Loja Mesquita", "Galpão"];
 
@@ -30,6 +32,44 @@ async function main() {
   console.log(`Locais cadastrados (${locais.length}):`);
   for (const local of locais) {
     console.log(`  - [${local.id}] ${local.nome}`);
+  }
+
+  // Sincroniza o catálogo: grava/atualiza cada permissão do código
+  // no banco (as novas nascem negadas)
+  await sincronizarCatalogoDePermissoes();
+
+  const permissoes = await prisma.permissao.findMany({
+    orderBy: { ordem: "asc" },
+    select: { id: true, codigo: true },
+  });
+  console.log(`\nPermissões no catálogo: ${permissoes.length}`);
+
+  // Concede TODAS as permissões ao primeiro usuário cadastrado,
+  // para que exista um administrador inicial. Depois disso, as
+  // concessões são gerenciadas na tela /permissoes.
+  const primeiroUsuario = await prisma.usuario.findFirst({
+    orderBy: { id: "asc" },
+    select: { id: true, nome: true, email: true },
+  });
+
+  if (!primeiroUsuario) {
+    console.log(
+      "\nNenhum usuário cadastrado ainda. Cadastre um usuário em /usuarios/novo" +
+        " e rode o seed de novo para ele virar o administrador inicial."
+    );
+  } else {
+    await prisma.permissaoUsuario.createMany({
+      data: permissoes.map((permissao) => ({
+        usuarioId: primeiroUsuario.id,
+        permissaoId: permissao.id,
+      })),
+      skipDuplicates: true,
+    });
+
+    console.log(
+      `\nTodas as permissões concedidas ao administrador inicial: ` +
+        `"${primeiroUsuario.nome}" (${primeiroUsuario.email}).`
+    );
   }
 
   console.log("\nTudo certo: a conexão com o banco está funcionando.");

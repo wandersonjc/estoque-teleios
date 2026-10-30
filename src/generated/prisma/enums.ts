@@ -9,14 +9,6 @@
 * 🟢 You can import this file directly.
 */
 
-export const PerfilUsuario = {
-  ESTOQUISTA: 'ESTOQUISTA',
-  COMPRADOR: 'COMPRADOR'
-} as const
-
-export type PerfilUsuario = (typeof PerfilUsuario)[keyof typeof PerfilUsuario]
-
-
 export const TipoMovimento = {
   ENTRADA: 'ENTRADA',
   SAIDA: 'SAIDA',
@@ -33,7 +25,8 @@ export const ModuloSistema = {
   LOCAIS: 'LOCAIS',
   FORNECEDORES: 'FORNECEDORES',
   PEDIDOS: 'PEDIDOS',
-  USUARIOS: 'USUARIOS'
+  USUARIOS: 'USUARIOS',
+  PERMISSOES: 'PERMISSOES'
 } as const
 
 export type ModuloSistema = (typeof ModuloSistema)[keyof typeof ModuloSistema]

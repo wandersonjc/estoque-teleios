@@ -2,8 +2,10 @@
 // Módulo 1 - Locais de estoque: tela de edição e exclusão
 // A exclusão é bloqueada quando o local já tem estoque ou
 // movimentações (o histórico de movimentação não é apagado).
+// Só entra quem tem a permissão de alterar locais.
 // ============================================================
 
+import { exigirPermissao } from "@/lib/autorizacao";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -18,6 +20,10 @@ export default async function EditarLocalPage({
   params,
   searchParams,
 }: PageProps<"/locais/[id]">) {
+  // Só entra quem pode alterar locais
+  const atual = await exigirPermissao("locais.local.editar");
+  const podeExcluir = atual.permissoes.has("locais.local.excluir");
+
   const { id } = await params;
   const { salvo, erro } = await searchParams;
 
@@ -71,7 +77,8 @@ export default async function EditarLocalPage({
         />
       </div>
 
-      <section className="mt-6 rounded-xl border border-zinc-200 bg-white p-3">
+      {podeExcluir && (
+        <section className="mt-6 rounded-xl border border-zinc-200 bg-white p-3">
         <h2 className="text-base font-semibold text-zinc-900">
           Excluir local
         </h2>
@@ -99,7 +106,8 @@ export default async function EditarLocalPage({
             </form>
           </>
         )}
-      </section>
+        </section>
+      )}
     </main>
   );
 }

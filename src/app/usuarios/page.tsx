@@ -2,9 +2,12 @@
 // Módulo 1 - Usuários: lista
 // O usuário só pode ser excluído quando não tem nenhuma
 // movimentação nem log; caso contrário, só desativado.
+// Os botões aparecem conforme as permissões de quem está logado,
+// mas a checagem de verdade é feita nas ações do servidor.
 // Regras: docs/regras-de-negocio.md (seção 2)
 // ============================================================
 
+import { exigirPermissao } from "@/lib/autorizacao";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 
@@ -17,12 +20,19 @@ import {
 } from "@/components/icones";
 
 import { desativarUsuario, excluirUsuario, reativarUsuario } from "./actions";
-import { ROTULO_PERFIL, type Perfil } from "./tipos";
 
 // A lista precisa mostrar o banco no estado atual, sem cache
 export const dynamic = "force-dynamic";
 
 export default async function UsuariosPage() {
+  // Bloqueia a tela para quem não pode consultar usuários
+  const atual = await exigirPermissao("usuarios.usuario.consultar");
+
+  const podeCriar = atual.permissoes.has("usuarios.usuario.criar");
+  const podeEditar = atual.permissoes.has("usuarios.usuario.editar");
+  const podeDesativar = atual.permissoes.has("usuarios.usuario.desativar");
+  const podeExcluir = atual.permissoes.has("usuarios.usuario.excluir");
+
   // _count mostra se há movimentações/logs, para decidir se o
   // usuário pode ser excluído (mesmo critério da tela de edição)
   const usuarios = await prisma.usuario.findMany({
@@ -31,7 +41,6 @@ export default async function UsuariosPage() {
       id: true,
       nome: true,
       email: true,
-      perfil: true,
       ativo: true,
       _count: { select: { movimentos: true, logs: true } },
     },
@@ -41,12 +50,14 @@ export default async function UsuariosPage() {
     <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-5">
       <div className="flex items-center justify-between gap-3">
         <h1 className="text-xl font-semibold text-zinc-900">Usuários</h1>
-        <Link
-          href="/usuarios/novo"
-          className="flex h-12 items-center rounded-lg bg-zinc-900 px-4 text-base font-medium text-white"
-        >
-          Novo usuário
-        </Link>
+        {podeCriar && (
+          <Link
+            href="/usuarios/novo"
+            className="flex h-12 items-center rounded-lg bg-zinc-900 px-4 text-base font-medium text-white"
+          >
+            Novo usuário
+          </Link>
+        )}
       </div>
 
       <p className="mt-4 text-sm text-zinc-600" role="status">
@@ -86,12 +97,6 @@ export default async function UsuariosPage() {
                         <IconeEmail className="h-4 w-4 sm:h-5 sm:w-5 shrink-0" />
                         <span className="text-xs sm:text-sm truncate">{usuario.email}</span>
                       </div>
-                      <div className="flex items-center gap-2 text-[#7d8fa9]">
-                        <IconeUser className="h-4 w-4 sm:h-5 sm:w-5 shrink-0" />
-                        <span className="text-xs sm:text-sm">
-                          Perfil: {ROTULO_PERFIL[usuario.perfil as Perfil]}
-                        </span>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -117,37 +122,42 @@ export default async function UsuariosPage() {
                   {/* Botões de Ação */}
                   <div className="flex items-center gap-2">
                     {/* Botão Editar */}
-                    <Link
-                      href={`/usuarios/${usuario.id}`}
-                      title="Editar"
-                      className="flex h-11 w-11 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-900 shadow-sm transition-colors hover:bg-zinc-50"
-                    >
-                      <IconeEditar className="h-5 w-5" />
-                    </Link>
+                    {podeEditar && (
+                      <Link
+                        href={`/usuarios/${usuario.id}`}
+                        title="Editar"
+                        className="flex h-11 w-11 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-900 shadow-sm transition-colors hover:bg-zinc-50"
+                      >
+                        <IconeEditar className="h-5 w-5" />
+                      </Link>
+                    )}
 
                     {/* Botão Switch */}
-                    <form
-                      action={usuario.ativo ? desativarUsuario : reativarUsuario}
-                    >
-                      <input type="hidden" name="id" value={usuario.id} />
-                      <button
-                        type="submit"
-                        title={usuario.ativo ? "Desativar" : "Reativar"}
-                        className={`flex h-11 w-11 items-center justify-center rounded-xl border transition-colors ${
-                          usuario.ativo
-                            ? "bg-[#f0fdf4] border-[#dcfce7]"
-                            : "bg-[#fef2f2] border-[#fee2e2]"
-                        }`}
+                    {podeDesativar && (
+                      <form
+                        action={usuario.ativo ? desativarUsuario : reativarUsuario}
                       >
-                        <IconeSwitch
-                          ativo={usuario.ativo}
-                          className="h-5 w-8"
-                        />
-                      </button>
-                    </form>
+                        <input type="hidden" name="id" value={usuario.id} />
+                        <button
+                          type="submit"
+                          title={usuario.ativo ? "Desativar" : "Reativar"}
+                          className={`flex h-11 w-11 items-center justify-center rounded-xl border transition-colors ${
+                            usuario.ativo
+                              ? "bg-[#f0fdf4] border-[#dcfce7]"
+                              : "bg-[#fef2f2] border-[#fee2e2]"
+                          }`}
+                        >
+                          <IconeSwitch
+                            ativo={usuario.ativo}
+                            className="h-5 w-8"
+                          />
+                        </button>
+                      </form>
+                    )}
 
                     {/* Botão Excluir */}
-                    {usuario._count.movimentos === 0 &&
+                    {podeExcluir &&
+                      usuario._count.movimentos === 0 &&
                       usuario._count.logs === 0 && (
                         <form action={excluirUsuario}>
                           <input type="hidden" name="id" value={usuario.id} />
