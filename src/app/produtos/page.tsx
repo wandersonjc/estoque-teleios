@@ -331,7 +331,7 @@ export default async function ProdutosPage({
                           <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
                             UNIDADE
                           </p>
-                          <p className="text-base font-bold text-[#002855] leading-tight">
+                          <p className="text-[13px] font-bold text-[#002855] leading-tight">
                             {produto.unidade}
                           </p>
                         </div>
@@ -346,12 +346,12 @@ export default async function ProdutosPage({
                           <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
                             TOTAL EM ESTOQUE
                           </p>
-                          <p className="text-base text-[#002855] leading-tight">
+                          <p className="text-[13px] text-[#002855] leading-tight">
                             <span className="font-bold">
                               {formatarQuantidade(totalEstoque)}
                             </span>
                             {dataUltima && (
-                              <span className="text-zinc-400 font-medium text-xs ml-1 block sm:inline">
+                              <span className="text-zinc-400 font-medium text-[11px] ml-1 block sm:inline">
                                 - Última contagem: {formatarDataBr(dataUltima)}
                               </span>
                             )}
@@ -368,7 +368,7 @@ export default async function ProdutosPage({
                           <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
                             CÓDIGO DE BARRAS
                           </p>
-                          <p className="text-base font-bold text-[#002855] leading-tight">
+                          <p className="text-[13px] font-bold text-[#002855] leading-tight">
                             {produto.codigoBarras || "-"}
                           </p>
                         </div>
@@ -383,7 +383,7 @@ export default async function ProdutosPage({
                           <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
                             CÓDIGO DO ERP
                           </p>
-                          <p className="text-base font-bold text-[#002855] leading-tight">
+                          <p className="text-[13px] font-bold text-[#002855] leading-tight">
                             {produto.codigoErp}
                           </p>
                         </div>
