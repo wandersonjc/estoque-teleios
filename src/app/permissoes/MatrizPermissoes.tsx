@@ -217,6 +217,9 @@ function FormularioPermissoes({
         className="flex flex-col gap-4"
       >
         <input type="hidden" name="usuarioId" value={usuario.id} />
+        {Array.from(selecionadas, (codigo) => (
+          <input key={codigo} type="hidden" name="permissao" value={codigo} />
+        ))}
 
         <div className="rounded-xl border border-zinc-200 bg-white p-3">
           <h3 className="text-base font-semibold text-zinc-900 sm:text-lg">{usuario.nome}</h3>
@@ -317,7 +320,6 @@ function FormularioPermissoes({
                               <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-zinc-200 p-3 hover:bg-zinc-50">
                                 <input
                                   type="checkbox"
-                                  name="permissao"
                                   value={operacao.codigo}
                                   checked={selecionadas.has(operacao.codigo)}
                                   onChange={(evento) =>
