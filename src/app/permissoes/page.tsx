@@ -9,7 +9,6 @@
 // ============================================================
 
 import { exigirPermissao } from "@/lib/autorizacao";
-import { sincronizarCatalogoDePermissoes } from "@/lib/permissoes";
 import prisma from "@/lib/prisma";
 
 import MatrizPermissoes from "./MatrizPermissoes";
@@ -27,54 +26,41 @@ function textoDoParametro(valor: string | string[] | undefined): string {
 export default async function PermissoesPage({
   searchParams,
 }: PageProps<"/permissoes">) {
-  // Garante que permissões novas do catálogo já existam no banco
-  // (nascem negadas: ninguém recebe nada aqui).
-  await sincronizarCatalogoDePermissoes();
-
   // Só entra quem pode consultar permissões
   const atual = await exigirPermissao("permissoes.permissao.consultar");
   const podeConceder = atual.permissoes.has("permissoes.permissao.conceder");
 
   const parametros = await searchParams;
   const idPedido = Number(textoDoParametro(parametros.usuario));
+  const idPedidoValido = Number.isInteger(idPedido) && idPedido > 0 ? idPedido : 0;
 
-  // Usuários para a busca do topo
-  const usuarios: UsuarioParaBusca[] = await prisma.usuario.findMany({
-    orderBy: { nome: "asc" },
-    select: { id: true, nome: true, email: true, ativo: true },
-  });
+  // Essas leituras são independentes e podem compartilhar a latência do banco.
+  const [usuarios, catalogo, concessoesSelecionadas] = await Promise.all([
+    prisma.usuario.findMany({
+      orderBy: { nome: "asc" },
+      select: { id: true, nome: true, email: true, ativo: true },
+    }),
+    prisma.permissao.findMany({
+      orderBy: [{ ordem: "asc" }, { codigo: "asc" }],
+      select: {
+        codigo: true,
+        modulo: true,
+        funcionalidade: true,
+        operacao: true,
+        descricao: true,
+      },
+    }),
+    prisma.permissaoUsuario.findMany({
+      where: { usuarioId: idPedidoValido },
+      select: { permissao: { select: { codigo: true } } },
+    }),
+  ]);
 
-  // Usuário escolhido (se o id informado existir de verdade)
-  const usuarioSelecionado =
-    Number.isInteger(idPedido) && idPedido > 0
-      ? await prisma.usuario.findUnique({
-          where: { id: idPedido },
-          select: { id: true, nome: true, email: true },
-        })
-      : null;
-
-  // Códigos concedidos ao usuário escolhido
+  const usuarioSelecionado: UsuarioParaBusca | null =
+    usuarios.find((usuario) => usuario.id === idPedidoValido) ?? null;
   const codigosConcedidos = usuarioSelecionado
-    ? (
-        await prisma.permissaoUsuario.findMany({
-          where: { usuarioId: usuarioSelecionado.id },
-          select: { permissao: { select: { codigo: true } } },
-        })
-      ).map((concessao) => concessao.permissao.codigo)
+    ? concessoesSelecionadas.map((concessao) => concessao.permissao.codigo)
     : [];
-
-  // Monta a matriz a partir do catálogo do banco:
-  // módulo -> funcionalidade -> operação, na ordem definida.
-  const catalogo = await prisma.permissao.findMany({
-    orderBy: [{ ordem: "asc" }, { codigo: "asc" }],
-    select: {
-      codigo: true,
-      modulo: true,
-      funcionalidade: true,
-      operacao: true,
-      descricao: true,
-    },
-  });
 
   const modulos = montarMatriz(catalogo);
 

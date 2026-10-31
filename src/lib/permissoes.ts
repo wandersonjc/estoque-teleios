@@ -10,8 +10,7 @@
 //      "codigo" único e estável (modulo.funcionalidade.operacao).
 //   2. Use esse código no backend (exigirPermissao / verificarPermissao)
 //      e no frontend (usuario.permissoes.has(...) ou MENU_PRINCIPAL).
-//   3. Rode `npm run db:seed` OU apenas abra a tela /permissoes:
-//      o sincronizador grava o item no banco automaticamente.
+//   3. Rode `npm run db:sync-permissoes` para atualizar o banco.
 // Novas permissões nascem NEGADAS: ninguém as recebe até que um
 // administrador marque a caixa e salve.
 // Regras: docs/regras-de-negocio.md (seção 2)
@@ -276,7 +275,7 @@ export const MENU_PRINCIPAL: ItemMenu[] = [
 ];
 
 // ------------------------------------------------------------
-// Sincronizador do catálogo
+// Sincronizador do catálogo, executado pelo seed/comando de manutenção
 // Grava/atualiza no banco (tabela "permissao") o que está no
 // catálogo em código. Usa upsert pelo "codigo", então:
 //   - permissão nova aparece automaticamente (nasce negada);
