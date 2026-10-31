@@ -7,3 +7,11 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+## Largura e responsividade das páginas
+
+- Em páginas e módulos com conteúdo de tela, use um contêiner principal centralizado, fluido e limitado a `max-w-7xl` (80rem/1280px) em telas desktop, com espaçamento lateral adequado.
+- Em tablets e celulares, mantenha o contêiner em `w-full` e reorganize o conteúdo com breakpoints para evitar cortes, sobreposição e rolagem horizontal da página.
+- Tabelas largas devem conter a rolagem horizontal em sua própria área ou oferecer uma apresentação adaptada a telas menores; não deixe que ampliem a página inteira.
+- Mantenha limites menores em formulários, cartões, diálogos e outros componentes compactos quando forem intencionais, sem restringir por acidente o contêiner principal da página.
+- Aplique esta convenção também a novas páginas e módulos, preservando a consistência com as telas existentes.

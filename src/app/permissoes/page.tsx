@@ -65,7 +65,7 @@ export default async function PermissoesPage({
   const modulos = montarMatriz(catalogo);
 
   return (
-    <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-5">
+    <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-5">
       <h1 className="text-lg font-semibold text-zinc-900 sm:text-xl">
         Módulos e Permissões
       </h1>

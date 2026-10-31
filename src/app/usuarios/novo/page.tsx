@@ -16,7 +16,7 @@ export default async function NovoUsuarioPage() {
   await exigirPermissao("usuarios.usuario.criar");
 
   return (
-    <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-5">
+    <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-5">
       <div className="flex items-center justify-between gap-3">
         <h1 className="text-lg font-semibold text-zinc-900 sm:text-xl">Novo usuário</h1>
         <Link href="/usuarios" className="text-base text-zinc-700">

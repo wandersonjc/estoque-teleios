@@ -19,7 +19,7 @@ export default async function LoginPage() {
   if (usuario) redirect("/produtos");
 
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center px-4 py-10">
+    <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col justify-center px-4 py-10">
       <div className="mx-auto w-full max-w-sm rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
         <h1 className="text-lg font-semibold text-zinc-900 sm:text-xl">Entrar</h1>
         <p className="mt-1 text-sm text-zinc-600">
