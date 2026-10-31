@@ -487,7 +487,7 @@ export default async function ProdutosPage({
       )}
 
       {produtos.length > 0 && visualizacao === "cards" && (
-        <ul className="mt-3 flex flex-col gap-3">
+        <ul className="mt-3 grid grid-cols-1 gap-3 xl:grid-cols-2">
           {produtos.map((produto) => {
             // RN-01: o total é sempre calculado; RN-03: data da contagem
             const totalEstoque = calcularTotalEstoque(produto.estoques);

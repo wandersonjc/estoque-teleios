@@ -370,7 +370,7 @@ export default async function PaginaFornecedores({
       )}
 
       {fornecedores.length > 0 && visualizacao === "cards" && (
-        <ul className="mt-3 flex flex-col gap-3">
+        <ul className="mt-3 grid grid-cols-1 gap-3 xl:grid-cols-2">
           {fornecedores.map((fornecedor) => (
             <li
               key={fornecedor.id}
