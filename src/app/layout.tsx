@@ -6,6 +6,7 @@ import "./globals.css";
 
 import { IconeUser } from "@/components/icones";
 import IndicadorCarregando from "@/components/IndicadorCarregando";
+import SeletorTema from "@/components/SeletorTema";
 import { sair } from "./login/actions";
 import { usuarioAtual } from "@/lib/autorizacao";
 import { MENU_PRINCIPAL } from "@/lib/permissoes";
@@ -29,6 +30,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   // O menu é montado a partir das permissões do usuário logado.
   // Sem sessão (tela de login), nenhum link aparece.
   const usuario = await usuarioAtual();
+  const tema = usuario?.tema === "ESCURO" ? "escuro" : "claro";
   const itensDoMenu = usuario
     ? MENU_PRINCIPAL.filter((item) => usuario.permissoes.has(item.permissao))
     : [];
@@ -36,6 +38,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="pt-BR"
+      data-tema={tema}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
@@ -81,6 +84,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                     >
                       Minha conta
                     </Link>
+                    <SeletorTema temaInicial={tema} />
                     <form action={sair}>
                       <button
                         type="submit"

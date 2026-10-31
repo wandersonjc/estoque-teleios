@@ -6,6 +6,12 @@
   color-scheme: light;
 }
 
+:root[data-tema="escuro"] {
+  --background: #09090b;
+  --foreground: #f4f4f5;
+  color-scheme: dark;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -17,6 +23,100 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+:root[data-tema="escuro"] .bg-white {
+  background-color: #18181b;
+}
+
+:root[data-tema="escuro"] .bg-zinc-50,
+:root[data-tema="escuro"] .bg-zinc-100 {
+  background-color: #27272a;
+}
+
+:root[data-tema="escuro"] .bg-zinc-300 {
+  background-color: #52525b;
+}
+
+:root[data-tema="escuro"] .bg-zinc-900.text-white {
+  background-color: #e4e4e7;
+  color: #18181b;
+}
+
+:root[data-tema="escuro"] .bg-zinc-900:not(.text-white) {
+  background-color: #d4d4d8;
+}
+
+:root[data-tema="escuro"] .text-zinc-900,
+:root[data-tema="escuro"] .text-zinc-800 {
+  color: #f4f4f5;
+}
+
+:root[data-tema="escuro"] .text-zinc-700 {
+  color: #d4d4d8;
+}
+
+:root[data-tema="escuro"] .text-zinc-600,
+:root[data-tema="escuro"] .text-zinc-500,
+:root[data-tema="escuro"] .text-zinc-400 {
+  color: #a1a1aa;
+}
+
+:root[data-tema="escuro"] [class~="text-[#002855]"] {
+  color: #bfdbfe;
+}
+
+:root[data-tema="escuro"] [class~="text-[#0061d5]"],
+:root[data-tema="escuro"] [class~="text-[#007bff]"] {
+  color: #93c5fd;
+}
+
+:root[data-tema="escuro"] [class~="text-[#7d8fa9]"] {
+  color: #a1a1aa;
+}
+
+:root[data-tema="escuro"] .bg-white.text-red-700 {
+  color: #f87171;
+}
+
+:root[data-tema="escuro"] .bg-zinc-900.text-white .text-zinc-300 {
+  color: #52525b;
+}
+
+:root[data-tema="escuro"] .border-zinc-100,
+:root[data-tema="escuro"] .border-zinc-200 {
+  border-color: #3f3f46;
+}
+
+:root[data-tema="escuro"] .border-zinc-300 {
+  border-color: #52525b;
+}
+
+:root[data-tema="escuro"] .border-zinc-400 {
+  border-color: #71717a;
+}
+
+:root[data-tema="escuro"] [class~="hover:bg-zinc-50"]:hover,
+:root[data-tema="escuro"] [class~="hover:bg-zinc-100"]:hover {
+  background-color: #3f3f46;
+}
+
+:root[data-tema="escuro"] [class~="hover:bg-zinc-800"]:hover {
+  background-color: #d4d4d8;
+}
+
+:root[data-tema="escuro"] [class~="focus:border-zinc-900"]:focus {
+  border-color: #a1a1aa;
+}
+
+:root[data-tema="escuro"] [class~="bg-zinc-200/70"] {
+  background-color: #3f3f46;
+}
+
+:root[data-tema="escuro"] input::placeholder,
+:root[data-tema="escuro"] textarea::placeholder {
+  color: #71717a;
+  opacity: 1;
 }
 
 /* Barra de carregamento global: o trecho colorido atravessa a tela

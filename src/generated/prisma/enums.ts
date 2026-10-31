@@ -9,6 +9,14 @@
 * 🟢 You can import this file directly.
 */
 
+export const TemaUsuario = {
+  CLARO: 'CLARO',
+  ESCURO: 'ESCURO'
+} as const
+
+export type TemaUsuario = (typeof TemaUsuario)[keyof typeof TemaUsuario]
+
+
 export const OrigemPreco = {
   COTADO: 'COTADO',
   PAGO: 'PAGO'

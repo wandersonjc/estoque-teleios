@@ -41,7 +41,7 @@ const adapter = new PrismaPg({
 // hot reload do Next.js não abrir uma conexão nova a cada alteração.
 // A "versao" força a recriação quando o schema do Prisma muda (ex.:
 // tabela historico_preco), porque o hot reload sozinho reusa o cliente velho.
-const VERSAO_DO_CLIENTE_PRISMA = 2;
+const VERSAO_DO_CLIENTE_PRISMA = 3;
 const globalForPrisma = global as unknown as {
   prisma?: PrismaClient;
   prismaVersao?: number;

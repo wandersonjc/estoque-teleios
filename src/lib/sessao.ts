@@ -29,6 +29,7 @@ export type SessaoAtual = {
     ativo: boolean;
     imagemChave: string | null;
     atualizadoEm: Date;
+    tema: "CLARO" | "ESCURO";
   };
   // Códigos de permissão (ex.: "produtos.produto.criar")
   codigosPermissao: string[];
@@ -78,6 +79,7 @@ export const obterSessao = cache(async (): Promise<SessaoAtual | null> => {
           ativo: true,
           imagemChave: true,
           atualizadoEm: true,
+          tema: true,
           permissoes: {
             select: { permissao: { select: { codigo: true } } },
           },
@@ -106,6 +108,7 @@ export const obterSessao = cache(async (): Promise<SessaoAtual | null> => {
       ativo: sessao.usuario.ativo,
       imagemChave: sessao.usuario.imagemChave,
       atualizadoEm: sessao.usuario.atualizadoEm,
+      tema: sessao.usuario.tema,
     },
     codigosPermissao: sessao.usuario.permissoes.map(
       (concessao) => concessao.permissao.codigo
@@ -125,4 +128,5 @@ export async function encerrarSessao(): Promise<void> {
   }
 
   cookieStore.delete(COOKIE_SESSAO);
+  cookieStore.delete("tema");
 }

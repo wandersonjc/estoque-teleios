@@ -55,6 +55,13 @@ export type StringNullableFilter<$PrismaModel = never> = {
   not?: Prisma.NestedStringNullableFilter<$PrismaModel> | string | null
 }
 
+export type EnumTemaUsuarioFilter<$PrismaModel = never> = {
+  equals?: $Enums.TemaUsuario | Prisma.EnumTemaUsuarioFieldRefInput<$PrismaModel>
+  in?: $Enums.TemaUsuario[] | Prisma.ListEnumTemaUsuarioFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TemaUsuario[] | Prisma.ListEnumTemaUsuarioFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTemaUsuarioFilter<$PrismaModel> | $Enums.TemaUsuario
+}
+
 export type BoolFilter<$PrismaModel = never> = {
   equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
   not?: Prisma.NestedBoolFilter<$PrismaModel> | boolean
@@ -126,6 +133,16 @@ export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedStringNullableFilter<$PrismaModel>
   _max?: Prisma.NestedStringNullableFilter<$PrismaModel>
+}
+
+export type EnumTemaUsuarioWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TemaUsuario | Prisma.EnumTemaUsuarioFieldRefInput<$PrismaModel>
+  in?: $Enums.TemaUsuario[] | Prisma.ListEnumTemaUsuarioFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TemaUsuario[] | Prisma.ListEnumTemaUsuarioFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTemaUsuarioWithAggregatesFilter<$PrismaModel> | $Enums.TemaUsuario
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTemaUsuarioFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTemaUsuarioFilter<$PrismaModel>
 }
 
 export type BoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -389,6 +406,13 @@ export type NestedStringNullableFilter<$PrismaModel = never> = {
   not?: Prisma.NestedStringNullableFilter<$PrismaModel> | string | null
 }
 
+export type NestedEnumTemaUsuarioFilter<$PrismaModel = never> = {
+  equals?: $Enums.TemaUsuario | Prisma.EnumTemaUsuarioFieldRefInput<$PrismaModel>
+  in?: $Enums.TemaUsuario[] | Prisma.ListEnumTemaUsuarioFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TemaUsuario[] | Prisma.ListEnumTemaUsuarioFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTemaUsuarioFilter<$PrismaModel> | $Enums.TemaUsuario
+}
+
 export type NestedBoolFilter<$PrismaModel = never> = {
   equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
   not?: Prisma.NestedBoolFilter<$PrismaModel> | boolean
@@ -475,6 +499,16 @@ export type NestedIntNullableFilter<$PrismaModel = never> = {
   gt?: number | Prisma.IntFieldRefInput<$PrismaModel>
   gte?: number | Prisma.IntFieldRefInput<$PrismaModel>
   not?: Prisma.NestedIntNullableFilter<$PrismaModel> | number | null
+}
+
+export type NestedEnumTemaUsuarioWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TemaUsuario | Prisma.EnumTemaUsuarioFieldRefInput<$PrismaModel>
+  in?: $Enums.TemaUsuario[] | Prisma.ListEnumTemaUsuarioFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TemaUsuario[] | Prisma.ListEnumTemaUsuarioFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTemaUsuarioWithAggregatesFilter<$PrismaModel> | $Enums.TemaUsuario
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTemaUsuarioFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTemaUsuarioFilter<$PrismaModel>
 }
 
 export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {

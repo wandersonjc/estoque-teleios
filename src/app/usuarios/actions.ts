@@ -64,6 +64,26 @@ function lerValores(formData: FormData): ValoresFormularioUsuario {
 // Validação simples de e-mail (não é exaustiva, só evita erros comuns)
 const FORMATO_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+export async function salvarPreferenciaTema(
+  tema: "CLARO" | "ESCURO"
+): Promise<boolean> {
+  const atual = await usuarioAtual();
+  if (!atual || (tema !== "CLARO" && tema !== "ESCURO")) return false;
+
+  try {
+    await prisma.usuario.update({
+      where: { id: atual.id },
+      data: { tema },
+    });
+  } catch (erro) {
+    console.error("Erro ao salvar preferência de tema:", erro);
+    return false;
+  }
+
+  revalidatePath("/", "layout");
+  return true;
+}
+
 type UsuarioValidado = {
   nome: string;
   email: string;

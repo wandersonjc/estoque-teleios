@@ -19,6 +19,7 @@ export type UsuarioSessao = {
   email: string;
   imagemChave: string | null;
   atualizadoEm: Date;
+  tema: "CLARO" | "ESCURO";
   // Códigos de permissão concedidos a este usuário
   permissoes: Set<string>;
 };
@@ -41,6 +42,7 @@ export const usuarioAtual = cache(async (): Promise<UsuarioSessao | null> => {
     email: sessao.usuario.email,
     imagemChave: sessao.usuario.imagemChave,
     atualizadoEm: sessao.usuario.atualizadoEm,
+    tema: sessao.usuario.tema,
     permissoes: new Set(sessao.codigosPermissao),
   };
 });
