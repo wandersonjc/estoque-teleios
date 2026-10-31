@@ -7,6 +7,7 @@
 // Tipo de filtro do Prisma (o client.ts não reexporta os tipos de entrada,
 // então importamos do arquivo de modelos gerado)
 import type { ProdutoWhereInput } from "@/generated/prisma/models";
+import Image from "next/image";
 import BotaoAcao from "@/components/BotaoAcao";
 import {
   IconeBarras,
@@ -239,15 +240,19 @@ export default async function ProdutosPage({
               >
                 <div className="flex gap-4 sm:gap-6">
                   {/* Coluna da Esquerda: Apenas Imagem */}
-                  <div className="h-24 w-24 sm:h-28 sm:w-28 shrink-0 overflow-hidden rounded-2xl bg-zinc-100">
-                    <img
-                      src={`https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=${encodeURIComponent(
-                        "clean minimalist product packaging white box " +
-                          produto.nome
-                      )}&image_size=square`}
-                      alt={produto.nome}
-                      className="h-full w-full object-cover"
-                    />
+                  <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-zinc-100 sm:h-28 sm:w-28">
+                    {produto.imagemChave ? (
+                      <Image
+                        src={`/api/imagens/produtos/${produto.id}`}
+                        alt={produto.nome}
+                        width={112}
+                        height={112}
+                        unoptimized
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <IconeCaixa className="h-10 w-10 text-zinc-400" />
+                    )}
                   </div>
 
                   {/* Coluna da Direita: Todo o conteúdo (Título, Status, Grid, Ações) */}

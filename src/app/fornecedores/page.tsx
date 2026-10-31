@@ -8,6 +8,7 @@ import { IconeCheck, IconeLapis } from "@/components/icones";
 import { exigirPermissao } from "@/lib/autorizacao";
 import prisma from "@/lib/prisma";
 import type { FornecedorWhereInput } from "@/generated/prisma/models";
+import Image from "next/image";
 import Link from "next/link";
 
 import { desativarFornecedor, reativarFornecedor } from "./actions";
@@ -114,13 +115,29 @@ export default async function PaginaFornecedores({
             className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm"
           >
             <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0 flex-1">
-                <h3 className="truncate text-base font-bold text-[#002855] sm:text-lg">
-                  {fornecedor.nome}
-                </h3>
-                <p className="mt-1 text-sm text-zinc-500">
-                  {fornecedor.contato || "Sem contato registrado"}
-                </p>
+              <div className="flex min-w-0 flex-1 items-start gap-3">
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-zinc-100 text-xl font-semibold text-zinc-500">
+                  {fornecedor.imagemChave ? (
+                    <Image
+                      src={`/api/imagens/fornecedores/${fornecedor.id}`}
+                      alt={fornecedor.nome}
+                      width={64}
+                      height={64}
+                      unoptimized
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    fornecedor.nome.slice(0, 1).toUpperCase()
+                  )}
+                </div>
+
+                <div className="min-w-0 flex-1">
+                  <h3 className="truncate text-base font-bold text-[#002855] sm:text-lg">
+                    {fornecedor.nome}
+                  </h3>
+                  <p className="mt-1 text-sm text-zinc-500">
+                    {fornecedor.contato || "Sem contato registrado"}
+                  </p>
 
                 <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-xs sm:grid-cols-3">
                   <div>
@@ -151,9 +168,10 @@ export default async function PaginaFornecedores({
                   </div>
                 </div>
 
-                <p className="mt-3 text-sm text-zinc-600">
-                  {fornecedor._count.produtos} produto(s) vinculado(s)
-                </p>
+                  <p className="mt-3 text-sm text-zinc-600">
+                    {fornecedor._count.produtos} produto(s) vinculado(s)
+                  </p>
+                </div>
               </div>
 
               <div className="flex shrink-0 flex-col items-end gap-2">

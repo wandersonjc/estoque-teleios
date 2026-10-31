@@ -44,6 +44,7 @@ export type FornecedorMinAggregateOutputType = {
   id: number | null
   nome: string | null
   contato: string | null
+  imagemChave: string | null
   prazoEntregaDias: number | null
   valorMinimoPedido: runtime.Decimal | null
   frete: runtime.Decimal | null
@@ -56,6 +57,7 @@ export type FornecedorMaxAggregateOutputType = {
   id: number | null
   nome: string | null
   contato: string | null
+  imagemChave: string | null
   prazoEntregaDias: number | null
   valorMinimoPedido: runtime.Decimal | null
   frete: runtime.Decimal | null
@@ -68,6 +70,7 @@ export type FornecedorCountAggregateOutputType = {
   id: number
   nome: number
   contato: number
+  imagemChave: number
   prazoEntregaDias: number
   valorMinimoPedido: number
   frete: number
@@ -96,6 +99,7 @@ export type FornecedorMinAggregateInputType = {
   id?: true
   nome?: true
   contato?: true
+  imagemChave?: true
   prazoEntregaDias?: true
   valorMinimoPedido?: true
   frete?: true
@@ -108,6 +112,7 @@ export type FornecedorMaxAggregateInputType = {
   id?: true
   nome?: true
   contato?: true
+  imagemChave?: true
   prazoEntregaDias?: true
   valorMinimoPedido?: true
   frete?: true
@@ -120,6 +125,7 @@ export type FornecedorCountAggregateInputType = {
   id?: true
   nome?: true
   contato?: true
+  imagemChave?: true
   prazoEntregaDias?: true
   valorMinimoPedido?: true
   frete?: true
@@ -219,6 +225,7 @@ export type FornecedorGroupByOutputType = {
   id: number
   nome: string
   contato: string | null
+  imagemChave: string | null
   prazoEntregaDias: number | null
   valorMinimoPedido: runtime.Decimal | null
   frete: runtime.Decimal | null
@@ -254,6 +261,7 @@ export type FornecedorWhereInput = {
   id?: Prisma.IntFilter<"Fornecedor"> | number
   nome?: Prisma.StringFilter<"Fornecedor"> | string
   contato?: Prisma.StringNullableFilter<"Fornecedor"> | string | null
+  imagemChave?: Prisma.StringNullableFilter<"Fornecedor"> | string | null
   prazoEntregaDias?: Prisma.IntNullableFilter<"Fornecedor"> | number | null
   valorMinimoPedido?: Prisma.DecimalNullableFilter<"Fornecedor"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   frete?: Prisma.DecimalNullableFilter<"Fornecedor"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -268,6 +276,7 @@ export type FornecedorOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   nome?: Prisma.SortOrder
   contato?: Prisma.SortOrderInput | Prisma.SortOrder
+  imagemChave?: Prisma.SortOrderInput | Prisma.SortOrder
   prazoEntregaDias?: Prisma.SortOrderInput | Prisma.SortOrder
   valorMinimoPedido?: Prisma.SortOrderInput | Prisma.SortOrder
   frete?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -285,6 +294,7 @@ export type FornecedorWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.FornecedorWhereInput | Prisma.FornecedorWhereInput[]
   nome?: Prisma.StringFilter<"Fornecedor"> | string
   contato?: Prisma.StringNullableFilter<"Fornecedor"> | string | null
+  imagemChave?: Prisma.StringNullableFilter<"Fornecedor"> | string | null
   prazoEntregaDias?: Prisma.IntNullableFilter<"Fornecedor"> | number | null
   valorMinimoPedido?: Prisma.DecimalNullableFilter<"Fornecedor"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   frete?: Prisma.DecimalNullableFilter<"Fornecedor"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -299,6 +309,7 @@ export type FornecedorOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   nome?: Prisma.SortOrder
   contato?: Prisma.SortOrderInput | Prisma.SortOrder
+  imagemChave?: Prisma.SortOrderInput | Prisma.SortOrder
   prazoEntregaDias?: Prisma.SortOrderInput | Prisma.SortOrder
   valorMinimoPedido?: Prisma.SortOrderInput | Prisma.SortOrder
   frete?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -319,6 +330,7 @@ export type FornecedorScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"Fornecedor"> | number
   nome?: Prisma.StringWithAggregatesFilter<"Fornecedor"> | string
   contato?: Prisma.StringNullableWithAggregatesFilter<"Fornecedor"> | string | null
+  imagemChave?: Prisma.StringNullableWithAggregatesFilter<"Fornecedor"> | string | null
   prazoEntregaDias?: Prisma.IntNullableWithAggregatesFilter<"Fornecedor"> | number | null
   valorMinimoPedido?: Prisma.DecimalNullableWithAggregatesFilter<"Fornecedor"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   frete?: Prisma.DecimalNullableWithAggregatesFilter<"Fornecedor"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -330,6 +342,7 @@ export type FornecedorScalarWhereWithAggregatesInput = {
 export type FornecedorCreateInput = {
   nome: string
   contato?: string | null
+  imagemChave?: string | null
   prazoEntregaDias?: number | null
   valorMinimoPedido?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   frete?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -344,6 +357,7 @@ export type FornecedorUncheckedCreateInput = {
   id?: number
   nome: string
   contato?: string | null
+  imagemChave?: string | null
   prazoEntregaDias?: number | null
   valorMinimoPedido?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   frete?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -357,6 +371,7 @@ export type FornecedorUncheckedCreateInput = {
 export type FornecedorUpdateInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   contato?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   valorMinimoPedido?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   frete?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -371,6 +386,7 @@ export type FornecedorUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   contato?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   valorMinimoPedido?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   frete?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -385,6 +401,7 @@ export type FornecedorCreateManyInput = {
   id?: number
   nome: string
   contato?: string | null
+  imagemChave?: string | null
   prazoEntregaDias?: number | null
   valorMinimoPedido?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   frete?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -396,6 +413,7 @@ export type FornecedorCreateManyInput = {
 export type FornecedorUpdateManyMutationInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   contato?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   valorMinimoPedido?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   frete?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -408,6 +426,7 @@ export type FornecedorUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   contato?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   valorMinimoPedido?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   frete?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -420,6 +439,7 @@ export type FornecedorCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   nome?: Prisma.SortOrder
   contato?: Prisma.SortOrder
+  imagemChave?: Prisma.SortOrder
   prazoEntregaDias?: Prisma.SortOrder
   valorMinimoPedido?: Prisma.SortOrder
   frete?: Prisma.SortOrder
@@ -439,6 +459,7 @@ export type FornecedorMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   nome?: Prisma.SortOrder
   contato?: Prisma.SortOrder
+  imagemChave?: Prisma.SortOrder
   prazoEntregaDias?: Prisma.SortOrder
   valorMinimoPedido?: Prisma.SortOrder
   frete?: Prisma.SortOrder
@@ -451,6 +472,7 @@ export type FornecedorMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   nome?: Prisma.SortOrder
   contato?: Prisma.SortOrder
+  imagemChave?: Prisma.SortOrder
   prazoEntregaDias?: Prisma.SortOrder
   valorMinimoPedido?: Prisma.SortOrder
   frete?: Prisma.SortOrder
@@ -518,6 +540,7 @@ export type FornecedorUpdateOneRequiredWithoutHistoricoPrecosNestedInput = {
 export type FornecedorCreateWithoutProdutosInput = {
   nome: string
   contato?: string | null
+  imagemChave?: string | null
   prazoEntregaDias?: number | null
   valorMinimoPedido?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   frete?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -531,6 +554,7 @@ export type FornecedorUncheckedCreateWithoutProdutosInput = {
   id?: number
   nome: string
   contato?: string | null
+  imagemChave?: string | null
   prazoEntregaDias?: number | null
   valorMinimoPedido?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   frete?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -559,6 +583,7 @@ export type FornecedorUpdateToOneWithWhereWithoutProdutosInput = {
 export type FornecedorUpdateWithoutProdutosInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   contato?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   valorMinimoPedido?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   frete?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -572,6 +597,7 @@ export type FornecedorUncheckedUpdateWithoutProdutosInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   contato?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   valorMinimoPedido?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   frete?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -584,6 +610,7 @@ export type FornecedorUncheckedUpdateWithoutProdutosInput = {
 export type FornecedorCreateWithoutHistoricoPrecosInput = {
   nome: string
   contato?: string | null
+  imagemChave?: string | null
   prazoEntregaDias?: number | null
   valorMinimoPedido?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   frete?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -597,6 +624,7 @@ export type FornecedorUncheckedCreateWithoutHistoricoPrecosInput = {
   id?: number
   nome: string
   contato?: string | null
+  imagemChave?: string | null
   prazoEntregaDias?: number | null
   valorMinimoPedido?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   frete?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -625,6 +653,7 @@ export type FornecedorUpdateToOneWithWhereWithoutHistoricoPrecosInput = {
 export type FornecedorUpdateWithoutHistoricoPrecosInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   contato?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   valorMinimoPedido?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   frete?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -638,6 +667,7 @@ export type FornecedorUncheckedUpdateWithoutHistoricoPrecosInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   contato?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   valorMinimoPedido?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   frete?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -691,6 +721,7 @@ export type FornecedorSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   id?: boolean
   nome?: boolean
   contato?: boolean
+  imagemChave?: boolean
   prazoEntregaDias?: boolean
   valorMinimoPedido?: boolean
   frete?: boolean
@@ -706,6 +737,7 @@ export type FornecedorSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   id?: boolean
   nome?: boolean
   contato?: boolean
+  imagemChave?: boolean
   prazoEntregaDias?: boolean
   valorMinimoPedido?: boolean
   frete?: boolean
@@ -718,6 +750,7 @@ export type FornecedorSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   id?: boolean
   nome?: boolean
   contato?: boolean
+  imagemChave?: boolean
   prazoEntregaDias?: boolean
   valorMinimoPedido?: boolean
   frete?: boolean
@@ -730,6 +763,7 @@ export type FornecedorSelectScalar = {
   id?: boolean
   nome?: boolean
   contato?: boolean
+  imagemChave?: boolean
   prazoEntregaDias?: boolean
   valorMinimoPedido?: boolean
   frete?: boolean
@@ -738,7 +772,7 @@ export type FornecedorSelectScalar = {
   atualizadoEm?: boolean
 }
 
-export type FornecedorOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nome" | "contato" | "prazoEntregaDias" | "valorMinimoPedido" | "frete" | "ativo" | "criadoEm" | "atualizadoEm", ExtArgs["result"]["fornecedor"]>
+export type FornecedorOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nome" | "contato" | "imagemChave" | "prazoEntregaDias" | "valorMinimoPedido" | "frete" | "ativo" | "criadoEm" | "atualizadoEm", ExtArgs["result"]["fornecedor"]>
 export type FornecedorInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   produtos?: boolean | Prisma.Fornecedor$produtosArgs<ExtArgs>
   historicoPrecos?: boolean | Prisma.Fornecedor$historicoPrecosArgs<ExtArgs>
@@ -757,6 +791,7 @@ export type $FornecedorPayload<ExtArgs extends runtime.Types.Extensions.Internal
     id: number
     nome: string
     contato: string | null
+    imagemChave: string | null
     prazoEntregaDias: number | null
     valorMinimoPedido: runtime.Decimal | null
     frete: runtime.Decimal | null
@@ -1191,6 +1226,7 @@ export interface FornecedorFieldRefs {
   readonly id: Prisma.FieldRef<"Fornecedor", 'Int'>
   readonly nome: Prisma.FieldRef<"Fornecedor", 'String'>
   readonly contato: Prisma.FieldRef<"Fornecedor", 'String'>
+  readonly imagemChave: Prisma.FieldRef<"Fornecedor", 'String'>
   readonly prazoEntregaDias: Prisma.FieldRef<"Fornecedor", 'Int'>
   readonly valorMinimoPedido: Prisma.FieldRef<"Fornecedor", 'Decimal'>
   readonly frete: Prisma.FieldRef<"Fornecedor", 'Decimal'>

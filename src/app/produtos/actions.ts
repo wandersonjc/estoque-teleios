@@ -15,6 +15,11 @@ import { redirect } from "next/navigation";
 
 import { Prisma } from "@/generated/prisma/client";
 import { MENSAGEM_SEM_PERMISSAO, verificarPermissao } from "@/lib/autorizacao";
+import {
+  armazenarImagem,
+  excluirImagemSemFalhar,
+  prepararImagem,
+} from "@/lib/armazenamento-imagens";
 import { registrarLog } from "@/lib/log";
 import prisma from "@/lib/prisma";
 
@@ -176,6 +181,21 @@ export async function criarProduto(
   // Devolve os erros mantendo o que foi digitado
   if (!validacao.ok) return validacao.estado;
 
+  const imagemPreparada = await prepararImagem(formData.get("imagem"));
+  if (!imagemPreparada.ok) {
+    return { erroGeral: imagemPreparada.erro, valores };
+  }
+
+  let imagemChave: string | null = null;
+  if (imagemPreparada.imagem) {
+    try {
+      imagemChave = await armazenarImagem(imagemPreparada.imagem, "produtos");
+    } catch (erro) {
+      console.error("Erro ao enviar imagem do produto:", erro);
+      return { erroGeral: "Não foi possível enviar a imagem. Tente novamente.", valores };
+    }
+  }
+
   try {
     await prisma.$transaction(async (tx) => {
       const produto = await tx.produto.create({
@@ -185,6 +205,7 @@ export async function criarProduto(
           codigoBarras: validacao.dados.codigoBarras,
           codigoErp: validacao.dados.codigoErp,
           estoqueMinimo: validacao.dados.estoqueMinimo,
+          imagemChave,
         },
       });
 
@@ -205,6 +226,7 @@ export async function criarProduto(
       );
     });
   } catch (erro) {
+    await excluirImagemSemFalhar(imagemChave);
     return { erroGeral: tratarErroBanco(erro), valores };
   }
 
@@ -234,6 +256,11 @@ export async function atualizarProduto(
   const validacao = validarProduto(valores);
   if (!validacao.ok) return validacao.estado;
 
+  const imagemPreparada = await prepararImagem(formData.get("imagem"));
+  if (!imagemPreparada.ok) {
+    return { erroGeral: imagemPreparada.erro, valores };
+  }
+
   const antes = await prisma.produto.findUnique({
     where: { id },
     select: {
@@ -242,10 +269,25 @@ export async function atualizarProduto(
       estoqueMinimo: true,
       codigoBarras: true,
       codigoErp: true,
+      imagemChave: true,
     },
   });
 
   if (!antes) return { erroGeral: "Produto não encontrado.", valores };
+
+  let novaImagemChave: string | null = null;
+  if (imagemPreparada.imagem) {
+    try {
+      novaImagemChave = await armazenarImagem(
+        imagemPreparada.imagem,
+        "produtos"
+      );
+    } catch (erro) {
+      console.error("Erro ao enviar imagem do produto:", erro);
+      return { erroGeral: "Não foi possível enviar a imagem. Tente novamente.", valores };
+    }
+  }
+  const removerImagem = formData.get("removerImagem") === "1";
 
   try {
     await prisma.$transaction(async (tx) => {
@@ -257,6 +299,8 @@ export async function atualizarProduto(
           codigoBarras: validacao.dados.codigoBarras,
           codigoErp: validacao.dados.codigoErp,
           estoqueMinimo: validacao.dados.estoqueMinimo,
+          imagemChave:
+            novaImagemChave ?? (removerImagem ? null : antes.imagemChave),
         },
       });
 
@@ -288,7 +332,12 @@ export async function atualizarProduto(
       );
     });
   } catch (erro) {
+    await excluirImagemSemFalhar(novaImagemChave);
     return { erroGeral: tratarErroBanco(erro), valores };
+  }
+
+  if (novaImagemChave || removerImagem) {
+    await excluirImagemSemFalhar(antes.imagemChave);
   }
 
   revalidatePath("/produtos");

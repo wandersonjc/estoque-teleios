@@ -42,6 +42,7 @@ export type ProdutoMinAggregateOutputType = {
   unidade: string | null
   codigoBarras: string | null
   codigoErp: string | null
+  imagemChave: string | null
   estoqueMinimo: runtime.Decimal | null
   ativo: boolean | null
   criadoEm: Date | null
@@ -54,6 +55,7 @@ export type ProdutoMaxAggregateOutputType = {
   unidade: string | null
   codigoBarras: string | null
   codigoErp: string | null
+  imagemChave: string | null
   estoqueMinimo: runtime.Decimal | null
   ativo: boolean | null
   criadoEm: Date | null
@@ -66,6 +68,7 @@ export type ProdutoCountAggregateOutputType = {
   unidade: number
   codigoBarras: number
   codigoErp: number
+  imagemChave: number
   estoqueMinimo: number
   ativo: number
   criadoEm: number
@@ -90,6 +93,7 @@ export type ProdutoMinAggregateInputType = {
   unidade?: true
   codigoBarras?: true
   codigoErp?: true
+  imagemChave?: true
   estoqueMinimo?: true
   ativo?: true
   criadoEm?: true
@@ -102,6 +106,7 @@ export type ProdutoMaxAggregateInputType = {
   unidade?: true
   codigoBarras?: true
   codigoErp?: true
+  imagemChave?: true
   estoqueMinimo?: true
   ativo?: true
   criadoEm?: true
@@ -114,6 +119,7 @@ export type ProdutoCountAggregateInputType = {
   unidade?: true
   codigoBarras?: true
   codigoErp?: true
+  imagemChave?: true
   estoqueMinimo?: true
   ativo?: true
   criadoEm?: true
@@ -213,6 +219,7 @@ export type ProdutoGroupByOutputType = {
   unidade: string
   codigoBarras: string | null
   codigoErp: string | null
+  imagemChave: string | null
   estoqueMinimo: runtime.Decimal
   ativo: boolean
   criadoEm: Date
@@ -248,6 +255,7 @@ export type ProdutoWhereInput = {
   unidade?: Prisma.StringFilter<"Produto"> | string
   codigoBarras?: Prisma.StringNullableFilter<"Produto"> | string | null
   codigoErp?: Prisma.StringNullableFilter<"Produto"> | string | null
+  imagemChave?: Prisma.StringNullableFilter<"Produto"> | string | null
   estoqueMinimo?: Prisma.DecimalFilter<"Produto"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   ativo?: Prisma.BoolFilter<"Produto"> | boolean
   criadoEm?: Prisma.DateTimeFilter<"Produto"> | Date | string
@@ -264,6 +272,7 @@ export type ProdutoOrderByWithRelationInput = {
   unidade?: Prisma.SortOrder
   codigoBarras?: Prisma.SortOrderInput | Prisma.SortOrder
   codigoErp?: Prisma.SortOrderInput | Prisma.SortOrder
+  imagemChave?: Prisma.SortOrderInput | Prisma.SortOrder
   estoqueMinimo?: Prisma.SortOrder
   ativo?: Prisma.SortOrder
   criadoEm?: Prisma.SortOrder
@@ -283,6 +292,7 @@ export type ProdutoWhereUniqueInput = Prisma.AtLeast<{
   nome?: Prisma.StringFilter<"Produto"> | string
   unidade?: Prisma.StringFilter<"Produto"> | string
   codigoBarras?: Prisma.StringNullableFilter<"Produto"> | string | null
+  imagemChave?: Prisma.StringNullableFilter<"Produto"> | string | null
   estoqueMinimo?: Prisma.DecimalFilter<"Produto"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   ativo?: Prisma.BoolFilter<"Produto"> | boolean
   criadoEm?: Prisma.DateTimeFilter<"Produto"> | Date | string
@@ -299,6 +309,7 @@ export type ProdutoOrderByWithAggregationInput = {
   unidade?: Prisma.SortOrder
   codigoBarras?: Prisma.SortOrderInput | Prisma.SortOrder
   codigoErp?: Prisma.SortOrderInput | Prisma.SortOrder
+  imagemChave?: Prisma.SortOrderInput | Prisma.SortOrder
   estoqueMinimo?: Prisma.SortOrder
   ativo?: Prisma.SortOrder
   criadoEm?: Prisma.SortOrder
@@ -319,6 +330,7 @@ export type ProdutoScalarWhereWithAggregatesInput = {
   unidade?: Prisma.StringWithAggregatesFilter<"Produto"> | string
   codigoBarras?: Prisma.StringNullableWithAggregatesFilter<"Produto"> | string | null
   codigoErp?: Prisma.StringNullableWithAggregatesFilter<"Produto"> | string | null
+  imagemChave?: Prisma.StringNullableWithAggregatesFilter<"Produto"> | string | null
   estoqueMinimo?: Prisma.DecimalWithAggregatesFilter<"Produto"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   ativo?: Prisma.BoolWithAggregatesFilter<"Produto"> | boolean
   criadoEm?: Prisma.DateTimeWithAggregatesFilter<"Produto"> | Date | string
@@ -330,6 +342,7 @@ export type ProdutoCreateInput = {
   unidade: string
   codigoBarras?: string | null
   codigoErp?: string | null
+  imagemChave?: string | null
   estoqueMinimo?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ativo?: boolean
   criadoEm?: Date | string
@@ -346,6 +359,7 @@ export type ProdutoUncheckedCreateInput = {
   unidade: string
   codigoBarras?: string | null
   codigoErp?: string | null
+  imagemChave?: string | null
   estoqueMinimo?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ativo?: boolean
   criadoEm?: Date | string
@@ -361,6 +375,7 @@ export type ProdutoUpdateInput = {
   unidade?: Prisma.StringFieldUpdateOperationsInput | string
   codigoBarras?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   codigoErp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   estoqueMinimo?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -377,6 +392,7 @@ export type ProdutoUncheckedUpdateInput = {
   unidade?: Prisma.StringFieldUpdateOperationsInput | string
   codigoBarras?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   codigoErp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   estoqueMinimo?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -393,6 +409,7 @@ export type ProdutoCreateManyInput = {
   unidade: string
   codigoBarras?: string | null
   codigoErp?: string | null
+  imagemChave?: string | null
   estoqueMinimo?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ativo?: boolean
   criadoEm?: Date | string
@@ -404,6 +421,7 @@ export type ProdutoUpdateManyMutationInput = {
   unidade?: Prisma.StringFieldUpdateOperationsInput | string
   codigoBarras?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   codigoErp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   estoqueMinimo?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -416,6 +434,7 @@ export type ProdutoUncheckedUpdateManyInput = {
   unidade?: Prisma.StringFieldUpdateOperationsInput | string
   codigoBarras?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   codigoErp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   estoqueMinimo?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -428,6 +447,7 @@ export type ProdutoCountOrderByAggregateInput = {
   unidade?: Prisma.SortOrder
   codigoBarras?: Prisma.SortOrder
   codigoErp?: Prisma.SortOrder
+  imagemChave?: Prisma.SortOrder
   estoqueMinimo?: Prisma.SortOrder
   ativo?: Prisma.SortOrder
   criadoEm?: Prisma.SortOrder
@@ -445,6 +465,7 @@ export type ProdutoMaxOrderByAggregateInput = {
   unidade?: Prisma.SortOrder
   codigoBarras?: Prisma.SortOrder
   codigoErp?: Prisma.SortOrder
+  imagemChave?: Prisma.SortOrder
   estoqueMinimo?: Prisma.SortOrder
   ativo?: Prisma.SortOrder
   criadoEm?: Prisma.SortOrder
@@ -457,6 +478,7 @@ export type ProdutoMinOrderByAggregateInput = {
   unidade?: Prisma.SortOrder
   codigoBarras?: Prisma.SortOrder
   codigoErp?: Prisma.SortOrder
+  imagemChave?: Prisma.SortOrder
   estoqueMinimo?: Prisma.SortOrder
   ativo?: Prisma.SortOrder
   criadoEm?: Prisma.SortOrder
@@ -471,10 +493,6 @@ export type ProdutoSumOrderByAggregateInput = {
 export type ProdutoScalarRelationFilter = {
   is?: Prisma.ProdutoWhereInput
   isNot?: Prisma.ProdutoWhereInput
-}
-
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
 }
 
 export type DecimalFieldUpdateOperationsInput = {
@@ -546,6 +564,7 @@ export type ProdutoCreateWithoutFornecedoresInput = {
   unidade: string
   codigoBarras?: string | null
   codigoErp?: string | null
+  imagemChave?: string | null
   estoqueMinimo?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ativo?: boolean
   criadoEm?: Date | string
@@ -561,6 +580,7 @@ export type ProdutoUncheckedCreateWithoutFornecedoresInput = {
   unidade: string
   codigoBarras?: string | null
   codigoErp?: string | null
+  imagemChave?: string | null
   estoqueMinimo?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ativo?: boolean
   criadoEm?: Date | string
@@ -591,6 +611,7 @@ export type ProdutoUpdateWithoutFornecedoresInput = {
   unidade?: Prisma.StringFieldUpdateOperationsInput | string
   codigoBarras?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   codigoErp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   estoqueMinimo?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -606,6 +627,7 @@ export type ProdutoUncheckedUpdateWithoutFornecedoresInput = {
   unidade?: Prisma.StringFieldUpdateOperationsInput | string
   codigoBarras?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   codigoErp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   estoqueMinimo?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -620,6 +642,7 @@ export type ProdutoCreateWithoutHistoricoPrecosInput = {
   unidade: string
   codigoBarras?: string | null
   codigoErp?: string | null
+  imagemChave?: string | null
   estoqueMinimo?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ativo?: boolean
   criadoEm?: Date | string
@@ -635,6 +658,7 @@ export type ProdutoUncheckedCreateWithoutHistoricoPrecosInput = {
   unidade: string
   codigoBarras?: string | null
   codigoErp?: string | null
+  imagemChave?: string | null
   estoqueMinimo?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ativo?: boolean
   criadoEm?: Date | string
@@ -665,6 +689,7 @@ export type ProdutoUpdateWithoutHistoricoPrecosInput = {
   unidade?: Prisma.StringFieldUpdateOperationsInput | string
   codigoBarras?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   codigoErp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   estoqueMinimo?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -680,6 +705,7 @@ export type ProdutoUncheckedUpdateWithoutHistoricoPrecosInput = {
   unidade?: Prisma.StringFieldUpdateOperationsInput | string
   codigoBarras?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   codigoErp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   estoqueMinimo?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -694,6 +720,7 @@ export type ProdutoCreateWithoutEstoquesInput = {
   unidade: string
   codigoBarras?: string | null
   codigoErp?: string | null
+  imagemChave?: string | null
   estoqueMinimo?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ativo?: boolean
   criadoEm?: Date | string
@@ -709,6 +736,7 @@ export type ProdutoUncheckedCreateWithoutEstoquesInput = {
   unidade: string
   codigoBarras?: string | null
   codigoErp?: string | null
+  imagemChave?: string | null
   estoqueMinimo?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ativo?: boolean
   criadoEm?: Date | string
@@ -739,6 +767,7 @@ export type ProdutoUpdateWithoutEstoquesInput = {
   unidade?: Prisma.StringFieldUpdateOperationsInput | string
   codigoBarras?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   codigoErp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   estoqueMinimo?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -754,6 +783,7 @@ export type ProdutoUncheckedUpdateWithoutEstoquesInput = {
   unidade?: Prisma.StringFieldUpdateOperationsInput | string
   codigoBarras?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   codigoErp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   estoqueMinimo?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -768,6 +798,7 @@ export type ProdutoCreateWithoutMovimentosInput = {
   unidade: string
   codigoBarras?: string | null
   codigoErp?: string | null
+  imagemChave?: string | null
   estoqueMinimo?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ativo?: boolean
   criadoEm?: Date | string
@@ -783,6 +814,7 @@ export type ProdutoUncheckedCreateWithoutMovimentosInput = {
   unidade: string
   codigoBarras?: string | null
   codigoErp?: string | null
+  imagemChave?: string | null
   estoqueMinimo?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ativo?: boolean
   criadoEm?: Date | string
@@ -813,6 +845,7 @@ export type ProdutoUpdateWithoutMovimentosInput = {
   unidade?: Prisma.StringFieldUpdateOperationsInput | string
   codigoBarras?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   codigoErp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   estoqueMinimo?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -828,6 +861,7 @@ export type ProdutoUncheckedUpdateWithoutMovimentosInput = {
   unidade?: Prisma.StringFieldUpdateOperationsInput | string
   codigoBarras?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   codigoErp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   estoqueMinimo?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -901,6 +935,7 @@ export type ProdutoSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   unidade?: boolean
   codigoBarras?: boolean
   codigoErp?: boolean
+  imagemChave?: boolean
   estoqueMinimo?: boolean
   ativo?: boolean
   criadoEm?: boolean
@@ -918,6 +953,7 @@ export type ProdutoSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   unidade?: boolean
   codigoBarras?: boolean
   codigoErp?: boolean
+  imagemChave?: boolean
   estoqueMinimo?: boolean
   ativo?: boolean
   criadoEm?: boolean
@@ -930,6 +966,7 @@ export type ProdutoSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   unidade?: boolean
   codigoBarras?: boolean
   codigoErp?: boolean
+  imagemChave?: boolean
   estoqueMinimo?: boolean
   ativo?: boolean
   criadoEm?: boolean
@@ -942,13 +979,14 @@ export type ProdutoSelectScalar = {
   unidade?: boolean
   codigoBarras?: boolean
   codigoErp?: boolean
+  imagemChave?: boolean
   estoqueMinimo?: boolean
   ativo?: boolean
   criadoEm?: boolean
   atualizadoEm?: boolean
 }
 
-export type ProdutoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nome" | "unidade" | "codigoBarras" | "codigoErp" | "estoqueMinimo" | "ativo" | "criadoEm" | "atualizadoEm", ExtArgs["result"]["produto"]>
+export type ProdutoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nome" | "unidade" | "codigoBarras" | "codigoErp" | "imagemChave" | "estoqueMinimo" | "ativo" | "criadoEm" | "atualizadoEm", ExtArgs["result"]["produto"]>
 export type ProdutoInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   fornecedores?: boolean | Prisma.Produto$fornecedoresArgs<ExtArgs>
   historicoPrecos?: boolean | Prisma.Produto$historicoPrecosArgs<ExtArgs>
@@ -973,6 +1011,7 @@ export type $ProdutoPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     unidade: string
     codigoBarras: string | null
     codigoErp: string | null
+    imagemChave: string | null
     estoqueMinimo: runtime.Decimal
     ativo: boolean
     criadoEm: Date
@@ -1409,6 +1448,7 @@ export interface ProdutoFieldRefs {
   readonly unidade: Prisma.FieldRef<"Produto", 'String'>
   readonly codigoBarras: Prisma.FieldRef<"Produto", 'String'>
   readonly codigoErp: Prisma.FieldRef<"Produto", 'String'>
+  readonly imagemChave: Prisma.FieldRef<"Produto", 'String'>
   readonly estoqueMinimo: Prisma.FieldRef<"Produto", 'Decimal'>
   readonly ativo: Prisma.FieldRef<"Produto", 'Boolean'>
   readonly criadoEm: Prisma.FieldRef<"Produto", 'DateTime'>

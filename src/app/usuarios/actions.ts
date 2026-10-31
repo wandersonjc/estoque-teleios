@@ -16,6 +16,11 @@ import { redirect } from "next/navigation";
 
 import { Prisma } from "@/generated/prisma/client";
 import { MENSAGEM_SEM_PERMISSAO, verificarPermissao } from "@/lib/autorizacao";
+import {
+  armazenarImagem,
+  excluirImagemSemFalhar,
+  prepararImagem,
+} from "@/lib/armazenamento-imagens";
 import { registrarLog } from "@/lib/log";
 import prisma from "@/lib/prisma";
 import { gerarHashSenha } from "@/lib/senha";
@@ -141,6 +146,21 @@ export async function criarUsuario(
 
   if (!validacao.ok) return validacao.estado;
 
+  const imagemPreparada = await prepararImagem(formData.get("imagem"));
+  if (!imagemPreparada.ok) {
+    return { erroGeral: imagemPreparada.erro, valores };
+  }
+
+  let imagemChave: string | null = null;
+  if (imagemPreparada.imagem) {
+    try {
+      imagemChave = await armazenarImagem(imagemPreparada.imagem, "usuarios");
+    } catch (erro) {
+      console.error("Erro ao enviar foto do usuário:", erro);
+      return { erroGeral: "Não foi possível enviar a imagem. Tente novamente.", valores };
+    }
+  }
+
   try {
     await prisma.$transaction(async (tx) => {
       const usuario = await tx.usuario.create({
@@ -148,6 +168,7 @@ export async function criarUsuario(
           nome: validacao.dados.nome,
           email: validacao.dados.email,
           senhaHash: gerarHashSenha(validacao.dados.senha),
+          imagemChave,
         },
       });
 
@@ -168,6 +189,7 @@ export async function criarUsuario(
       );
     });
   } catch (erro) {
+    await excluirImagemSemFalhar(imagemChave);
     return { erroGeral: tratarErroBanco(erro), valores };
   }
 
@@ -200,11 +222,30 @@ export async function atualizarUsuario(
   const validacao = validarUsuario(valores, false);
   if (!validacao.ok) return validacao.estado;
 
+  const imagemPreparada = await prepararImagem(formData.get("imagem"));
+  if (!imagemPreparada.ok) {
+    return { erroGeral: imagemPreparada.erro, valores };
+  }
+
   const antes = await prisma.usuario.findUnique({
     where: { id },
-    select: { nome: true, email: true },
+    select: { nome: true, email: true, imagemChave: true },
   });
   if (!antes) return { erroGeral: "Usuário não encontrado.", valores };
+
+  let novaImagemChave: string | null = null;
+  if (imagemPreparada.imagem) {
+    try {
+      novaImagemChave = await armazenarImagem(
+        imagemPreparada.imagem,
+        "usuarios"
+      );
+    } catch (erro) {
+      console.error("Erro ao enviar foto do usuário:", erro);
+      return { erroGeral: "Não foi possível enviar a imagem. Tente novamente.", valores };
+    }
+  }
+  const removerImagem = formData.get("removerImagem") === "1";
 
   const senhaAlterada = validacao.dados.senha !== "";
 
@@ -219,6 +260,8 @@ export async function atualizarUsuario(
           ...(senhaAlterada
             ? { senhaHash: gerarHashSenha(validacao.dados.senha) }
             : {}),
+          imagemChave:
+            novaImagemChave ?? (removerImagem ? null : antes.imagemChave),
         },
       });
 
@@ -242,7 +285,12 @@ export async function atualizarUsuario(
       );
     });
   } catch (erro) {
+    await excluirImagemSemFalhar(novaImagemChave);
     return { erroGeral: tratarErroBanco(erro), valores };
+  }
+
+  if (novaImagemChave || removerImagem) {
+    await excluirImagemSemFalhar(antes.imagemChave);
   }
 
   revalidatePath("/usuarios");
@@ -328,7 +376,7 @@ export async function excluirUsuario(formData: FormData): Promise<void> {
 
   const usuario = await prisma.usuario.findUnique({
     where: { id },
-    select: { nome: true, email: true },
+    select: { nome: true, email: true, imagemChave: true },
   });
   if (!usuario) return;
 
@@ -356,6 +404,8 @@ export async function excluirUsuario(formData: FormData): Promise<void> {
       tx
     );
   });
+
+  await excluirImagemSemFalhar(usuario.imagemChave);
 
   revalidatePath("/usuarios");
   redirect("/usuarios");

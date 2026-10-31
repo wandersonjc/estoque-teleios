@@ -1360,6 +1360,7 @@ export const UsuarioScalarFieldEnum = {
   nome: 'nome',
   email: 'email',
   senhaHash: 'senhaHash',
+  imagemChave: 'imagemChave',
   ativo: 'ativo',
   criadoEm: 'criadoEm',
   atualizadoEm: 'atualizadoEm'
@@ -1382,6 +1383,7 @@ export const ProdutoScalarFieldEnum = {
   unidade: 'unidade',
   codigoBarras: 'codigoBarras',
   codigoErp: 'codigoErp',
+  imagemChave: 'imagemChave',
   estoqueMinimo: 'estoqueMinimo',
   ativo: 'ativo',
   criadoEm: 'criadoEm',
@@ -1395,6 +1397,7 @@ export const FornecedorScalarFieldEnum = {
   id: 'id',
   nome: 'nome',
   contato: 'contato',
+  imagemChave: 'imagemChave',
   prazoEntregaDias: 'prazoEntregaDias',
   valorMinimoPedido: 'valorMinimoPedido',
   frete: 'frete',

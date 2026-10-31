@@ -12,6 +12,11 @@ import { redirect } from "next/navigation";
 
 import { Prisma } from "@/generated/prisma/client";
 import { MENSAGEM_SEM_PERMISSAO, verificarPermissao } from "@/lib/autorizacao";
+import {
+  armazenarImagem,
+  excluirImagemSemFalhar,
+  prepararImagem,
+} from "@/lib/armazenamento-imagens";
 import { registrarLog } from "@/lib/log";
 import prisma from "@/lib/prisma";
 
@@ -190,6 +195,24 @@ export async function criarFornecedor(
   const validacao = validarFornecedor(valores);
   if (!validacao.ok) return validacao.estado;
 
+  const imagemPreparada = await prepararImagem(formData.get("imagem"));
+  if (!imagemPreparada.ok) {
+    return { erroGeral: imagemPreparada.erro, valores };
+  }
+
+  let imagemChave: string | null = null;
+  if (imagemPreparada.imagem) {
+    try {
+      imagemChave = await armazenarImagem(
+        imagemPreparada.imagem,
+        "fornecedores"
+      );
+    } catch (erro) {
+      console.error("Erro ao enviar imagem do fornecedor:", erro);
+      return { erroGeral: "Não foi possível enviar a imagem. Tente novamente.", valores };
+    }
+  }
+
   try {
     await prisma.$transaction(async (tx) => {
       const novo = await tx.fornecedor.create({
@@ -199,6 +222,7 @@ export async function criarFornecedor(
           prazoEntregaDias: validacao.dados.prazoEntregaDias,
           valorMinimoPedido: validacao.dados.valorMinimoPedido,
           frete: validacao.dados.frete,
+          imagemChave,
         },
       });
 
@@ -221,6 +245,7 @@ export async function criarFornecedor(
       );
     });
   } catch (erro) {
+    await excluirImagemSemFalhar(imagemChave);
     return { erroGeral: tratarErroBanco(erro, "fornecedor"), valores };
   }
 
@@ -242,6 +267,11 @@ export async function atualizarFornecedor(
   const validacao = validarFornecedor(valores);
   if (!validacao.ok) return validacao.estado;
 
+  const imagemPreparada = await prepararImagem(formData.get("imagem"));
+  if (!imagemPreparada.ok) {
+    return { erroGeral: imagemPreparada.erro, valores };
+  }
+
   const antigo = await prisma.fornecedor.findUnique({
     where: { id },
     select: {
@@ -250,9 +280,24 @@ export async function atualizarFornecedor(
       prazoEntregaDias: true,
       valorMinimoPedido: true,
       frete: true,
+      imagemChave: true,
     },
   });
   if (!antigo) return { erroGeral: "Fornecedor não encontrado.", valores };
+
+  let novaImagemChave: string | null = null;
+  if (imagemPreparada.imagem) {
+    try {
+      novaImagemChave = await armazenarImagem(
+        imagemPreparada.imagem,
+        "fornecedores"
+      );
+    } catch (erro) {
+      console.error("Erro ao enviar imagem do fornecedor:", erro);
+      return { erroGeral: "Não foi possível enviar a imagem. Tente novamente.", valores };
+    }
+  }
+  const removerImagem = formData.get("removerImagem") === "1";
 
   try {
     await prisma.$transaction(async (tx) => {
@@ -264,6 +309,8 @@ export async function atualizarFornecedor(
           prazoEntregaDias: validacao.dados.prazoEntregaDias,
           valorMinimoPedido: validacao.dados.valorMinimoPedido,
           frete: validacao.dados.frete,
+          imagemChave:
+            novaImagemChave ?? (removerImagem ? null : antigo.imagemChave),
         },
       });
 
@@ -289,7 +336,12 @@ export async function atualizarFornecedor(
       );
     });
   } catch (erro) {
+    await excluirImagemSemFalhar(novaImagemChave);
     return { erroGeral: tratarErroBanco(erro, "fornecedor"), valores };
+  }
+
+  if (novaImagemChave || removerImagem) {
+    await excluirImagemSemFalhar(antigo.imagemChave);
   }
 
   revalidarFornecedores(undefined, id);

@@ -9,6 +9,7 @@
 
 import { exigirPermissao } from "@/lib/autorizacao";
 import prisma from "@/lib/prisma";
+import Image from "next/image";
 import Link from "next/link";
 
 import BotaoAcao from "@/components/BotaoAcao";
@@ -42,6 +43,7 @@ export default async function UsuariosPage() {
       id: true,
       nome: true,
       email: true,
+      imagemChave: true,
       ativo: true,
       _count: { select: { movimentos: true, logs: true } },
     },
@@ -84,8 +86,19 @@ export default async function UsuariosPage() {
               <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5">
                 <div className="flex items-center gap-4 sm:gap-5 flex-1 min-w-0">
                   {/* Avatar */}
-                  <div className="flex h-16 w-16 sm:h-20 sm:w-20 shrink-0 items-center justify-center rounded-full bg-[#eef1f5] text-[#7d8fa9]">
-                    <IconeUser className="h-8 w-8 sm:h-10 sm:w-10" />
+                  <div className="flex h-16 w-16 sm:h-20 sm:w-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#eef1f5] text-[#7d8fa9]">
+                    {usuario.imagemChave ? (
+                      <Image
+                        src={`/api/imagens/usuarios/${usuario.id}`}
+                        alt={usuario.nome}
+                        width={80}
+                        height={80}
+                        unoptimized
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <IconeUser className="h-8 w-8 sm:h-10 sm:w-10" />
+                    )}
                   </div>
 
                   {/* Conteúdo central */}

@@ -32,6 +32,7 @@ model Usuario {
   nome         String
   email        String   @unique
   senhaHash    String   @map("senha_hash") // NUNCA guardar a senha pura
+  imagemChave  String?  @map("imagem_chave")
   ativo        Boolean  @default(true)
   criadoEm     DateTime @default(now()) @map("criado_em")
   atualizadoEm DateTime @updatedAt @map("atualizado_em")
@@ -70,6 +71,7 @@ model Produto {
   // Código do produto no ERP (Superus). Opcional, mas único quando
   // preenchido (RN-22). Será a chave da importação futura.
   codigoErp     String?  @unique @map("codigo_erp")
+  imagemChave   String?  @map("imagem_chave")
   // Estoque mínimo único por produto, comparado com o TOTAL dos 3
   // locais (RN-05). Aceita decimais (3 casas) para itens vendidos por peso.
   estoqueMinimo Decimal  @default(0) @map("estoque_minimo") @db.Decimal(12, 3)
@@ -92,6 +94,7 @@ model Fornecedor {
   id               Int      @id @default(autoincrement())
   nome             String
   contato          String? // Telefone, e-mail, nome do vendedor etc.
+  imagemChave      String?  @map("imagem_chave")
   prazoEntregaDias Int?     @map("prazo_entrega_dias") // Prazo médio de entrega
   // Valor mínimo de pedido e frete (RN-17). Opcionais.
   valorMinimoPedido Decimal? @map("valor_minimo_pedido") @db.Decimal(12, 2)

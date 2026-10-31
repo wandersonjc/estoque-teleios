@@ -8,6 +8,7 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
+import CampoImagem from "@/components/CampoImagem";
 
 import {
   LIMITE_EMAIL,
@@ -28,6 +29,7 @@ type Props = {
   // Preenchido apenas na edição
   id?: number;
   valoresIniciais?: ValoresFormularioUsuario;
+  imagemUrl?: string;
   // Na edição a senha é opcional (em branco = manter a atual)
   ehEdicao?: boolean;
 };
@@ -42,6 +44,7 @@ export default function UsuarioForm({
   textoBotao,
   id,
   valoresIniciais,
+  imagemUrl,
   ehEdicao = false,
 }: Props) {
   const [estado, enviarFormulario, salvando] = useActionState(acao, {
@@ -61,6 +64,12 @@ export default function UsuarioForm({
           {estado.erroGeral}
         </p>
       )}
+
+      <CampoImagem
+        imagemUrl={imagemUrl}
+        textoAlternativo="Foto do usuário"
+        circular
+      />
 
       <div className="flex flex-col gap-1">
         <label htmlFor="nome" className={CLASSE_ROTULO}>

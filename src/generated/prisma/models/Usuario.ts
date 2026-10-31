@@ -39,6 +39,7 @@ export type UsuarioMinAggregateOutputType = {
   nome: string | null
   email: string | null
   senhaHash: string | null
+  imagemChave: string | null
   ativo: boolean | null
   criadoEm: Date | null
   atualizadoEm: Date | null
@@ -49,6 +50,7 @@ export type UsuarioMaxAggregateOutputType = {
   nome: string | null
   email: string | null
   senhaHash: string | null
+  imagemChave: string | null
   ativo: boolean | null
   criadoEm: Date | null
   atualizadoEm: Date | null
@@ -59,6 +61,7 @@ export type UsuarioCountAggregateOutputType = {
   nome: number
   email: number
   senhaHash: number
+  imagemChave: number
   ativo: number
   criadoEm: number
   atualizadoEm: number
@@ -79,6 +82,7 @@ export type UsuarioMinAggregateInputType = {
   nome?: true
   email?: true
   senhaHash?: true
+  imagemChave?: true
   ativo?: true
   criadoEm?: true
   atualizadoEm?: true
@@ -89,6 +93,7 @@ export type UsuarioMaxAggregateInputType = {
   nome?: true
   email?: true
   senhaHash?: true
+  imagemChave?: true
   ativo?: true
   criadoEm?: true
   atualizadoEm?: true
@@ -99,6 +104,7 @@ export type UsuarioCountAggregateInputType = {
   nome?: true
   email?: true
   senhaHash?: true
+  imagemChave?: true
   ativo?: true
   criadoEm?: true
   atualizadoEm?: true
@@ -196,6 +202,7 @@ export type UsuarioGroupByOutputType = {
   nome: string
   email: string
   senhaHash: string
+  imagemChave: string | null
   ativo: boolean
   criadoEm: Date
   atualizadoEm: Date
@@ -229,6 +236,7 @@ export type UsuarioWhereInput = {
   nome?: Prisma.StringFilter<"Usuario"> | string
   email?: Prisma.StringFilter<"Usuario"> | string
   senhaHash?: Prisma.StringFilter<"Usuario"> | string
+  imagemChave?: Prisma.StringNullableFilter<"Usuario"> | string | null
   ativo?: Prisma.BoolFilter<"Usuario"> | boolean
   criadoEm?: Prisma.DateTimeFilter<"Usuario"> | Date | string
   atualizadoEm?: Prisma.DateTimeFilter<"Usuario"> | Date | string
@@ -243,6 +251,7 @@ export type UsuarioOrderByWithRelationInput = {
   nome?: Prisma.SortOrder
   email?: Prisma.SortOrder
   senhaHash?: Prisma.SortOrder
+  imagemChave?: Prisma.SortOrderInput | Prisma.SortOrder
   ativo?: Prisma.SortOrder
   criadoEm?: Prisma.SortOrder
   atualizadoEm?: Prisma.SortOrder
@@ -260,6 +269,7 @@ export type UsuarioWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.UsuarioWhereInput | Prisma.UsuarioWhereInput[]
   nome?: Prisma.StringFilter<"Usuario"> | string
   senhaHash?: Prisma.StringFilter<"Usuario"> | string
+  imagemChave?: Prisma.StringNullableFilter<"Usuario"> | string | null
   ativo?: Prisma.BoolFilter<"Usuario"> | boolean
   criadoEm?: Prisma.DateTimeFilter<"Usuario"> | Date | string
   atualizadoEm?: Prisma.DateTimeFilter<"Usuario"> | Date | string
@@ -274,6 +284,7 @@ export type UsuarioOrderByWithAggregationInput = {
   nome?: Prisma.SortOrder
   email?: Prisma.SortOrder
   senhaHash?: Prisma.SortOrder
+  imagemChave?: Prisma.SortOrderInput | Prisma.SortOrder
   ativo?: Prisma.SortOrder
   criadoEm?: Prisma.SortOrder
   atualizadoEm?: Prisma.SortOrder
@@ -292,6 +303,7 @@ export type UsuarioScalarWhereWithAggregatesInput = {
   nome?: Prisma.StringWithAggregatesFilter<"Usuario"> | string
   email?: Prisma.StringWithAggregatesFilter<"Usuario"> | string
   senhaHash?: Prisma.StringWithAggregatesFilter<"Usuario"> | string
+  imagemChave?: Prisma.StringNullableWithAggregatesFilter<"Usuario"> | string | null
   ativo?: Prisma.BoolWithAggregatesFilter<"Usuario"> | boolean
   criadoEm?: Prisma.DateTimeWithAggregatesFilter<"Usuario"> | Date | string
   atualizadoEm?: Prisma.DateTimeWithAggregatesFilter<"Usuario"> | Date | string
@@ -301,6 +313,7 @@ export type UsuarioCreateInput = {
   nome: string
   email: string
   senhaHash: string
+  imagemChave?: string | null
   ativo?: boolean
   criadoEm?: Date | string
   atualizadoEm?: Date | string
@@ -315,6 +328,7 @@ export type UsuarioUncheckedCreateInput = {
   nome: string
   email: string
   senhaHash: string
+  imagemChave?: string | null
   ativo?: boolean
   criadoEm?: Date | string
   atualizadoEm?: Date | string
@@ -328,6 +342,7 @@ export type UsuarioUpdateInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   senhaHash?: Prisma.StringFieldUpdateOperationsInput | string
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -342,6 +357,7 @@ export type UsuarioUncheckedUpdateInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   senhaHash?: Prisma.StringFieldUpdateOperationsInput | string
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -356,6 +372,7 @@ export type UsuarioCreateManyInput = {
   nome: string
   email: string
   senhaHash: string
+  imagemChave?: string | null
   ativo?: boolean
   criadoEm?: Date | string
   atualizadoEm?: Date | string
@@ -365,6 +382,7 @@ export type UsuarioUpdateManyMutationInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   senhaHash?: Prisma.StringFieldUpdateOperationsInput | string
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -375,6 +393,7 @@ export type UsuarioUncheckedUpdateManyInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   senhaHash?: Prisma.StringFieldUpdateOperationsInput | string
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -385,6 +404,7 @@ export type UsuarioCountOrderByAggregateInput = {
   nome?: Prisma.SortOrder
   email?: Prisma.SortOrder
   senhaHash?: Prisma.SortOrder
+  imagemChave?: Prisma.SortOrder
   ativo?: Prisma.SortOrder
   criadoEm?: Prisma.SortOrder
   atualizadoEm?: Prisma.SortOrder
@@ -399,6 +419,7 @@ export type UsuarioMaxOrderByAggregateInput = {
   nome?: Prisma.SortOrder
   email?: Prisma.SortOrder
   senhaHash?: Prisma.SortOrder
+  imagemChave?: Prisma.SortOrder
   ativo?: Prisma.SortOrder
   criadoEm?: Prisma.SortOrder
   atualizadoEm?: Prisma.SortOrder
@@ -409,6 +430,7 @@ export type UsuarioMinOrderByAggregateInput = {
   nome?: Prisma.SortOrder
   email?: Prisma.SortOrder
   senhaHash?: Prisma.SortOrder
+  imagemChave?: Prisma.SortOrder
   ativo?: Prisma.SortOrder
   criadoEm?: Prisma.SortOrder
   atualizadoEm?: Prisma.SortOrder
@@ -430,6 +452,10 @@ export type UsuarioScalarRelationFilter = {
 
 export type StringFieldUpdateOperationsInput = {
   set?: string
+}
+
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
 }
 
 export type BoolFieldUpdateOperationsInput = {
@@ -512,6 +538,7 @@ export type UsuarioCreateWithoutMovimentosInput = {
   nome: string
   email: string
   senhaHash: string
+  imagemChave?: string | null
   ativo?: boolean
   criadoEm?: Date | string
   atualizadoEm?: Date | string
@@ -525,6 +552,7 @@ export type UsuarioUncheckedCreateWithoutMovimentosInput = {
   nome: string
   email: string
   senhaHash: string
+  imagemChave?: string | null
   ativo?: boolean
   criadoEm?: Date | string
   atualizadoEm?: Date | string
@@ -553,6 +581,7 @@ export type UsuarioUpdateWithoutMovimentosInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   senhaHash?: Prisma.StringFieldUpdateOperationsInput | string
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -566,6 +595,7 @@ export type UsuarioUncheckedUpdateWithoutMovimentosInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   senhaHash?: Prisma.StringFieldUpdateOperationsInput | string
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -578,6 +608,7 @@ export type UsuarioCreateWithoutLogsInput = {
   nome: string
   email: string
   senhaHash: string
+  imagemChave?: string | null
   ativo?: boolean
   criadoEm?: Date | string
   atualizadoEm?: Date | string
@@ -591,6 +622,7 @@ export type UsuarioUncheckedCreateWithoutLogsInput = {
   nome: string
   email: string
   senhaHash: string
+  imagemChave?: string | null
   ativo?: boolean
   criadoEm?: Date | string
   atualizadoEm?: Date | string
@@ -619,6 +651,7 @@ export type UsuarioUpdateWithoutLogsInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   senhaHash?: Prisma.StringFieldUpdateOperationsInput | string
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -632,6 +665,7 @@ export type UsuarioUncheckedUpdateWithoutLogsInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   senhaHash?: Prisma.StringFieldUpdateOperationsInput | string
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -644,6 +678,7 @@ export type UsuarioCreateWithoutPermissoesInput = {
   nome: string
   email: string
   senhaHash: string
+  imagemChave?: string | null
   ativo?: boolean
   criadoEm?: Date | string
   atualizadoEm?: Date | string
@@ -657,6 +692,7 @@ export type UsuarioUncheckedCreateWithoutPermissoesInput = {
   nome: string
   email: string
   senhaHash: string
+  imagemChave?: string | null
   ativo?: boolean
   criadoEm?: Date | string
   atualizadoEm?: Date | string
@@ -685,6 +721,7 @@ export type UsuarioUpdateWithoutPermissoesInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   senhaHash?: Prisma.StringFieldUpdateOperationsInput | string
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -698,6 +735,7 @@ export type UsuarioUncheckedUpdateWithoutPermissoesInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   senhaHash?: Prisma.StringFieldUpdateOperationsInput | string
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -710,6 +748,7 @@ export type UsuarioCreateWithoutSessoesInput = {
   nome: string
   email: string
   senhaHash: string
+  imagemChave?: string | null
   ativo?: boolean
   criadoEm?: Date | string
   atualizadoEm?: Date | string
@@ -723,6 +762,7 @@ export type UsuarioUncheckedCreateWithoutSessoesInput = {
   nome: string
   email: string
   senhaHash: string
+  imagemChave?: string | null
   ativo?: boolean
   criadoEm?: Date | string
   atualizadoEm?: Date | string
@@ -751,6 +791,7 @@ export type UsuarioUpdateWithoutSessoesInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   senhaHash?: Prisma.StringFieldUpdateOperationsInput | string
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -764,6 +805,7 @@ export type UsuarioUncheckedUpdateWithoutSessoesInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   senhaHash?: Prisma.StringFieldUpdateOperationsInput | string
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -835,6 +877,7 @@ export type UsuarioSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   nome?: boolean
   email?: boolean
   senhaHash?: boolean
+  imagemChave?: boolean
   ativo?: boolean
   criadoEm?: boolean
   atualizadoEm?: boolean
@@ -850,6 +893,7 @@ export type UsuarioSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   nome?: boolean
   email?: boolean
   senhaHash?: boolean
+  imagemChave?: boolean
   ativo?: boolean
   criadoEm?: boolean
   atualizadoEm?: boolean
@@ -860,6 +904,7 @@ export type UsuarioSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   nome?: boolean
   email?: boolean
   senhaHash?: boolean
+  imagemChave?: boolean
   ativo?: boolean
   criadoEm?: boolean
   atualizadoEm?: boolean
@@ -870,12 +915,13 @@ export type UsuarioSelectScalar = {
   nome?: boolean
   email?: boolean
   senhaHash?: boolean
+  imagemChave?: boolean
   ativo?: boolean
   criadoEm?: boolean
   atualizadoEm?: boolean
 }
 
-export type UsuarioOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nome" | "email" | "senhaHash" | "ativo" | "criadoEm" | "atualizadoEm", ExtArgs["result"]["usuario"]>
+export type UsuarioOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nome" | "email" | "senhaHash" | "imagemChave" | "ativo" | "criadoEm" | "atualizadoEm", ExtArgs["result"]["usuario"]>
 export type UsuarioInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   movimentos?: boolean | Prisma.Usuario$movimentosArgs<ExtArgs>
   logs?: boolean | Prisma.Usuario$logsArgs<ExtArgs>
@@ -899,6 +945,7 @@ export type $UsuarioPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     nome: string
     email: string
     senhaHash: string
+    imagemChave: string | null
     ativo: boolean
     criadoEm: Date
     atualizadoEm: Date
@@ -1333,6 +1380,7 @@ export interface UsuarioFieldRefs {
   readonly nome: Prisma.FieldRef<"Usuario", 'String'>
   readonly email: Prisma.FieldRef<"Usuario", 'String'>
   readonly senhaHash: Prisma.FieldRef<"Usuario", 'String'>
+  readonly imagemChave: Prisma.FieldRef<"Usuario", 'String'>
   readonly ativo: Prisma.FieldRef<"Usuario", 'Boolean'>
   readonly criadoEm: Prisma.FieldRef<"Usuario", 'DateTime'>
   readonly atualizadoEm: Prisma.FieldRef<"Usuario", 'DateTime'>

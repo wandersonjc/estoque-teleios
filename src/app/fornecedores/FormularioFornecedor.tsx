@@ -7,6 +7,7 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
+import CampoImagem from "@/components/CampoImagem";
 
 import {
   LIMITE_CONTATO_FORNECEDOR,
@@ -24,6 +25,7 @@ type Props = {
   textoBotao: string;
   id?: number;
   valoresIniciais?: ValoresFormularioFornecedor;
+  imagemUrl?: string;
 };
 
 const CLASSE_CAMPO =
@@ -35,6 +37,7 @@ export default function FormularioFornecedor({
   textoBotao,
   id,
   valoresIniciais,
+  imagemUrl,
 }: Props) {
   const [estado, enviarFormulario, enviando] = useActionState(acao, {
     valores: valoresIniciais ?? VALORES_FORNECEDOR_VAZIOS,
@@ -51,6 +54,8 @@ export default function FormularioFornecedor({
           {estado.erroGeral}
         </p>
       )}
+
+      <CampoImagem imagemUrl={imagemUrl} textoAlternativo="Imagem do fornecedor" />
 
       <div className="flex flex-col gap-1">
         <label htmlFor="nome" className={CLASSE_ROTULO}>

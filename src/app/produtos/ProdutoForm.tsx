@@ -8,6 +8,7 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
+import CampoImagem from "@/components/CampoImagem";
 
 import {
   LIMITE_CODIGO_BARRAS,
@@ -29,6 +30,7 @@ type Props = {
   // Preenchido apenas na edição
   id?: number;
   valoresIniciais?: ValoresFormularioProduto;
+  imagemUrl?: string;
 };
 
 // Campos altos (48px) e com fonte de 16px: uso em pé, no celular
@@ -41,6 +43,7 @@ export default function ProdutoForm({
   textoBotao,
   id,
   valoresIniciais,
+  imagemUrl,
 }: Props) {
   // useActionState guarda o que foi digitado e os erros devolvidos
   // pelo servidor, então o formulário não perde o conteúdo.
@@ -61,6 +64,8 @@ export default function ProdutoForm({
           {estado.erroGeral}
         </p>
       )}
+
+      <CampoImagem imagemUrl={imagemUrl} textoAlternativo="Imagem do produto" />
 
       <div className="flex flex-col gap-1">
         <label htmlFor="nome" className={CLASSE_ROTULO}>
