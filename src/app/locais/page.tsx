@@ -38,7 +38,7 @@ export default async function LocaisPage() {
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-5">
       <div className="flex items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold text-zinc-900">
+        <h1 className="text-lg font-semibold text-zinc-900 sm:text-xl">
           Locais de estoque
         </h1>
         {podeCriar && (
@@ -93,9 +93,9 @@ export default async function LocaisPage() {
 
                   {/* Informações principais */}
                   <div className="flex flex-col gap-1 sm:gap-2 min-w-0 flex-1">
-                    <h2 className="text-xl sm:text-2xl font-bold text-[#002855] truncate">
+                    <h3 className="text-base sm:text-lg font-bold text-[#002855] truncate">
                       {local.nome}
-                    </h2>
+                    </h3>
                     
                     <div className="flex w-fit items-center gap-1.5 rounded-full bg-blue-50/80 px-3 py-1 text-[#007bff]">
                       <IconePin className="h-4 w-4" />

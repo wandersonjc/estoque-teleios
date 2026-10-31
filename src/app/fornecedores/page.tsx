@@ -52,7 +52,7 @@ export default async function PaginaFornecedores({
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-5">
       <div className="flex items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold text-zinc-900">Fornecedores</h1>
+        <h1 className="text-lg font-semibold text-zinc-900 sm:text-xl">Fornecedores</h1>
         {podeCriar && (
           <Link
             href="/fornecedores/novo"
@@ -115,9 +115,9 @@ export default async function PaginaFornecedores({
           >
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0 flex-1">
-                <h2 className="truncate text-lg font-bold text-[#002855]">
+                <h3 className="truncate text-base font-bold text-[#002855] sm:text-lg">
                   {fornecedor.nome}
-                </h2>
+                </h3>
                 <p className="mt-1 text-sm text-zinc-500">
                   {fornecedor.contato || "Sem contato registrado"}
                 </p>

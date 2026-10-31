@@ -134,7 +134,7 @@ export default async function ProdutosPage({
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-5">
       <div className="flex items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold text-zinc-900">Produtos</h1>
+        <h1 className="text-lg font-semibold text-zinc-900 sm:text-xl">Produtos</h1>
         {podeCriar && (
           <Link
             href="/produtos/novo"
@@ -255,7 +255,7 @@ export default async function ProdutosPage({
                     {/* Topo: Nome e Status */}
                     <div className="flex justify-between items-start gap-4">
                       <div className="min-w-0">
-                        <h3 className="text-2xl font-bold text-[#002855] truncate">
+                        <h3 className="text-base font-bold text-[#002855] truncate sm:text-lg">
                           {produto.nome}
                         </h3>
                         {/* Badge Estoque Mínimo */}

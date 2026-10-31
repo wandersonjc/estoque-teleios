@@ -50,7 +50,7 @@ export default async function UsuariosPage() {
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-5">
       <div className="flex items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold text-zinc-900">Usuários</h1>
+        <h1 className="text-lg font-semibold text-zinc-900 sm:text-xl">Usuários</h1>
         {podeCriar && (
           <Link
             href="/usuarios/novo"
@@ -90,7 +90,7 @@ export default async function UsuariosPage() {
 
                   {/* Conteúdo central */}
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-lg sm:text-xl font-bold text-[#002855] truncate">
+                    <h3 className="text-base sm:text-lg font-bold text-[#002855] truncate">
                       {usuario.nome}
                     </h3>
                     <div className="mt-1 sm:mt-2 flex flex-col gap-1 sm:gap-1.5">

@@ -80,7 +80,7 @@ export default async function PermissoesPage({
 
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-5">
-      <h1 className="text-xl font-semibold text-zinc-900">
+      <h1 className="text-lg font-semibold text-zinc-900 sm:text-xl">
         Módulos e Permissões
       </h1>
       <p className="mt-1 text-sm text-zinc-600">

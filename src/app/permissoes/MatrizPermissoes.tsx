@@ -219,7 +219,7 @@ function FormularioPermissoes({
         <input type="hidden" name="usuarioId" value={usuario.id} />
 
         <div className="rounded-xl border border-zinc-200 bg-white p-3">
-          <h2 className="text-base font-semibold text-zinc-900">{usuario.nome}</h2>
+          <h3 className="text-base font-semibold text-zinc-900 sm:text-lg">{usuario.nome}</h3>
           <p className="text-sm text-zinc-600">{usuario.email}</p>
           <p className="mt-1 text-sm text-zinc-600">
             {selecionadas.size} permissão(ões) concedida(s) de {totalOperacoes}.
