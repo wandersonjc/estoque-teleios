@@ -65,70 +65,76 @@ export default function UsuarioForm({
         </p>
       )}
 
-      <CampoImagem
-        imagemUrl={imagemUrl}
-        textoAlternativo="Foto do usuário"
-        circular
-      />
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-[18rem_minmax(0,1fr)]">
+        <div className="md:border-r md:border-zinc-200 md:pr-4">
+          <CampoImagem
+            imagemUrl={imagemUrl}
+            textoAlternativo="Foto do usuário"
+            circular
+          />
+        </div>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="nome" className={CLASSE_ROTULO}>
-          Nome <span className="text-red-700">*</span>
-        </label>
-        <input
-          id="nome"
-          name="nome"
-          type="text"
-          required
-          maxLength={LIMITE_NOME_USUARIO}
-          defaultValue={valores.nome}
-          aria-invalid={erros.nome ? true : undefined}
-          placeholder="Ex.: Maria Silva"
-          className={CLASSE_CAMPO}
-        />
-        {erros.nome && <p className="text-sm text-red-700">{erros.nome}</p>}
-      </div>
+        <div className="flex flex-col gap-4 md:pl-2">
+          <div className="flex flex-col gap-1">
+            <label htmlFor="nome" className={CLASSE_ROTULO}>
+              Nome <span className="text-red-700">*</span>
+            </label>
+            <input
+              id="nome"
+              name="nome"
+              type="text"
+              required
+              maxLength={LIMITE_NOME_USUARIO}
+              defaultValue={valores.nome}
+              aria-invalid={erros.nome ? true : undefined}
+              placeholder="Ex.: Maria Silva"
+              className={CLASSE_CAMPO}
+            />
+            {erros.nome && <p className="text-sm text-red-700">{erros.nome}</p>}
+          </div>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="email" className={CLASSE_ROTULO}>
-          E-mail <span className="text-red-700">*</span>
-        </label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          required
-          maxLength={LIMITE_EMAIL}
-          defaultValue={valores.email}
-          aria-invalid={erros.email ? true : undefined}
-          placeholder="nome@empresa.com.br"
-          autoComplete="off"
-          className={CLASSE_CAMPO}
-        />
-        {erros.email && <p className="text-sm text-red-700">{erros.email}</p>}
-      </div>
+          <div className="flex flex-col gap-1">
+            <label htmlFor="email" className={CLASSE_ROTULO}>
+              E-mail <span className="text-red-700">*</span>
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+              maxLength={LIMITE_EMAIL}
+              defaultValue={valores.email}
+              aria-invalid={erros.email ? true : undefined}
+              placeholder="nome@empresa.com.br"
+              autoComplete="off"
+              className={CLASSE_CAMPO}
+            />
+            {erros.email && <p className="text-sm text-red-700">{erros.email}</p>}
+          </div>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="senha" className={CLASSE_ROTULO}>
-          {ehEdicao ? "Nova senha" : "Senha"}{" "}
-          {!ehEdicao && <span className="text-red-700">*</span>}
-        </label>
-        <input
-          id="senha"
-          name="senha"
-          type="password"
-          required={!ehEdicao}
-          autoComplete="new-password"
-          aria-invalid={erros.senha ? true : undefined}
-          placeholder={`Mínimo ${SENHA_MINIMA} caracteres`}
-          className={CLASSE_CAMPO}
-        />
-        <p className="text-sm text-zinc-500">
-          {ehEdicao
-            ? "Deixe em branco para manter a senha atual."
-            : "A senha é guardada com segurança e nunca aparece nas telas."}
-        </p>
-        {erros.senha && <p className="text-sm text-red-700">{erros.senha}</p>}
+          <div className="flex flex-col gap-1">
+            <label htmlFor="senha" className={CLASSE_ROTULO}>
+              {ehEdicao ? "Nova senha" : "Senha"}{" "}
+              {!ehEdicao && <span className="text-red-700">*</span>}
+            </label>
+            <input
+              id="senha"
+              name="senha"
+              type="password"
+              required={!ehEdicao}
+              autoComplete="new-password"
+              aria-invalid={erros.senha ? true : undefined}
+              placeholder={`Mínimo ${SENHA_MINIMA} caracteres`}
+              className={CLASSE_CAMPO}
+            />
+            <p className="text-sm text-zinc-500">
+              {ehEdicao
+                ? "Deixe em branco para manter a senha atual."
+                : "A senha é guardada com segurança e nunca aparece nas telas."}
+            </p>
+            {erros.senha && <p className="text-sm text-red-700">{erros.senha}</p>}
+          </div>
+        </div>
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row">

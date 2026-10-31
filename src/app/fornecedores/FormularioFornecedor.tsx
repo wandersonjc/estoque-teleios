@@ -55,43 +55,52 @@ export default function FormularioFornecedor({
         </p>
       )}
 
-      <CampoImagem imagemUrl={imagemUrl} textoAlternativo="Imagem do fornecedor" />
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-[18rem_minmax(0,1fr)]">
+        <div className="md:border-r md:border-zinc-200 md:pr-4">
+          <CampoImagem
+            imagemUrl={imagemUrl}
+            textoAlternativo="Imagem do fornecedor"
+          />
+        </div>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="nome" className={CLASSE_ROTULO}>
-          Nome <span className="text-red-700">*</span>
-        </label>
-        <input
-          id="nome"
-          name="nome"
-          type="text"
-          required
-          maxLength={LIMITE_NOME_FORNECEDOR}
-          defaultValue={estado.valores.nome}
-          aria-invalid={erros.nome ? true : undefined}
-          placeholder="Ex.: Distribuidora Alimentos Ltda"
-          className={CLASSE_CAMPO}
-        />
-        {erros.nome && <p className="text-sm text-red-700">{erros.nome}</p>}
-      </div>
+        <div className="flex flex-col gap-4 md:pl-2">
+          <div className="flex flex-col gap-1">
+            <label htmlFor="nome" className={CLASSE_ROTULO}>
+              Nome <span className="text-red-700">*</span>
+            </label>
+            <input
+              id="nome"
+              name="nome"
+              type="text"
+              required
+              maxLength={LIMITE_NOME_FORNECEDOR}
+              defaultValue={estado.valores.nome}
+              aria-invalid={erros.nome ? true : undefined}
+              placeholder="Ex.: Distribuidora Alimentos Ltda"
+              className={CLASSE_CAMPO}
+            />
+            {erros.nome && <p className="text-sm text-red-700">{erros.nome}</p>}
+          </div>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="contato" className={CLASSE_ROTULO}>
-          Contato
-        </label>
-        <textarea
-          id="contato"
-          name="contato"
-          rows={3}
-          maxLength={LIMITE_CONTATO_FORNECEDOR}
-          defaultValue={estado.valores.contato}
-          aria-invalid={erros.contato ? true : undefined}
-          placeholder="Telefone, e-mail, nome do vendedor..."
-          className="w-full rounded-lg border border-zinc-300 bg-white p-3 text-base text-zinc-900 outline-none focus:border-zinc-900"
-        />
-        {erros.contato && (
-          <p className="text-sm text-red-700">{erros.contato}</p>
-        )}
+          <div className="flex flex-col gap-1">
+            <label htmlFor="contato" className={CLASSE_ROTULO}>
+              Contato
+            </label>
+            <textarea
+              id="contato"
+              name="contato"
+              rows={3}
+              maxLength={LIMITE_CONTATO_FORNECEDOR}
+              defaultValue={estado.valores.contato}
+              aria-invalid={erros.contato ? true : undefined}
+              placeholder="Telefone, e-mail, nome do vendedor..."
+              className="w-full rounded-lg border border-zinc-300 bg-white p-3 text-base text-zinc-900 outline-none focus:border-zinc-900"
+            />
+            {erros.contato && (
+              <p className="text-sm text-red-700">{erros.contato}</p>
+            )}
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">

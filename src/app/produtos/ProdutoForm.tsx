@@ -65,45 +65,53 @@ export default function ProdutoForm({
         </p>
       )}
 
-      <CampoImagem imagemUrl={imagemUrl} textoAlternativo="Imagem do produto" />
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-[18rem_minmax(0,1fr)]">
+        <div className="md:border-r md:border-zinc-200 md:pr-4">
+          <CampoImagem imagemUrl={imagemUrl} textoAlternativo="Imagem do produto" />
+        </div>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="nome" className={CLASSE_ROTULO}>
-          Nome <span className="text-red-700">*</span>
-        </label>
-        <input
-          id="nome"
-          name="nome"
-          type="text"
-          required
-          maxLength={LIMITE_NOME}
-          defaultValue={valores.nome}
-          aria-invalid={erros.nome ? true : undefined}
-          placeholder="Ex.: Copo descartável 200 ml"
-          className={CLASSE_CAMPO}
-        />
-        {erros.nome && <p className="text-sm text-red-700">{erros.nome}</p>}
-      </div>
+        <div className="flex flex-col gap-4 md:pl-2">
+          <div className="flex flex-col gap-1">
+            <label htmlFor="nome" className={CLASSE_ROTULO}>
+              Nome <span className="text-red-700">*</span>
+            </label>
+            <input
+              id="nome"
+              name="nome"
+              type="text"
+              required
+              maxLength={LIMITE_NOME}
+              defaultValue={valores.nome}
+              aria-invalid={erros.nome ? true : undefined}
+              placeholder="Ex.: Copo descartável 200 ml"
+              className={CLASSE_CAMPO}
+            />
+            {erros.nome && <p className="text-sm text-red-700">{erros.nome}</p>}
+          </div>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="unidade" className={CLASSE_ROTULO}>
-          Unidade <span className="text-red-700">*</span>
-        </label>
-        <select
-          id="unidade"
-          name="unidade"
-          required
-          defaultValue={valores.unidade}
-          aria-invalid={erros.unidade ? true : undefined}
-          className={CLASSE_CAMPO}
-        >
-          {UNIDADES.map((unidade) => (
-            <option key={unidade} value={unidade}>
-              {unidade}
-            </option>
-          ))}
-        </select>
-        {erros.unidade && <p className="text-sm text-red-700">{erros.unidade}</p>}
+          <div className="flex flex-col gap-1">
+            <label htmlFor="unidade" className={CLASSE_ROTULO}>
+              Unidade <span className="text-red-700">*</span>
+            </label>
+            <select
+              id="unidade"
+              name="unidade"
+              required
+              defaultValue={valores.unidade}
+              aria-invalid={erros.unidade ? true : undefined}
+              className={CLASSE_CAMPO}
+            >
+              {UNIDADES.map((unidade) => (
+                <option key={unidade} value={unidade}>
+                  {unidade}
+                </option>
+              ))}
+            </select>
+            {erros.unidade && (
+              <p className="text-sm text-red-700">{erros.unidade}</p>
+            )}
+          </div>
+        </div>
       </div>
 
       <div className="flex flex-col gap-1">
