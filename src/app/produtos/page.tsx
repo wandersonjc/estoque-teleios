@@ -6,7 +6,11 @@
 
 // Tipo de filtro do Prisma (o client.ts não reexporta os tipos de entrada,
 // então importamos do arquivo de modelos gerado)
-import type { ProdutoWhereInput } from "@/generated/prisma/models";
+import { Prisma } from "@/generated/prisma/client";
+import type {
+  ProdutoOrderByWithRelationInput,
+  ProdutoWhereInput,
+} from "@/generated/prisma/models";
 import Image from "next/image";
 import BotaoAcao from "@/components/BotaoAcao";
 import {
@@ -21,10 +25,12 @@ import { exigirPermissao } from "@/lib/autorizacao";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 
+import AlternadorVisualizacao from "./AlternadorVisualizacao";
+import DicaEstoque from "./DicaEstoque";
 import { desativarProduto, reativarProduto } from "./actions";
 import MovimentacaoEstoque from "./MovimentacaoEstoque";
 import {
-  TAMANHOS_PAGINA,
+  TAMANHOS_PAGINA_PRODUTOS,
   TAMANHO_PAGINA_PADRAO,
   calcularTotalEstoque,
   formatarDataBr,
@@ -35,6 +41,17 @@ import {
 
 // A lista precisa mostrar o banco no estado atual, sem cache
 export const dynamic = "force-dynamic";
+
+const COLUNAS_ORDENACAO = [
+  "codigoErp",
+  "nome",
+  "totalEstoque",
+  "estoqueMinimo",
+  "codigoBarras",
+] as const;
+
+type ColunaOrdenacao = (typeof COLUNAS_ORDENACAO)[number];
+type DirecaoOrdenacao = "asc" | "desc";
 
 // Um parâmetro pode chegar repetido na URL (vira vetor); usamos o primeiro
 function textoDoParametro(valor: string | string[] | undefined): string {
@@ -58,9 +75,21 @@ export default async function ProdutosPage({
   const busca = textoDoParametro(parametros.busca).trim();
   const mostrarInativos = textoDoParametro(parametros.inativos) === "1";
   const movRegistrado = textoDoParametro(parametros.mov) === "1";
+  const visualizacao =
+    textoDoParametro(parametros.visualizacao) === "tabela" ? "tabela" : "cards";
+  const ordenacaoSolicitada = textoDoParametro(parametros.ordenacao);
+  const ordenacao = COLUNAS_ORDENACAO.includes(
+    ordenacaoSolicitada as ColunaOrdenacao
+  )
+    ? (ordenacaoSolicitada as ColunaOrdenacao)
+    : "nome";
+  const direcao: DirecaoOrdenacao =
+    textoDoParametro(parametros.direcao) === "desc" ? "desc" : "asc";
 
   const tamanhoPedido = Number(textoDoParametro(parametros.tamanho));
-  const tamanho = (TAMANHOS_PAGINA as readonly number[]).includes(tamanhoPedido)
+  const tamanho = (
+    TAMANHOS_PAGINA_PRODUTOS as readonly number[]
+  ).includes(tamanhoPedido)
     ? tamanhoPedido
     : TAMANHO_PAGINA_PADRAO;
 
@@ -90,12 +119,51 @@ export default async function ProdutosPage({
   ]);
   const totalPaginas = Math.max(1, Math.ceil(total / tamanho));
   const pagina = Math.min(paginaInicial, totalPaginas);
+  const offset = (pagina - 1) * tamanho;
+  let idsOrdenados: number[] | null = null;
 
-  const produtos = await prisma.produto.findMany({
-    where: filtro,
-    orderBy: { nome: "asc" },
-    skip: (pagina - 1) * tamanho,
-    take: tamanho,
+  if (ordenacao === "totalEstoque") {
+    const padraoBusca = `%${busca}%`;
+    const ordenarAscendente = direcao === "asc";
+    const linhasOrdenadas = await prisma.$queryRaw<{ id: number }[]>(Prisma.sql`
+      SELECT produto.id
+      FROM produto
+      LEFT JOIN (
+        SELECT produto_id, SUM(quantidade) AS total
+        FROM estoque
+        GROUP BY produto_id
+      ) AS totais ON totais.produto_id = produto.id
+      WHERE (${mostrarInativos} OR produto.ativo = TRUE)
+        AND (
+          ${busca === ""}
+          OR produto.nome ILIKE ${padraoBusca}
+          OR COALESCE(produto.codigo_barras, '') ILIKE ${padraoBusca}
+          OR COALESCE(produto.codigo_erp, '') ILIKE ${padraoBusca}
+        )
+      ORDER BY
+        CASE WHEN ${ordenarAscendente} THEN COALESCE(totais.total, 0) END ASC,
+        CASE WHEN NOT ${ordenarAscendente} THEN COALESCE(totais.total, 0) END DESC,
+        produto.nome ASC,
+        produto.id ASC
+      LIMIT ${tamanho}
+      OFFSET ${offset}
+    `);
+    idsOrdenados = linhasOrdenadas.map((linha) => linha.id);
+  }
+
+  const orderBy: ProdutoOrderByWithRelationInput[] =
+    ordenacao === "codigoErp"
+      ? [{ codigoErp: direcao }, { id: "asc" }]
+      : ordenacao === "estoqueMinimo"
+        ? [{ estoqueMinimo: direcao }, { id: "asc" }]
+        : ordenacao === "codigoBarras"
+          ? [{ codigoBarras: direcao }, { id: "asc" }]
+          : [{ nome: direcao }, { id: "asc" }];
+
+  const encontrados = await prisma.produto.findMany({
+    where: idsOrdenados === null ? filtro : { id: { in: idsOrdenados } },
+    orderBy: idsOrdenados === null ? orderBy : { id: "asc" },
+    ...(idsOrdenados === null ? { skip: offset, take: tamanho } : {}),
     // RN-01: o total é a soma destas linhas, calculado na tela
     include: {
       estoques: {
@@ -107,6 +175,15 @@ export default async function ProdutosPage({
       },
     },
   });
+  const encontradosPorId = new Map(
+    encontrados.map((produto) => [produto.id, produto])
+  );
+  const produtos =
+    idsOrdenados === null
+      ? encontrados
+      : idsOrdenados
+          .map((id) => encontradosPorId.get(id))
+          .filter((produto) => produto !== undefined);
 
   // Monta o endereço da lista mantendo os filtros atuais
   function urlDaLista(extras: Record<string, string>): string {
@@ -116,10 +193,25 @@ export default async function ProdutosPage({
     if (tamanho !== TAMANHO_PAGINA_PADRAO) {
       parametrosUrl.set("tamanho", String(tamanho));
     }
+    if (visualizacao === "tabela") {
+      parametrosUrl.set("visualizacao", "tabela");
+    }
+    if (ordenacao !== "nome") parametrosUrl.set("ordenacao", ordenacao);
+    if (direcao !== "asc") parametrosUrl.set("direcao", direcao);
     for (const [chave, valor] of Object.entries(extras)) {
       parametrosUrl.set(chave, valor);
     }
     return `/produtos?${parametrosUrl.toString()}`;
+  }
+
+  function urlDaOrdenacao(coluna: ColunaOrdenacao): string {
+    const proximaDirecao: DirecaoOrdenacao =
+      coluna === ordenacao && direcao === "asc" ? "desc" : "asc";
+    return urlDaLista({
+      ordenacao: coluna,
+      direcao: proximaDirecao,
+      pagina: "1",
+    });
   }
 
   function urlDaPagina(numero: number): string {
@@ -131,6 +223,21 @@ export default async function ProdutosPage({
   const urlRetorno = urlDaLista(
     pagina > 1 ? { pagina: String(pagina), mov: "1" } : { mov: "1" }
   );
+  const hrefVisualizacaoCards = urlDaLista({
+    visualizacao: "cards",
+    pagina: "1",
+  });
+  const hrefVisualizacaoTabela = urlDaLista({
+    visualizacao: "tabela",
+    pagina: "1",
+  });
+  const colunasTabela: { chave: ColunaOrdenacao; rotulo: string }[] = [
+    { chave: "codigoErp", rotulo: "Código ERP" },
+    { chave: "nome", rotulo: "Nome do Produto" },
+    { chave: "totalEstoque", rotulo: "Total em Estoque" },
+    { chave: "estoqueMinimo", rotulo: "Estoque Mínimo" },
+    { chave: "codigoBarras", rotulo: "Código de Barras" },
+  ];
 
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-5">
@@ -152,6 +259,10 @@ export default async function ProdutosPage({
         method="get"
         className="mt-4 flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-3"
       >
+        <input type="hidden" name="visualizacao" value={visualizacao} />
+        <input type="hidden" name="ordenacao" value={ordenacao} />
+        <input type="hidden" name="direcao" value={direcao} />
+
         <div className="flex flex-col gap-1">
           <label htmlFor="busca" className="text-base font-medium text-zinc-800">
             Buscar
@@ -185,13 +296,19 @@ export default async function ProdutosPage({
               defaultValue={String(tamanho)}
               className="h-11 rounded-lg border border-zinc-300 bg-white px-2 text-base text-zinc-900"
             >
-              {TAMANHOS_PAGINA.map((opcao) => (
+              {TAMANHOS_PAGINA_PRODUTOS.map((opcao) => (
                 <option key={opcao} value={opcao}>
                   {opcao}
                 </option>
               ))}
             </select>
           </label>
+
+          <AlternadorVisualizacao
+            tabelaAtiva={visualizacao === "tabela"}
+            hrefCards={hrefVisualizacaoCards}
+            hrefTabela={hrefVisualizacaoTabela}
+          />
 
           <button
             type="submit"
@@ -217,7 +334,159 @@ export default async function ProdutosPage({
           : `${total} produto(s) — página ${pagina} de ${totalPaginas}`}
       </p>
 
-      {produtos.length > 0 && (
+      {produtos.length > 0 && visualizacao === "tabela" && (
+        <div className="mt-3 overflow-x-auto rounded-xl border border-zinc-200 bg-white">
+          <table className="w-full min-w-[980px] border-collapse text-left text-sm">
+            <thead className="bg-zinc-50 text-zinc-600">
+              <tr className="border-b border-zinc-200">
+                {colunasTabela.map((coluna) => (
+                  <th
+                    key={coluna.chave}
+                    scope="col"
+                    aria-sort={
+                      ordenacao === coluna.chave
+                        ? direcao === "asc"
+                          ? "ascending"
+                          : "descending"
+                        : "none"
+                    }
+                    className="whitespace-nowrap px-3 py-3 font-semibold"
+                  >
+                    <Link
+                      href={urlDaOrdenacao(coluna.chave)}
+                      className="inline-flex items-center gap-2 hover:text-zinc-900"
+                    >
+                      {coluna.rotulo}
+                      <span aria-hidden="true" className="text-xs">
+                        {ordenacao === coluna.chave
+                          ? direcao === "asc"
+                            ? "↑"
+                            : "↓"
+                          : "↕"}
+                      </span>
+                    </Link>
+                  </th>
+                ))}
+                <th scope="col" className="whitespace-nowrap px-3 py-3 font-semibold">
+                  Status
+                </th>
+                <th scope="col" className="whitespace-nowrap px-3 py-3 font-semibold">
+                  Ações
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {produtos.map((produto) => {
+                const totalEstoque = calcularTotalEstoque(produto.estoques);
+                const dataUltima = ultimaContagem(produto.estoques);
+                const saldos: Record<string, string> = {};
+                for (const estoque of produto.estoques) {
+                  saldos[String(estoque.localEstoqueId)] = formatarDecimalBr(
+                    estoque.quantidade.toString()
+                  );
+                }
+
+                return (
+                  <tr
+                    key={produto.id}
+                    className="border-b border-zinc-100 last:border-0"
+                  >
+                    <td className="whitespace-nowrap px-3 py-3 text-zinc-700">
+                      {produto.codigoErp || "—"}
+                    </td>
+                    <td className="px-3 py-3">
+                      <div className="min-w-[260px]">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <Link
+                              href={`/produtos/${produto.id}`}
+                              title={podeEditar ? "Editar produto" : "Ver produto"}
+                              className="font-semibold text-zinc-900 hover:underline"
+                            >
+                              {produto.nome}
+                            </Link>
+                          </div>
+                          <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-zinc-500">
+                            <span>Unidade: {produto.unidade}</span>
+                          </div>
+                      </div>
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-3 text-zinc-900">
+                      <div className="inline-flex items-center gap-1">
+                        <span className="font-semibold">
+                          {formatarQuantidade(totalEstoque)}
+                        </span>
+                        <DicaEstoque
+                          dataAtualizacao={
+                            dataUltima ? formatarDataBr(dataUltima) : null
+                          }
+                        />
+                      </div>
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-3 text-zinc-900">
+                      {formatarDecimalBr(produto.estoqueMinimo.toString())}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-3 text-zinc-700">
+                      {produto.codigoBarras || "—"}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-3">
+                      {podeDesativar ? (
+                        <form
+                          action={
+                            produto.ativo ? desativarProduto : reativarProduto
+                          }
+                        >
+                          <input type="hidden" name="id" value={produto.id} />
+                          <BotaoAcao
+                            title={produto.ativo ? "Desativar" : "Reativar"}
+                            className={`rounded-full px-2 py-0.5 text-xs font-medium text-white ${
+                              produto.ativo ? "bg-[#22c55e]" : "bg-[#ef4444]"
+                            }`}
+                          >
+                            {produto.ativo ? "Ativo" : "Inativo"}
+                          </BotaoAcao>
+                        </form>
+                      ) : (
+                        <span
+                          className={`rounded-full px-2 py-0.5 text-xs font-medium text-white ${
+                            produto.ativo ? "bg-[#22c55e]" : "bg-[#ef4444]"
+                          }`}
+                        >
+                          {produto.ativo ? "Ativo" : "Inativo"}
+                        </span>
+                      )}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-3">
+                      <div className="flex items-center gap-2">
+                        {podeEditar && (
+                          <Link
+                            href={`/produtos/${produto.id}`}
+                            title="Editar produto"
+                            aria-label={`Editar ${produto.nome}`}
+                            className="flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200 text-zinc-800 hover:bg-zinc-50"
+                          >
+                            <IconeLapis className="h-4 w-4" />
+                          </Link>
+                        )}
+                        {podeMovimentar && locais.length > 0 && (
+                          <MovimentacaoEstoque
+                            produtoId={produto.id}
+                            locais={locais}
+                            saldos={saldos}
+                            retorno={urlRetorno}
+                            layout="horizontal"
+                          />
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {produtos.length > 0 && visualizacao === "cards" && (
         <ul className="mt-3 flex flex-col gap-3">
           {produtos.map((produto) => {
             // RN-01: o total é sempre calculado; RN-03: data da contagem

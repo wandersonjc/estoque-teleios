@@ -142,6 +142,36 @@ export function IconeCalendario({ className = "h-5 w-5" }: Props) {
   );
 }
 
+export function IconeInformacao({ className = "h-5 w-5" }: Props) {
+  return (
+    <svg {...TRACO} className={className} aria-hidden="true">
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 11v5" />
+      <path d="M12 8h.01" />
+    </svg>
+  );
+}
+
+export function IconeVisualizacaoCards({ className = "h-5 w-5" }: Props) {
+  return (
+    <svg {...TRACO} className={className} aria-hidden="true">
+      <rect x="3" y="3" width="8" height="8" rx="1" />
+      <rect x="13" y="3" width="8" height="8" rx="1" />
+      <rect x="3" y="13" width="8" height="8" rx="1" />
+      <rect x="13" y="13" width="8" height="8" rx="1" />
+    </svg>
+  );
+}
+
+export function IconeVisualizacaoTabela({ className = "h-5 w-5" }: Props) {
+  return (
+    <svg {...TRACO} className={className} aria-hidden="true">
+      <rect x="3" y="4" width="18" height="16" rx="1" />
+      <path d="M3 9h18M3 14h18M9 4v16" />
+    </svg>
+  );
+}
+
 export function IconeBarras({ className = "h-5 w-5" }: Props) {
   return (
     <svg {...TRACO} className={className} aria-hidden="true">

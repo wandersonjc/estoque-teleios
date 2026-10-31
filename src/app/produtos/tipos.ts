@@ -20,7 +20,8 @@ export const LIMITE_CODIGO_ERP = 50;
 
 // Quantidades de itens por página na lista de produtos
 export const TAMANHOS_PAGINA = [25, 50, 75, 100] as const;
-export const TAMANHO_PAGINA_PADRAO = 50;
+export const TAMANHOS_PAGINA_PRODUTOS = [10, 25, 50, 75, 100] as const;
+export const TAMANHO_PAGINA_PADRAO = 10;
 
 // RN-03: a partir de quantos dias uma movimentação é considerada antiga
 export const DIAS_CONTAGEM_ANTIGA = 30;
