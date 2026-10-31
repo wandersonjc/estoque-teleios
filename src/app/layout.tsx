@@ -61,7 +61,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 <details className="group relative ml-auto shrink-0">
                   <summary
                     aria-label="Abrir menu da conta"
-                    title="Menu da conta"
+                    title={usuario.nome}
                     className="flex h-10 w-10 cursor-pointer list-none items-center justify-center overflow-hidden rounded-full border border-zinc-200 bg-zinc-100 text-zinc-600 [&::-webkit-details-marker]:hidden"
                   >
                     {usuario.imagemChave ? (
@@ -77,7 +77,16 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                       <IconeUser className="h-5 w-5" />
                     )}
                   </summary>
-                  <div className="absolute right-0 top-full z-50 mt-2 w-44 rounded-lg border border-zinc-200 bg-white p-1 shadow-lg">
+                  <div className="absolute right-0 top-full z-50 mt-2 w-64 max-w-[calc(100vw-2rem)] rounded-lg border border-zinc-200 bg-white p-1 shadow-lg">
+                    <div className="px-3 py-2">
+                      <p className="truncate text-sm font-semibold text-zinc-900">
+                        {usuario.nome}
+                      </p>
+                      <p className="break-all text-xs text-zinc-600">
+                        {usuario.email}
+                      </p>
+                    </div>
+                    <hr className="my-1 border-zinc-200" />
                     <Link
                       href={`/usuarios/${usuario.id}`}
                       className="block rounded-md px-3 py-2 text-sm font-medium text-zinc-800 hover:bg-zinc-100"
@@ -85,6 +94,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                       Minha conta
                     </Link>
                     <SeletorTema temaInicial={tema} />
+                    <hr className="my-1 border-zinc-200" />
                     <form action={sair}>
                       <button
                         type="submit"
