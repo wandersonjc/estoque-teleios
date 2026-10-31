@@ -284,7 +284,7 @@ export default async function EditarProdutoPage({
                     acao={atualizarProduto}
                     textoBotao="Salvar alterações"
                     id={produto.id}
-                    imagemUrl={produto.imagemChave ? `/api/imagens/produtos/${produto.id}` : undefined}
+                    imagemUrl={produto.imagemChave ? `/api/imagens/produtos/${produto.id}?v=${produto.atualizadoEm.getTime()}` : undefined}
                     valoresIniciais={{
                       nome: produto.nome,
                       unidade: produto.unidade,

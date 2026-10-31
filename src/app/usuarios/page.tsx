@@ -44,6 +44,7 @@ export default async function UsuariosPage() {
       nome: true,
       email: true,
       imagemChave: true,
+      atualizadoEm: true,
       ativo: true,
       _count: { select: { movimentos: true, logs: true } },
     },
@@ -89,7 +90,7 @@ export default async function UsuariosPage() {
                   <div className="flex h-16 w-16 sm:h-20 sm:w-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#eef1f5] text-[#7d8fa9]">
                     {usuario.imagemChave ? (
                       <Image
-                        src={`/api/imagens/usuarios/${usuario.id}`}
+                        src={`/api/imagens/usuarios/${usuario.id}?v=${usuario.atualizadoEm.getTime()}`}
                         alt={usuario.nome}
                         width={80}
                         height={80}

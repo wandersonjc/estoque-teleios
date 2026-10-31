@@ -44,6 +44,7 @@ export default async function EditarUsuarioPage({
       nome: true,
       email: true,
       imagemChave: true,
+      atualizadoEm: true,
       ativo: true,
       _count: { select: { movimentos: true, logs: true } },
     },
@@ -95,7 +96,7 @@ export default async function EditarUsuarioPage({
           acao={atualizarUsuario}
           textoBotao="Salvar alterações"
           id={usuario.id}
-          imagemUrl={usuario.imagemChave ? `/api/imagens/usuarios/${usuario.id}` : undefined}
+          imagemUrl={usuario.imagemChave ? `/api/imagens/usuarios/${usuario.id}?v=${usuario.atualizadoEm.getTime()}` : undefined}
           ehEdicao
           valoresIniciais={{
             nome: usuario.nome,

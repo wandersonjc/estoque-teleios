@@ -119,7 +119,7 @@ export default async function PaginaFornecedores({
                 <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-zinc-100 text-xl font-semibold text-zinc-500">
                   {fornecedor.imagemChave ? (
                     <Image
-                      src={`/api/imagens/fornecedores/${fornecedor.id}`}
+                      src={`/api/imagens/fornecedores/${fornecedor.id}?v=${fornecedor.atualizadoEm.getTime()}`}
                       alt={fornecedor.nome}
                       width={64}
                       height={64}

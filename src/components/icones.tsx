@@ -184,6 +184,36 @@ export function IconeUser({ className = "h-5 w-5" }: Props) {
   );
 }
 
+export function IconeImagem({ className = "h-5 w-5" }: Props) {
+  return (
+    <svg {...TRACO} className={className} aria-hidden="true">
+      <rect x="3" y="3" width="18" height="18" rx="2" />
+      <circle cx="8.5" cy="8.5" r="1.5" />
+      <path d="m21 15-5-5L5 21" />
+    </svg>
+  );
+}
+
+export function IconeCamera({ className = "h-5 w-5" }: Props) {
+  return (
+    <svg {...TRACO} className={className} aria-hidden="true">
+      <path d="M14 5 12.5 3h-5L6 5H4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  );
+}
+
+export function IconeImagemVazia({ className = "h-5 w-5" }: Props) {
+  return (
+    <svg {...TRACO} className={className} aria-hidden="true">
+      <rect x="3" y="3" width="18" height="18" rx="2" />
+      <circle cx="8.5" cy="8.5" r="1.5" />
+      <path d="m21 15-5-5L5 21" />
+      <path d="M12 12h.01" />
+    </svg>
+  );
+}
+
 export function IconeArmazem({ className = "h-5 w-5" }: Props) {
   return (
     <svg {...TRACO} className={className} aria-hidden="true">

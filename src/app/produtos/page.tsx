@@ -243,7 +243,7 @@ export default async function ProdutosPage({
                   <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-zinc-100 sm:h-28 sm:w-28">
                     {produto.imagemChave ? (
                       <Image
-                        src={`/api/imagens/produtos/${produto.id}`}
+                        src={`/api/imagens/produtos/${produto.id}?v=${produto.atualizadoEm.getTime()}`}
                         alt={produto.nome}
                         width={112}
                         height={112}

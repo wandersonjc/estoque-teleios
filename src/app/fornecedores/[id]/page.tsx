@@ -279,7 +279,7 @@ export default async function PaginaEditarFornecedor({
                 acao={atualizarFornecedor}
                 textoBotao="Salvar alterações"
                 id={fornecedor.id}
-                imagemUrl={fornecedor.imagemChave ? `/api/imagens/fornecedores/${fornecedor.id}` : undefined}
+                imagemUrl={fornecedor.imagemChave ? `/api/imagens/fornecedores/${fornecedor.id}?v=${fornecedor.atualizadoEm.getTime()}` : undefined}
                 valoresIniciais={{
                   nome: fornecedor.nome,
                   contato: fornecedor.contato ?? "",
