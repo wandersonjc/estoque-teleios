@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Image from "next/image";
 import Link from "next/link";
 import "./globals.css";
 
-import BotaoAcao from "@/components/BotaoAcao";
+import { IconeUser } from "@/components/icones";
 import IndicadorCarregando from "@/components/IndicadorCarregando";
 import { sair } from "./login/actions";
 import { usuarioAtual } from "@/lib/autorizacao";
@@ -41,26 +42,56 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <IndicadorCarregando>
           {usuario && (
             <header className="border-b border-zinc-200">
-              <nav className="mx-auto flex h-14 w-full max-w-3xl items-center gap-5 overflow-x-auto px-4">
-                {itensDoMenu.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className="shrink-0 text-base font-semibold text-zinc-900"
-                  >
-                    {item.rotulo}
-                  </Link>
-                ))}
+              <div className="mx-auto flex h-14 w-full max-w-3xl items-center gap-3 px-4">
+                <nav className="flex min-w-0 flex-1 items-center gap-5 overflow-x-auto">
+                  {itensDoMenu.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="shrink-0 text-base font-semibold text-zinc-900"
+                    >
+                      {item.rotulo}
+                    </Link>
+                  ))}
+                </nav>
 
-                <form action={sair} className="ml-auto shrink-0">
-                  <BotaoAcao
-                    carregando="Saindo..."
-                    className="text-base font-medium text-zinc-600"
+                <details className="group relative ml-auto shrink-0">
+                  <summary
+                    aria-label="Abrir menu da conta"
+                    title="Menu da conta"
+                    className="flex h-10 w-10 cursor-pointer list-none items-center justify-center overflow-hidden rounded-full border border-zinc-200 bg-zinc-100 text-zinc-600 [&::-webkit-details-marker]:hidden"
                   >
-                    Sair
-                  </BotaoAcao>
-                </form>
-              </nav>
+                    {usuario.imagemChave ? (
+                      <Image
+                        src={`/api/imagens/usuarios/${usuario.id}?v=${usuario.atualizadoEm.getTime()}`}
+                        alt=""
+                        width={40}
+                        height={40}
+                        unoptimized
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <IconeUser className="h-5 w-5" />
+                    )}
+                  </summary>
+                  <div className="absolute right-0 top-full z-50 mt-2 w-44 rounded-lg border border-zinc-200 bg-white p-1 shadow-lg">
+                    <Link
+                      href={`/usuarios/${usuario.id}`}
+                      className="block rounded-md px-3 py-2 text-sm font-medium text-zinc-800 hover:bg-zinc-100"
+                    >
+                      Minha conta
+                    </Link>
+                    <form action={sair}>
+                      <button
+                        type="submit"
+                        className="w-full rounded-md px-3 py-2 text-left text-sm font-medium text-zinc-800 hover:bg-zinc-100"
+                      >
+                        Sair
+                      </button>
+                    </form>
+                  </div>
+                </details>
+              </div>
             </header>
           )}
           {children}

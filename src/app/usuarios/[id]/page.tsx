@@ -6,10 +6,11 @@
 // Regras: docs/regras-de-negocio.md (seção 2)
 // ============================================================
 
-import { exigirPermissao } from "@/lib/autorizacao";
+import { exigirSessao } from "@/lib/autorizacao";
 import prisma from "@/lib/prisma";
+import { MENU_PRINCIPAL } from "@/lib/permissoes";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import BotaoAcao from "@/components/BotaoAcao";
 
@@ -28,14 +29,30 @@ export default async function EditarUsuarioPage({
   params,
   searchParams,
 }: PageProps<"/usuarios/[id]">) {
-  // Só entra quem pode consultar usuários
-  await exigirPermissao("usuarios.usuario.consultar");
+  const atual = await exigirSessao();
 
   const { id } = await params;
   const { salvo, erro } = await searchParams;
 
   const numero = Number(id);
   if (!Number.isInteger(numero) || numero <= 0) notFound();
+
+  const propriaConta = atual.id === numero;
+  if (
+    !propriaConta &&
+    !atual.permissoes.has("usuarios.usuario.consultar")
+  ) {
+    redirect("/acesso-negado");
+  }
+
+  const podeEditar =
+    propriaConta || atual.permissoes.has("usuarios.usuario.editar");
+  const podeDesativar = atual.permissoes.has("usuarios.usuario.desativar");
+  const podeExcluir = atual.permissoes.has("usuarios.usuario.excluir");
+  const hrefVoltar = propriaConta
+    ? MENU_PRINCIPAL.find((item) => atual.permissoes.has(item.permissao))?.href ??
+      "/acesso-negado"
+    : "/usuarios";
 
   const usuario = await prisma.usuario.findUnique({
     where: { id: numero },
@@ -59,8 +76,10 @@ export default async function EditarUsuarioPage({
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-5">
       <div className="flex items-center justify-between gap-3">
-        <h1 className="text-lg font-semibold text-zinc-900 sm:text-xl">Editar usuário</h1>
-        <Link href="/usuarios" className="text-base text-zinc-700">
+        <h1 className="text-lg font-semibold text-zinc-900 sm:text-xl">
+          {propriaConta ? "Minha conta" : podeEditar ? "Editar usuário" : "Usuário"}
+        </h1>
+        <Link href={hrefVoltar} className="text-base text-zinc-700">
           Voltar
         </Link>
       </div>
@@ -92,32 +111,47 @@ export default async function EditarUsuarioPage({
       )}
 
       <div className="mt-4">
-        <UsuarioForm
-          acao={atualizarUsuario}
-          textoBotao="Salvar alterações"
-          id={usuario.id}
-          imagemUrl={usuario.imagemChave ? `/api/imagens/usuarios/${usuario.id}?v=${usuario.atualizadoEm.getTime()}` : undefined}
-          ehEdicao
-          valoresIniciais={{
-            nome: usuario.nome,
-            email: usuario.email,
-            // A senha nunca é preenchida: em branco mantém a atual
-            senha: "",
-          }}
-        />
+        {podeEditar ? (
+          <UsuarioForm
+            acao={atualizarUsuario}
+            textoBotao="Salvar alterações"
+            id={usuario.id}
+            imagemUrl={usuario.imagemChave ? `/api/imagens/usuarios/${usuario.id}?v=${usuario.atualizadoEm.getTime()}` : undefined}
+            ehEdicao
+            valoresIniciais={{
+              nome: usuario.nome,
+              email: usuario.email,
+              // A senha nunca é preenchida: em branco mantém a atual
+              senha: "",
+            }}
+          />
+        ) : (
+          <dl className="grid grid-cols-1 gap-3 rounded-lg border border-zinc-200 bg-white p-3 text-base sm:grid-cols-2">
+            <div>
+              <dt className="text-sm text-zinc-500">Nome</dt>
+              <dd className="font-medium text-zinc-900">{usuario.nome}</dd>
+            </div>
+            <div>
+              <dt className="text-sm text-zinc-500">E-mail</dt>
+              <dd className="font-medium text-zinc-900">{usuario.email}</dd>
+            </div>
+          </dl>
+        )}
       </div>
 
-      <form
-        action={usuario.ativo ? desativarUsuario : reativarUsuario}
-        className="mt-6"
-      >
-        <input type="hidden" name="id" value={usuario.id} />
-        <BotaoAcao className="h-12 rounded-lg border border-zinc-300 px-4 text-base font-medium text-zinc-900">
-          {usuario.ativo ? "Desativar usuário" : "Reativar usuário"}
-        </BotaoAcao>
-      </form>
+      {!propriaConta && podeDesativar && (
+        <form
+          action={usuario.ativo ? desativarUsuario : reativarUsuario}
+          className="mt-6"
+        >
+          <input type="hidden" name="id" value={usuario.id} />
+          <BotaoAcao className="h-12 rounded-lg border border-zinc-300 px-4 text-base font-medium text-zinc-900">
+            {usuario.ativo ? "Desativar usuário" : "Reativar usuário"}
+          </BotaoAcao>
+        </form>
+      )}
 
-      <div className="mt-6 border-t border-red-200 pt-4">
+      {!propriaConta && podeExcluir && <div className="mt-6 border-t border-red-200 pt-4">
         <h2 className="text-base font-semibold text-red-800">
           Excluir usuário
         </h2>
@@ -142,7 +176,7 @@ export default async function EditarUsuarioPage({
             </form>
           </>
         )}
-      </div>
+      </div>}
     </main>
   );
 }

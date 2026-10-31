@@ -17,6 +17,8 @@ export type UsuarioSessao = {
   id: number;
   nome: string;
   email: string;
+  imagemChave: string | null;
+  atualizadoEm: Date;
   // Códigos de permissão concedidos a este usuário
   permissoes: Set<string>;
 };
@@ -37,6 +39,8 @@ export const usuarioAtual = cache(async (): Promise<UsuarioSessao | null> => {
     id: sessao.usuario.id,
     nome: sessao.usuario.nome,
     email: sessao.usuario.email,
+    imagemChave: sessao.usuario.imagemChave,
+    atualizadoEm: sessao.usuario.atualizadoEm,
     permissoes: new Set(sessao.codigosPermissao),
   };
 });

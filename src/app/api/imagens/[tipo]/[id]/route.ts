@@ -47,7 +47,10 @@ export async function GET(
       })
     )?.imagemChave;
   } else if (tipo === "usuarios") {
-    if (!sessao.codigosPermissao.includes("usuarios.usuario.consultar")) {
+    if (
+      sessao.usuario.id !== id &&
+      !sessao.codigosPermissao.includes("usuarios.usuario.consultar")
+    ) {
       return new Response(null, { status: 403, headers: CABECALHOS_PRIVADOS });
     }
     imagemChave = (

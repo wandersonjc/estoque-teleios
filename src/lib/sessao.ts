@@ -27,6 +27,8 @@ export type SessaoAtual = {
     nome: string;
     email: string;
     ativo: boolean;
+    imagemChave: string | null;
+    atualizadoEm: Date;
   };
   // Códigos de permissão (ex.: "produtos.produto.criar")
   codigosPermissao: string[];
@@ -74,6 +76,8 @@ export const obterSessao = cache(async (): Promise<SessaoAtual | null> => {
           nome: true,
           email: true,
           ativo: true,
+          imagemChave: true,
+          atualizadoEm: true,
           permissoes: {
             select: { permissao: { select: { codigo: true } } },
           },
@@ -100,6 +104,8 @@ export const obterSessao = cache(async (): Promise<SessaoAtual | null> => {
       nome: sessao.usuario.nome,
       email: sessao.usuario.email,
       ativo: sessao.usuario.ativo,
+      imagemChave: sessao.usuario.imagemChave,
+      atualizadoEm: sessao.usuario.atualizadoEm,
     },
     codigosPermissao: sessao.usuario.permissoes.map(
       (concessao) => concessao.permissao.codigo

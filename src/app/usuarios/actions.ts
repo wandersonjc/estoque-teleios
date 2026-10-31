@@ -15,7 +15,11 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { Prisma } from "@/generated/prisma/client";
-import { MENSAGEM_SEM_PERMISSAO, verificarPermissao } from "@/lib/autorizacao";
+import {
+  MENSAGEM_SEM_PERMISSAO,
+  usuarioAtual,
+  verificarPermissao,
+} from "@/lib/autorizacao";
 import {
   armazenarImagem,
   excluirImagemSemFalhar,
@@ -204,14 +208,7 @@ export async function atualizarUsuario(
   _estadoAnterior: EstadoFormularioUsuario,
   formData: FormData
 ): Promise<EstadoFormularioUsuario> {
-  const atual = await verificarPermissao("usuarios.usuario.editar");
-  if (!atual) {
-    return {
-      erroGeral: MENSAGEM_SEM_PERMISSAO,
-      valores: lerValores(formData),
-    };
-  }
-
+  const atual = await usuarioAtual();
   const valores = lerValores(formData);
   const id = Number(formData.get("id"));
 
@@ -219,8 +216,27 @@ export async function atualizarUsuario(
     return { erroGeral: "Usuário inválido.", valores };
   }
 
+  const ehPropriaConta = atual?.id === id;
+  if (
+    !atual ||
+    (!ehPropriaConta && !atual.permissoes.has("usuarios.usuario.editar"))
+  ) {
+    return { erroGeral: MENSAGEM_SEM_PERMISSAO, valores };
+  }
+
   const validacao = validarUsuario(valores, false);
   if (!validacao.ok) return validacao.estado;
+
+  const emailEmUso = await prisma.usuario.findFirst({
+    where: { email: validacao.dados.email, id: { not: id } },
+    select: { id: true },
+  });
+  if (emailEmUso) {
+    return {
+      erros: { email: "Este e-mail já está sendo usado por outro usuário." },
+      valores,
+    };
+  }
 
   const imagemPreparada = await prepararImagem(formData.get("imagem"));
   if (!imagemPreparada.ok) {
