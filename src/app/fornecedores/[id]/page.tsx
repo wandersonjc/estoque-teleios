@@ -9,7 +9,6 @@ import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import BotaoAcao from "@/components/BotaoAcao";
 import { formatarDecimalBr } from "@/app/produtos/tipos";
 import { TAMANHOS_PAGINA } from "@/app/produtos/tipos";
 
@@ -279,6 +278,18 @@ export default async function PaginaEditarFornecedor({
                 acao={atualizarFornecedor}
                 textoBotao="Salvar alterações"
                 id={fornecedor.id}
+                acaoStatus={
+                  podeDesativar
+                    ? fornecedor.ativo
+                      ? desativarFornecedor
+                      : reativarFornecedor
+                    : undefined
+                }
+                textoAcaoStatus={
+                  fornecedor.ativo
+                    ? "Desativar fornecedor"
+                    : "Reativar fornecedor"
+                }
                 imagemUrl={fornecedor.imagemChave ? `/api/imagens/fornecedores/${fornecedor.id}?v=${fornecedor.atualizadoEm.getTime()}` : undefined}
                 valoresIniciais={{
                   nome: fornecedor.nome,
@@ -353,6 +364,11 @@ export default async function PaginaEditarFornecedor({
             )}
 
             <div className="mt-4">
+              {vinculos.length > 0 && (
+                <h3 className="mb-3 text-base font-semibold text-zinc-900">
+                  Produtos vinculados
+                </h3>
+              )}
               <ListaVinculos
                 podeGerenciarVinculo={podeVincular}
                 precosAtuais={mapaPrecos}
@@ -404,10 +420,14 @@ export default async function PaginaEditarFornecedor({
               </div>
             )}
 
+            <h3 className="mt-4 text-base font-semibold text-zinc-900">
+              Registros de preços
+            </h3>
+
             <form
               action={retorno}
               method="get"
-              className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end"
+              className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end"
             >
               <input type="hidden" name="aba" value="precos" />
               <input
@@ -598,18 +618,6 @@ export default async function PaginaEditarFornecedor({
           </section>
         }
       />
-
-      {podeDesativar && (
-        <form
-          action={fornecedor.ativo ? desativarFornecedor : reativarFornecedor}
-          className="mt-4"
-        >
-          <input type="hidden" name="id" value={fornecedor.id} />
-          <BotaoAcao className="h-12 rounded-lg border border-zinc-300 px-4 text-base font-medium text-zinc-900">
-            {fornecedor.ativo ? "Desativar fornecedor" : "Reativar fornecedor"}
-          </BotaoAcao>
-        </form>
-      )}
     </main>
   );
 }

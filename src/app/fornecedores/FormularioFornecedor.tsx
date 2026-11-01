@@ -7,6 +7,7 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
+import BotaoAcao from "@/components/BotaoAcao";
 import CampoImagem from "@/components/CampoImagem";
 
 import {
@@ -26,6 +27,8 @@ type Props = {
   id?: number;
   valoresIniciais?: ValoresFormularioFornecedor;
   imagemUrl?: string;
+  acaoStatus?: (formData: FormData) => Promise<void>;
+  textoAcaoStatus?: string;
 };
 
 const CLASSE_CAMPO =
@@ -38,6 +41,8 @@ export default function FormularioFornecedor({
   id,
   valoresIniciais,
   imagemUrl,
+  acaoStatus,
+  textoAcaoStatus,
 }: Props) {
   const [estado, enviarFormulario, enviando] = useActionState(acao, {
     valores: valoresIniciais ?? VALORES_FORNECEDOR_VAZIOS,
@@ -162,20 +167,28 @@ export default function FormularioFornecedor({
         </div>
       </div>
 
-      <div className="flex flex-col gap-3 pt-2 sm:flex-row">
+      <div className="flex flex-col gap-3 sm:flex-row">
         <button
           type="submit"
           disabled={enviando}
-          className="h-12 flex-1 rounded-lg bg-zinc-900 px-6 text-base font-medium text-white disabled:opacity-60"
+          className="h-12 rounded-lg bg-zinc-900 px-5 text-base font-medium text-white disabled:opacity-60"
         >
           {enviando ? "Salvando..." : textoBotao}
         </button>
         <Link
           href="/fornecedores"
-          className="flex h-12 items-center justify-center rounded-lg border border-zinc-300 px-6 text-base font-medium text-zinc-900"
+          className="flex h-12 items-center justify-center rounded-lg border border-zinc-300 px-5 text-base font-medium text-zinc-900"
         >
           Cancelar
         </Link>
+        {acaoStatus && textoAcaoStatus && (
+          <BotaoAcao
+            formAction={acaoStatus}
+            className="h-12 rounded-lg border border-zinc-300 px-4 text-base font-medium text-zinc-900"
+          >
+            {textoAcaoStatus}
+          </BotaoAcao>
+        )}
       </div>
     </form>
   );
