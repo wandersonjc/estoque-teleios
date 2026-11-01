@@ -17,7 +17,7 @@ type ItemMenu = {
 
 type Props = {
   children: React.ReactNode;
-  itensDoMenu: ItemMenu[];
+  gruposDoMenu: ItemMenu[][];
   usuario: {
     id: number;
     nome: string;
@@ -135,7 +135,7 @@ function IconeNavegacao({ href }: { href: string }) {
   );
 }
 
-export default function AppShell({ children, itensDoMenu, usuario }: Props) {
+export default function AppShell({ children, gruposDoMenu, usuario }: Props) {
   const pathname = usePathname();
   const [menuRecolhido, setMenuRecolhido] = useState(false);
   const [menuMovelAberto, setMenuMovelAberto] = useState(false);
@@ -161,31 +161,43 @@ export default function AppShell({ children, itensDoMenu, usuario }: Props) {
 
   function renderizarNavegacao(movel = false) {
     return (
-      <nav aria-label="Navegação principal" className="flex flex-col gap-1">
-        {itensDoMenu.map((item) => {
-          const ativo =
-            pathname === item.href || pathname.startsWith(`${item.href}/`);
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              title={menuRecolhido && !movel ? item.rotulo : undefined}
-              aria-current={ativo ? "page" : undefined}
-              onClick={() => setMenuMovelAberto(false)}
-              className={`group flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors ${
-                ativo
-                  ? "bg-[#002855] text-white shadow-sm"
-                  : "text-zinc-700 hover:bg-blue-50 hover:text-[#002855]"
-              } ${menuRecolhido && !movel ? "justify-center px-2" : ""}`}
-            >
-              <IconeNavegacao href={item.href} />
-              {(!menuRecolhido || movel) && <span>{item.rotulo}</span>}
-              {ativo && (!menuRecolhido || movel) && (
-                <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[#ff5a1f]" />
-              )}
-            </Link>
-          );
-        })}
+      <nav aria-label="Navegação principal" className="flex flex-col">
+        {gruposDoMenu.map((grupo, indice) => (
+          <div key={grupo[0].href}>
+            {indice > 0 && (
+              <hr
+                role="separator"
+                className="my-3 border-zinc-200"
+              />
+            )}
+            <div className="flex flex-col gap-1">
+              {grupo.map((item) => {
+                const ativo =
+                  pathname === item.href || pathname.startsWith(`${item.href}/`);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    title={menuRecolhido && !movel ? item.rotulo : undefined}
+                    aria-current={ativo ? "page" : undefined}
+                    onClick={() => setMenuMovelAberto(false)}
+                    className={`group flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors ${
+                      ativo
+                        ? "bg-[#002855] text-white shadow-sm"
+                        : "text-zinc-700 hover:bg-blue-50 hover:text-[#002855]"
+                    } ${menuRecolhido && !movel ? "justify-center px-2" : ""}`}
+                  >
+                    <IconeNavegacao href={item.href} />
+                    {(!menuRecolhido || movel) && <span>{item.rotulo}</span>}
+                    {ativo && (!menuRecolhido || movel) && (
+                      <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[#ff5a1f]" />
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        ))}
       </nav>
     );
   }

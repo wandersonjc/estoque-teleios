@@ -341,28 +341,46 @@ export type ItemMenu = {
   permissao?: string;
 };
 
-export const MENU_PRINCIPAL: ItemMenu[] = [
-  { href: "/dashboard", rotulo: "Dashboard" },
-  { href: "/produtos", rotulo: "Produtos", permissao: "produtos.produto.consultar" },
-  { href: "/locais", rotulo: "Locais", permissao: "locais.local.consultar" },
-  {
-    href: "/fornecedores",
-    rotulo: "Fornecedores",
-    permissao: "fornecedores.fornecedor.consultar",
-  },
-  { href: "/cargos", rotulo: "Cargos", permissao: "cargos.cargo.consultar" },
-  { href: "/funcoes", rotulo: "Funções", permissao: "funcoes.funcao.consultar" },
-  { href: "/usuarios", rotulo: "Usuários", permissao: "usuarios.usuario.consultar" },
-  {
-    href: "/permissoes",
-    rotulo: "Permissões",
-    permissao: "permissoes.permissao.consultar",
-  },
-  {
-    href: "/historico",
-    rotulo: "Histórico",
-    permissao: "auditoria.log.consultar",
-  },
+export const MENU_PRINCIPAL: ItemMenu[][] = [
+  [{ href: "/dashboard", rotulo: "Dashboard" }],
+  [
+    {
+      href: "/produtos",
+      rotulo: "Produtos",
+      permissao: "produtos.produto.consultar",
+    },
+    { href: "/locais", rotulo: "Locais", permissao: "locais.local.consultar" },
+    {
+      href: "/fornecedores",
+      rotulo: "Fornecedores",
+      permissao: "fornecedores.fornecedor.consultar",
+    },
+  ],
+  [
+    { href: "/cargos", rotulo: "Cargos", permissao: "cargos.cargo.consultar" },
+    {
+      href: "/funcoes",
+      rotulo: "Funções",
+      permissao: "funcoes.funcao.consultar",
+    },
+    {
+      href: "/usuarios",
+      rotulo: "Usuários",
+      permissao: "usuarios.usuario.consultar",
+    },
+    {
+      href: "/permissoes",
+      rotulo: "Permissões",
+      permissao: "permissoes.permissao.consultar",
+    },
+  ],
+  [
+    {
+      href: "/historico",
+      rotulo: "Histórico",
+      permissao: "auditoria.log.consultar",
+    },
+  ],
 ];
 
 // ------------------------------------------------------------

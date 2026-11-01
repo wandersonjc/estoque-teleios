@@ -36,10 +36,12 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   // Sem sessão (tela de login), nenhum link aparece.
   const usuario = await usuarioAtual();
   const tema = usuario?.tema === "ESCURO" ? "escuro" : "claro";
-  const itensDoMenu = usuario
-    ? MENU_PRINCIPAL.filter(
-        (item) => !item.permissao || usuario.permissoes.has(item.permissao)
-      )
+  const gruposDoMenu = usuario
+    ? MENU_PRINCIPAL.map((grupo) =>
+        grupo.filter(
+          (item) => !item.permissao || usuario.permissoes.has(item.permissao)
+        )
+      ).filter((grupo) => grupo.length > 0)
     : [];
 
   return (
@@ -51,7 +53,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         {usuario ? (
           <AppShell
-            itensDoMenu={itensDoMenu}
+            gruposDoMenu={gruposDoMenu}
             usuario={{
               id: usuario.id,
               nome: usuario.nome,

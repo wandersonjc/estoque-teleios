@@ -66,7 +66,7 @@ export default async function EditarUsuarioPage({
     "funcoes.usuario.gerenciar"
   );
   const hrefVoltar = propriaConta
-    ? MENU_PRINCIPAL.find(
+    ? MENU_PRINCIPAL.flat().find(
         (item) => !item.permissao || atual.permissoes.has(item.permissao)
       )?.href ?? "/acesso-negado"
     : "/usuarios";
