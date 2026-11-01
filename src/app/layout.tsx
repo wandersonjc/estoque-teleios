@@ -37,7 +37,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const usuario = await usuarioAtual();
   const tema = usuario?.tema === "ESCURO" ? "escuro" : "claro";
   const itensDoMenu = usuario
-    ? MENU_PRINCIPAL.filter((item) => usuario.permissoes.has(item.permissao))
+    ? MENU_PRINCIPAL.filter(
+        (item) => !item.permissao || usuario.permissoes.has(item.permissao)
+      )
     : [];
 
   return (

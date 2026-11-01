@@ -1,7 +1,7 @@
 // ============================================================
 // Módulo 1 - Login: tela de entrada
 // Quem já está logado não precisa ver o formulário: vai direto
-// para a lista de produtos.
+// para o Dashboard.
 // Regras: docs/regras-de-negocio.md (seção 2)
 // ============================================================
 
@@ -16,7 +16,7 @@ export const dynamic = "force-dynamic";
 
 export default async function LoginPage() {
   const usuario = await usuarioAtual();
-  if (usuario) redirect("/produtos");
+  if (usuario) redirect("/dashboard");
 
   return (
     <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col justify-center px-4 py-10">

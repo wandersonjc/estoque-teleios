@@ -66,8 +66,9 @@ export default async function EditarUsuarioPage({
     "funcoes.usuario.gerenciar"
   );
   const hrefVoltar = propriaConta
-    ? MENU_PRINCIPAL.find((item) => atual.permissoes.has(item.permissao))?.href ??
-      "/acesso-negado"
+    ? MENU_PRINCIPAL.find(
+        (item) => !item.permissao || atual.permissoes.has(item.permissao)
+      )?.href ?? "/acesso-negado"
     : "/usuarios";
 
   const [usuario, cargosDisponiveisNoSistema, funcoesDisponiveisNoSistema] = await Promise.all([

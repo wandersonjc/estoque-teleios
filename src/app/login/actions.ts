@@ -56,7 +56,7 @@ export async function entrar(
   await criarSessao(usuario.id);
 
   // Fora de try/catch: o redirect lança um erro de controle de fluxo
-  redirect("/produtos");
+  redirect("/dashboard");
 }
 
 export async function sair(): Promise<void> {

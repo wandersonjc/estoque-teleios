@@ -337,11 +337,12 @@ export const CODIGOS_DE_PERMISSAO = CATALOGO_DE_PERMISSOES.map(
 export type ItemMenu = {
   href: string;
   rotulo: string;
-  // Permissão exigida para o item aparecer
-  permissao: string;
+  // Sem permissão específica, o item fica visível para qualquer usuário logado.
+  permissao?: string;
 };
 
 export const MENU_PRINCIPAL: ItemMenu[] = [
+  { href: "/dashboard", rotulo: "Dashboard" },
   { href: "/produtos", rotulo: "Produtos", permissao: "produtos.produto.consultar" },
   { href: "/locais", rotulo: "Locais", permissao: "locais.local.consultar" },
   {

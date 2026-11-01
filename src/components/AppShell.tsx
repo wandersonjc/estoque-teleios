@@ -58,6 +58,14 @@ function IconeMenu({ fechado = false }: { fechado?: boolean }) {
 
 function IconeNavegacao({ href }: { href: string }) {
   const paths: Record<string, React.ReactNode> = {
+    "/dashboard": (
+      <>
+        <rect x="3" y="3" width="8" height="8" rx="1" />
+        <rect x="13" y="3" width="8" height="5" rx="1" />
+        <rect x="13" y="10" width="8" height="11" rx="1" />
+        <rect x="3" y="13" width="8" height="8" rx="1" />
+      </>
+    ),
     "/produtos": (
       <>
         <path d="m12 3 9 5-9 5-9-5 9-5Z" />
