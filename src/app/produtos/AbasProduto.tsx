@@ -2,17 +2,19 @@
 
 import { useState, type KeyboardEvent, type ReactNode } from "react";
 
-type Aba = "geral" | "estoque" | "fornecedores";
+type Aba = "geral" | "embalagens" | "estoque" | "fornecedores";
 
 type Props = {
   abaInicial?: string;
   geral: ReactNode;
+  embalagens: ReactNode;
   estoque: ReactNode;
   fornecedores: ReactNode;
 };
 
 const ABAS: { id: Aba; rotulo: string }[] = [
   { id: "geral", rotulo: "Geral" },
+  { id: "embalagens", rotulo: "Embalagens" },
   { id: "estoque", rotulo: "Estoque" },
   { id: "fornecedores", rotulo: "Fornecedores" },
 ];
@@ -20,6 +22,7 @@ const ABAS: { id: Aba; rotulo: string }[] = [
 export default function AbasProduto({
   abaInicial,
   geral,
+  embalagens,
   estoque,
   fornecedores,
 }: Props) {
@@ -28,7 +31,12 @@ export default function AbasProduto({
       ? (abaInicial as Aba)
       : "geral"
   );
-  const paineis: Record<Aba, ReactNode> = { geral, estoque, fornecedores };
+  const paineis: Record<Aba, ReactNode> = {
+    geral,
+    embalagens,
+    estoque,
+    fornecedores,
+  };
 
   function navegarPelasAbas(evento: KeyboardEvent<HTMLButtonElement>) {
     const indiceAtual = ABAS.findIndex((aba) => aba.id === abaAtiva);

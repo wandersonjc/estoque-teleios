@@ -8,7 +8,7 @@
 // Use sempre DENTRO de um <form>, no lugar do <button type="submit">.
 // ============================================================
 
-import { useEffect, type ReactNode } from "react";
+import { useEffect, type AriaRole, type ReactNode } from "react";
 import { useFormStatus } from "react-dom";
 
 import { IconeCarregando } from "@/components/icones";
@@ -24,6 +24,8 @@ type Props = {
   disabled?: boolean;
   formAction?: (formData: FormData) => void | Promise<void>;
   confirmacao?: string;
+  role?: AriaRole;
+  ariaChecked?: boolean;
   // Rótulo para leitores de tela (quando o botão só tem ícone)
   ariaLabel?: string;
 };
@@ -36,6 +38,8 @@ export default function BotaoAcao({
   disabled = false,
   formAction,
   confirmacao,
+  role,
+  ariaChecked,
   ariaLabel,
 }: Props) {
   const { pending } = useFormStatus();
@@ -62,6 +66,8 @@ export default function BotaoAcao({
           : undefined
       }
       disabled={disabled || pending}
+      role={role}
+      aria-checked={ariaChecked}
       title={title}
       aria-label={ariaLabel}
       aria-busy={pending}

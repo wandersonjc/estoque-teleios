@@ -14,6 +14,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import AbasProduto from "../AbasProduto";
+import EmbalagensProduto from "../EmbalagensProduto";
 import HistoricoMovimentacoes from "../HistoricoMovimentacoes";
 import MovimentacaoEstoque from "../MovimentacaoEstoque";
 import ProdutoForm from "../ProdutoForm";
@@ -78,6 +79,7 @@ export default async function EditarProdutoPage({
     tamanho,
     ordenacao,
     direcao,
+    embalagem: resultadoEmbalagem,
   } = await searchParams;
   const abaInicial = valorUnico(aba);
 
@@ -98,7 +100,7 @@ export default async function EditarProdutoPage({
     await Promise.all([
       prisma.produto.findUnique({
         where: { id: numero },
-        include: { estoques: true },
+        include: { estoques: true, embalagens: { orderBy: { codigoBarras: "asc" } } },
       }),
       prisma.localEstoque.findMany({
         select: { id: true, nome: true },
@@ -290,7 +292,10 @@ export default async function EditarProdutoPage({
         geral={
           <div className="flex flex-col gap-4">
             <p className="rounded-lg border border-zinc-200 bg-white p-3 text-base text-zinc-800">
-              Total em estoque: <strong>{formatarQuantidade(total)}</strong>
+              Total em estoque:{" "}
+              <strong>
+                {formatarQuantidade(total)} {produto.unidade}
+              </strong>
               {" · "}
               {dataUltima ? (
                 <>
@@ -333,7 +338,6 @@ export default async function EditarProdutoPage({
                       estoqueMinimo: formatarDecimalBr(
                         produto.estoqueMinimo.toString()
                       ),
-                      codigoBarras: produto.codigoBarras ?? "",
                       codigoErp: produto.codigoErp ?? "",
                     }}
                   />
@@ -345,7 +349,7 @@ export default async function EditarProdutoPage({
                     <dd className="text-base text-zinc-900">{produto.nome}</dd>
                   </div>
                   <div>
-                    <dt className="text-sm text-zinc-600">Unidade</dt>
+                    <dt className="text-sm text-zinc-600">Unidade-base</dt>
                     <dd className="text-base text-zinc-900">
                       {produto.unidade}
                     </dd>
@@ -354,12 +358,7 @@ export default async function EditarProdutoPage({
                     <dt className="text-sm text-zinc-600">Estoque mínimo</dt>
                     <dd className="text-base text-zinc-900">
                       {formatarDecimalBr(produto.estoqueMinimo.toString())}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-sm text-zinc-600">Código de barras</dt>
-                    <dd className="text-base text-zinc-900">
-                      {produto.codigoBarras || "Não informado"}
+                      {" "}{produto.unidade}
                     </dd>
                   </div>
                   <div>
@@ -389,6 +388,21 @@ export default async function EditarProdutoPage({
             </div>
           </div>
         }
+        embalagens={
+          <EmbalagensProduto
+            produtoId={produto.id}
+            unidadeBase={produto.unidade}
+            embalagens={produto.embalagens.map((embalagem) => ({
+              id: embalagem.id,
+              codigoBarras: embalagem.codigoBarras,
+              unidade: embalagem.unidade,
+              quantidadeBase: embalagem.quantidadeBase.toString(),
+              principal: embalagem.principal,
+            }))}
+            podeEditar={podeEditar}
+            resultado={valorUnico(resultadoEmbalagem)}
+          />
+        }
         estoque={
           <div className="flex flex-col gap-4">
             <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
@@ -412,7 +426,9 @@ export default async function EditarProdutoPage({
                         className="flex items-center justify-between gap-3 text-base text-zinc-800"
                       >
                         <span>{local.nome}</span>
-                        <strong>{saldos[String(local.id)] ?? "0"}</strong>
+                        <strong>
+                          {saldos[String(local.id)] ?? "0"} {produto.unidade}
+                        </strong>
                       </li>
                     ))}
                   </ul>
@@ -423,6 +439,14 @@ export default async function EditarProdutoPage({
                 <MovimentacaoEstoque
                   produtoId={produto.id}
                   locais={locais}
+                  unidadeBase={produto.unidade}
+                  embalagens={produto.embalagens.map((embalagem) => ({
+                    id: embalagem.id,
+                    codigoBarras: embalagem.codigoBarras,
+                    unidade: embalagem.unidade,
+                    quantidadeBase: embalagem.quantidadeBase.toString(),
+                    principal: embalagem.principal,
+                  }))}
                   saldos={saldos}
                   retorno={`${retornoProduto}?mov=1&aba=estoque`}
                 />
@@ -431,6 +455,7 @@ export default async function EditarProdutoPage({
 
             <HistoricoMovimentacoes
               produtoId={produto.id}
+              unidadeBase={produto.unidade}
               locais={locais}
               localSelecionado={localSelecionado}
               movimentos={movimentos.map((movimento) => ({

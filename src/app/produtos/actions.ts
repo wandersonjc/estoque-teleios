@@ -58,7 +58,6 @@ function lerValores(formData: FormData): ValoresFormularioProduto {
     nome: texto("nome"),
     unidade: texto("unidade").toUpperCase(),
     estoqueMinimo: texto("estoqueMinimo"),
-    codigoBarras: texto("codigoBarras"),
     codigoErp: texto("codigoErp"),
   };
 }
@@ -81,10 +80,14 @@ function lerQuantidades(formData: FormData): QuantidadesPorLocal {
   return quantidades;
 }
 
+function embalagemIdDoFormulario(formData: FormData): string {
+  const valor = formData.get("embalagemId");
+  return typeof valor === "string" ? valor : "";
+}
+
 type ProdutoValidado = {
   nome: string;
   unidade: string;
-  codigoBarras: string | null;
   codigoErp: string | null;
   estoqueMinimo: string;
 };
@@ -117,11 +120,6 @@ function validarProduto(valores: ValoresFormularioProduto): ResultadoValidacao {
     erros.estoqueMinimo = MENSAGEM_NUMERO_INVALIDO;
   }
 
-  const codigoBarras = valores.codigoBarras === "" ? null : valores.codigoBarras;
-  if (codigoBarras !== null && codigoBarras.length > LIMITE_CODIGO_BARRAS) {
-    erros.codigoBarras = `O código de barras pode ter no máximo ${LIMITE_CODIGO_BARRAS} caracteres.`;
-  }
-
   // RN-22: o código do ERP é opcional, mas único quando preenchido
   const codigoErp = valores.codigoErp === "" ? null : valores.codigoErp;
   if (codigoErp !== null && codigoErp.length > LIMITE_CODIGO_ERP) {
@@ -137,7 +135,6 @@ function validarProduto(valores: ValoresFormularioProduto): ResultadoValidacao {
     dados: {
       nome: valores.nome,
       unidade: valores.unidade,
-      codigoBarras,
       codigoErp,
       estoqueMinimo: estoqueMinimo ?? "0",
     },
@@ -202,7 +199,6 @@ export async function criarProduto(
         data: {
           nome: validacao.dados.nome,
           unidade: validacao.dados.unidade,
-          codigoBarras: validacao.dados.codigoBarras,
           codigoErp: validacao.dados.codigoErp,
           estoqueMinimo: validacao.dados.estoqueMinimo,
           imagemChave,
@@ -253,14 +249,6 @@ export async function atualizarProduto(
     return { erroGeral: "Produto inválido.", valores };
   }
 
-  const validacao = validarProduto(valores);
-  if (!validacao.ok) return validacao.estado;
-
-  const imagemPreparada = await prepararImagem(formData.get("imagem"));
-  if (!imagemPreparada.ok) {
-    return { erroGeral: imagemPreparada.erro, valores };
-  }
-
   const antes = await prisma.produto.findUnique({
     where: { id },
     select: {
@@ -274,6 +262,15 @@ export async function atualizarProduto(
   });
 
   if (!antes) return { erroGeral: "Produto não encontrado.", valores };
+  valores.unidade = antes.unidade;
+
+  const validacao = validarProduto(valores);
+  if (!validacao.ok) return validacao.estado;
+
+  const imagemPreparada = await prepararImagem(formData.get("imagem"));
+  if (!imagemPreparada.ok) {
+    return { erroGeral: imagemPreparada.erro, valores };
+  }
 
   let novaImagemChave: string | null = null;
   if (imagemPreparada.imagem) {
@@ -296,7 +293,6 @@ export async function atualizarProduto(
         data: {
           nome: validacao.dados.nome,
           unidade: validacao.dados.unidade,
-          codigoBarras: validacao.dados.codigoBarras,
           codigoErp: validacao.dados.codigoErp,
           estoqueMinimo: validacao.dados.estoqueMinimo,
           imagemChave:
@@ -315,14 +311,12 @@ export async function atualizarProduto(
               nome: antes.nome,
               unidade: antes.unidade,
               estoqueMinimo: antes.estoqueMinimo.toString(),
-              codigoBarras: antes.codigoBarras,
               codigoErp: antes.codigoErp,
             },
             depois: {
               nome: validacao.dados.nome,
               unidade: validacao.dados.unidade,
               estoqueMinimo: validacao.dados.estoqueMinimo,
-              codigoBarras: validacao.dados.codigoBarras,
               codigoErp: validacao.dados.codigoErp,
             },
           },
@@ -343,6 +337,346 @@ export async function atualizarProduto(
   revalidatePath("/produtos");
   revalidatePath(`/produtos/${id}`);
   redirect(`/produtos/${id}?salvo=1`);
+}
+
+type DadosEmbalagem = {
+  codigoBarras: string;
+  unidade: string;
+  quantidadeBase: string;
+};
+
+function lerDadosEmbalagem(formData: FormData): DadosEmbalagem {
+  const texto = (campo: string): string => {
+    const valor = formData.get(campo);
+    return typeof valor === "string" ? valor.trim() : "";
+  };
+
+  return {
+    codigoBarras: texto("codigoBarras"),
+    unidade: texto("unidade").toUpperCase(),
+    quantidadeBase: texto("quantidadeBase"),
+  };
+}
+
+function validarDadosEmbalagem(dados: DadosEmbalagem): string | null {
+  const quantidade = normalizarDecimal(dados.quantidadeBase);
+  if (
+    dados.codigoBarras.length === 0 ||
+    dados.codigoBarras.length > LIMITE_CODIGO_BARRAS ||
+    !UNIDADES.includes(dados.unidade as Unidade) ||
+    quantidade === null ||
+    Number(quantidade) <= 0
+  ) {
+    return null;
+  }
+  return quantidade;
+}
+
+function urlEmbalagens(produtoId: number, resultado?: string): string {
+  const parametros = new URLSearchParams({ aba: "embalagens" });
+  if (resultado) parametros.set("embalagem", resultado);
+  return `/produtos/${produtoId}?${parametros.toString()}`;
+}
+
+function erroCodigoDuplicado(erro: unknown): boolean {
+  return (
+    erro instanceof Prisma.PrismaClientKnownRequestError &&
+    erro.code === "P2002"
+  );
+}
+
+async function bloquearProdutoEmEdicao(
+  tx: Prisma.TransactionClient,
+  produtoId: number
+): Promise<void> {
+  await tx.$queryRaw`SELECT id FROM produto WHERE id = ${produtoId} FOR UPDATE`;
+}
+
+export async function adicionarEmbalagemProduto(
+  formData: FormData
+): Promise<void> {
+  const atual = await verificarPermissao("produtos.produto.editar");
+  if (!atual) return;
+
+  const produtoId = Number(formData.get("produtoId"));
+  const dados = lerDadosEmbalagem(formData);
+  if (!Number.isInteger(produtoId) || produtoId <= 0) return;
+  const quantidadeBase = validarDadosEmbalagem(dados);
+  if (quantidadeBase === null) {
+    redirect(urlEmbalagens(produtoId, "dados-invalidos"));
+  }
+
+  try {
+    const criada = await prisma.$transaction(async (tx) => {
+      await bloquearProdutoEmEdicao(tx, produtoId);
+      const produto = await tx.produto.findUnique({
+        where: { id: produtoId },
+        select: { nome: true },
+      });
+      if (!produto) return false;
+
+      const quantidadeExistente = await tx.embalagemProduto.count({
+        where: { produtoId },
+      });
+      const embalagem = await tx.embalagemProduto.create({
+        data: {
+          produtoId,
+          codigoBarras: dados.codigoBarras,
+          unidade: dados.unidade,
+          quantidadeBase,
+          principal: quantidadeExistente === 0,
+        },
+      });
+      if (embalagem.principal) {
+        await tx.produto.update({
+          where: { id: produtoId },
+          data: { codigoBarras: embalagem.codigoBarras },
+        });
+      }
+
+      await registrarLog(
+        {
+          modulo: "PRODUTOS",
+          acao: "CRIAR",
+          registroId: produtoId,
+          descricao: `Embalagem ${embalagem.unidade} adicionada ao produto "${produto.nome}"`,
+          dados: {
+            codigoBarras: embalagem.codigoBarras,
+            unidade: embalagem.unidade,
+            quantidadeBase: embalagem.quantidadeBase.toString(),
+            principal: embalagem.principal,
+          },
+          usuarioId: atual.id,
+        },
+        tx
+      );
+      return true;
+    });
+    if (!criada) {
+      redirect(urlEmbalagens(produtoId, "produto-nao-encontrado"));
+    }
+  } catch (erro) {
+    if (erroCodigoDuplicado(erro)) {
+      redirect(urlEmbalagens(produtoId, "codigo-duplicado"));
+    }
+    throw erro;
+  }
+
+  revalidatePath("/produtos");
+  revalidatePath(`/produtos/${produtoId}`);
+  redirect(urlEmbalagens(produtoId, "adicionada"));
+}
+
+export async function atualizarEmbalagemProduto(
+  formData: FormData
+): Promise<void> {
+  const atual = await verificarPermissao("produtos.produto.editar");
+  if (!atual) return;
+
+  const produtoId = Number(formData.get("produtoId"));
+  const embalagemId = Number(formData.get("embalagemId"));
+  const dados = lerDadosEmbalagem(formData);
+  if (
+    !Number.isInteger(produtoId) ||
+    produtoId <= 0 ||
+    !Number.isInteger(embalagemId) ||
+    embalagemId <= 0
+  ) {
+    return;
+  }
+  const quantidadeBase = validarDadosEmbalagem(dados);
+  if (quantidadeBase === null) {
+    redirect(urlEmbalagens(produtoId, "dados-invalidos"));
+  }
+
+  try {
+    const atualizada = await prisma.$transaction(async (tx) => {
+      await bloquearProdutoEmEdicao(tx, produtoId);
+      const resultado = await tx.embalagemProduto.updateMany({
+        where: { id: embalagemId, produtoId },
+        data: {
+          codigoBarras: dados.codigoBarras,
+          unidade: dados.unidade,
+          quantidadeBase,
+        },
+      });
+      if (resultado.count === 0) return false;
+      const embalagem = await tx.embalagemProduto.findUnique({
+        where: { id: embalagemId },
+        select: {
+          codigoBarras: true,
+          unidade: true,
+          quantidadeBase: true,
+          principal: true,
+        },
+      });
+      if (!embalagem) return false;
+      if (embalagem.principal) {
+        await tx.produto.update({
+          where: { id: produtoId },
+          data: { codigoBarras: embalagem.codigoBarras },
+        });
+      }
+      await registrarLog(
+        {
+          modulo: "PRODUTOS",
+          acao: "ALTERAR",
+          registroId: produtoId,
+          descricao: `Embalagem do produto #${produtoId} alterada`,
+          dados: {
+            codigoBarras: embalagem.codigoBarras,
+            unidade: embalagem.unidade,
+            quantidadeBase: embalagem.quantidadeBase.toString(),
+            principal: embalagem.principal,
+          },
+          usuarioId: atual.id,
+        },
+        tx
+      );
+      return true;
+    });
+    if (!atualizada) {
+      redirect(urlEmbalagens(produtoId, "nao-encontrada"));
+    }
+  } catch (erro) {
+    if (erroCodigoDuplicado(erro)) {
+      redirect(urlEmbalagens(produtoId, "codigo-duplicado"));
+    }
+    throw erro;
+  }
+
+  revalidatePath("/produtos");
+  revalidatePath(`/produtos/${produtoId}`);
+  redirect(urlEmbalagens(produtoId, "atualizada"));
+}
+
+export async function definirEmbalagemPrincipal(
+  formData: FormData
+): Promise<void> {
+  const atual = await verificarPermissao("produtos.produto.editar");
+  if (!atual) return;
+
+  const produtoId = Number(formData.get("produtoId"));
+  const embalagemId = Number(formData.get("embalagemId"));
+  if (
+    !Number.isInteger(produtoId) ||
+    produtoId <= 0 ||
+    !Number.isInteger(embalagemId) ||
+    embalagemId <= 0
+  ) {
+    return;
+  }
+
+  const embalagem = await prisma.$transaction(async (tx) => {
+    await bloquearProdutoEmEdicao(tx, produtoId);
+    const encontrada = await tx.embalagemProduto.findFirst({
+      where: { id: embalagemId, produtoId },
+      select: { codigoBarras: true, unidade: true },
+    });
+    if (!encontrada) return null;
+
+    await tx.embalagemProduto.updateMany({
+      where: { produtoId },
+      data: { principal: false },
+    });
+    await tx.embalagemProduto.update({
+      where: { id: embalagemId },
+      data: { principal: true },
+    });
+    await tx.produto.update({
+      where: { id: produtoId },
+      data: { codigoBarras: encontrada.codigoBarras },
+    });
+    await registrarLog(
+      {
+        modulo: "PRODUTOS",
+        acao: "ALTERAR",
+        registroId: produtoId,
+        descricao: `Embalagem principal do produto #${produtoId} alterada`,
+        dados: {
+          codigoBarras: encontrada.codigoBarras,
+          unidade: encontrada.unidade,
+        },
+        usuarioId: atual.id,
+      },
+      tx
+    );
+    return encontrada;
+  });
+
+  if (!embalagem) redirect(urlEmbalagens(produtoId, "nao-encontrada"));
+  revalidatePath("/produtos");
+  revalidatePath(`/produtos/${produtoId}`);
+  redirect(urlEmbalagens(produtoId, "principal-atualizada"));
+}
+
+export async function excluirEmbalagemProduto(
+  formData: FormData
+): Promise<void> {
+  const atual = await verificarPermissao("produtos.produto.editar");
+  if (!atual) return;
+
+  const produtoId = Number(formData.get("produtoId"));
+  const embalagemId = Number(formData.get("embalagemId"));
+  if (
+    !Number.isInteger(produtoId) ||
+    produtoId <= 0 ||
+    !Number.isInteger(embalagemId) ||
+    embalagemId <= 0
+  ) {
+    return;
+  }
+
+  const excluida = await prisma.$transaction(async (tx) => {
+    await bloquearProdutoEmEdicao(tx, produtoId);
+    const embalagem = await tx.embalagemProduto.findFirst({
+      where: { id: embalagemId, produtoId },
+      select: { codigoBarras: true, unidade: true, principal: true },
+    });
+    if (!embalagem) return false;
+
+    await tx.embalagemProduto.delete({ where: { id: embalagemId } });
+    if (embalagem.principal) {
+      const proximaPrincipal = await tx.embalagemProduto.findFirst({
+        where: { produtoId },
+        orderBy: { codigoBarras: "asc" },
+        select: { id: true, codigoBarras: true },
+      });
+      if (proximaPrincipal) {
+        await tx.embalagemProduto.update({
+          where: { id: proximaPrincipal.id },
+          data: { principal: true },
+        });
+      }
+      await tx.produto.update({
+        where: { id: produtoId },
+        data: { codigoBarras: proximaPrincipal?.codigoBarras ?? null },
+      });
+    }
+    await registrarLog(
+      {
+        modulo: "PRODUTOS",
+        acao: "EXCLUIR",
+        registroId: produtoId,
+        descricao: `Embalagem ${embalagem.unidade} removida do produto #${produtoId}`,
+        dados: {
+          codigoBarras: embalagem.codigoBarras,
+          unidade: embalagem.unidade,
+          principal: embalagem.principal,
+        },
+        usuarioId: atual.id,
+      },
+      tx
+    );
+    return true;
+  });
+
+  if (!excluida) {
+    redirect(urlEmbalagens(produtoId, "nao-encontrada"));
+  }
+  revalidatePath("/produtos");
+  revalidatePath(`/produtos/${produtoId}`);
+  redirect(urlEmbalagens(produtoId, "excluida"));
 }
 
 // Produtos com relações funcionais não podem ser excluídos; nesses casos,
@@ -477,6 +811,7 @@ type LinhaMovimento = {
   saldoNovo: number;
   // Valor gravado no histórico (na contagem, é o novo saldo)
   quantidadeRegistrada: string;
+  quantidadeInformada: string;
 };
 
 // Aceita apenas um caminho interno (ex.: "/produtos?..."). Serve
@@ -498,6 +833,7 @@ export async function registrarMovimento(
   }
 
   const valores = lerQuantidades(formData);
+  const embalagemIdInformado = embalagemIdDoFormulario(formData);
   const produtoId = Number(formData.get("produtoId"));
   const tipo = String(formData.get("tipo") ?? "");
 
@@ -511,39 +847,98 @@ export async function registrarMovimento(
 
   const tipoMovimento = tipo as TipoMovimento;
 
+  const produto = await prisma.produto.findUnique({
+    where: { id: produtoId },
+    select: {
+      id: true,
+      nome: true,
+      unidade: true,
+      embalagens: {
+        select: {
+          id: true,
+          codigoBarras: true,
+          unidade: true,
+          quantidadeBase: true,
+          principal: true,
+        },
+      },
+    },
+  });
+  if (!produto) return { erroGeral: "Produto não encontrado.", valores };
+
+  let multiplicador = new Prisma.Decimal(1);
+  let rotuloEmbalagem = produto.unidade;
+  if (tipoMovimento !== "CONTAGEM" && embalagemIdInformado !== "") {
+    const embalagemId = Number(embalagemIdInformado);
+    if (!Number.isInteger(embalagemId) || embalagemId <= 0) {
+      return {
+        erroGeral: "Selecione uma embalagem válida.",
+        valores,
+        embalagemId: embalagemIdInformado,
+      };
+    }
+    const embalagem = produto.embalagens.find(
+      (item) => item.id === embalagemId
+    );
+    if (!embalagem) {
+      return {
+        erroGeral: "A embalagem selecionada não pertence a este produto.",
+        valores,
+        embalagemId: embalagemIdInformado,
+      };
+    }
+    multiplicador = embalagem.quantidadeBase;
+    rotuloEmbalagem = embalagem.unidade;
+  }
+
   // Campos em branco = não mexer no local. Os demais precisam ser
-  // números válidos. Entrada/saída de zero não mudam nada.
-  const informadas: { localEstoqueId: number; valor: string }[] = [];
+  // números válidos. Entradas/saídas são convertidas para a unidade-base.
+  const informadas: {
+    localEstoqueId: number;
+    valor: string;
+    valorInformado: string;
+  }[] = [];
   const erros: Record<string, string> = {};
 
   for (const [idDoLocal, texto] of Object.entries(valores)) {
     if (texto === "") continue;
 
-    const valor = normalizarDecimal(texto);
-    if (valor === null) {
+    const valorInformado = normalizarDecimal(texto);
+    if (valorInformado === null) {
       erros[idDoLocal] = MENSAGEM_NUMERO_INVALIDO;
       continue;
     }
 
-    if (tipoMovimento !== "CONTAGEM" && Number(valor) === 0) continue;
+    if (tipoMovimento !== "CONTAGEM" && Number(valorInformado) === 0) continue;
 
-    informadas.push({ localEstoqueId: Number(idDoLocal), valor });
+    const convertido = new Prisma.Decimal(valorInformado).mul(multiplicador);
+    if (
+      convertido.decimalPlaces() > 3 ||
+      convertido.abs().greaterThan("999999999.999")
+    ) {
+      erros[idDoLocal] =
+        `A quantidade convertida excede a precisão permitida em ${produto.unidade}.`;
+      continue;
+    }
+
+    informadas.push({
+      localEstoqueId: Number(idDoLocal),
+      valor: convertido.toFixed(3),
+      valorInformado,
+    });
   }
 
-  if (Object.keys(erros).length > 0) return { erros, valores };
+  if (Object.keys(erros).length > 0) {
+    return { erros, valores, embalagemId: embalagemIdInformado };
+  }
 
   if (informadas.length === 0) {
     return {
       erroGeral: "Informe a quantidade de pelo menos um local.",
       valores,
+      embalagemId: embalagemIdInformado,
     };
   }
-
-  const produto = await prisma.produto.findUnique({
-    where: { id: produtoId },
-    select: { id: true, nome: true },
-  });
-  if (!produto) return { erroGeral: "Produto não encontrado.", valores };
 
   const locais = await prisma.localEstoque.findMany({
     select: { id: true, nome: true },
@@ -600,15 +995,19 @@ export async function registrarMovimento(
       saldoAnterior,
       saldoNovo,
       quantidadeRegistrada: item.valor,
+      quantidadeInformada: item.valorInformado,
     });
   }
 
-  if (Object.keys(errosSaldo).length > 0) return { erros: errosSaldo, valores };
+  if (Object.keys(errosSaldo).length > 0) {
+    return { erros: errosSaldo, valores, embalagemId: embalagemIdInformado };
+  }
 
   if (linhas.length === 0) {
     return {
       erroGeral: "Nada a alterar: as quantidades informadas são iguais às atuais.",
       valores,
+      embalagemId: embalagemIdInformado,
     };
   }
 
@@ -656,13 +1055,18 @@ export async function registrarMovimento(
             acao: tipoMovimento,
             registroId: produto.id,
             descricao: `${ROTULO_MOVIMENTO[tipoMovimento]} de ${formatarQuantidade(
+              Number(linha.quantidadeInformada)
+            )} ${rotuloEmbalagem} em "${produto.nome}" (${linha.localNome}) — equivalente a ${formatarQuantidade(
               Number(linha.quantidadeRegistrada)
-            )} em "${produto.nome}" (${linha.localNome})`,
+            )} ${produto.unidade}`,
             dados: {
               produtoId,
               localEstoqueId: linha.localEstoqueId,
               tipo: tipoMovimento,
-              quantidade: Number(linha.quantidadeRegistrada),
+              quantidadeInformada: Number(linha.quantidadeInformada),
+              unidadeInformada: rotuloEmbalagem,
+              quantidadeBase: Number(linha.quantidadeRegistrada),
+              unidadeBase: produto.unidade,
               saldoAnterior: linha.saldoAnterior,
               saldoNovo: linha.saldoNovo,
             },
@@ -677,6 +1081,7 @@ export async function registrarMovimento(
     return {
       erroGeral: "Não foi possível registrar a movimentação. Tente novamente.",
       valores,
+      embalagemId: embalagemIdInformado,
     };
   }
 

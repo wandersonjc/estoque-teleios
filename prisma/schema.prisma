@@ -118,7 +118,9 @@ model LocalEstoque {
 model Produto {
   id            Int      @id @default(autoincrement())
   nome          String
-  unidade       String // Ex.: UN, KG, CX, PCT
+  unidade       String // Unidade-base do estoque. Ex.: UN ou KG.
+  // Mantido como espelho do código da embalagem principal durante a
+  // transição; os códigos de barras oficiais ficam em EmbalagemProduto.
   codigoBarras  String?  @map("codigo_barras")
   // Código do produto no ERP (Superus). Opcional, mas único quando
   // preenchido (RN-22). Será a chave da importação futura.
@@ -135,8 +137,25 @@ model Produto {
   historicoPrecos HistoricoPreco[]
   estoques        Estoque[]
   movimentos      MovimentoEstoque[]
+  embalagens      EmbalagemProduto[]
 
   @@map("produto")
+}
+
+model EmbalagemProduto {
+  id              Int      @id @default(autoincrement())
+  produtoId       Int      @map("produto_id")
+  codigoBarras   String   @unique @map("codigo_barras")
+  unidade         String
+  quantidadeBase Decimal  @map("quantidade_base") @db.Decimal(12, 3)
+  principal       Boolean  @default(false)
+  criadoEm        DateTime @default(now()) @map("criado_em")
+  atualizadoEm    DateTime @updatedAt @map("atualizado_em")
+
+  produto Produto @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+
+  @@index([produtoId, principal])
+  @@map("embalagem_produto")
 }
 
 // ------------------------------------------------------------

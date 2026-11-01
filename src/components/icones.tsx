@@ -152,6 +152,16 @@ export function IconeInformacao({ className = "h-5 w-5" }: Props) {
   );
 }
 
+export function IconeInterrogacao({ className = "h-5 w-5" }: Props) {
+  return (
+    <svg {...TRACO} className={className} aria-hidden="true">
+      <circle cx="12" cy="12" r="10" />
+      <path d="M9.6 9a2.5 2.5 0 1 1 4.2 1.8c-1 .9-1.8 1.2-1.8 2.7" />
+      <path d="M12 17h.01" />
+    </svg>
+  );
+}
+
 export function IconeVisualizacaoCards({ className = "h-5 w-5" }: Props) {
   return (
     <svg {...TRACO} className={className} aria-hidden="true">
@@ -334,6 +344,5 @@ export function IconeCarregando({ className = "h-5 w-5" }: Props) {
     </svg>
   );
 }
-
 
 

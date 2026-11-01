@@ -40,6 +40,14 @@ export type LocalDeEstoque = {
   nome: string;
 };
 
+export type EmbalagemMovimento = {
+  id: number;
+  codigoBarras: string;
+  unidade: string;
+  quantidadeBase: string;
+  principal: boolean;
+};
+
 // ------------------------------------------------------------
 // Formulário de cadastro/edição do produto
 // (a quantidade NÃO fica aqui: ela é movimentada por entrada,
@@ -51,7 +59,6 @@ export type ValoresFormularioProduto = {
   nome: string;
   unidade: string;
   estoqueMinimo: string;
-  codigoBarras: string;
   codigoErp: string;
 };
 
@@ -60,7 +67,6 @@ export type ErrosFormularioProduto = {
   nome?: string;
   unidade?: string;
   estoqueMinimo?: string;
-  codigoBarras?: string;
   codigoErp?: string;
 };
 
@@ -78,7 +84,6 @@ export const VALORES_FORMULARIO_VAZIOS: ValoresFormularioProduto = {
   nome: "",
   unidade: "UN",
   estoqueMinimo: "0",
-  codigoBarras: "",
   codigoErp: "",
 };
 
@@ -103,6 +108,7 @@ export type EstadoMovimento = {
   erroGeral?: string;
   // Um erro por local de estoque (chave = id do local)
   erros?: Record<string, string>;
+  embalagemId?: string;
   // Quantidades digitadas, para não perder o conteúdo quando houver erro
   valores: QuantidadesPorLocal;
 };

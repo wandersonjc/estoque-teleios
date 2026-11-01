@@ -108,6 +108,11 @@ export default async function ProdutosPage({
     filtro.OR = [
       { nome: { contains: busca, mode: "insensitive" } },
       { codigoBarras: { contains: busca, mode: "insensitive" } },
+      {
+        embalagens: {
+          some: { codigoBarras: { contains: busca, mode: "insensitive" } },
+        },
+      },
       { codigoErp: { contains: busca, mode: "insensitive" } },
     ];
   }
@@ -124,9 +129,11 @@ export default async function ProdutosPage({
   const offset = (pagina - 1) * tamanho;
   let idsOrdenados: number[] | null = null;
 
-  if (ordenacao === "totalEstoque") {
+  if (ordenacao === "totalEstoque" || ordenacao === "codigoBarras") {
     const padraoBusca = `%${busca}%`;
     const ordenarAscendente = direcao === "asc";
+    const ordenarEstoque = ordenacao === "totalEstoque";
+    const ordenarCodigoBarras = ordenacao === "codigoBarras";
     const linhasOrdenadas = await prisma.$queryRaw<{ id: number }[]>(Prisma.sql`
       SELECT produto.id
       FROM produto
@@ -141,10 +148,32 @@ export default async function ProdutosPage({
           OR produto.nome ILIKE ${padraoBusca}
           OR COALESCE(produto.codigo_barras, '') ILIKE ${padraoBusca}
           OR COALESCE(produto.codigo_erp, '') ILIKE ${padraoBusca}
+          OR EXISTS (
+            SELECT 1
+            FROM embalagem_produto embalagem_busca
+            WHERE embalagem_busca.produto_id = produto.id
+              AND embalagem_busca.codigo_barras ILIKE ${padraoBusca}
+          )
         )
       ORDER BY
-        CASE WHEN ${ordenarAscendente} THEN COALESCE(totais.total, 0) END ASC,
-        CASE WHEN NOT ${ordenarAscendente} THEN COALESCE(totais.total, 0) END DESC,
+        CASE WHEN ${ordenarEstoque} AND ${ordenarAscendente}
+          THEN COALESCE(totais.total, 0) END ASC,
+        CASE WHEN ${ordenarEstoque} AND NOT ${ordenarAscendente}
+          THEN COALESCE(totais.total, 0) END DESC,
+        CASE WHEN ${ordenarCodigoBarras} AND ${ordenarAscendente}
+          THEN COALESCE((
+            SELECT embalagem.codigo_barras
+            FROM embalagem_produto embalagem
+            WHERE embalagem.produto_id = produto.id AND embalagem.principal = TRUE
+            LIMIT 1
+          ), produto.codigo_barras, '') END ASC,
+        CASE WHEN ${ordenarCodigoBarras} AND NOT ${ordenarAscendente}
+          THEN COALESCE((
+            SELECT embalagem.codigo_barras
+            FROM embalagem_produto embalagem
+            WHERE embalagem.produto_id = produto.id AND embalagem.principal = TRUE
+            LIMIT 1
+          ), produto.codigo_barras, '') END DESC,
         produto.nome ASC,
         produto.id ASC
       LIMIT ${tamanho}
@@ -157,9 +186,7 @@ export default async function ProdutosPage({
     ordenacao === "codigoErp"
       ? [{ codigoErp: direcao }, { id: "asc" }]
       : ordenacao === "estoqueMinimo"
-        ? [{ estoqueMinimo: direcao }, { id: "asc" }]
-        : ordenacao === "codigoBarras"
-          ? [{ codigoBarras: direcao }, { id: "asc" }]
+          ? [{ estoqueMinimo: direcao }, { id: "asc" }]
           : [{ nome: direcao }, { id: "asc" }];
 
   const encontrados = await prisma.produto.findMany({
@@ -173,6 +200,15 @@ export default async function ProdutosPage({
           localEstoqueId: true,
           quantidade: true,
           dataUltimaContagem: true,
+        },
+      },
+      embalagens: {
+        select: {
+          id: true,
+          codigoBarras: true,
+          unidade: true,
+          quantidadeBase: true,
+          principal: true,
         },
       },
     },
@@ -377,6 +413,16 @@ export default async function ProdutosPage({
               {produtos.map((produto) => {
                 const totalEstoque = calcularTotalEstoque(produto.estoques);
                 const dataUltima = ultimaContagem(produto.estoques);
+                const embalagensMovimento = produto.embalagens.map((embalagem) => ({
+                  id: embalagem.id,
+                  codigoBarras: embalagem.codigoBarras,
+                  unidade: embalagem.unidade,
+                  quantidadeBase: embalagem.quantidadeBase.toString(),
+                  principal: embalagem.principal,
+                }));
+                const codigoBarrasPrincipal =
+                  produto.embalagens.find((embalagem) => embalagem.principal)
+                    ?.codigoBarras ?? produto.codigoBarras;
                 const saldos: Record<string, string> = {};
                 for (const estoque of produto.estoques) {
                   saldos[String(estoque.localEstoqueId)] = formatarDecimalBr(
@@ -404,7 +450,7 @@ export default async function ProdutosPage({
                             </Link>
                           </div>
                           <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-zinc-500">
-                            <span>Unidade: {produto.unidade}</span>
+                            <span>Unidade-base: {produto.unidade}</span>
                           </div>
                       </div>
                     </td>
@@ -413,6 +459,7 @@ export default async function ProdutosPage({
                         <span className="font-semibold">
                           {formatarQuantidade(totalEstoque)}
                         </span>
+                        {" "}{produto.unidade}
                         <DicaEstoque
                           dataAtualizacao={
                             dataUltima ? formatarDataBr(dataUltima) : null
@@ -422,9 +469,10 @@ export default async function ProdutosPage({
                     </td>
                     <td className="whitespace-nowrap px-3 py-3 text-zinc-900">
                       {formatarDecimalBr(produto.estoqueMinimo.toString())}
+                      {" "}{produto.unidade}
                     </td>
                     <td className="whitespace-nowrap px-3 py-3 text-zinc-700">
-                      {produto.codigoBarras || "—"}
+                      {codigoBarrasPrincipal || "—"}
                     </td>
                     <td className="whitespace-nowrap px-3 py-3">
                       {podeDesativar ? (
@@ -470,6 +518,8 @@ export default async function ProdutosPage({
                           <MovimentacaoEstoque
                             produtoId={produto.id}
                             locais={locais}
+                            unidadeBase={produto.unidade}
+                            embalagens={embalagensMovimento}
                             saldos={saldos}
                             retorno={urlRetorno}
                             layout="horizontal"
@@ -491,6 +541,16 @@ export default async function ProdutosPage({
             // RN-01: o total é sempre calculado; RN-03: data da contagem
             const totalEstoque = calcularTotalEstoque(produto.estoques);
             const dataUltima = ultimaContagem(produto.estoques);
+            const codigoBarrasPrincipal =
+              produto.embalagens.find((embalagem) => embalagem.principal)
+                ?.codigoBarras ?? produto.codigoBarras;
+            const embalagensMovimento = produto.embalagens.map((embalagem) => ({
+              id: embalagem.id,
+              codigoBarras: embalagem.codigoBarras,
+              unidade: embalagem.unidade,
+              quantidadeBase: embalagem.quantidadeBase.toString(),
+              principal: embalagem.principal,
+            }));
 
             // Saldo de cada local, em texto no padrão brasileiro,
             // para o popup de movimentação mostrar o estoque atual
@@ -538,7 +598,7 @@ export default async function ProdutosPage({
                             Estoque mínimo:{" "}
                             {formatarDecimalBr(
                               produto.estoqueMinimo.toString()
-                            )}
+                            )} {produto.unidade}
                           </span>
                         </div>
                       </div>
@@ -597,7 +657,7 @@ export default async function ProdutosPage({
                         </div>
                         <div className="min-w-0">
                           <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
-                            UNIDADE
+                            UNIDADE-BASE
                           </p>
                           <p className="text-[13px] font-bold text-[#002855] leading-tight">
                             {produto.unidade}
@@ -637,7 +697,7 @@ export default async function ProdutosPage({
                             CÓDIGO DE BARRAS
                           </p>
                           <p className="text-[13px] font-bold text-[#002855] leading-tight">
-                            {produto.codigoBarras || "-"}
+                            {codigoBarrasPrincipal || "-"}
                           </p>
                         </div>
                       </div>
@@ -675,6 +735,8 @@ export default async function ProdutosPage({
                         <MovimentacaoEstoque
                           produtoId={produto.id}
                           locais={locais}
+                          unidadeBase={produto.unidade}
+                          embalagens={embalagensMovimento}
                           saldos={saldos}
                           retorno={urlRetorno}
                           layout="horizontal"

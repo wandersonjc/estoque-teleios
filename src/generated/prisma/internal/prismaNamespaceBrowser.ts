@@ -58,6 +58,7 @@ export const ModelName = {
   UsuarioFuncao: 'UsuarioFuncao',
   LocalEstoque: 'LocalEstoque',
   Produto: 'Produto',
+  EmbalagemProduto: 'EmbalagemProduto',
   Fornecedor: 'Fornecedor',
   ProdutoFornecedor: 'ProdutoFornecedor',
   HistoricoPreco: 'HistoricoPreco',
@@ -156,6 +157,20 @@ export const ProdutoScalarFieldEnum = {
 } as const
 
 export type ProdutoScalarFieldEnum = (typeof ProdutoScalarFieldEnum)[keyof typeof ProdutoScalarFieldEnum]
+
+
+export const EmbalagemProdutoScalarFieldEnum = {
+  id: 'id',
+  produtoId: 'produtoId',
+  codigoBarras: 'codigoBarras',
+  unidade: 'unidade',
+  quantidadeBase: 'quantidadeBase',
+  principal: 'principal',
+  criadoEm: 'criadoEm',
+  atualizadoEm: 'atualizadoEm'
+} as const
+
+export type EmbalagemProdutoScalarFieldEnum = (typeof EmbalagemProdutoScalarFieldEnum)[keyof typeof EmbalagemProdutoScalarFieldEnum]
 
 
 export const FornecedorScalarFieldEnum = {

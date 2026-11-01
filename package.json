@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "db:seed": "tsx scripts/seed.ts",
+    "db:migrar-embalagens": "tsx scripts/migrar-embalagens.ts",
     "db:sync-permissoes": "tsx scripts/sincronizar-permissoes.ts"
   },
   "dependencies": {

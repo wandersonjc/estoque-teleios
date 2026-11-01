@@ -404,6 +404,7 @@ export const ModelName = {
   UsuarioFuncao: 'UsuarioFuncao',
   LocalEstoque: 'LocalEstoque',
   Produto: 'Produto',
+  EmbalagemProduto: 'EmbalagemProduto',
   Fornecedor: 'Fornecedor',
   ProdutoFornecedor: 'ProdutoFornecedor',
   HistoricoPreco: 'HistoricoPreco',
@@ -428,7 +429,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "usuario" | "cargo" | "usuarioCargo" | "funcao" | "usuarioFuncao" | "localEstoque" | "produto" | "fornecedor" | "produtoFornecedor" | "historicoPreco" | "estoque" | "movimentoEstoque" | "logSistema" | "permissao" | "permissaoUsuario" | "sessao"
+    modelProps: "usuario" | "cargo" | "usuarioCargo" | "funcao" | "usuarioFuncao" | "localEstoque" | "produto" | "embalagemProduto" | "fornecedor" | "produtoFornecedor" | "historicoPreco" | "estoque" | "movimentoEstoque" | "logSistema" | "permissao" | "permissaoUsuario" | "sessao"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -947,6 +948,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.ProdutoCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.ProdutoCountAggregateOutputType> | number
+        }
+      }
+    }
+    EmbalagemProduto: {
+      payload: Prisma.$EmbalagemProdutoPayload<ExtArgs>
+      fields: Prisma.EmbalagemProdutoFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.EmbalagemProdutoFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmbalagemProdutoPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.EmbalagemProdutoFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmbalagemProdutoPayload>
+        }
+        findFirst: {
+          args: Prisma.EmbalagemProdutoFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmbalagemProdutoPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.EmbalagemProdutoFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmbalagemProdutoPayload>
+        }
+        findMany: {
+          args: Prisma.EmbalagemProdutoFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmbalagemProdutoPayload>[]
+        }
+        create: {
+          args: Prisma.EmbalagemProdutoCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmbalagemProdutoPayload>
+        }
+        createMany: {
+          args: Prisma.EmbalagemProdutoCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.EmbalagemProdutoCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmbalagemProdutoPayload>[]
+        }
+        delete: {
+          args: Prisma.EmbalagemProdutoDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmbalagemProdutoPayload>
+        }
+        update: {
+          args: Prisma.EmbalagemProdutoUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmbalagemProdutoPayload>
+        }
+        deleteMany: {
+          args: Prisma.EmbalagemProdutoDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.EmbalagemProdutoUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.EmbalagemProdutoUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmbalagemProdutoPayload>[]
+        }
+        upsert: {
+          args: Prisma.EmbalagemProdutoUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmbalagemProdutoPayload>
+        }
+        aggregate: {
+          args: Prisma.EmbalagemProdutoAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEmbalagemProduto>
+        }
+        groupBy: {
+          args: Prisma.EmbalagemProdutoGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EmbalagemProdutoGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.EmbalagemProdutoCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EmbalagemProdutoCountAggregateOutputType> | number
         }
       }
     }
@@ -1728,6 +1803,20 @@ export const ProdutoScalarFieldEnum = {
 export type ProdutoScalarFieldEnum = (typeof ProdutoScalarFieldEnum)[keyof typeof ProdutoScalarFieldEnum]
 
 
+export const EmbalagemProdutoScalarFieldEnum = {
+  id: 'id',
+  produtoId: 'produtoId',
+  codigoBarras: 'codigoBarras',
+  unidade: 'unidade',
+  quantidadeBase: 'quantidadeBase',
+  principal: 'principal',
+  criadoEm: 'criadoEm',
+  atualizadoEm: 'atualizadoEm'
+} as const
+
+export type EmbalagemProdutoScalarFieldEnum = (typeof EmbalagemProdutoScalarFieldEnum)[keyof typeof EmbalagemProdutoScalarFieldEnum]
+
+
 export const FornecedorScalarFieldEnum = {
   id: 'id',
   nome: 'nome',
@@ -2208,6 +2297,7 @@ export type GlobalOmitConfig = {
   usuarioFuncao?: Prisma.UsuarioFuncaoOmit
   localEstoque?: Prisma.LocalEstoqueOmit
   produto?: Prisma.ProdutoOmit
+  embalagemProduto?: Prisma.EmbalagemProdutoOmit
   fornecedor?: Prisma.FornecedorOmit
   produtoFornecedor?: Prisma.ProdutoFornecedorOmit
   historicoPreco?: Prisma.HistoricoPrecoOmit

@@ -23,6 +23,7 @@ import {
   ROTULO_MOVIMENTO,
   TIPOS_MOVIMENTO,
   type EstadoMovimento,
+  type EmbalagemMovimento,
   type LocalDeEstoque,
   type TipoMovimento,
 } from "./tipos";
@@ -30,6 +31,8 @@ import {
 type Props = {
   produtoId: number;
   locais: LocalDeEstoque[];
+  unidadeBase: string;
+  embalagens: EmbalagemMovimento[];
   // Estoque atual de cada local já formatado (ex.: "1,5"); chave = id do local
   saldos: Record<string, string>;
   // Para onde ir depois de registrar. Quando vazio, a ação volta
@@ -58,6 +61,8 @@ const AJUDA: Record<TipoMovimento, string> = {
 export default function MovimentacaoEstoque({
   produtoId,
   locais,
+  unidadeBase,
+  embalagens,
   saldos,
   retorno,
   layout = "bloco",
@@ -119,6 +124,8 @@ export default function MovimentacaoEstoque({
             tipo={tipoAberto}
             produtoId={produtoId}
             locais={locais}
+            unidadeBase={unidadeBase}
+            embalagens={embalagens}
             saldos={saldos}
             retorno={retorno}
             aoFechar={() => setTipoAberto(null)}
@@ -154,6 +161,8 @@ export default function MovimentacaoEstoque({
           tipo={tipoAberto}
           produtoId={produtoId}
           locais={locais}
+          unidadeBase={unidadeBase}
+          embalagens={embalagens}
           saldos={saldos}
           retorno={retorno}
           aoFechar={() => setTipoAberto(null)}
@@ -167,6 +176,8 @@ type PropsPopup = {
   tipo: TipoMovimento;
   produtoId: number;
   locais: LocalDeEstoque[];
+  unidadeBase: string;
+  embalagens: EmbalagemMovimento[];
   saldos: Record<string, string>;
   retorno?: string;
   aoFechar: () => void;
@@ -176,6 +187,8 @@ function PopupMovimento({
   tipo,
   produtoId,
   locais,
+  unidadeBase,
+  embalagens,
   saldos,
   retorno,
   aoFechar,
@@ -184,6 +197,12 @@ function PopupMovimento({
     EstadoMovimento,
     FormData
   >(registrarMovimento, ESTADO_MOVIMENTO_VAZIO);
+  const [embalagemSelecionada, setEmbalagemSelecionada] = useState("");
+
+  const embalagemAtual = embalagens.find(
+    (embalagem) => String(embalagem.id) === embalagemSelecionada
+  );
+  const unidadeMovimentada = embalagemAtual?.unidade ?? unidadeBase;
 
   // Na contagem o campo já vem com o estoque atual; na entrada e na
   // saída, começa vazio. Se houve erro, mantém o que o usuário digitou.
@@ -221,6 +240,33 @@ function PopupMovimento({
           <input type="hidden" name="tipo" value={tipo} />
           {retorno && <input type="hidden" name="retorno" value={retorno} />}
 
+          {tipo !== "CONTAGEM" && embalagens.length > 0 && (
+            <label className="flex flex-col gap-1 text-sm font-medium text-zinc-800">
+              Unidade da movimentação
+              <select
+                name="embalagemId"
+                value={embalagemSelecionada}
+                onChange={(evento) =>
+                  setEmbalagemSelecionada(evento.currentTarget.value)
+                }
+                className={CLASSE_CAMPO}
+              >
+                <option value="">Unidade-base ({unidadeBase})</option>
+                {embalagens.map((embalagem) => (
+                  <option key={embalagem.id} value={embalagem.id}>
+                    {embalagem.unidade} · {embalagem.codigoBarras} · 1 equivale
+                    a {embalagem.quantidadeBase} {unidadeBase}
+                    {embalagem.principal ? " · principal" : ""}
+                  </option>
+                ))}
+              </select>
+              <span className="text-xs font-normal text-zinc-500">
+                A quantidade será convertida para {unidadeBase} antes de
+                atualizar o saldo.
+              </span>
+            </label>
+          )}
+
           {estado.erroGeral && (
             <p
               role="alert"
@@ -240,7 +286,7 @@ function PopupMovimento({
                   htmlFor={`${PREFIXO_QUANTIDADE}${local.id}`}
                   className="text-base font-medium text-zinc-800"
                 >
-                  {local.nome}
+                  {local.nome} ({tipo === "CONTAGEM" ? unidadeBase : unidadeMovimentada})
                 </label>
                 <input
                   id={`${PREFIXO_QUANTIDADE}${local.id}`}
@@ -253,7 +299,7 @@ function PopupMovimento({
                   className={CLASSE_CAMPO}
                 />
                 <p className="text-sm text-zinc-500">
-                  Estoque atual: {saldos[chave] ?? "0"}
+                  Estoque atual: {saldos[chave] ?? "0"} {unidadeBase}
                 </p>
                 {erro && <p className="text-sm text-red-700">{erro}</p>}
               </div>

@@ -16,6 +16,23 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Atualização do banco
+
+Depois de alterar `prisma/schema.prisma`, aplique o schema e gere o cliente Prisma:
+
+```bash
+npx prisma db push
+npx prisma generate
+```
+
+Para migrar códigos de barras legados para embalagens, execute também:
+
+```bash
+npm run db:migrar-embalagens
+```
+
+O comando é idempotente e preserva cada código antigo como embalagem principal, na unidade-base já cadastrada.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

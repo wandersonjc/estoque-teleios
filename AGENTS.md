@@ -37,3 +37,8 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 - Botões que excluem registros devem usar `BotaoAcao` (`src/components/BotaoAcao.tsx`) com a prop `confirmacao`; após confirmação, o componente desabilita o botão e mostra loading até a Server Action terminar.
 - Preserve as condições de elegibilidade existentes e informe com clareza o registro que será excluído na confirmação.
+
+## Ações que exigem espera
+
+- Em qualquer fluxo assíncrono que exija aguardar (salvar, cancelar, ativar/desativar, excluir ou similar), desabilite o botão ou seletor durante o processamento e mostre um indicador de loading até a ação terminar; depois, restaure o estado normal.
+- Para envios de formulários com Server Actions, use `BotaoAcao` dentro do formulário para aproveitar o estado pendente. Para outros controles, use o estado pendente apropriado e mantenha o controle acessível e com dimensões estáveis durante o loading.

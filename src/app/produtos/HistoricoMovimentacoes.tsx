@@ -15,6 +15,7 @@ type Movimento = {
 
 type Props = {
   produtoId: number;
+  unidadeBase: string;
   locais: { id: number; nome: string }[];
   localSelecionado: string;
   movimentos: Movimento[];
@@ -37,6 +38,7 @@ const TAMANHOS = [25, 50, 75, 100];
 
 export default function HistoricoMovimentacoes({
   produtoId,
+  unidadeBase,
   locais,
   localSelecionado,
   movimentos,
@@ -186,7 +188,8 @@ export default function HistoricoMovimentacoes({
                     {formatarDataHoraBr(movimento.dataHora)}
                   </td>
                   <td className="px-3 py-3 text-zinc-800">
-                    {formatarQuantidade(Number(movimento.quantidade))}
+                    {formatarQuantidade(Number(movimento.quantidade))}{" "}
+                    {unidadeBase}
                   </td>
                   <td className="px-3 py-3 text-zinc-800">{movimento.usuarioNome}</td>
                 </tr>

@@ -53,6 +53,11 @@ export type LocalEstoque = Prisma.LocalEstoqueModel
  */
 export type Produto = Prisma.ProdutoModel
 /**
+ * Model EmbalagemProduto
+ *
+ */
+export type EmbalagemProduto = Prisma.EmbalagemProdutoModel
+/**
  * Model Fornecedor
  * 
  */
