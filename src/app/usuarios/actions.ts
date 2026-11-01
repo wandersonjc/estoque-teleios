@@ -334,6 +334,105 @@ export async function atualizarUsuario(
   redirect(`/usuarios/${id}?salvo=1`);
 }
 
+export async function adicionarCargoUsuario(formData: FormData): Promise<void> {
+  const atual = await verificarPermissao("cargos.usuario.gerenciar");
+  if (!atual) return;
+
+  const usuarioId = Number(formData.get("usuarioId"));
+  const cargoId = Number(formData.get("cargoId"));
+  if (
+    !Number.isInteger(usuarioId) ||
+    usuarioId <= 0 ||
+    !Number.isInteger(cargoId) ||
+    cargoId <= 0
+  ) {
+    return;
+  }
+
+  await prisma.$transaction(async (tx) => {
+    const [usuario, cargo] = await Promise.all([
+      tx.usuario.findUnique({
+        where: { id: usuarioId },
+        select: { nome: true },
+      }),
+      tx.cargo.findUnique({ where: { id: cargoId }, select: { nome: true } }),
+    ]);
+    if (!usuario || !cargo) return;
+
+    const associacao = await tx.usuarioCargo.createMany({
+      data: { usuarioId, cargoId },
+      skipDuplicates: true,
+    });
+    if (associacao.count === 0) return;
+
+    await registrarLog(
+      {
+        modulo: "CARGOS",
+        acao: "ALTERAR",
+        registroId: usuarioId,
+        descricao: `Cargo "${cargo.nome}" associado ao usuário "${usuario.nome}"`,
+        dados: { usuarioId, cargoId, cargo: cargo.nome },
+        usuarioId: atual.id,
+      },
+      tx
+    );
+  });
+
+  revalidatePath("/usuarios");
+  revalidatePath(`/usuarios/${usuarioId}`);
+  revalidatePath("/cargos");
+  redirect(`/usuarios/${usuarioId}?cargos=atualizado`);
+}
+
+export async function removerCargoUsuario(formData: FormData): Promise<void> {
+  const atual = await verificarPermissao("cargos.usuario.gerenciar");
+  if (!atual) return;
+
+  const usuarioId = Number(formData.get("usuarioId"));
+  const cargoId = Number(formData.get("cargoId"));
+  if (
+    !Number.isInteger(usuarioId) ||
+    usuarioId <= 0 ||
+    !Number.isInteger(cargoId) ||
+    cargoId <= 0
+  ) {
+    return;
+  }
+
+  await prisma.$transaction(async (tx) => {
+    const [usuario, cargo] = await Promise.all([
+      tx.usuario.findUnique({
+        where: { id: usuarioId },
+        select: { nome: true },
+      }),
+      tx.cargo.findUnique({ where: { id: cargoId }, select: { nome: true } }),
+    ]);
+    if (!usuario || !cargo) return;
+
+    const associacao = await tx.usuarioCargo.deleteMany({
+      where: { usuarioId, cargoId },
+    });
+    if (associacao.count === 0) return;
+
+    await registrarLog(
+      {
+        modulo: "CARGOS",
+        acao: "ALTERAR",
+        registroId: usuarioId,
+        descricao: `Cargo "${cargo.nome}" removido do usuário "${usuario.nome}"`,
+        dados: { usuarioId, cargoId, cargo: cargo.nome },
+        usuarioId: atual.id,
+      },
+      tx
+    );
+  });
+
+  revalidatePath("/usuarios");
+  revalidatePath(`/usuarios/${usuarioId}`);
+  revalidatePath("/cargos");
+  redirect(`/usuarios/${usuarioId}?cargos=atualizado`);
+}
+
 // O usuário nunca é apagado: só desativado, para não quebrar as
 // movimentações e os logs que apontam para ele.
 export async function desativarUsuario(formData: FormData): Promise<void> {

@@ -9,6 +9,7 @@
 import "dotenv/config"; // IMPORTANTE: precisa ser o primeiro import (carrega o .env)
 import prisma from "../src/lib/prisma";
 import { sincronizarCatalogoDePermissoes } from "../src/lib/permissoes";
+import { CARGOS_INICIAIS } from "../src/app/cargos/tipos";
 
 const LOCAIS_DE_ESTOQUE = ["Loja Nova Iguaçu", "Loja Mesquita", "Galpão"];
 
@@ -18,6 +19,14 @@ async function main() {
   for (const nome of LOCAIS_DE_ESTOQUE) {
     // upsert = cria se não existir; se já existir, não altera nada
     await prisma.localEstoque.upsert({
+      where: { nome },
+      update: {},
+      create: { nome },
+    });
+  }
+
+  for (const nome of CARGOS_INICIAIS) {
+    await prisma.cargo.upsert({
       where: { nome },
       update: {},
       create: { nome },

@@ -28,7 +28,7 @@ O sistema deve:
 
 ## 2. Usuários, login e permissões
 
-**Não existem perfis nem grupos.** O acesso de cada usuário é definido por **permissões individuais**, concedidas na tela `/permissoes` (Módulos e Permissões). Uma permissão que não foi concedida está **negada**.
+**Não existem perfis nem grupos de permissões.** Cargos são informações descritivas associadas aos usuários e **não concedem acesso**. O acesso de cada usuário é definido por **permissões individuais**, concedidas na tela `/permissoes` (Módulos e Permissões). Uma permissão que não foi concedida está **negada**.
 
 O catálogo de permissões é organizado em **módulo → funcionalidade → operação**. Cada permissão tem um **código único e estável** no formato `modulo.funcionalidade.operacao` (ex.: `produtos.produto.criar`).
 
@@ -40,6 +40,7 @@ Exemplos de permissões já existentes: `produtos.produto.consultar`, `produtos.
 - **RN-30. Autorização no servidor:** toda página e toda operação confere a permissão **no servidor** (funções `exigirPermissao` e `verificarPermissao` em `src/lib/autorizacao.ts`). Esconder um botão na tela **não** é suficiente: tentar executar a ação sem permissão é bloqueado no backend.
 - **RN-31. Permissões nascem negadas:** uma permissão nova (recem-registrada no catálogo) **não é concedida a ninguém** até que um administrador marque a caixa e salve.
 - **RN-32. Trava contra auto-bloqueio:** ninguém pode remover de si mesmo a permissão `permissoes.permissao.conceder`, para não trancar todos para fora da administração.
+- **RN-33. Cargos informativos:** um usuário pode ter vários cargos e um cargo pode pertencer a vários usuários. Cargos não concedem permissões; os acessos continuam individuais. O módulo `/cargos` permite consultar, cadastrar, renomear e excluir cargos. A lista é uma tabela pesquisável e ordenável pelo cabeçalho, começa por nome ascendente, usa 10 itens por página por padrão e oferece 10, 25, 50, 75 ou 100 itens. Os 31 cargos iniciais são cadastrados pelo seed e apresentados em ordem alfabética. Um cargo só pode ser excluído quando não estiver associado a nenhum usuário.
 
 Todo registro importante (movimentação de estoque, pedido, preço, ação administrativa) guarda **quem fez** e **quando** (data e hora).
 

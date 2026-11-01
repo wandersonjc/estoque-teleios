@@ -252,6 +252,7 @@ export type UsuarioWhereInput = {
   logs?: Prisma.LogSistemaListRelationFilter
   sessoes?: Prisma.SessaoListRelationFilter
   permissoes?: Prisma.PermissaoUsuarioListRelationFilter
+  cargos?: Prisma.UsuarioCargoListRelationFilter
 }
 
 export type UsuarioOrderByWithRelationInput = {
@@ -268,6 +269,7 @@ export type UsuarioOrderByWithRelationInput = {
   logs?: Prisma.LogSistemaOrderByRelationAggregateInput
   sessoes?: Prisma.SessaoOrderByRelationAggregateInput
   permissoes?: Prisma.PermissaoUsuarioOrderByRelationAggregateInput
+  cargos?: Prisma.UsuarioCargoOrderByRelationAggregateInput
 }
 
 export type UsuarioWhereUniqueInput = Prisma.AtLeast<{
@@ -287,6 +289,7 @@ export type UsuarioWhereUniqueInput = Prisma.AtLeast<{
   logs?: Prisma.LogSistemaListRelationFilter
   sessoes?: Prisma.SessaoListRelationFilter
   permissoes?: Prisma.PermissaoUsuarioListRelationFilter
+  cargos?: Prisma.UsuarioCargoListRelationFilter
 }, "id" | "email">
 
 export type UsuarioOrderByWithAggregationInput = {
@@ -334,6 +337,7 @@ export type UsuarioCreateInput = {
   logs?: Prisma.LogSistemaCreateNestedManyWithoutUsuarioInput
   sessoes?: Prisma.SessaoCreateNestedManyWithoutUsuarioInput
   permissoes?: Prisma.PermissaoUsuarioCreateNestedManyWithoutUsuarioInput
+  cargos?: Prisma.UsuarioCargoCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateInput = {
@@ -350,6 +354,7 @@ export type UsuarioUncheckedCreateInput = {
   logs?: Prisma.LogSistemaUncheckedCreateNestedManyWithoutUsuarioInput
   sessoes?: Prisma.SessaoUncheckedCreateNestedManyWithoutUsuarioInput
   permissoes?: Prisma.PermissaoUsuarioUncheckedCreateNestedManyWithoutUsuarioInput
+  cargos?: Prisma.UsuarioCargoUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUpdateInput = {
@@ -365,6 +370,7 @@ export type UsuarioUpdateInput = {
   logs?: Prisma.LogSistemaUpdateManyWithoutUsuarioNestedInput
   sessoes?: Prisma.SessaoUpdateManyWithoutUsuarioNestedInput
   permissoes?: Prisma.PermissaoUsuarioUpdateManyWithoutUsuarioNestedInput
+  cargos?: Prisma.UsuarioCargoUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateInput = {
@@ -381,6 +387,7 @@ export type UsuarioUncheckedUpdateInput = {
   logs?: Prisma.LogSistemaUncheckedUpdateManyWithoutUsuarioNestedInput
   sessoes?: Prisma.SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
   permissoes?: Prisma.PermissaoUsuarioUncheckedUpdateManyWithoutUsuarioNestedInput
+  cargos?: Prisma.UsuarioCargoUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioCreateManyInput = {
@@ -462,14 +469,14 @@ export type UsuarioSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
 }
 
-export type UsuarioNullableScalarRelationFilter = {
-  is?: Prisma.UsuarioWhereInput | null
-  isNot?: Prisma.UsuarioWhereInput | null
-}
-
 export type UsuarioScalarRelationFilter = {
   is?: Prisma.UsuarioWhereInput
   isNot?: Prisma.UsuarioWhereInput
+}
+
+export type UsuarioNullableScalarRelationFilter = {
+  is?: Prisma.UsuarioWhereInput | null
+  isNot?: Prisma.UsuarioWhereInput | null
 }
 
 export type StringFieldUpdateOperationsInput = {
@@ -498,6 +505,20 @@ export type IntFieldUpdateOperationsInput = {
   decrement?: number
   multiply?: number
   divide?: number
+}
+
+export type UsuarioCreateNestedOneWithoutCargosInput = {
+  create?: Prisma.XOR<Prisma.UsuarioCreateWithoutCargosInput, Prisma.UsuarioUncheckedCreateWithoutCargosInput>
+  connectOrCreate?: Prisma.UsuarioCreateOrConnectWithoutCargosInput
+  connect?: Prisma.UsuarioWhereUniqueInput
+}
+
+export type UsuarioUpdateOneRequiredWithoutCargosNestedInput = {
+  create?: Prisma.XOR<Prisma.UsuarioCreateWithoutCargosInput, Prisma.UsuarioUncheckedCreateWithoutCargosInput>
+  connectOrCreate?: Prisma.UsuarioCreateOrConnectWithoutCargosInput
+  upsert?: Prisma.UsuarioUpsertWithoutCargosInput
+  connect?: Prisma.UsuarioWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UsuarioUpdateToOneWithWhereWithoutCargosInput, Prisma.UsuarioUpdateWithoutCargosInput>, Prisma.UsuarioUncheckedUpdateWithoutCargosInput>
 }
 
 export type UsuarioCreateNestedOneWithoutMovimentosInput = {
@@ -560,6 +581,84 @@ export type UsuarioUpdateOneRequiredWithoutSessoesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UsuarioUpdateToOneWithWhereWithoutSessoesInput, Prisma.UsuarioUpdateWithoutSessoesInput>, Prisma.UsuarioUncheckedUpdateWithoutSessoesInput>
 }
 
+export type UsuarioCreateWithoutCargosInput = {
+  nome: string
+  email: string
+  senhaHash: string
+  imagemChave?: string | null
+  tema?: $Enums.TemaUsuario
+  ativo?: boolean
+  criadoEm?: Date | string
+  atualizadoEm?: Date | string
+  movimentos?: Prisma.MovimentoEstoqueCreateNestedManyWithoutUsuarioInput
+  logs?: Prisma.LogSistemaCreateNestedManyWithoutUsuarioInput
+  sessoes?: Prisma.SessaoCreateNestedManyWithoutUsuarioInput
+  permissoes?: Prisma.PermissaoUsuarioCreateNestedManyWithoutUsuarioInput
+}
+
+export type UsuarioUncheckedCreateWithoutCargosInput = {
+  id?: number
+  nome: string
+  email: string
+  senhaHash: string
+  imagemChave?: string | null
+  tema?: $Enums.TemaUsuario
+  ativo?: boolean
+  criadoEm?: Date | string
+  atualizadoEm?: Date | string
+  movimentos?: Prisma.MovimentoEstoqueUncheckedCreateNestedManyWithoutUsuarioInput
+  logs?: Prisma.LogSistemaUncheckedCreateNestedManyWithoutUsuarioInput
+  sessoes?: Prisma.SessaoUncheckedCreateNestedManyWithoutUsuarioInput
+  permissoes?: Prisma.PermissaoUsuarioUncheckedCreateNestedManyWithoutUsuarioInput
+}
+
+export type UsuarioCreateOrConnectWithoutCargosInput = {
+  where: Prisma.UsuarioWhereUniqueInput
+  create: Prisma.XOR<Prisma.UsuarioCreateWithoutCargosInput, Prisma.UsuarioUncheckedCreateWithoutCargosInput>
+}
+
+export type UsuarioUpsertWithoutCargosInput = {
+  update: Prisma.XOR<Prisma.UsuarioUpdateWithoutCargosInput, Prisma.UsuarioUncheckedUpdateWithoutCargosInput>
+  create: Prisma.XOR<Prisma.UsuarioCreateWithoutCargosInput, Prisma.UsuarioUncheckedCreateWithoutCargosInput>
+  where?: Prisma.UsuarioWhereInput
+}
+
+export type UsuarioUpdateToOneWithWhereWithoutCargosInput = {
+  where?: Prisma.UsuarioWhereInput
+  data: Prisma.XOR<Prisma.UsuarioUpdateWithoutCargosInput, Prisma.UsuarioUncheckedUpdateWithoutCargosInput>
+}
+
+export type UsuarioUpdateWithoutCargosInput = {
+  nome?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  senhaHash?: Prisma.StringFieldUpdateOperationsInput | string
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tema?: Prisma.EnumTemaUsuarioFieldUpdateOperationsInput | $Enums.TemaUsuario
+  ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  movimentos?: Prisma.MovimentoEstoqueUpdateManyWithoutUsuarioNestedInput
+  logs?: Prisma.LogSistemaUpdateManyWithoutUsuarioNestedInput
+  sessoes?: Prisma.SessaoUpdateManyWithoutUsuarioNestedInput
+  permissoes?: Prisma.PermissaoUsuarioUpdateManyWithoutUsuarioNestedInput
+}
+
+export type UsuarioUncheckedUpdateWithoutCargosInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  nome?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  senhaHash?: Prisma.StringFieldUpdateOperationsInput | string
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tema?: Prisma.EnumTemaUsuarioFieldUpdateOperationsInput | $Enums.TemaUsuario
+  ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  movimentos?: Prisma.MovimentoEstoqueUncheckedUpdateManyWithoutUsuarioNestedInput
+  logs?: Prisma.LogSistemaUncheckedUpdateManyWithoutUsuarioNestedInput
+  sessoes?: Prisma.SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
+  permissoes?: Prisma.PermissaoUsuarioUncheckedUpdateManyWithoutUsuarioNestedInput
+}
+
 export type UsuarioCreateWithoutMovimentosInput = {
   nome: string
   email: string
@@ -572,6 +671,7 @@ export type UsuarioCreateWithoutMovimentosInput = {
   logs?: Prisma.LogSistemaCreateNestedManyWithoutUsuarioInput
   sessoes?: Prisma.SessaoCreateNestedManyWithoutUsuarioInput
   permissoes?: Prisma.PermissaoUsuarioCreateNestedManyWithoutUsuarioInput
+  cargos?: Prisma.UsuarioCargoCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutMovimentosInput = {
@@ -587,6 +687,7 @@ export type UsuarioUncheckedCreateWithoutMovimentosInput = {
   logs?: Prisma.LogSistemaUncheckedCreateNestedManyWithoutUsuarioInput
   sessoes?: Prisma.SessaoUncheckedCreateNestedManyWithoutUsuarioInput
   permissoes?: Prisma.PermissaoUsuarioUncheckedCreateNestedManyWithoutUsuarioInput
+  cargos?: Prisma.UsuarioCargoUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutMovimentosInput = {
@@ -617,6 +718,7 @@ export type UsuarioUpdateWithoutMovimentosInput = {
   logs?: Prisma.LogSistemaUpdateManyWithoutUsuarioNestedInput
   sessoes?: Prisma.SessaoUpdateManyWithoutUsuarioNestedInput
   permissoes?: Prisma.PermissaoUsuarioUpdateManyWithoutUsuarioNestedInput
+  cargos?: Prisma.UsuarioCargoUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutMovimentosInput = {
@@ -632,6 +734,7 @@ export type UsuarioUncheckedUpdateWithoutMovimentosInput = {
   logs?: Prisma.LogSistemaUncheckedUpdateManyWithoutUsuarioNestedInput
   sessoes?: Prisma.SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
   permissoes?: Prisma.PermissaoUsuarioUncheckedUpdateManyWithoutUsuarioNestedInput
+  cargos?: Prisma.UsuarioCargoUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioCreateWithoutLogsInput = {
@@ -646,6 +749,7 @@ export type UsuarioCreateWithoutLogsInput = {
   movimentos?: Prisma.MovimentoEstoqueCreateNestedManyWithoutUsuarioInput
   sessoes?: Prisma.SessaoCreateNestedManyWithoutUsuarioInput
   permissoes?: Prisma.PermissaoUsuarioCreateNestedManyWithoutUsuarioInput
+  cargos?: Prisma.UsuarioCargoCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutLogsInput = {
@@ -661,6 +765,7 @@ export type UsuarioUncheckedCreateWithoutLogsInput = {
   movimentos?: Prisma.MovimentoEstoqueUncheckedCreateNestedManyWithoutUsuarioInput
   sessoes?: Prisma.SessaoUncheckedCreateNestedManyWithoutUsuarioInput
   permissoes?: Prisma.PermissaoUsuarioUncheckedCreateNestedManyWithoutUsuarioInput
+  cargos?: Prisma.UsuarioCargoUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutLogsInput = {
@@ -691,6 +796,7 @@ export type UsuarioUpdateWithoutLogsInput = {
   movimentos?: Prisma.MovimentoEstoqueUpdateManyWithoutUsuarioNestedInput
   sessoes?: Prisma.SessaoUpdateManyWithoutUsuarioNestedInput
   permissoes?: Prisma.PermissaoUsuarioUpdateManyWithoutUsuarioNestedInput
+  cargos?: Prisma.UsuarioCargoUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutLogsInput = {
@@ -706,6 +812,7 @@ export type UsuarioUncheckedUpdateWithoutLogsInput = {
   movimentos?: Prisma.MovimentoEstoqueUncheckedUpdateManyWithoutUsuarioNestedInput
   sessoes?: Prisma.SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
   permissoes?: Prisma.PermissaoUsuarioUncheckedUpdateManyWithoutUsuarioNestedInput
+  cargos?: Prisma.UsuarioCargoUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioCreateWithoutPermissoesInput = {
@@ -720,6 +827,7 @@ export type UsuarioCreateWithoutPermissoesInput = {
   movimentos?: Prisma.MovimentoEstoqueCreateNestedManyWithoutUsuarioInput
   logs?: Prisma.LogSistemaCreateNestedManyWithoutUsuarioInput
   sessoes?: Prisma.SessaoCreateNestedManyWithoutUsuarioInput
+  cargos?: Prisma.UsuarioCargoCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutPermissoesInput = {
@@ -735,6 +843,7 @@ export type UsuarioUncheckedCreateWithoutPermissoesInput = {
   movimentos?: Prisma.MovimentoEstoqueUncheckedCreateNestedManyWithoutUsuarioInput
   logs?: Prisma.LogSistemaUncheckedCreateNestedManyWithoutUsuarioInput
   sessoes?: Prisma.SessaoUncheckedCreateNestedManyWithoutUsuarioInput
+  cargos?: Prisma.UsuarioCargoUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutPermissoesInput = {
@@ -765,6 +874,7 @@ export type UsuarioUpdateWithoutPermissoesInput = {
   movimentos?: Prisma.MovimentoEstoqueUpdateManyWithoutUsuarioNestedInput
   logs?: Prisma.LogSistemaUpdateManyWithoutUsuarioNestedInput
   sessoes?: Prisma.SessaoUpdateManyWithoutUsuarioNestedInput
+  cargos?: Prisma.UsuarioCargoUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutPermissoesInput = {
@@ -780,6 +890,7 @@ export type UsuarioUncheckedUpdateWithoutPermissoesInput = {
   movimentos?: Prisma.MovimentoEstoqueUncheckedUpdateManyWithoutUsuarioNestedInput
   logs?: Prisma.LogSistemaUncheckedUpdateManyWithoutUsuarioNestedInput
   sessoes?: Prisma.SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
+  cargos?: Prisma.UsuarioCargoUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioCreateWithoutSessoesInput = {
@@ -794,6 +905,7 @@ export type UsuarioCreateWithoutSessoesInput = {
   movimentos?: Prisma.MovimentoEstoqueCreateNestedManyWithoutUsuarioInput
   logs?: Prisma.LogSistemaCreateNestedManyWithoutUsuarioInput
   permissoes?: Prisma.PermissaoUsuarioCreateNestedManyWithoutUsuarioInput
+  cargos?: Prisma.UsuarioCargoCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutSessoesInput = {
@@ -809,6 +921,7 @@ export type UsuarioUncheckedCreateWithoutSessoesInput = {
   movimentos?: Prisma.MovimentoEstoqueUncheckedCreateNestedManyWithoutUsuarioInput
   logs?: Prisma.LogSistemaUncheckedCreateNestedManyWithoutUsuarioInput
   permissoes?: Prisma.PermissaoUsuarioUncheckedCreateNestedManyWithoutUsuarioInput
+  cargos?: Prisma.UsuarioCargoUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutSessoesInput = {
@@ -839,6 +952,7 @@ export type UsuarioUpdateWithoutSessoesInput = {
   movimentos?: Prisma.MovimentoEstoqueUpdateManyWithoutUsuarioNestedInput
   logs?: Prisma.LogSistemaUpdateManyWithoutUsuarioNestedInput
   permissoes?: Prisma.PermissaoUsuarioUpdateManyWithoutUsuarioNestedInput
+  cargos?: Prisma.UsuarioCargoUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutSessoesInput = {
@@ -854,6 +968,7 @@ export type UsuarioUncheckedUpdateWithoutSessoesInput = {
   movimentos?: Prisma.MovimentoEstoqueUncheckedUpdateManyWithoutUsuarioNestedInput
   logs?: Prisma.LogSistemaUncheckedUpdateManyWithoutUsuarioNestedInput
   permissoes?: Prisma.PermissaoUsuarioUncheckedUpdateManyWithoutUsuarioNestedInput
+  cargos?: Prisma.UsuarioCargoUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 
@@ -866,6 +981,7 @@ export type UsuarioCountOutputType = {
   logs: number
   sessoes: number
   permissoes: number
+  cargos: number
 }
 
 export type UsuarioCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -873,6 +989,7 @@ export type UsuarioCountOutputTypeSelect<ExtArgs extends runtime.Types.Extension
   logs?: boolean | UsuarioCountOutputTypeCountLogsArgs
   sessoes?: boolean | UsuarioCountOutputTypeCountSessoesArgs
   permissoes?: boolean | UsuarioCountOutputTypeCountPermissoesArgs
+  cargos?: boolean | UsuarioCountOutputTypeCountCargosArgs
 }
 
 /**
@@ -913,6 +1030,13 @@ export type UsuarioCountOutputTypeCountPermissoesArgs<ExtArgs extends runtime.Ty
   where?: Prisma.PermissaoUsuarioWhereInput
 }
 
+/**
+ * UsuarioCountOutputType without action
+ */
+export type UsuarioCountOutputTypeCountCargosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UsuarioCargoWhereInput
+}
+
 
 export type UsuarioSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -928,6 +1052,7 @@ export type UsuarioSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   logs?: boolean | Prisma.Usuario$logsArgs<ExtArgs>
   sessoes?: boolean | Prisma.Usuario$sessoesArgs<ExtArgs>
   permissoes?: boolean | Prisma.Usuario$permissoesArgs<ExtArgs>
+  cargos?: boolean | Prisma.Usuario$cargosArgs<ExtArgs>
   _count?: boolean | Prisma.UsuarioCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["usuario"]>
 
@@ -973,6 +1098,7 @@ export type UsuarioInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   logs?: boolean | Prisma.Usuario$logsArgs<ExtArgs>
   sessoes?: boolean | Prisma.Usuario$sessoesArgs<ExtArgs>
   permissoes?: boolean | Prisma.Usuario$permissoesArgs<ExtArgs>
+  cargos?: boolean | Prisma.Usuario$cargosArgs<ExtArgs>
   _count?: boolean | Prisma.UsuarioCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UsuarioIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -985,6 +1111,7 @@ export type $UsuarioPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     logs: Prisma.$LogSistemaPayload<ExtArgs>[]
     sessoes: Prisma.$SessaoPayload<ExtArgs>[]
     permissoes: Prisma.$PermissaoUsuarioPayload<ExtArgs>[]
+    cargos: Prisma.$UsuarioCargoPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1394,6 +1521,7 @@ export interface Prisma__UsuarioClient<T, Null = never, ExtArgs extends runtime.
   logs<T extends Prisma.Usuario$logsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$logsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LogSistemaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sessoes<T extends Prisma.Usuario$sessoesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$sessoesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SessaoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   permissoes<T extends Prisma.Usuario$permissoesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$permissoesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PermissaoUsuarioPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  cargos<T extends Prisma.Usuario$cargosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$cargosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UsuarioCargoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1918,6 +2046,30 @@ export type Usuario$permissoesArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.PermissaoUsuarioScalarFieldEnum | Prisma.PermissaoUsuarioScalarFieldEnum[]
+}
+
+/**
+ * Usuario.cargos
+ */
+export type Usuario$cargosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UsuarioCargo
+   */
+  select?: Prisma.UsuarioCargoSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UsuarioCargo
+   */
+  omit?: Prisma.UsuarioCargoOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UsuarioCargoInclude<ExtArgs> | null
+  where?: Prisma.UsuarioCargoWhereInput
+  orderBy?: Prisma.UsuarioCargoOrderByWithRelationInput | Prisma.UsuarioCargoOrderByWithRelationInput[]
+  cursor?: Prisma.UsuarioCargoWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UsuarioCargoScalarFieldEnum | Prisma.UsuarioCargoScalarFieldEnum[]
 }
 
 /**

@@ -242,6 +242,46 @@ export const CATALOGO_DE_PERMISSOES: PermissaoCatalogo[] = [
     descricao: "Registrar preço cotado de um produto em um fornecedor, sem pedido",
     ordem: 760,
   },
+  {
+    codigo: "cargos.cargo.consultar",
+    modulo: "Cargos",
+    funcionalidade: "Cargo",
+    operacao: "Consultar",
+    descricao: "Ver a lista e os dados dos cargos cadastrados",
+    ordem: 810,
+  },
+  {
+    codigo: "cargos.cargo.criar",
+    modulo: "Cargos",
+    funcionalidade: "Cargo",
+    operacao: "Cadastrar",
+    descricao: "Cadastrar novos cargos",
+    ordem: 820,
+  },
+  {
+    codigo: "cargos.cargo.editar",
+    modulo: "Cargos",
+    funcionalidade: "Cargo",
+    operacao: "Alterar",
+    descricao: "Alterar o nome dos cargos cadastrados",
+    ordem: 830,
+  },
+  {
+    codigo: "cargos.cargo.excluir",
+    modulo: "Cargos",
+    funcionalidade: "Cargo",
+    operacao: "Excluir",
+    descricao: "Excluir cargos sem usuários associados",
+    ordem: 840,
+  },
+  {
+    codigo: "cargos.usuario.gerenciar",
+    modulo: "Cargos",
+    funcionalidade: "Cargo do usuário",
+    operacao: "Gerenciar",
+    descricao: "Associar e remover cargos dos usuários",
+    ordem: 850,
+  },
 ];
 
 // Códigos válidos hoje (útil para validar o que chega do formulário)
@@ -269,6 +309,7 @@ export const MENU_PRINCIPAL: ItemMenu[] = [
     rotulo: "Fornecedores",
     permissao: "fornecedores.fornecedor.consultar",
   },
+  { href: "/cargos", rotulo: "Cargos", permissao: "cargos.cargo.consultar" },
   { href: "/usuarios", rotulo: "Usuários", permissao: "usuarios.usuario.consultar" },
   {
     href: "/permissoes",

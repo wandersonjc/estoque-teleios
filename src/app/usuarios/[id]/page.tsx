@@ -13,12 +13,15 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import BotaoAcao from "@/components/BotaoAcao";
+import { IconeExcluir } from "@/components/icones";
 
 import UsuarioForm from "../UsuarioForm";
 import {
+  adicionarCargoUsuario,
   atualizarUsuario,
   desativarUsuario,
   excluirUsuario,
+  removerCargoUsuario,
   reativarUsuario,
 } from "../actions";
 
@@ -32,7 +35,7 @@ export default async function EditarUsuarioPage({
   const atual = await exigirSessao();
 
   const { id } = await params;
-  const { salvo, erro } = await searchParams;
+  const { salvo, erro, cargos: estadoCargos } = await searchParams;
 
   const numero = Number(id);
   if (!Number.isInteger(numero) || numero <= 0) notFound();
@@ -49,29 +52,50 @@ export default async function EditarUsuarioPage({
     propriaConta || atual.permissoes.has("usuarios.usuario.editar");
   const podeDesativar = atual.permissoes.has("usuarios.usuario.desativar");
   const podeExcluir = atual.permissoes.has("usuarios.usuario.excluir");
+  const podeGerenciarCargos = atual.permissoes.has(
+    "cargos.usuario.gerenciar"
+  );
   const hrefVoltar = propriaConta
     ? MENU_PRINCIPAL.find((item) => atual.permissoes.has(item.permissao))?.href ??
       "/acesso-negado"
     : "/usuarios";
 
-  const usuario = await prisma.usuario.findUnique({
-    where: { id: numero },
-    select: {
-      id: true,
-      nome: true,
-      email: true,
-      imagemChave: true,
-      atualizadoEm: true,
-      ativo: true,
-      _count: { select: { movimentos: true, logs: true } },
-    },
-  });
+  const [usuario, cargosDisponiveisNoSistema] = await Promise.all([
+    prisma.usuario.findUnique({
+      where: { id: numero },
+      select: {
+        id: true,
+        nome: true,
+        email: true,
+        imagemChave: true,
+        atualizadoEm: true,
+        ativo: true,
+        cargos: {
+          select: { cargoId: true, cargo: { select: { nome: true } } },
+        },
+        _count: { select: { movimentos: true, logs: true } },
+      },
+    }),
+    prisma.cargo.findMany({
+      select: { id: true, nome: true },
+      orderBy: { nome: "asc" },
+    }),
+  ]);
 
   if (!usuario) notFound();
 
   const temMovimentos = usuario._count.movimentos > 0;
   const temLogs = usuario._count.logs > 0;
   const emUso = temMovimentos || temLogs;
+  const cargosVinculados = [...usuario.cargos].sort((a, b) =>
+    a.cargo.nome.localeCompare(b.cargo.nome, "pt-BR")
+  );
+  const idsCargosVinculados = new Set(
+    cargosVinculados.map((associacao) => associacao.cargoId)
+  );
+  const cargosParaAssociar = cargosDisponiveisNoSistema.filter(
+    (cargo) => !idsCargosVinculados.has(cargo.id)
+  );
 
   return (
     <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-5">
@@ -94,6 +118,12 @@ export default async function EditarUsuarioPage({
           className="mt-4 rounded-lg bg-green-50 p-3 text-base text-green-800"
         >
           Usuário salvo com sucesso.
+        </p>
+      )}
+
+      {estadoCargos === "atualizado" && (
+        <p role="status" className="mt-4 rounded-lg bg-green-50 p-3 text-base text-green-800">
+          Cargos do usuário atualizados.
         </p>
       )}
 
@@ -142,6 +172,79 @@ export default async function EditarUsuarioPage({
           </dl>
         )}
       </div>
+
+      <section className="mt-6 rounded-xl border border-zinc-200 bg-white p-3">
+        <h2 className="text-base font-semibold text-zinc-900">Cargos</h2>
+        {cargosVinculados.length === 0 ? (
+          <p className="mt-2 text-sm text-zinc-600">Nenhum cargo vinculado.</p>
+        ) : (
+          <ul className="mt-3 flex flex-col gap-2">
+            {cargosVinculados.map(({ cargoId, cargo }) => (
+              <li
+                key={cargoId}
+                className="flex items-center justify-between gap-3 rounded-lg border border-zinc-200 px-3 py-2"
+              >
+                <span className="text-sm font-medium text-zinc-800">
+                  {cargo.nome}
+                </span>
+                {podeGerenciarCargos && (
+                  <form action={removerCargoUsuario}>
+                    <input type="hidden" name="usuarioId" value={usuario.id} />
+                    <input type="hidden" name="cargoId" value={cargoId} />
+                    <BotaoAcao
+                      title="Remover cargo do usuário"
+                      ariaLabel={`Remover o cargo ${cargo.nome} do usuário ${usuario.nome}`}
+                      confirmacao={`Remover o cargo "${cargo.nome}" do usuário "${usuario.nome}"?`}
+                      className="flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200 text-red-700 hover:bg-red-50"
+                    >
+                      <IconeExcluir className="h-4 w-4" />
+                    </BotaoAcao>
+                  </form>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {podeGerenciarCargos && cargosParaAssociar.length > 0 && (
+          <form
+            action={adicionarCargoUsuario}
+            className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end"
+          >
+            <input type="hidden" name="usuarioId" value={usuario.id} />
+            <div className="flex flex-1 flex-col gap-1">
+              <label htmlFor="cargoId" className="text-sm font-medium text-zinc-700">
+                Adicionar cargo
+              </label>
+              <select
+                id="cargoId"
+                name="cargoId"
+                required
+                defaultValue=""
+                className="h-11 w-full rounded-lg border border-zinc-300 bg-white px-3 text-base text-zinc-900"
+              >
+                <option value="" disabled>
+                  Selecione um cargo
+                </option>
+                {cargosParaAssociar.map((cargo) => (
+                  <option key={cargo.id} value={cargo.id}>
+                    {cargo.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <BotaoAcao className="h-11 rounded-lg bg-zinc-900 px-4 text-sm font-medium text-white">
+              Adicionar cargo
+            </BotaoAcao>
+          </form>
+        )}
+
+        {podeGerenciarCargos && cargosParaAssociar.length === 0 && (
+          <p className="mt-3 text-sm text-zinc-600">
+            Todos os cargos disponíveis já estão associados.
+          </p>
+        )}
+      </section>
 
       {!propriaConta && podeDesativar && (
         <form

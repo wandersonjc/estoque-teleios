@@ -47,6 +47,16 @@ export { Prisma }
  */
 export type Usuario = Prisma.UsuarioModel
 /**
+ * Model Cargo
+ * 
+ */
+export type Cargo = Prisma.CargoModel
+/**
+ * Model UsuarioCargo
+ * 
+ */
+export type UsuarioCargo = Prisma.UsuarioCargoModel
+/**
  * Model LocalEstoque
  * 
  */

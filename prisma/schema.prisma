@@ -1,7 +1,7 @@
 // ============================================================
 // Sistema de Pedidos de Compra - Modelo de dados
-// ETAPA 1: Cadastros (usuários, locais de estoque, fornecedores,
-//          produtos e vínculo produto x fornecedor)
+// ETAPA 1: Cadastros (usuários, cargos, locais de estoque,
+//          fornecedores, produtos e vínculo produto x fornecedor)
 // Regras: docs/regras-de-negocio.md
 //
 // Convenção: nos modelos usamos PascalCase e camelCase (padrão do
@@ -28,7 +28,7 @@ enum TemaUsuario {
 
 // ------------------------------------------------------------
 // Usuário do sistema
-// O acesso NÃO vem mais de um "perfil" fixo: cada usuário recebe
+// O acesso NÃO vem de um cargo ou perfil: cada usuário recebe
 // permissões individuais (ver os modelos Permissao e
 // PermissaoUsuario), concedidas na tela /permissoes.
 // ------------------------------------------------------------
@@ -47,8 +47,31 @@ model Usuario {
   logs       LogSistema[]
   sessoes    Sessao[]
   permissoes PermissaoUsuario[]
+  cargos     UsuarioCargo[]
 
   @@map("usuario")
+}
+
+// Cargo é informativo e não concede permissões ao usuário.
+model Cargo {
+  id       Int             @id @default(autoincrement())
+  nome     String          @unique
+  criadoEm DateTime        @default(now()) @map("criado_em")
+  usuarios UsuarioCargo[]
+
+  @@map("cargo")
+}
+
+model UsuarioCargo {
+  usuarioId Int @map("usuario_id")
+  cargoId   Int @map("cargo_id")
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  cargo   Cargo   @relation(fields: [cargoId], references: [id], onDelete: Restrict)
+
+  @@id([usuarioId, cargoId])
+  @@index([cargoId])
+  @@map("usuario_cargo")
 }
 
 // ------------------------------------------------------------
@@ -235,6 +258,7 @@ enum ModuloSistema {
   PRODUTOS
   ESTOQUE
   LOCAIS
+  CARGOS
   FORNECEDORES
   PEDIDOS
   USUARIOS
