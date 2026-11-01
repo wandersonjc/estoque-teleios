@@ -10,7 +10,11 @@ import {
   definirEmbalagemPrincipal,
   excluirEmbalagemProduto,
 } from "./actions";
-import { UNIDADES } from "./tipos";
+import {
+  formatarQuantidade,
+  formatarSaldoEmEmbalagem,
+  UNIDADES,
+} from "./tipos";
 
 export type EmbalagemProdutoExibicao = {
   id: number;
@@ -23,6 +27,7 @@ export type EmbalagemProdutoExibicao = {
 type Props = {
   produtoId: number;
   unidadeBase: string;
+  saldoTotal: number;
   embalagens: EmbalagemProdutoExibicao[];
   podeEditar: boolean;
   resultado?: string;
@@ -42,15 +47,10 @@ const ROTULOS_RESULTADO: Record<string, string> = {
   "produto-nao-encontrado": "O produto não foi encontrado. Atualize a página e tente novamente.",
 };
 
-function formatarQuantidade(texto: string): string {
-  return Number(texto).toLocaleString("pt-BR", {
-    maximumFractionDigits: 3,
-  });
-}
-
 export default function EmbalagensProduto({
   produtoId,
   unidadeBase,
+  saldoTotal,
   embalagens,
   podeEditar,
   resultado,
@@ -123,6 +123,10 @@ export default function EmbalagensProduto({
           exemplo: se uma caixa contém 100 unidades, cadastre a unidade CX e a
           equivalência 100 {unidadeBase}.
         </p>
+        <p className="mt-1 text-sm text-zinc-600">
+          O saldo equivalente abaixo é calculado a partir do estoque total e não
+          indica necessariamente embalagens fechadas fisicamente.
+        </p>
       </div>
 
       {resultado && ROTULOS_RESULTADO[resultado] && (
@@ -147,12 +151,15 @@ export default function EmbalagensProduto({
       )}
 
       <div className="overflow-x-auto rounded-xl border border-zinc-200 bg-white">
-        <table className="w-full min-w-[760px] border-collapse text-left text-sm">
+        <table className="w-full min-w-[900px] border-collapse text-left text-sm">
           <thead className="bg-zinc-50 text-zinc-600">
             <tr className="border-b border-zinc-200">
               {cabecalho("Código de Barras", "codigoBarras")}
               {cabecalho("Unidade", "unidade")}
               {cabecalho("Equivalência", "quantidadeBase")}
+              <th scope="col" className="whitespace-nowrap px-3 py-3 font-semibold">
+                Saldo equivalente
+              </th>
               {cabecalho("Principal", "principal")}
               {podeEditar && (
                 <th scope="col" className="whitespace-nowrap px-3 py-3 font-semibold">
@@ -207,7 +214,9 @@ export default function EmbalagensProduto({
                           form={formularioId}
                           name="quantidadeBase"
                           aria-label={`Equivalência em ${unidadeBase} da embalagem ${embalagem.codigoBarras}`}
-                          defaultValue={formatarQuantidade(embalagem.quantidadeBase)}
+                          defaultValue={formatarQuantidade(
+                            Number(embalagem.quantidadeBase)
+                          )}
                           required
                           inputMode="decimal"
                           className="h-10 w-24 rounded-md border border-zinc-300 px-2"
@@ -217,8 +226,21 @@ export default function EmbalagensProduto({
                         </span>
                       </div>
                     ) : (
-                      `${formatarQuantidade(embalagem.quantidadeBase)} ${unidadeBase}`
+                      `${formatarQuantidade(Number(embalagem.quantidadeBase))} ${unidadeBase}`
                     )}
+                  </td>
+                  <td className="px-3 py-2">
+                    <strong className="block text-zinc-900">
+                      {formatarSaldoEmEmbalagem(
+                        saldoTotal,
+                        Number(embalagem.quantidadeBase),
+                        unidadeBase,
+                        embalagem.unidade
+                      )}
+                    </strong>
+                    <span className="text-xs text-zinc-500">
+                      Saldo total: {formatarQuantidade(saldoTotal)} {unidadeBase}
+                    </span>
                   </td>
                   <td className="px-3 py-2">
                     <form action={definirEmbalagemPrincipal}>
@@ -299,7 +321,7 @@ export default function EmbalagensProduto({
             {ordenadas.length === 0 && (
               <tr>
                 <td
-                  colSpan={podeEditar ? 5 : 4}
+                  colSpan={podeEditar ? 6 : 5}
                   className="px-3 py-8 text-center text-sm text-zinc-500"
                 >
                   Nenhuma embalagem cadastrada.

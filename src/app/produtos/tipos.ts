@@ -177,6 +177,43 @@ export function formatarQuantidade(numero: number): string {
   return FORMATO_NUMERO.format(numero);
 }
 
+export function formatarSaldoEmEmbalagem(
+  saldoBase: number,
+  quantidadeBasePorEmbalagem: number,
+  unidadeBase: string,
+  unidadeEmbalagem: string
+): string {
+  if (
+    !Number.isFinite(saldoBase) ||
+    !Number.isFinite(quantidadeBasePorEmbalagem) ||
+    quantidadeBasePorEmbalagem <= 0
+  ) {
+    throw new RangeError("Saldo ou equivalência de embalagem inválidos.");
+  }
+
+  if (
+    Number.isInteger(saldoBase) &&
+    Number.isInteger(quantidadeBasePorEmbalagem)
+  ) {
+    const quantidadeEmbalagens = Math.floor(
+      saldoBase / quantidadeBasePorEmbalagem
+    );
+    const saldoRestante =
+      saldoBase - quantidadeEmbalagens * quantidadeBasePorEmbalagem;
+
+    if (saldoRestante === 0) {
+      return `${formatarQuantidade(quantidadeEmbalagens)} ${unidadeEmbalagem}`;
+    }
+    if (quantidadeEmbalagens === 0) {
+      return `${formatarQuantidade(saldoBase)} ${unidadeBase}`;
+    }
+
+    return `${formatarQuantidade(quantidadeEmbalagens)} ${unidadeEmbalagem} + ${formatarQuantidade(saldoRestante)} ${unidadeBase}`;
+  }
+
+  return `${formatarQuantidade(saldoBase / quantidadeBasePorEmbalagem)} ${unidadeEmbalagem}`;
+}
+
 const FORMATO_DATA = new Intl.DateTimeFormat("pt-BR", {
   timeZone: "America/Sao_Paulo",
   day: "2-digit",

@@ -35,6 +35,7 @@ import {
   formatarDataBr,
   formatarDecimalBr,
   formatarQuantidade,
+  formatarSaldoEmEmbalagem,
   ultimaContagem,
   TAMANHOS_PAGINA,
 } from "../tipos";
@@ -182,14 +183,31 @@ export default async function EditarProdutoPage({
   // Estoque atual de cada local, já em texto no padrão brasileiro
   // (o Decimal do Prisma nunca vai para o componente de cliente)
   const saldos: Record<string, string> = {};
+  const saldosNumericos: Record<string, number> = {};
 
   for (const estoque of produto.estoques) {
     const chave = String(estoque.localEstoqueId);
     saldos[chave] = formatarDecimalBr(estoque.quantidade.toString());
+    saldosNumericos[chave] = Number(estoque.quantidade.toString());
   }
 
   // RN-01: o total é a soma dos locais, sempre calculado
   const total = calcularTotalEstoque(produto.estoques);
+  const embalagensExibicao = produto.embalagens.map((embalagem) => ({
+    id: embalagem.id,
+    codigoBarras: embalagem.codigoBarras,
+    unidade: embalagem.unidade,
+    quantidadeBase: embalagem.quantidadeBase.toString(),
+    principal: embalagem.principal,
+  }));
+  const embalagensEquivalentes = Array.from(
+    new Map(
+      embalagensExibicao.map((embalagem) => [
+        `${embalagem.unidade}:${embalagem.quantidadeBase}`,
+        embalagem,
+      ])
+    ).values()
+  );
   const dataUltima = ultimaContagem(produto.estoques);
 
   const idsFornecedoresVinculados = new Set(
@@ -392,13 +410,8 @@ export default async function EditarProdutoPage({
           <EmbalagensProduto
             produtoId={produto.id}
             unidadeBase={produto.unidade}
-            embalagens={produto.embalagens.map((embalagem) => ({
-              id: embalagem.id,
-              codigoBarras: embalagem.codigoBarras,
-              unidade: embalagem.unidade,
-              quantidadeBase: embalagem.quantidadeBase.toString(),
-              principal: embalagem.principal,
-            }))}
+            saldoTotal={total}
+            embalagens={embalagensExibicao}
             podeEditar={podeEditar}
             resultado={valorUnico(resultadoEmbalagem)}
           />
@@ -419,19 +432,46 @@ export default async function EditarProdutoPage({
                     Nenhum local de estoque cadastrado.
                   </p>
                 ) : (
-                  <ul className="mt-2 flex flex-col gap-1">
-                    {locais.map((local) => (
-                      <li
-                        key={local.id}
-                        className="flex items-center justify-between gap-3 text-base text-zinc-800"
-                      >
-                        <span>{local.nome}</span>
-                        <strong>
-                          {saldos[String(local.id)] ?? "0"} {produto.unidade}
-                        </strong>
-                      </li>
-                    ))}
-                  </ul>
+                  <>
+                    <p className="mt-1 text-xs text-zinc-500">
+                      Equivalências calculadas a partir do saldo-base; não
+                      representam necessariamente embalagens fechadas.
+                    </p>
+                    <ul className="mt-2 flex flex-col gap-2">
+                      {locais.map((local) => (
+                        <li
+                          key={local.id}
+                          className="flex flex-col gap-1 border-b border-zinc-100 pb-2 text-sm text-zinc-800 last:border-0 last:pb-0 sm:flex-row sm:items-start sm:justify-between sm:gap-3"
+                        >
+                          <span className="font-medium">{local.nome}</span>
+                          <div className="sm:text-right">
+                            <strong className="block text-base">
+                              {saldos[String(local.id)] ?? "0"} {produto.unidade}
+                            </strong>
+                            {embalagensEquivalentes.length > 0 && (
+                              <ul className="mt-1 flex flex-col gap-0.5 text-xs text-zinc-600 sm:items-end">
+                                {embalagensEquivalentes.map((embalagem) => (
+                                  <li key={`${local.id}-${embalagem.id}`}>
+                                    {formatarSaldoEmEmbalagem(
+                                      saldosNumericos[String(local.id)] ?? 0,
+                                      Number(embalagem.quantidadeBase),
+                                      produto.unidade,
+                                      embalagem.unidade
+                                    )}
+                                    {" ("}
+                                    {formatarQuantidade(
+                                      Number(embalagem.quantidadeBase)
+                                    )}{" "}
+                                    {produto.unidade} por {embalagem.unidade})
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
                 )}
               </div>
 
@@ -440,13 +480,7 @@ export default async function EditarProdutoPage({
                   produtoId={produto.id}
                   locais={locais}
                   unidadeBase={produto.unidade}
-                  embalagens={produto.embalagens.map((embalagem) => ({
-                    id: embalagem.id,
-                    codigoBarras: embalagem.codigoBarras,
-                    unidade: embalagem.unidade,
-                    quantidadeBase: embalagem.quantidadeBase.toString(),
-                    principal: embalagem.principal,
-                  }))}
+                  embalagens={embalagensExibicao}
                   saldos={saldos}
                   retorno={`${retornoProduto}?mov=1&aba=estoque`}
                 />
