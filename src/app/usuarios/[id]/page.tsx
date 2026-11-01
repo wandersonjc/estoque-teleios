@@ -18,10 +18,12 @@ import { IconeExcluir } from "@/components/icones";
 import UsuarioForm from "../UsuarioForm";
 import {
   adicionarCargoUsuario,
+  adicionarFuncaoUsuario,
   atualizarUsuario,
   desativarUsuario,
   excluirUsuario,
   removerCargoUsuario,
+  removerFuncaoUsuario,
   reativarUsuario,
 } from "../actions";
 
@@ -35,7 +37,12 @@ export default async function EditarUsuarioPage({
   const atual = await exigirSessao();
 
   const { id } = await params;
-  const { salvo, erro, cargos: estadoCargos } = await searchParams;
+  const {
+    salvo,
+    erro,
+    cargos: estadoCargos,
+    funcoes: estadoFuncoes,
+  } = await searchParams;
 
   const numero = Number(id);
   if (!Number.isInteger(numero) || numero <= 0) notFound();
@@ -55,12 +62,15 @@ export default async function EditarUsuarioPage({
   const podeGerenciarCargos = atual.permissoes.has(
     "cargos.usuario.gerenciar"
   );
+  const podeGerenciarFuncoes = atual.permissoes.has(
+    "funcoes.usuario.gerenciar"
+  );
   const hrefVoltar = propriaConta
     ? MENU_PRINCIPAL.find((item) => atual.permissoes.has(item.permissao))?.href ??
       "/acesso-negado"
     : "/usuarios";
 
-  const [usuario, cargosDisponiveisNoSistema] = await Promise.all([
+  const [usuario, cargosDisponiveisNoSistema, funcoesDisponiveisNoSistema] = await Promise.all([
     prisma.usuario.findUnique({
       where: { id: numero },
       select: {
@@ -73,10 +83,17 @@ export default async function EditarUsuarioPage({
         cargos: {
           select: { cargoId: true, cargo: { select: { nome: true } } },
         },
+        funcoes: {
+          select: { funcaoId: true, funcao: { select: { nome: true } } },
+        },
         _count: { select: { movimentos: true, logs: true } },
       },
     }),
     prisma.cargo.findMany({
+      select: { id: true, nome: true },
+      orderBy: { nome: "asc" },
+    }),
+    prisma.funcao.findMany({
       select: { id: true, nome: true },
       orderBy: { nome: "asc" },
     }),
@@ -95,6 +112,15 @@ export default async function EditarUsuarioPage({
   );
   const cargosParaAssociar = cargosDisponiveisNoSistema.filter(
     (cargo) => !idsCargosVinculados.has(cargo.id)
+  );
+  const funcoesVinculadas = [...usuario.funcoes].sort((a, b) =>
+    a.funcao.nome.localeCompare(b.funcao.nome, "pt-BR")
+  );
+  const idsFuncoesVinculadas = new Set(
+    funcoesVinculadas.map((associacao) => associacao.funcaoId)
+  );
+  const funcoesParaAssociar = funcoesDisponiveisNoSistema.filter(
+    (funcao) => !idsFuncoesVinculadas.has(funcao.id)
   );
 
   return (
@@ -124,6 +150,11 @@ export default async function EditarUsuarioPage({
       {estadoCargos === "atualizado" && (
         <p role="status" className="mt-4 rounded-lg bg-green-50 p-3 text-base text-green-800">
           Cargos do usuário atualizados.
+        </p>
+      )}
+      {estadoFuncoes === "atualizado" && (
+        <p role="status" className="mt-4 rounded-lg bg-green-50 p-3 text-base text-green-800">
+          Funções do usuário atualizadas.
         </p>
       )}
 
@@ -201,7 +232,8 @@ export default async function EditarUsuarioPage({
       </div>
       )}
 
-      <section className="mt-6 rounded-xl border border-zinc-200 bg-white p-3">
+      <div className="mt-6 grid grid-cols-1 items-start gap-4 lg:grid-cols-2">
+      <section className="rounded-xl border border-zinc-200 bg-white p-3">
         <h2 className="text-base font-semibold text-zinc-900">Cargos</h2>
         {cargosVinculados.length === 0 ? (
           <p className="mt-2 text-sm text-zinc-600">Nenhum cargo vinculado.</p>
@@ -273,6 +305,80 @@ export default async function EditarUsuarioPage({
           </p>
         )}
       </section>
+
+      <section className="rounded-xl border border-zinc-200 bg-white p-3">
+        <h2 className="text-base font-semibold text-zinc-900">Funções</h2>
+        {funcoesVinculadas.length === 0 ? (
+          <p className="mt-2 text-sm text-zinc-600">Nenhuma função vinculada.</p>
+        ) : (
+          <ul className="mt-3 flex flex-col gap-2">
+            {funcoesVinculadas.map(({ funcaoId, funcao }) => (
+              <li
+                key={funcaoId}
+                className="flex items-center justify-between gap-3 rounded-lg border border-zinc-200 px-3 py-2"
+              >
+                <span className="text-sm font-medium text-zinc-800">
+                  {funcao.nome}
+                </span>
+                {podeGerenciarFuncoes && (
+                  <form action={removerFuncaoUsuario}>
+                    <input type="hidden" name="usuarioId" value={usuario.id} />
+                    <input type="hidden" name="funcaoId" value={funcaoId} />
+                    <BotaoAcao
+                      title="Remover função do usuário"
+                      ariaLabel={`Remover a função ${funcao.nome} do usuário ${usuario.nome}`}
+                      confirmacao={`Remover a função "${funcao.nome}" do usuário "${usuario.nome}"?`}
+                      className="flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200 text-red-700 hover:bg-red-50"
+                    >
+                      <IconeExcluir className="h-4 w-4" />
+                    </BotaoAcao>
+                  </form>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {podeGerenciarFuncoes && funcoesParaAssociar.length > 0 && (
+          <form
+            action={adicionarFuncaoUsuario}
+            className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end"
+          >
+            <input type="hidden" name="usuarioId" value={usuario.id} />
+            <div className="flex flex-1 flex-col gap-1">
+              <label htmlFor="funcaoId" className="text-sm font-medium text-zinc-700">
+                Adicionar função
+              </label>
+              <select
+                id="funcaoId"
+                name="funcaoId"
+                required
+                defaultValue=""
+                className="h-11 w-full rounded-lg border border-zinc-300 bg-white px-3 text-base text-zinc-900"
+              >
+                <option value="" disabled>
+                  Selecione uma função
+                </option>
+                {funcoesParaAssociar.map((funcao) => (
+                  <option key={funcao.id} value={funcao.id}>
+                    {funcao.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <BotaoAcao className="h-11 rounded-lg bg-zinc-900 px-4 text-sm font-medium text-white">
+              Adicionar função
+            </BotaoAcao>
+          </form>
+        )}
+
+        {podeGerenciarFuncoes && funcoesParaAssociar.length === 0 && (
+          <p className="mt-3 text-sm text-zinc-600">
+            Todas as funções disponíveis já estão associadas.
+          </p>
+        )}
+      </section>
+      </div>
 
       {!propriaConta && podeExcluir && <div className="mt-6 border-t border-red-200 pt-4">
         <h2 className="text-base font-semibold text-red-800">

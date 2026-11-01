@@ -400,6 +400,8 @@ export const ModelName = {
   Usuario: 'Usuario',
   Cargo: 'Cargo',
   UsuarioCargo: 'UsuarioCargo',
+  Funcao: 'Funcao',
+  UsuarioFuncao: 'UsuarioFuncao',
   LocalEstoque: 'LocalEstoque',
   Produto: 'Produto',
   Fornecedor: 'Fornecedor',
@@ -426,7 +428,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "usuario" | "cargo" | "usuarioCargo" | "localEstoque" | "produto" | "fornecedor" | "produtoFornecedor" | "historicoPreco" | "estoque" | "movimentoEstoque" | "logSistema" | "permissao" | "permissaoUsuario" | "sessao"
+    modelProps: "usuario" | "cargo" | "usuarioCargo" | "funcao" | "usuarioFuncao" | "localEstoque" | "produto" | "fornecedor" | "produtoFornecedor" | "historicoPreco" | "estoque" | "movimentoEstoque" | "logSistema" | "permissao" | "permissaoUsuario" | "sessao"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -649,6 +651,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.UsuarioCargoCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.UsuarioCargoCountAggregateOutputType> | number
+        }
+      }
+    }
+    Funcao: {
+      payload: Prisma.$FuncaoPayload<ExtArgs>
+      fields: Prisma.FuncaoFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.FuncaoFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FuncaoPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.FuncaoFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FuncaoPayload>
+        }
+        findFirst: {
+          args: Prisma.FuncaoFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FuncaoPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.FuncaoFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FuncaoPayload>
+        }
+        findMany: {
+          args: Prisma.FuncaoFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FuncaoPayload>[]
+        }
+        create: {
+          args: Prisma.FuncaoCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FuncaoPayload>
+        }
+        createMany: {
+          args: Prisma.FuncaoCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.FuncaoCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FuncaoPayload>[]
+        }
+        delete: {
+          args: Prisma.FuncaoDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FuncaoPayload>
+        }
+        update: {
+          args: Prisma.FuncaoUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FuncaoPayload>
+        }
+        deleteMany: {
+          args: Prisma.FuncaoDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.FuncaoUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.FuncaoUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FuncaoPayload>[]
+        }
+        upsert: {
+          args: Prisma.FuncaoUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FuncaoPayload>
+        }
+        aggregate: {
+          args: Prisma.FuncaoAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateFuncao>
+        }
+        groupBy: {
+          args: Prisma.FuncaoGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FuncaoGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.FuncaoCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FuncaoCountAggregateOutputType> | number
+        }
+      }
+    }
+    UsuarioFuncao: {
+      payload: Prisma.$UsuarioFuncaoPayload<ExtArgs>
+      fields: Prisma.UsuarioFuncaoFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.UsuarioFuncaoFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UsuarioFuncaoPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.UsuarioFuncaoFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UsuarioFuncaoPayload>
+        }
+        findFirst: {
+          args: Prisma.UsuarioFuncaoFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UsuarioFuncaoPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.UsuarioFuncaoFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UsuarioFuncaoPayload>
+        }
+        findMany: {
+          args: Prisma.UsuarioFuncaoFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UsuarioFuncaoPayload>[]
+        }
+        create: {
+          args: Prisma.UsuarioFuncaoCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UsuarioFuncaoPayload>
+        }
+        createMany: {
+          args: Prisma.UsuarioFuncaoCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.UsuarioFuncaoCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UsuarioFuncaoPayload>[]
+        }
+        delete: {
+          args: Prisma.UsuarioFuncaoDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UsuarioFuncaoPayload>
+        }
+        update: {
+          args: Prisma.UsuarioFuncaoUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UsuarioFuncaoPayload>
+        }
+        deleteMany: {
+          args: Prisma.UsuarioFuncaoDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.UsuarioFuncaoUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.UsuarioFuncaoUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UsuarioFuncaoPayload>[]
+        }
+        upsert: {
+          args: Prisma.UsuarioFuncaoUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UsuarioFuncaoPayload>
+        }
+        aggregate: {
+          args: Prisma.UsuarioFuncaoAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUsuarioFuncao>
+        }
+        groupBy: {
+          args: Prisma.UsuarioFuncaoGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UsuarioFuncaoGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.UsuarioFuncaoCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UsuarioFuncaoCountAggregateOutputType> | number
         }
       }
     }
@@ -1537,6 +1687,23 @@ export const UsuarioCargoScalarFieldEnum = {
 export type UsuarioCargoScalarFieldEnum = (typeof UsuarioCargoScalarFieldEnum)[keyof typeof UsuarioCargoScalarFieldEnum]
 
 
+export const FuncaoScalarFieldEnum = {
+  id: 'id',
+  nome: 'nome',
+  criadoEm: 'criadoEm'
+} as const
+
+export type FuncaoScalarFieldEnum = (typeof FuncaoScalarFieldEnum)[keyof typeof FuncaoScalarFieldEnum]
+
+
+export const UsuarioFuncaoScalarFieldEnum = {
+  usuarioId: 'usuarioId',
+  funcaoId: 'funcaoId'
+} as const
+
+export type UsuarioFuncaoScalarFieldEnum = (typeof UsuarioFuncaoScalarFieldEnum)[keyof typeof UsuarioFuncaoScalarFieldEnum]
+
+
 export const LocalEstoqueScalarFieldEnum = {
   id: 'id',
   nome: 'nome'
@@ -2037,6 +2204,8 @@ export type GlobalOmitConfig = {
   usuario?: Prisma.UsuarioOmit
   cargo?: Prisma.CargoOmit
   usuarioCargo?: Prisma.UsuarioCargoOmit
+  funcao?: Prisma.FuncaoOmit
+  usuarioFuncao?: Prisma.UsuarioFuncaoOmit
   localEstoque?: Prisma.LocalEstoqueOmit
   produto?: Prisma.ProdutoOmit
   fornecedor?: Prisma.FornecedorOmit

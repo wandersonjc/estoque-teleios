@@ -54,6 +54,8 @@ export const ModelName = {
   Usuario: 'Usuario',
   Cargo: 'Cargo',
   UsuarioCargo: 'UsuarioCargo',
+  Funcao: 'Funcao',
+  UsuarioFuncao: 'UsuarioFuncao',
   LocalEstoque: 'LocalEstoque',
   Produto: 'Produto',
   Fornecedor: 'Fornecedor',
@@ -113,6 +115,23 @@ export const UsuarioCargoScalarFieldEnum = {
 } as const
 
 export type UsuarioCargoScalarFieldEnum = (typeof UsuarioCargoScalarFieldEnum)[keyof typeof UsuarioCargoScalarFieldEnum]
+
+
+export const FuncaoScalarFieldEnum = {
+  id: 'id',
+  nome: 'nome',
+  criadoEm: 'criadoEm'
+} as const
+
+export type FuncaoScalarFieldEnum = (typeof FuncaoScalarFieldEnum)[keyof typeof FuncaoScalarFieldEnum]
+
+
+export const UsuarioFuncaoScalarFieldEnum = {
+  usuarioId: 'usuarioId',
+  funcaoId: 'funcaoId'
+} as const
+
+export type UsuarioFuncaoScalarFieldEnum = (typeof UsuarioFuncaoScalarFieldEnum)[keyof typeof UsuarioFuncaoScalarFieldEnum]
 
 
 export const LocalEstoqueScalarFieldEnum = {

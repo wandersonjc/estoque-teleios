@@ -1,6 +1,6 @@
 // ============================================================
 // Sistema de Pedidos de Compra - Modelo de dados
-// ETAPA 1: Cadastros (usuários, cargos, locais de estoque,
+// ETAPA 1: Cadastros (usuários, cargos, funções, locais de estoque,
 //          fornecedores, produtos e vínculo produto x fornecedor)
 // Regras: docs/regras-de-negocio.md
 //
@@ -48,6 +48,7 @@ model Usuario {
   sessoes    Sessao[]
   permissoes PermissaoUsuario[]
   cargos     UsuarioCargo[]
+  funcoes    UsuarioFuncao[]
 
   @@map("usuario")
 }
@@ -72,6 +73,28 @@ model UsuarioCargo {
   @@id([usuarioId, cargoId])
   @@index([cargoId])
   @@map("usuario_cargo")
+}
+
+// Função descreve atividades exercidas pelo usuário e não concede acesso.
+model Funcao {
+  id       Int             @id @default(autoincrement())
+  nome     String          @unique
+  criadoEm DateTime        @default(now()) @map("criado_em")
+  usuarios UsuarioFuncao[]
+
+  @@map("funcao")
+}
+
+model UsuarioFuncao {
+  usuarioId Int @map("usuario_id")
+  funcaoId  Int @map("funcao_id")
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  funcao  Funcao  @relation(fields: [funcaoId], references: [id], onDelete: Restrict)
+
+  @@id([usuarioId, funcaoId])
+  @@index([funcaoId])
+  @@map("usuario_funcao")
 }
 
 // ------------------------------------------------------------
@@ -259,6 +282,7 @@ enum ModuloSistema {
   ESTOQUE
   LOCAIS
   CARGOS
+  FUNCOES
   FORNECEDORES
   PEDIDOS
   USUARIOS

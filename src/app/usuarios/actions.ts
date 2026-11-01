@@ -433,6 +433,105 @@ export async function removerCargoUsuario(formData: FormData): Promise<void> {
   redirect(`/usuarios/${usuarioId}?cargos=atualizado`);
 }
 
+export async function adicionarFuncaoUsuario(formData: FormData): Promise<void> {
+  const atual = await verificarPermissao("funcoes.usuario.gerenciar");
+  if (!atual) return;
+
+  const usuarioId = Number(formData.get("usuarioId"));
+  const funcaoId = Number(formData.get("funcaoId"));
+  if (
+    !Number.isInteger(usuarioId) ||
+    usuarioId <= 0 ||
+    !Number.isInteger(funcaoId) ||
+    funcaoId <= 0
+  ) {
+    return;
+  }
+
+  await prisma.$transaction(async (tx) => {
+    const [usuario, funcao] = await Promise.all([
+      tx.usuario.findUnique({
+        where: { id: usuarioId },
+        select: { nome: true },
+      }),
+      tx.funcao.findUnique({ where: { id: funcaoId }, select: { nome: true } }),
+    ]);
+    if (!usuario || !funcao) return;
+
+    const associacao = await tx.usuarioFuncao.createMany({
+      data: { usuarioId, funcaoId },
+      skipDuplicates: true,
+    });
+    if (associacao.count === 0) return;
+
+    await registrarLog(
+      {
+        modulo: "FUNCOES",
+        acao: "ALTERAR",
+        registroId: usuarioId,
+        descricao: `Função "${funcao.nome}" associada ao usuário "${usuario.nome}"`,
+        dados: { usuarioId, funcaoId, funcao: funcao.nome },
+        usuarioId: atual.id,
+      },
+      tx
+    );
+  });
+
+  revalidatePath("/usuarios");
+  revalidatePath(`/usuarios/${usuarioId}`);
+  revalidatePath("/funcoes");
+  redirect(`/usuarios/${usuarioId}?funcoes=atualizado`);
+}
+
+export async function removerFuncaoUsuario(formData: FormData): Promise<void> {
+  const atual = await verificarPermissao("funcoes.usuario.gerenciar");
+  if (!atual) return;
+
+  const usuarioId = Number(formData.get("usuarioId"));
+  const funcaoId = Number(formData.get("funcaoId"));
+  if (
+    !Number.isInteger(usuarioId) ||
+    usuarioId <= 0 ||
+    !Number.isInteger(funcaoId) ||
+    funcaoId <= 0
+  ) {
+    return;
+  }
+
+  await prisma.$transaction(async (tx) => {
+    const [usuario, funcao] = await Promise.all([
+      tx.usuario.findUnique({
+        where: { id: usuarioId },
+        select: { nome: true },
+      }),
+      tx.funcao.findUnique({ where: { id: funcaoId }, select: { nome: true } }),
+    ]);
+    if (!usuario || !funcao) return;
+
+    const associacao = await tx.usuarioFuncao.deleteMany({
+      where: { usuarioId, funcaoId },
+    });
+    if (associacao.count === 0) return;
+
+    await registrarLog(
+      {
+        modulo: "FUNCOES",
+        acao: "ALTERAR",
+        registroId: usuarioId,
+        descricao: `Função "${funcao.nome}" removida do usuário "${usuario.nome}"`,
+        dados: { usuarioId, funcaoId, funcao: funcao.nome },
+        usuarioId: atual.id,
+      },
+      tx
+    );
+  });
+
+  revalidatePath("/usuarios");
+  revalidatePath(`/usuarios/${usuarioId}`);
+  revalidatePath("/funcoes");
+  redirect(`/usuarios/${usuarioId}?funcoes=atualizado`);
+}
+
 // O usuário nunca é apagado: só desativado, para não quebrar as
 // movimentações e os logs que apontam para ele.
 export async function desativarUsuario(formData: FormData): Promise<void> {

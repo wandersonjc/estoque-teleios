@@ -282,6 +282,46 @@ export const CATALOGO_DE_PERMISSOES: PermissaoCatalogo[] = [
     descricao: "Associar e remover cargos dos usuários",
     ordem: 850,
   },
+  {
+    codigo: "funcoes.funcao.consultar",
+    modulo: "Funções",
+    funcionalidade: "Função",
+    operacao: "Consultar",
+    descricao: "Ver a lista e os dados das funções cadastradas",
+    ordem: 910,
+  },
+  {
+    codigo: "funcoes.funcao.criar",
+    modulo: "Funções",
+    funcionalidade: "Função",
+    operacao: "Cadastrar",
+    descricao: "Cadastrar novas funções",
+    ordem: 920,
+  },
+  {
+    codigo: "funcoes.funcao.editar",
+    modulo: "Funções",
+    funcionalidade: "Função",
+    operacao: "Alterar",
+    descricao: "Alterar o nome das funções cadastradas",
+    ordem: 930,
+  },
+  {
+    codigo: "funcoes.funcao.excluir",
+    modulo: "Funções",
+    funcionalidade: "Função",
+    operacao: "Excluir",
+    descricao: "Excluir funções sem usuários associados",
+    ordem: 940,
+  },
+  {
+    codigo: "funcoes.usuario.gerenciar",
+    modulo: "Funções",
+    funcionalidade: "Função do usuário",
+    operacao: "Gerenciar",
+    descricao: "Associar e remover funções dos usuários",
+    ordem: 950,
+  },
 ];
 
 // Códigos válidos hoje (útil para validar o que chega do formulário)
@@ -310,6 +350,7 @@ export const MENU_PRINCIPAL: ItemMenu[] = [
     permissao: "fornecedores.fornecedor.consultar",
   },
   { href: "/cargos", rotulo: "Cargos", permissao: "cargos.cargo.consultar" },
+  { href: "/funcoes", rotulo: "Funções", permissao: "funcoes.funcao.consultar" },
   { href: "/usuarios", rotulo: "Usuários", permissao: "usuarios.usuario.consultar" },
   {
     href: "/permissoes",

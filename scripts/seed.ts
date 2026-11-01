@@ -1,5 +1,5 @@
 // ============================================================
-// Seed da etapa 1: cadastra os 3 locais de estoque (seção 3 das regras),
+// Seed da etapa 1: cadastra locais de estoque, cargos e funções,
 // sincroniza o catálogo de permissões e concede TODAS as permissões
 // ao primeiro usuário cadastrado (o administrador inicial).
 // Rodar com: npm run db:seed
@@ -10,6 +10,7 @@ import "dotenv/config"; // IMPORTANTE: precisa ser o primeiro import (carrega o 
 import prisma from "../src/lib/prisma";
 import { sincronizarCatalogoDePermissoes } from "../src/lib/permissoes";
 import { CARGOS_INICIAIS } from "../src/app/cargos/tipos";
+import { FUNCOES_INICIAIS } from "../src/app/funcoes/tipos";
 
 const LOCAIS_DE_ESTOQUE = ["Loja Nova Iguaçu", "Loja Mesquita", "Galpão"];
 
@@ -27,6 +28,14 @@ async function main() {
 
   for (const nome of CARGOS_INICIAIS) {
     await prisma.cargo.upsert({
+      where: { nome },
+      update: {},
+      create: { nome },
+    });
+  }
+
+  for (const nome of FUNCOES_INICIAIS) {
+    await prisma.funcao.upsert({
       where: { nome },
       update: {},
       create: { nome },
