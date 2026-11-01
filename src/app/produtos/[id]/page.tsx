@@ -1,8 +1,7 @@
 // ============================================================
 // Módulo 1 - Cadastro de produtos: tela de edição
 // RN-01 (total calculado), RN-02 (movimentação de estoque) e
-// RN-03 (data da última movimentação), RN-23 (produto não é
-// apagado, só desativado ou reativado).
+// RN-03 (data da última movimentação) e RN-23 (exclusão segura).
 // Cada bloco aparece conforme as permissões de quem está logado,
 // mas a checagem de verdade é feita nas ações do servidor.
 // ============================================================
@@ -10,6 +9,7 @@
 import { exigirPermissao } from "@/lib/autorizacao";
 import prisma from "@/lib/prisma";
 import { Prisma } from "@/generated/prisma/client";
+import BotaoAcao from "@/components/BotaoAcao";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -22,7 +22,12 @@ import FormularioVinculo from "@/app/fornecedores/FormularioVinculo";
 import ListaVinculos from "@/app/fornecedores/ListaVinculos";
 import { precosAtuais } from "@/app/fornecedores/tipos";
 
-import { atualizarProduto, desativarProduto, reativarProduto } from "../actions";
+import {
+  atualizarProduto,
+  desativarProduto,
+  excluirProduto,
+  reativarProduto,
+} from "../actions";
 import {
   calcularTotalEstoque,
   contagemDesatualizada,
@@ -52,6 +57,7 @@ export default async function EditarProdutoPage({
 
   const podeEditar = atual.permissoes.has("produtos.produto.editar");
   const podeDesativar = atual.permissoes.has("produtos.produto.desativar");
+  const podeExcluir = atual.permissoes.has("produtos.produto.excluir");
   const podeMovimentar = atual.permissoes.has("estoque.movimento.registrar");
   const podeVincular = atual.permissoes.has("fornecedores.vinculo.gerenciar");
   const podeCotar = atual.permissoes.has("fornecedores.preco.cotar");
@@ -65,6 +71,7 @@ export default async function EditarProdutoPage({
     vinculoBloqueado,
     vinculoErro,
     preco,
+    erro,
     aba,
     local,
     pagina: paginaParam,
@@ -80,7 +87,14 @@ export default async function EditarProdutoPage({
   // RN-01: o produto e os locais vêm em consultas separadas.
   // Vínculos e preços (RN-09 e RN-10) vêm das tabelas
   // produto_fornecedor e historico_preco.
-  const [produto, locais, vinculos, historico, fornecedoresAtivos] =
+  const [
+    produto,
+    locais,
+    vinculos,
+    historico,
+    fornecedoresAtivos,
+    totalMovimentosProduto,
+  ] =
     await Promise.all([
       prisma.produto.findUnique({
         where: { id: numero },
@@ -107,6 +121,7 @@ export default async function EditarProdutoPage({
         select: { id: true, nome: true },
         orderBy: { nome: "asc" },
       }),
+      prisma.movimentoEstoque.count({ where: { produtoId: numero } }),
     ]);
 
   if (!produto) notFound();
@@ -187,6 +202,11 @@ export default async function EditarProdutoPage({
   }));
   const mapaPrecos = precosAtuais(historico);
   const retornoProduto = `/produtos/${produto.id}`;
+  const podeExcluirAgora =
+    vinculos.length === 0 &&
+    historico.length === 0 &&
+    produto.estoques.length === 0 &&
+    totalMovimentosProduto === 0;
 
   return (
     <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-5">
@@ -248,6 +268,12 @@ export default async function EditarProdutoPage({
         </p>
       )}
 
+      {erro === "em-uso" && (
+        <p role="alert" className="mt-4 rounded-lg bg-red-50 p-3 text-base text-red-700">
+          Não foi possível excluir: o produto possui registros vinculados a estoque, movimentações, fornecedores, preços ou outra funcionalidade.
+        </p>
+      )}
+
       {!produto.ativo && (
         <p className="mt-4 rounded-lg bg-zinc-100 p-3 text-base text-zinc-700">
           Este produto está inativo: ele não aparece nas contagens nem na lista
@@ -292,6 +318,10 @@ export default async function EditarProdutoPage({
                     textoAcaoStatus={
                       produto.ativo ? "Desativar produto" : "Reativar produto"
                     }
+                    acaoExclusao={
+                      podeExcluir && podeExcluirAgora ? excluirProduto : undefined
+                    }
+                    confirmacaoExclusao={`Excluir o produto "${produto.nome}"? Esta ação não pode ser desfeita.`}
                     imagemUrl={produto.imagemChave ? `/api/imagens/produtos/${produto.id}?v=${produto.atualizadoEm.getTime()}` : undefined}
                     valoresIniciais={{
                       nome: produto.nome,
@@ -335,6 +365,22 @@ export default async function EditarProdutoPage({
                     </dd>
                   </div>
                 </dl>
+              )}
+              {!podeEditar && podeExcluir && podeExcluirAgora && (
+                <form action={excluirProduto} className="mt-4">
+                  <input type="hidden" name="id" value={produto.id} />
+                  <BotaoAcao
+                    confirmacao={`Excluir o produto "${produto.nome}"? Esta ação não pode ser desfeita.`}
+                    className="h-12 rounded-lg border border-red-300 px-4 text-base font-medium text-red-700 hover:bg-red-50"
+                  >
+                    Excluir produto
+                  </BotaoAcao>
+                </form>
+              )}
+              {podeExcluir && !podeExcluirAgora && (
+                <p className="mt-4 text-sm text-zinc-600">
+                  Este produto não pode ser excluído porque possui registros vinculados em estoque, movimentações, fornecedores, preços ou outra funcionalidade.
+                </p>
               )}
             </div>
           </div>

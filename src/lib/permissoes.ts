@@ -70,6 +70,14 @@ export const CATALOGO_DE_PERMISSOES: PermissaoCatalogo[] = [
     descricao: "Desativar e reativar produtos",
     ordem: 140,
   },
+  {
+    codigo: "produtos.produto.excluir",
+    modulo: "Produtos",
+    funcionalidade: "Produto",
+    operacao: "Excluir",
+    descricao: "Excluir produtos sem vínculos, preços, estoque ou movimentações",
+    ordem: 150,
+  },
 
   // Módulo Estoque
   {

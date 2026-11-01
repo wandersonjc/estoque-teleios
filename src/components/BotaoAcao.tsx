@@ -22,6 +22,7 @@ type Props = {
   className?: string;
   title?: string;
   formAction?: (formData: FormData) => void | Promise<void>;
+  confirmacao?: string;
   // Rótulo para leitores de tela (quando o botão só tem ícone)
   ariaLabel?: string;
 };
@@ -32,6 +33,7 @@ export default function BotaoAcao({
   className = "",
   title,
   formAction,
+  confirmacao,
   ariaLabel,
 }: Props) {
   const { pending } = useFormStatus();
@@ -50,6 +52,13 @@ export default function BotaoAcao({
     <button
       type="submit"
       formAction={formAction}
+      onClick={
+        confirmacao
+          ? (evento) => {
+              if (!window.confirm(confirmacao)) evento.preventDefault();
+            }
+          : undefined
+      }
       disabled={pending}
       title={title}
       aria-label={ariaLabel}

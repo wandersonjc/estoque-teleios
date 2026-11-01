@@ -116,7 +116,7 @@ Campos obrigatórios: **comprador** (usuário logado), **data da compra** (data 
 ## 8. Regras do catálogo de produtos
 
 - **RN-22.** O produto tem um campo opcional **`codigo_erp`**, **único** quando preenchido. Será a chave para importar e atualizar produtos do ERP no futuro, sem duplicar.
-- **RN-23.** No início, produtos são **cadastrados à mão** (testes com 20 a 30 itens).
+- **RN-23. Exclusão segura de produto:** produtos são cadastrados à mão. Um produto só pode ser excluído permanentemente por usuário com a permissão `produtos.produto.excluir` quando não houver vínculos com fornecedores, registros de preços, linhas de estoque, movimentações ou outras relações funcionais do sistema. Registros de auditoria, por si só, não bloqueiam a exclusão e devem ser preservados. Ao adicionar uma nova relação funcional ao produto, atualize também a verificação de elegibilidade para exclusão. Quando houver qualquer relação funcional, o produto só pode ser desativado.
 - **RN-24.** A importação de planilha do ERP (Superus) faz parte do **Módulo 1** e deve estar pronta **antes do uso real** pelo estoquista, para o catálogo completo estar cadastrado. Ela importa **somente cadastro** (código, descrição, unidade, código de barras, custo), nunca estoque.
 
 ## 9. Modelo de dados conceitual

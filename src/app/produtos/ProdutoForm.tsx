@@ -34,6 +34,8 @@ type Props = {
   imagemUrl?: string;
   acaoStatus?: (formData: FormData) => Promise<void>;
   textoAcaoStatus?: string;
+  acaoExclusao?: (formData: FormData) => Promise<void>;
+  confirmacaoExclusao?: string;
 };
 
 // Campos altos (48px) e com fonte de 16px: uso em pé, no celular
@@ -49,6 +51,8 @@ export default function ProdutoForm({
   imagemUrl,
   acaoStatus,
   textoAcaoStatus,
+  acaoExclusao,
+  confirmacaoExclusao,
 }: Props) {
   // useActionState guarda o que foi digitado e os erros devolvidos
   // pelo servidor, então o formulário não perde o conteúdo.
@@ -210,6 +214,15 @@ export default function ProdutoForm({
             className="h-12 rounded-lg border border-zinc-300 px-4 text-base font-medium text-zinc-900"
           >
             {textoAcaoStatus}
+          </BotaoAcao>
+        )}
+        {acaoExclusao && (
+          <BotaoAcao
+            formAction={acaoExclusao}
+            confirmacao={confirmacaoExclusao}
+            className="h-12 rounded-lg border border-red-300 px-4 text-base font-medium text-red-700 hover:bg-red-50"
+          >
+            Excluir produto
           </BotaoAcao>
         )}
       </div>

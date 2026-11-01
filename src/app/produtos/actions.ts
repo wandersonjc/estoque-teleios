@@ -345,8 +345,8 @@ export async function atualizarProduto(
   redirect(`/produtos/${id}?salvo=1`);
 }
 
-// RN-23: produto nunca é apagado, só desativado, porque depois
-// tem estoque, movimentações e pedidos ligados a ele.
+// Produtos com relações funcionais não podem ser excluídos; nesses casos,
+// a opção é desativar para preservar estoque, movimentações e históricos.
 export async function desativarProduto(formData: FormData): Promise<void> {
   const atual = await verificarPermissao("produtos.produto.desativar");
   if (!atual) return;
@@ -408,6 +408,58 @@ export async function reativarProduto(formData: FormData): Promise<void> {
 
   revalidatePath("/produtos");
   revalidatePath(`/produtos/${id}`);
+}
+
+export async function excluirProduto(formData: FormData): Promise<void> {
+  const atual = await verificarPermissao("produtos.produto.excluir");
+  if (!atual) return;
+
+  const id = Number(formData.get("id"));
+  if (!Number.isInteger(id) || id <= 0) return;
+
+  const resultado = await prisma.$transaction(async (tx) => {
+    const produto = await tx.produto.findUnique({
+      where: { id },
+      select: { nome: true, imagemChave: true },
+    });
+    if (!produto) return { tipo: "inexistente" as const };
+
+    const [vinculos, precos, estoques, movimentos] = await Promise.all([
+      tx.produtoFornecedor.count({ where: { produtoId: id } }),
+      tx.historicoPreco.count({ where: { produtoId: id } }),
+      tx.estoque.count({ where: { produtoId: id } }),
+      tx.movimentoEstoque.count({ where: { produtoId: id } }),
+    ]);
+
+    if (vinculos > 0 || precos > 0 || estoques > 0 || movimentos > 0) {
+      return { tipo: "em-uso" as const };
+    }
+
+    await tx.produto.delete({ where: { id } });
+    await registrarLog(
+      {
+        modulo: "PRODUTOS",
+        acao: "EXCLUIR",
+        registroId: id,
+        descricao: `Produto "${produto.nome}" excluído`,
+        dados: { nome: produto.nome },
+        usuarioId: atual.id,
+      },
+      tx
+    );
+
+    return { tipo: "excluido" as const, imagemChave: produto.imagemChave };
+  });
+
+  if (resultado.tipo === "em-uso") {
+    redirect(`/produtos/${id}?erro=em-uso`);
+  }
+  if (resultado.tipo === "inexistente") redirect("/produtos");
+
+  await excluirImagemSemFalhar(resultado.imagemChave);
+  revalidatePath("/produtos");
+  revalidatePath(`/produtos/${id}`);
+  redirect("/produtos");
 }
 
 // ------------------------------------------------------------
