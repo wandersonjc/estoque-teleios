@@ -8,6 +8,7 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
+import BotaoAcao from "@/components/BotaoAcao";
 import CampoImagem from "@/components/CampoImagem";
 
 import {
@@ -31,6 +32,8 @@ type Props = {
   id?: number;
   valoresIniciais?: ValoresFormularioProduto;
   imagemUrl?: string;
+  acaoStatus?: (formData: FormData) => Promise<void>;
+  textoAcaoStatus?: string;
 };
 
 // Campos altos (48px) e com fonte de 16px: uso em pé, no celular
@@ -44,6 +47,8 @@ export default function ProdutoForm({
   id,
   valoresIniciais,
   imagemUrl,
+  acaoStatus,
+  textoAcaoStatus,
 }: Props) {
   // useActionState guarda o que foi digitado e os erros devolvidos
   // pelo servidor, então o formulário não perde o conteúdo.
@@ -53,6 +58,29 @@ export default function ProdutoForm({
 
   const valores = estado.valores;
   const erros = estado.erros ?? {};
+  const campoEstoqueMinimo = (
+    <div className="flex flex-col gap-1">
+      <label htmlFor="estoqueMinimo" className={CLASSE_ROTULO}>
+        Estoque mínimo
+      </label>
+      <input
+        id="estoqueMinimo"
+        name="estoqueMinimo"
+        type="text"
+        inputMode="decimal"
+        defaultValue={valores.estoqueMinimo}
+        aria-invalid={erros.estoqueMinimo ? true : undefined}
+        placeholder="0"
+        className={CLASSE_CAMPO}
+      />
+      <p className="text-sm text-zinc-500">
+        Comparado com o total dos 3 locais. Use vírgula para decimais (ex.: 1,5).
+      </p>
+      {erros.estoqueMinimo && (
+        <p className="text-sm text-red-700">{erros.estoqueMinimo}</p>
+      )}
+    </div>
+  );
 
   return (
     <form action={enviarFormulario} className="flex flex-col gap-4">
@@ -111,30 +139,11 @@ export default function ProdutoForm({
               <p className="text-sm text-red-700">{erros.unidade}</p>
             )}
           </div>
+          {id !== undefined && campoEstoqueMinimo}
         </div>
       </div>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="estoqueMinimo" className={CLASSE_ROTULO}>
-          Estoque mínimo
-        </label>
-        <input
-          id="estoqueMinimo"
-          name="estoqueMinimo"
-          type="text"
-          inputMode="decimal"
-          defaultValue={valores.estoqueMinimo}
-          aria-invalid={erros.estoqueMinimo ? true : undefined}
-          placeholder="0"
-          className={CLASSE_CAMPO}
-        />
-        <p className="text-sm text-zinc-500">
-          Comparado com o total dos 3 locais. Use vírgula para decimais (ex.: 1,5).
-        </p>
-        {erros.estoqueMinimo && (
-          <p className="text-sm text-red-700">{erros.estoqueMinimo}</p>
-        )}
-      </div>
+      {id === undefined && campoEstoqueMinimo}
 
       <div className="flex flex-col gap-1">
         <label htmlFor="codigoBarras" className={CLASSE_ROTULO}>
@@ -195,6 +204,14 @@ export default function ProdutoForm({
         >
           Cancelar
         </Link>
+        {acaoStatus && textoAcaoStatus && (
+          <BotaoAcao
+            formAction={acaoStatus}
+            className="h-12 rounded-lg border border-zinc-300 px-4 text-base font-medium text-zinc-900"
+          >
+            {textoAcaoStatus}
+          </BotaoAcao>
+        )}
       </div>
     </form>
   );

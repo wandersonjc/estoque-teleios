@@ -13,8 +13,6 @@ import { Prisma } from "@/generated/prisma/client";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import BotaoAcao from "@/components/BotaoAcao";
-
 import AbasProduto from "../AbasProduto";
 import HistoricoMovimentacoes from "../HistoricoMovimentacoes";
 import MovimentacaoEstoque from "../MovimentacaoEstoque";
@@ -284,6 +282,16 @@ export default async function EditarProdutoPage({
                     acao={atualizarProduto}
                     textoBotao="Salvar alterações"
                     id={produto.id}
+                    acaoStatus={
+                      podeDesativar
+                        ? produto.ativo
+                          ? desativarProduto
+                          : reativarProduto
+                        : undefined
+                    }
+                    textoAcaoStatus={
+                      produto.ativo ? "Desativar produto" : "Reativar produto"
+                    }
                     imagemUrl={produto.imagemChave ? `/api/imagens/produtos/${produto.id}?v=${produto.atualizadoEm.getTime()}` : undefined}
                     valoresIniciais={{
                       nome: produto.nome,
@@ -333,26 +341,41 @@ export default async function EditarProdutoPage({
         }
         estoque={
           <div className="flex flex-col gap-4">
-            <div className="rounded-xl border border-zinc-200 bg-white p-3">
-              <h2 className="text-base font-semibold text-zinc-900">
-                Estoque por local
-              </h2>
-              {locais.length === 0 ? (
-                <p className="mt-1 text-sm text-zinc-600">
-                  Nenhum local de estoque cadastrado.
-                </p>
-              ) : (
-                <ul className="mt-2 flex flex-col gap-1">
-                  {locais.map((local) => (
-                    <li
-                      key={local.id}
-                      className="flex items-center justify-between gap-3 text-base text-zinc-800"
-                    >
-                      <span>{local.nome}</span>
-                      <strong>{saldos[String(local.id)] ?? "0"}</strong>
-                    </li>
-                  ))}
-                </ul>
+            <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+              <div
+                className={`rounded-xl border border-zinc-200 bg-white p-3 ${
+                  podeMovimentar ? "" : "xl:col-span-2"
+                }`}
+              >
+                <h2 className="text-base font-semibold text-zinc-900">
+                  Estoque por local
+                </h2>
+                {locais.length === 0 ? (
+                  <p className="mt-1 text-sm text-zinc-600">
+                    Nenhum local de estoque cadastrado.
+                  </p>
+                ) : (
+                  <ul className="mt-2 flex flex-col gap-1">
+                    {locais.map((local) => (
+                      <li
+                        key={local.id}
+                        className="flex items-center justify-between gap-3 text-base text-zinc-800"
+                      >
+                        <span>{local.nome}</span>
+                        <strong>{saldos[String(local.id)] ?? "0"}</strong>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              {podeMovimentar && (
+                <MovimentacaoEstoque
+                  produtoId={produto.id}
+                  locais={locais}
+                  saldos={saldos}
+                  retorno={`${retornoProduto}?mov=1&aba=estoque`}
+                />
               )}
             </div>
 
@@ -374,15 +397,6 @@ export default async function EditarProdutoPage({
               ordenacao={ordenacaoHistorico}
               direcao={direcaoHistorico}
             />
-
-            {podeMovimentar && (
-              <MovimentacaoEstoque
-                produtoId={produto.id}
-                locais={locais}
-                saldos={saldos}
-                retorno={`${retornoProduto}?mov=1&aba=estoque`}
-              />
-            )}
           </div>
         }
         fornecedores={
@@ -395,8 +409,9 @@ export default async function EditarProdutoPage({
               (o mais recente do histórico).
             </p>
 
-            {podeVincular && (
-              <div className="mt-4 rounded-xl border border-zinc-200 bg-white p-3">
+            <div className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-2">
+              {podeVincular && (
+              <div className="rounded-xl border border-zinc-200 bg-white p-3">
                 <h3 className="text-base font-semibold text-zinc-900">
                   Vincular fornecedor
                 </h3>
@@ -411,7 +426,7 @@ export default async function EditarProdutoPage({
             )}
 
             {podeCotar && (
-              <div className="mt-4 rounded-xl border border-zinc-200 bg-white p-3">
+              <div className="rounded-xl border border-zinc-200 bg-white p-3">
                 <h3 className="text-base font-semibold text-zinc-900">
                   Registrar preço cotado
                 </h3>
@@ -424,8 +439,14 @@ export default async function EditarProdutoPage({
                 </div>
               </div>
             )}
+            </div>
 
             <div className="mt-4">
+              {vinculos.length > 0 && (
+                <h3 className="mb-3 text-base font-semibold text-zinc-900">
+                  Fornecedores vinculados
+                </h3>
+              )}
               <ListaVinculos
                 podeGerenciarVinculo={podeVincular}
                 precosAtuais={mapaPrecos}
@@ -453,17 +474,6 @@ export default async function EditarProdutoPage({
         }
       />
 
-      {podeDesativar && (
-        <form
-          action={produto.ativo ? desativarProduto : reativarProduto}
-          className="mt-6"
-        >
-          <input type="hidden" name="id" value={produto.id} />
-          <BotaoAcao className="h-12 rounded-lg border border-zinc-300 px-4 text-base font-medium text-zinc-900">
-            {produto.ativo ? "Desativar produto" : "Reativar produto"}
-          </BotaoAcao>
-        </form>
-      )}
     </main>
   );
 }
