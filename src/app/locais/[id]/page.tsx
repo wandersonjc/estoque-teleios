@@ -99,7 +99,10 @@ export default async function EditarLocalPage({
 
             <form action={excluirLocal} className="mt-3">
               <input type="hidden" name="id" value={local.id} />
-              <BotaoAcao className="h-12 rounded-lg border border-red-300 px-4 text-base font-medium text-red-700">
+              <BotaoAcao
+                confirmacao={`Excluir o local "${local.nome}"? Esta ação não pode ser desfeita.`}
+                className="h-12 rounded-lg border border-red-300 px-4 text-base font-medium text-red-700"
+              >
                 Excluir local
               </BotaoAcao>
             </form>

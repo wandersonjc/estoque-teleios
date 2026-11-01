@@ -170,7 +170,10 @@ export default async function EditarUsuarioPage({
             </p>
             <form action={excluirUsuario} className="mt-3">
               <input type="hidden" name="id" value={usuario.id} />
-              <BotaoAcao className="h-12 rounded-lg bg-red-700 px-4 text-base font-medium text-white">
+              <BotaoAcao
+                confirmacao={`Excluir o usuário "${usuario.nome}"? Esta ação não pode ser desfeita.`}
+                className="h-12 rounded-lg bg-red-700 px-4 text-base font-medium text-white"
+              >
                 Excluir usuário
               </BotaoAcao>
             </form>

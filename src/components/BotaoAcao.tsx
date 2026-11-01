@@ -21,6 +21,7 @@ type Props = {
   carregando?: ReactNode;
   className?: string;
   title?: string;
+  disabled?: boolean;
   formAction?: (formData: FormData) => void | Promise<void>;
   confirmacao?: string;
   // Rótulo para leitores de tela (quando o botão só tem ícone)
@@ -32,6 +33,7 @@ export default function BotaoAcao({
   carregando,
   className = "",
   title,
+  disabled = false,
   formAction,
   confirmacao,
   ariaLabel,
@@ -59,7 +61,7 @@ export default function BotaoAcao({
             }
           : undefined
       }
-      disabled={pending}
+      disabled={disabled || pending}
       title={title}
       aria-label={ariaLabel}
       aria-busy={pending}

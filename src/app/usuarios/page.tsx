@@ -179,6 +179,7 @@ export default async function UsuariosPage() {
                           <input type="hidden" name="id" value={usuario.id} />
                           <BotaoAcao
                             title="Excluir"
+                            confirmacao={`Excluir o usuário "${usuario.nome}"? Esta ação não pode ser desfeita.`}
                             className="flex h-11 w-11 items-center justify-center rounded-xl border border-zinc-200 bg-white text-red-700 shadow-sm transition-colors hover:bg-red-50"
                           >
                             <IconeExcluir className="h-5 w-5" />

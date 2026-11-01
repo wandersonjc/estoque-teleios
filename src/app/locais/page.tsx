@@ -134,6 +134,7 @@ export default async function LocaisPage() {
                           <input type="hidden" name="id" value={local.id} />
                           <BotaoAcao
                             title="Excluir"
+                            confirmacao={`Excluir o local "${local.nome}"? Esta ação não pode ser desfeita.`}
                             className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl border border-zinc-200 bg-white text-red-700 shadow-sm transition-colors hover:bg-red-50"
                           >
                             <IconeExcluir className="h-5 w-5" />

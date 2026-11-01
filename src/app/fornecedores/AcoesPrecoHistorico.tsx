@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 
 import { IconeExcluir } from "@/components/icones";
+import BotaoAcao from "@/components/BotaoAcao";
 import {
   atualizarPrecoHistorico,
   excluirPrecoHistorico,
@@ -100,8 +101,7 @@ export function BotaoExcluirPrecoHistorico({
       <input type="hidden" name="id" value={id} />
       <input type="hidden" name="fornecedorId" value={fornecedorId} />
       <input type="hidden" name="retorno" value={retorno} />
-      <button
-        type="submit"
+      <BotaoAcao
         disabled={!podeExcluir}
         title={
           podeExcluir
@@ -110,25 +110,18 @@ export function BotaoExcluirPrecoHistorico({
               ? "Preço pago vinculado a uma compra não pode ser excluído aqui"
               : "Você não tem permissão para excluir preços"
         }
-        aria-label={
+        ariaLabel={
           podeExcluir
             ? "Excluir preço cotado"
             : origem === "PAGO"
               ? "Preço pago protegido contra exclusão"
               : "Sem permissão para excluir preço"
         }
-        onClick={(evento) => {
-          if (
-            podeExcluir &&
-            !window.confirm("Deseja excluir este registro de preço cotado?")
-          ) {
-            evento.preventDefault();
-          }
-        }}
+        confirmacao="Deseja excluir este registro de preço cotado?"
         className="flex h-10 w-10 items-center justify-center rounded-lg text-red-700 transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:text-zinc-300 disabled:hover:bg-transparent"
       >
         <IconeExcluir className="h-5 w-5" />
-      </button>
+      </BotaoAcao>
     </form>
   );
 }
