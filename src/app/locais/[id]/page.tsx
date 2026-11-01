@@ -48,7 +48,11 @@ export default async function EditarLocalPage({
   return (
     <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-5">
       <div className="flex items-center justify-between gap-3">
-        <h1 className="text-lg font-semibold text-zinc-900 sm:text-xl">Editar local</h1>
+        <h1 className="min-w-0 flex-1 text-lg font-normal text-zinc-900 sm:text-xl">
+          <strong className="font-semibold">Editar local</strong>
+          {" | "}
+          {local.nome}
+        </h1>
         <Link href="/locais" className="text-base text-zinc-700">
           Voltar
         </Link>

@@ -21,6 +21,12 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Links de ação que abrem a edição de um registro devem usar `LinkAcaoComCarregamento` (`src/components/LinkAcaoComCarregamento.tsx`): ao iniciar a navegação, substituem o ícone por loading e ficam desabilitados para cliques repetidos.
 - Preserve o tamanho fixo do botão durante o loading e forneça um `ariaLabel` que identifique o registro editado.
 
+## Títulos de edição
+
+- Em páginas de edição de registros, mostre no título o rótulo da página seguido de ` | ` e o nome do registro, por exemplo `Editar produto | Copos descartáveis`.
+- Deixe em negrito somente o rótulo antes do separador; o nome do registro deve permanecer em peso normal.
+- Mantenha o título fluido e responsivo para que nomes longos quebrem linha sem sobrepor os controles próximos.
+
 ## Filtros de inativos
 
 - Checkboxes “Mostrar inativos” em filtros GET devem usar `CheckboxEnvioAutomatico` (`src/components/CheckboxEnvioAutomatico.tsx`), que serializa os campos do formulário e navega com `router.push` para atualizar a lista sem recarregar o documento.

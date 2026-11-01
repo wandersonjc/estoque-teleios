@@ -76,8 +76,12 @@ export default async function EditarUsuarioPage({
   return (
     <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-5">
       <div className="flex items-center justify-between gap-3">
-        <h1 className="text-lg font-semibold text-zinc-900 sm:text-xl">
-          {propriaConta ? "Minha conta" : podeEditar ? "Editar usuário" : "Usuário"}
+        <h1 className="min-w-0 flex-1 text-lg font-normal text-zinc-900 sm:text-xl">
+          <strong className="font-semibold">
+            {propriaConta ? "Minha conta" : podeEditar ? "Editar usuário" : "Usuário"}
+          </strong>
+          {" | "}
+          {usuario.nome}
         </h1>
         <Link href={hrefVoltar} className="text-base text-zinc-700">
           Voltar

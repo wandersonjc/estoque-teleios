@@ -197,8 +197,12 @@ export default async function PaginaEditarFornecedor({
   return (
     <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-5">
       <div className="flex items-center justify-between gap-3">
-        <h1 className="text-lg font-semibold text-zinc-900 sm:text-xl">
-          {podeEditar ? "Editar fornecedor" : "Fornecedor"}
+        <h1 className="min-w-0 flex-1 text-lg font-normal text-zinc-900 sm:text-xl">
+          <strong className="font-semibold">
+            {podeEditar ? "Editar fornecedor" : "Fornecedor"}
+          </strong>
+          {" | "}
+          {fornecedor.nome}
         </h1>
         <Link href="/fornecedores" className="text-base text-zinc-700">
           Voltar
