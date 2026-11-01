@@ -78,7 +78,7 @@ export default async function LocaisPage() {
       )}
 
       {locais.length > 0 && (
-        <ul className="mt-3 flex flex-col gap-3">
+        <ul className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
           {locais.map((local) => {
             return (
               <li
@@ -104,7 +104,7 @@ export default async function LocaisPage() {
 
                     <div className="flex items-center gap-2 text-slate-500">
                       <IconeCaixa className="h-4 w-4 sm:h-5 sm:w-5 text-slate-400 shrink-0" />
-                      <p className="text-xs sm:text-sm font-medium line-clamp-2">
+                      <p className="text-xs font-medium line-clamp-2">
                         {local._count.movimentos > 0 
                           ? `Em uso: ${local._count.estoques} produto(s) com estoque e ${local._count.movimentos} movimentação(ões)`
                           : "Ainda sem estoque e sem movimentações"}
