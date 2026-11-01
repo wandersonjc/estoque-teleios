@@ -1,13 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Image from "next/image";
-import Link from "next/link";
 import "./globals.css";
 
-import { IconeUser } from "@/components/icones";
+import AppShell from "@/components/AppShell";
 import IndicadorCarregando from "@/components/IndicadorCarregando";
-import SeletorTema from "@/components/SeletorTema";
-import { sair } from "./login/actions";
 import { usuarioAtual } from "@/lib/autorizacao";
 import { MENU_PRINCIPAL } from "@/lib/permissoes";
 
@@ -51,74 +47,24 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <IndicadorCarregando>
-          {usuario && (
-            <header className="border-b border-zinc-200">
-              <div className="mx-auto flex h-14 w-full max-w-3xl items-center gap-3 px-4">
-                <nav className="flex min-w-0 flex-1 items-center gap-5 overflow-x-auto">
-                  {itensDoMenu.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className="shrink-0 text-base font-semibold text-zinc-900"
-                    >
-                      {item.rotulo}
-                    </Link>
-                  ))}
-                </nav>
-
-                <details className="group relative ml-auto shrink-0">
-                  <summary
-                    aria-label="Abrir menu da conta"
-                    title={usuario.nome}
-                    className="flex h-10 w-10 cursor-pointer list-none items-center justify-center overflow-hidden rounded-full border border-zinc-200 bg-zinc-100 text-zinc-600 [&::-webkit-details-marker]:hidden"
-                  >
-                    {usuario.imagemChave ? (
-                      <Image
-                        src={`/api/imagens/usuarios/${usuario.id}?v=${usuario.atualizadoEm.getTime()}`}
-                        alt=""
-                        width={40}
-                        height={40}
-                        unoptimized
-                        className="h-full w-full object-cover"
-                      />
-                    ) : (
-                      <IconeUser className="h-5 w-5" />
-                    )}
-                  </summary>
-                  <div className="absolute right-0 top-full z-50 mt-2 w-64 max-w-[calc(100vw-2rem)] rounded-lg border border-zinc-200 bg-white p-1 shadow-lg">
-                    <div className="px-3 py-2">
-                      <p className="truncate text-sm font-semibold text-zinc-900">
-                        {usuario.nome}
-                      </p>
-                      <p className="break-all text-xs text-zinc-600">
-                        {usuario.email}
-                      </p>
-                    </div>
-                    <hr className="my-1 border-zinc-200" />
-                    <Link
-                      href={`/usuarios/${usuario.id}`}
-                      className="block rounded-md px-3 py-2 text-sm font-medium text-zinc-800 hover:bg-zinc-100"
-                    >
-                      Minha conta
-                    </Link>
-                    <SeletorTema temaInicial={tema} />
-                    <hr className="my-1 border-zinc-200" />
-                    <form action={sair}>
-                      <button
-                        type="submit"
-                        className="w-full rounded-md px-3 py-2 text-left text-sm font-medium text-zinc-800 hover:bg-zinc-100"
-                      >
-                        Sair
-                      </button>
-                    </form>
-                  </div>
-                </details>
-              </div>
-            </header>
-          )}
-          {children}
-        </IndicadorCarregando>
+        {usuario ? (
+          <AppShell
+            itensDoMenu={itensDoMenu}
+            usuario={{
+              id: usuario.id,
+              nome: usuario.nome,
+              email: usuario.email,
+              imagemUrl: usuario.imagemChave
+                ? `/api/imagens/usuarios/${usuario.id}?v=${usuario.atualizadoEm.getTime()}`
+                : undefined,
+              tema,
+            }}
+          >
+            {children}
+          </AppShell>
+        ) : (
+          <IndicadorCarregando>{children}</IndicadorCarregando>
+        )}
       </body>
     </html>
   );
