@@ -16,8 +16,18 @@ export default function SeletorTema({ temaInicial }: Props) {
   function alternarTema() {
     const proximoTema = temaEscuro ? "claro" : "escuro";
     const temaAnterior = temaEscuro;
+    const favicon = document.querySelector<HTMLLinkElement>(
+      'link[rel~="icon"]'
+    );
+    const hrefFaviconAnterior = favicon?.href;
     setTemaEscuro(proximoTema === "escuro");
     document.documentElement.dataset.tema = proximoTema;
+    if (favicon) {
+      favicon.href =
+        proximoTema === "escuro"
+          ? "/imagens/logo_atria_favicon_branco.png"
+          : "/imagens/logo_atria_favicon.png";
+    }
     setErro(false);
 
     iniciarTransicao(async () => {
@@ -29,6 +39,9 @@ export default function SeletorTema({ temaInicial }: Props) {
         setTemaEscuro(temaAnterior);
         document.documentElement.dataset.tema =
           temaAnterior ? "escuro" : "claro";
+        if (favicon && hrefFaviconAnterior) {
+          favicon.href = hrefFaviconAnterior;
+        }
         setErro(true);
       }
     });
