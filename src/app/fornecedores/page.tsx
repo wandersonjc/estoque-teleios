@@ -4,6 +4,7 @@
 // ============================================================
 
 import BotaoAcao from "@/components/BotaoAcao";
+import CheckboxEnvioAutomatico from "@/components/CheckboxEnvioAutomatico";
 import LinkAcaoComCarregamento from "@/components/LinkAcaoComCarregamento";
 import {
   IconeCheck,
@@ -186,16 +187,12 @@ export default async function PaginaFornecedores({
           />
         </div>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
-          <label className="flex items-center gap-2 text-base text-zinc-800">
-            <input
-              type="checkbox"
-              name="inativos"
-              value="1"
-              defaultChecked={mostrarInativos}
-              className="h-5 w-5"
-            />
-            Mostrar inativos
-          </label>
+          <CheckboxEnvioAutomatico
+            name="inativos"
+            value="1"
+            defaultChecked={mostrarInativos}
+            label="Mostrar inativos"
+          />
           <label className="flex items-center gap-2 text-base text-zinc-800">
             Itens por página
             <select

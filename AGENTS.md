@@ -20,3 +20,9 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 - Links de ação que abrem a edição de um registro devem usar `LinkAcaoComCarregamento` (`src/components/LinkAcaoComCarregamento.tsx`): ao iniciar a navegação, substituem o ícone por loading e ficam desabilitados para cliques repetidos.
 - Preserve o tamanho fixo do botão durante o loading e forneça um `ariaLabel` que identifique o registro editado.
+
+## Filtros de inativos
+
+- Checkboxes “Mostrar inativos” em filtros GET devem usar `CheckboxEnvioAutomatico` (`src/components/CheckboxEnvioAutomatico.tsx`), que serializa os campos do formulário e navega com `router.push` para atualizar a lista sem recarregar o documento.
+- Preserve os demais filtros do formulário; o valor marcado deve ser enviado e, ao desmarcar, o parâmetro deve ser omitido.
+- Monte a query a partir dos valores do formulário antes de desabilitar qualquer campo, pois campos desabilitados não são incluídos nos dados enviados.
