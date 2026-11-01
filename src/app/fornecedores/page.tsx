@@ -4,6 +4,7 @@
 // ============================================================
 
 import BotaoAcao from "@/components/BotaoAcao";
+import LinkAcaoComCarregamento from "@/components/LinkAcaoComCarregamento";
 import {
   IconeCheck,
   IconeLapis,
@@ -353,14 +354,26 @@ export default async function PaginaFornecedores({
                     {formatarMoedaOpcional(fornecedor.frete)}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    <Link
-                      href={`/fornecedores/${fornecedor.id}`}
-                      title={podeEditar ? "Editar fornecedor" : "Ver fornecedor"}
-                      aria-label={`${podeEditar ? "Editar" : "Ver"} ${fornecedor.nome}`}
-                      className="flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200 text-zinc-800 hover:bg-zinc-50"
-                    >
-                      <IconeLapis className="h-4 w-4" />
-                    </Link>
+                    {podeEditar ? (
+                      <LinkAcaoComCarregamento
+                        href={`/fornecedores/${fornecedor.id}`}
+                        title="Editar fornecedor"
+                        ariaLabel={`Editar ${fornecedor.nome}`}
+                        className="flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200 text-zinc-800 hover:bg-zinc-50"
+                        tamanhoIconeCarregando="h-4 w-4"
+                      >
+                        <IconeLapis className="h-4 w-4" />
+                      </LinkAcaoComCarregamento>
+                    ) : (
+                      <Link
+                        href={`/fornecedores/${fornecedor.id}`}
+                        title="Ver fornecedor"
+                        aria-label={`Ver ${fornecedor.nome}`}
+                        className="flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200 text-zinc-800 hover:bg-zinc-50"
+                      >
+                        <IconeLapis className="h-4 w-4" />
+                      </Link>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -466,13 +479,23 @@ export default async function PaginaFornecedores({
                       {fornecedor.ativo ? "Ativo" : "Inativo"}
                     </span>
                   )}
-                  <Link
-                    href={`/fornecedores/${fornecedor.id}`}
-                    aria-label={`${podeEditar ? "Editar" : "Ver"} ${fornecedor.nome}`}
-                    className="flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200 bg-white text-[#002855] shadow-sm"
-                  >
-                    <IconeLapis className="h-5 w-5" />
-                  </Link>
+                  {podeEditar ? (
+                    <LinkAcaoComCarregamento
+                      href={`/fornecedores/${fornecedor.id}`}
+                      ariaLabel={`Editar ${fornecedor.nome}`}
+                      className="flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200 bg-white text-[#002855] shadow-sm"
+                    >
+                      <IconeLapis className="h-5 w-5" />
+                    </LinkAcaoComCarregamento>
+                  ) : (
+                    <Link
+                      href={`/fornecedores/${fornecedor.id}`}
+                      aria-label={`Ver ${fornecedor.nome}`}
+                      className="flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200 bg-white text-[#002855] shadow-sm"
+                    >
+                      <IconeLapis className="h-5 w-5" />
+                    </Link>
+                  )}
                 </div>
               </div>
             </li>

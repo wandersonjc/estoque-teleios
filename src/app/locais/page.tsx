@@ -13,6 +13,7 @@ import Link from "next/link";
 
 import { IconeArmazem, IconeCaixa, IconeExcluir, IconeLapis, IconePin } from "@/components/icones";
 import BotaoAcao from "@/components/BotaoAcao";
+import LinkAcaoComCarregamento from "@/components/LinkAcaoComCarregamento";
 import { excluirLocal } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -117,13 +118,13 @@ export default async function LocaisPage() {
                   {/* Ações */}
                   <div className="flex items-center justify-end gap-2 sm:gap-3 w-full sm:w-auto sm:pl-6">
                     {podeEditar && (
-                      <Link
+                      <LinkAcaoComCarregamento
                         href={`/locais/${local.id}`}
-                        aria-label={`Editar ${local.nome}`}
+                        ariaLabel={`Editar ${local.nome}`}
                         className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-900 shadow-sm transition-colors hover:bg-zinc-50"
                       >
                         <IconeLapis className="h-5 w-5" />
-                      </Link>
+                      </LinkAcaoComCarregamento>
                     )}
 
                     {podeExcluir &&

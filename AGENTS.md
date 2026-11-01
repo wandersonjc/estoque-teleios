@@ -15,3 +15,8 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Tabelas largas devem conter a rolagem horizontal em sua própria área ou oferecer uma apresentação adaptada a telas menores; não deixe que ampliem a página inteira.
 - Mantenha limites menores em formulários, cartões, diálogos e outros componentes compactos quando forem intencionais, sem restringir por acidente o contêiner principal da página.
 - Aplique esta convenção também a novas páginas e módulos, preservando a consistência com as telas existentes.
+
+## Navegação para edição
+
+- Links de ação que abrem a edição de um registro devem usar `LinkAcaoComCarregamento` (`src/components/LinkAcaoComCarregamento.tsx`): ao iniciar a navegação, substituem o ícone por loading e ficam desabilitados para cliques repetidos.
+- Preserve o tamanho fixo do botão durante o loading e forneça um `ariaLabel` que identifique o registro editado.

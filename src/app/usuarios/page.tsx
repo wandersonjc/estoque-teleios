@@ -13,6 +13,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import BotaoAcao from "@/components/BotaoAcao";
+import LinkAcaoComCarregamento from "@/components/LinkAcaoComCarregamento";
 import {
   IconeEditar,
   IconeEmail,
@@ -138,13 +139,14 @@ export default async function UsuariosPage() {
                   <div className="flex items-center gap-2">
                     {/* Botão Editar */}
                     {podeEditar && (
-                      <Link
+                      <LinkAcaoComCarregamento
                         href={`/usuarios/${usuario.id}`}
                         title="Editar"
+                        ariaLabel={`Editar ${usuario.nome}`}
                         className="flex h-11 w-11 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-900 shadow-sm transition-colors hover:bg-zinc-50"
                       >
                         <IconeEditar className="h-5 w-5" />
-                      </Link>
+                      </LinkAcaoComCarregamento>
                     )}
 
                     {/* Botão Switch */}

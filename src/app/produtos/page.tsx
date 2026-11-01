@@ -13,6 +13,7 @@ import type {
 } from "@/generated/prisma/models";
 import Image from "next/image";
 import BotaoAcao from "@/components/BotaoAcao";
+import LinkAcaoComCarregamento from "@/components/LinkAcaoComCarregamento";
 import {
   IconeBarras,
   IconeCaixa,
@@ -458,14 +459,15 @@ export default async function ProdutosPage({
                     <td className="whitespace-nowrap px-3 py-3">
                       <div className="flex items-center gap-2">
                         {podeEditar && (
-                          <Link
+                          <LinkAcaoComCarregamento
                             href={`/produtos/${produto.id}`}
                             title="Editar produto"
-                            aria-label={`Editar ${produto.nome}`}
                             className="flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200 text-zinc-800 hover:bg-zinc-50"
+                            ariaLabel={`Editar ${produto.nome}`}
+                            tamanhoIconeCarregando="h-4 w-4"
                           >
                             <IconeLapis className="h-4 w-4" />
-                          </Link>
+                          </LinkAcaoComCarregamento>
                         )}
                         {podeMovimentar && locais.length > 0 && (
                           <MovimentacaoEstoque
@@ -662,13 +664,14 @@ export default async function ProdutosPage({
                     {/* Ações na base, também alinhadas à direita da imagem */}
                     <div className="mt-5 flex items-center gap-3">
                       {podeEditar && (
-                        <Link
+                        <LinkAcaoComCarregamento
                           href={`/produtos/${produto.id}`}
                           title="Editar"
+                          ariaLabel={`Editar ${produto.nome}`}
                           className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#0061d5]/10 bg-[#f0f7ff] text-[#0061d5] shadow-sm transition-colors hover:bg-[#e0efff]"
                         >
                           <IconeLapis className="h-5 w-5" />
-                        </Link>
+                        </LinkAcaoComCarregamento>
                       )}
 
                       {podeMovimentar && locais.length > 0 && (
