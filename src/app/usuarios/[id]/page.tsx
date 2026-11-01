@@ -152,6 +152,17 @@ export default async function EditarUsuarioPage({
             id={usuario.id}
             imagemUrl={usuario.imagemChave ? `/api/imagens/usuarios/${usuario.id}?v=${usuario.atualizadoEm.getTime()}` : undefined}
             ehEdicao
+            acaoStatus={
+              !propriaConta && podeDesativar
+                ? usuario.ativo
+                  ? desativarUsuario
+                  : reativarUsuario
+                : undefined
+            }
+            textoAcaoStatus={
+              usuario.ativo ? "Desativar usuário" : "Reativar usuário"
+            }
+            hrefCancelar={hrefVoltar}
             valoresIniciais={{
               nome: usuario.nome,
               email: usuario.email,
@@ -172,6 +183,23 @@ export default async function EditarUsuarioPage({
           </dl>
         )}
       </div>
+
+      {!podeEditar && !propriaConta && podeDesativar && (
+        <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+          <Link
+            href={hrefVoltar}
+            className="flex h-12 items-center justify-center rounded-lg border border-zinc-300 px-5 text-base font-medium text-zinc-900"
+          >
+            Cancelar
+          </Link>
+          <form action={usuario.ativo ? desativarUsuario : reativarUsuario}>
+            <input type="hidden" name="id" value={usuario.id} />
+            <BotaoAcao className="h-12 rounded-lg border border-zinc-300 px-4 text-base font-medium text-zinc-900">
+              {usuario.ativo ? "Desativar usuário" : "Reativar usuário"}
+            </BotaoAcao>
+          </form>
+      </div>
+      )}
 
       <section className="mt-6 rounded-xl border border-zinc-200 bg-white p-3">
         <h2 className="text-base font-semibold text-zinc-900">Cargos</h2>
@@ -245,18 +273,6 @@ export default async function EditarUsuarioPage({
           </p>
         )}
       </section>
-
-      {!propriaConta && podeDesativar && (
-        <form
-          action={usuario.ativo ? desativarUsuario : reativarUsuario}
-          className="mt-6"
-        >
-          <input type="hidden" name="id" value={usuario.id} />
-          <BotaoAcao className="h-12 rounded-lg border border-zinc-300 px-4 text-base font-medium text-zinc-900">
-            {usuario.ativo ? "Desativar usuário" : "Reativar usuário"}
-          </BotaoAcao>
-        </form>
-      )}
 
       {!propriaConta && podeExcluir && <div className="mt-6 border-t border-red-200 pt-4">
         <h2 className="text-base font-semibold text-red-800">

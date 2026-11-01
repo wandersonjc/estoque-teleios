@@ -8,6 +8,7 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
+import BotaoAcao from "@/components/BotaoAcao";
 import CampoImagem from "@/components/CampoImagem";
 
 import {
@@ -32,6 +33,9 @@ type Props = {
   imagemUrl?: string;
   // Na edição a senha é opcional (em branco = manter a atual)
   ehEdicao?: boolean;
+  acaoStatus?: (formData: FormData) => Promise<void>;
+  textoAcaoStatus?: string;
+  hrefCancelar?: string;
 };
 
 // Campos altos (48px) e com fonte de 16px: uso em pé, no celular
@@ -46,6 +50,9 @@ export default function UsuarioForm({
   valoresIniciais,
   imagemUrl,
   ehEdicao = false,
+  acaoStatus,
+  textoAcaoStatus,
+  hrefCancelar = "/usuarios",
 }: Props) {
   const [estado, enviarFormulario, salvando] = useActionState(acao, {
     valores: valoresIniciais ?? VALORES_FORMULARIO_USUARIO_VAZIOS,
@@ -146,11 +153,19 @@ export default function UsuarioForm({
           {salvando ? "Salvando..." : textoBotao}
         </button>
         <Link
-          href="/usuarios"
+          href={hrefCancelar}
           className="flex h-12 items-center justify-center rounded-lg border border-zinc-300 px-5 text-base font-medium text-zinc-900"
         >
           Cancelar
         </Link>
+        {acaoStatus && textoAcaoStatus && (
+          <BotaoAcao
+            formAction={acaoStatus}
+            className="h-12 rounded-lg border border-zinc-300 px-4 text-base font-medium text-zinc-900"
+          >
+            {textoAcaoStatus}
+          </BotaoAcao>
+        )}
       </div>
     </form>
   );
