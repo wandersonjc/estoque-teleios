@@ -33,6 +33,51 @@ npm run db:migrar-embalagens
 
 O comando é idempotente e preserva cada código antigo como embalagem principal, na unidade-base já cadastrada.
 
+## Login com Google (OAuth)
+
+O login com Google autentica somente usuários já cadastrados e ativos no Átria,
+associados pelo endereço de e-mail verificado. O fluxo não cria usuários nem
+altera ou concede permissões.
+
+### Criar credenciais no Google Cloud
+
+1. Acesse o [Google Cloud Console](https://console.cloud.google.com/) e crie ou
+   selecione um projeto para o Átria.
+2. Em **Google Auth Platform**, configure a tela de consentimento:
+   - Nome do app: `Átria`.
+   - E-mail de suporte: escolha o endereço administrado pela sua organização.
+   - Público: **External** para permitir contas Google de diferentes
+     organizações; durante o modo de teste, adicione os e-mails permitidos em
+     **Test users**.
+   - Solicite somente os escopos `openid` e `email`.
+3. Em **Clients**, crie um cliente OAuth do tipo **Web application**.
+4. Em **Authorized redirect URIs**, adicione:
+   - Desenvolvimento local: `http://localhost:3000/api/auth/google/callback`
+   - Produção: `https://SEU-DOMINIO/api/auth/google/callback` (troque pelo
+     domínio HTTPS real do Átria).
+5. Salve e copie o **Client ID** e o **Client secret**. Não os envie pelo chat
+   nem os publique em código ou repositório.
+
+### Configurar o Átria
+
+No arquivo `.env` local, preencha:
+
+```env
+APP_URL=http://localhost:3000
+GOOGLE_CLIENT_ID=cole-o-client-id-aqui
+GOOGLE_CLIENT_SECRET=cole-o-client-secret-aqui
+```
+
+Reinicie `npm run dev`. Para produção, configure as mesmas três variáveis no
+gerenciador de segredos da hospedagem, usando `APP_URL` com a origem HTTPS
+real. A URL de callback calculada pelo Átria deve corresponder exatamente a
+uma das **Authorized redirect URIs** cadastradas no Google.
+
+O botão Google não pede senha ao Átria. A conta Google precisa ter o e-mail
+verificado igual ao e-mail de um usuário já cadastrado e ativo. Usuários não
+cadastrados ou inativos não conseguem entrar; as permissões permanecem sendo
+as já atribuídas na matriz de permissões do Átria.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
