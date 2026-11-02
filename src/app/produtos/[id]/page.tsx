@@ -478,6 +478,7 @@ export default async function EditarProdutoPage({
               {podeMovimentar && (
                 <MovimentacaoEstoque
                   produtoId={produto.id}
+                  produtoNome={produto.nome}
                   locais={locais}
                   unidadeBase={produto.unidade}
                   embalagens={embalagensExibicao}
@@ -497,6 +498,7 @@ export default async function EditarProdutoPage({
                 tipo: movimento.tipo,
                 dataHora: movimento.dataHora,
                 quantidade: movimento.quantidade.toString(),
+                comentario: movimento.comentario,
                 usuarioNome: movimento.usuario?.nome ?? "Sistema",
               }))}
               pagina={paginaHistorico}

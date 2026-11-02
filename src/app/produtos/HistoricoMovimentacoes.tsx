@@ -10,6 +10,7 @@ type Movimento = {
   tipo: string;
   dataHora: Date;
   quantidade: string;
+  comentario: string | null;
   usuarioNome: string;
 };
 
@@ -183,7 +184,14 @@ export default function HistoricoMovimentacoes({
             ) : (
               movimentos.map((movimento) => (
                 <tr key={movimento.id} className="border-b border-zinc-100 last:border-0">
-                  <td className="px-3 py-3 text-zinc-900">{movimento.tipo}</td>
+                  <td className="px-3 py-3 text-zinc-900">
+                    <span>{movimento.tipo}</span>
+                    {movimento.comentario && (
+                      <p className="mt-1 max-w-64 break-words text-xs text-zinc-600">
+                        {movimento.comentario}
+                      </p>
+                    )}
+                  </td>
                   <td className="whitespace-nowrap px-3 py-3 text-zinc-800">
                     {formatarDataHoraBr(movimento.dataHora)}
                   </td>

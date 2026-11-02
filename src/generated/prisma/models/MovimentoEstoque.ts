@@ -49,6 +49,7 @@ export type MovimentoEstoqueMinAggregateOutputType = {
   usuarioId: number | null
   tipo: $Enums.TipoMovimento | null
   quantidade: runtime.Decimal | null
+  comentario: string | null
   dataHora: Date | null
 }
 
@@ -59,6 +60,7 @@ export type MovimentoEstoqueMaxAggregateOutputType = {
   usuarioId: number | null
   tipo: $Enums.TipoMovimento | null
   quantidade: runtime.Decimal | null
+  comentario: string | null
   dataHora: Date | null
 }
 
@@ -69,6 +71,7 @@ export type MovimentoEstoqueCountAggregateOutputType = {
   usuarioId: number
   tipo: number
   quantidade: number
+  comentario: number
   dataHora: number
   _all: number
 }
@@ -97,6 +100,7 @@ export type MovimentoEstoqueMinAggregateInputType = {
   usuarioId?: true
   tipo?: true
   quantidade?: true
+  comentario?: true
   dataHora?: true
 }
 
@@ -107,6 +111,7 @@ export type MovimentoEstoqueMaxAggregateInputType = {
   usuarioId?: true
   tipo?: true
   quantidade?: true
+  comentario?: true
   dataHora?: true
 }
 
@@ -117,6 +122,7 @@ export type MovimentoEstoqueCountAggregateInputType = {
   usuarioId?: true
   tipo?: true
   quantidade?: true
+  comentario?: true
   dataHora?: true
   _all?: true
 }
@@ -214,6 +220,7 @@ export type MovimentoEstoqueGroupByOutputType = {
   usuarioId: number | null
   tipo: $Enums.TipoMovimento
   quantidade: runtime.Decimal
+  comentario: string | null
   dataHora: Date
   _count: MovimentoEstoqueCountAggregateOutputType | null
   _avg: MovimentoEstoqueAvgAggregateOutputType | null
@@ -247,6 +254,7 @@ export type MovimentoEstoqueWhereInput = {
   usuarioId?: Prisma.IntNullableFilter<"MovimentoEstoque"> | number | null
   tipo?: Prisma.EnumTipoMovimentoFilter<"MovimentoEstoque"> | $Enums.TipoMovimento
   quantidade?: Prisma.DecimalFilter<"MovimentoEstoque"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: Prisma.StringNullableFilter<"MovimentoEstoque"> | string | null
   dataHora?: Prisma.DateTimeFilter<"MovimentoEstoque"> | Date | string
   produto?: Prisma.XOR<Prisma.ProdutoScalarRelationFilter, Prisma.ProdutoWhereInput>
   localEstoque?: Prisma.XOR<Prisma.LocalEstoqueScalarRelationFilter, Prisma.LocalEstoqueWhereInput>
@@ -260,6 +268,7 @@ export type MovimentoEstoqueOrderByWithRelationInput = {
   usuarioId?: Prisma.SortOrderInput | Prisma.SortOrder
   tipo?: Prisma.SortOrder
   quantidade?: Prisma.SortOrder
+  comentario?: Prisma.SortOrderInput | Prisma.SortOrder
   dataHora?: Prisma.SortOrder
   produto?: Prisma.ProdutoOrderByWithRelationInput
   localEstoque?: Prisma.LocalEstoqueOrderByWithRelationInput
@@ -276,6 +285,7 @@ export type MovimentoEstoqueWhereUniqueInput = Prisma.AtLeast<{
   usuarioId?: Prisma.IntNullableFilter<"MovimentoEstoque"> | number | null
   tipo?: Prisma.EnumTipoMovimentoFilter<"MovimentoEstoque"> | $Enums.TipoMovimento
   quantidade?: Prisma.DecimalFilter<"MovimentoEstoque"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: Prisma.StringNullableFilter<"MovimentoEstoque"> | string | null
   dataHora?: Prisma.DateTimeFilter<"MovimentoEstoque"> | Date | string
   produto?: Prisma.XOR<Prisma.ProdutoScalarRelationFilter, Prisma.ProdutoWhereInput>
   localEstoque?: Prisma.XOR<Prisma.LocalEstoqueScalarRelationFilter, Prisma.LocalEstoqueWhereInput>
@@ -289,6 +299,7 @@ export type MovimentoEstoqueOrderByWithAggregationInput = {
   usuarioId?: Prisma.SortOrderInput | Prisma.SortOrder
   tipo?: Prisma.SortOrder
   quantidade?: Prisma.SortOrder
+  comentario?: Prisma.SortOrderInput | Prisma.SortOrder
   dataHora?: Prisma.SortOrder
   _count?: Prisma.MovimentoEstoqueCountOrderByAggregateInput
   _avg?: Prisma.MovimentoEstoqueAvgOrderByAggregateInput
@@ -307,12 +318,14 @@ export type MovimentoEstoqueScalarWhereWithAggregatesInput = {
   usuarioId?: Prisma.IntNullableWithAggregatesFilter<"MovimentoEstoque"> | number | null
   tipo?: Prisma.EnumTipoMovimentoWithAggregatesFilter<"MovimentoEstoque"> | $Enums.TipoMovimento
   quantidade?: Prisma.DecimalWithAggregatesFilter<"MovimentoEstoque"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: Prisma.StringNullableWithAggregatesFilter<"MovimentoEstoque"> | string | null
   dataHora?: Prisma.DateTimeWithAggregatesFilter<"MovimentoEstoque"> | Date | string
 }
 
 export type MovimentoEstoqueCreateInput = {
   tipo: $Enums.TipoMovimento
   quantidade: runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: string | null
   dataHora?: Date | string
   produto: Prisma.ProdutoCreateNestedOneWithoutMovimentosInput
   localEstoque: Prisma.LocalEstoqueCreateNestedOneWithoutMovimentosInput
@@ -326,12 +339,14 @@ export type MovimentoEstoqueUncheckedCreateInput = {
   usuarioId?: number | null
   tipo: $Enums.TipoMovimento
   quantidade: runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: string | null
   dataHora?: Date | string
 }
 
 export type MovimentoEstoqueUpdateInput = {
   tipo?: Prisma.EnumTipoMovimentoFieldUpdateOperationsInput | $Enums.TipoMovimento
   quantidade?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataHora?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   produto?: Prisma.ProdutoUpdateOneRequiredWithoutMovimentosNestedInput
   localEstoque?: Prisma.LocalEstoqueUpdateOneRequiredWithoutMovimentosNestedInput
@@ -345,6 +360,7 @@ export type MovimentoEstoqueUncheckedUpdateInput = {
   usuarioId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   tipo?: Prisma.EnumTipoMovimentoFieldUpdateOperationsInput | $Enums.TipoMovimento
   quantidade?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataHora?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -355,12 +371,14 @@ export type MovimentoEstoqueCreateManyInput = {
   usuarioId?: number | null
   tipo: $Enums.TipoMovimento
   quantidade: runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: string | null
   dataHora?: Date | string
 }
 
 export type MovimentoEstoqueUpdateManyMutationInput = {
   tipo?: Prisma.EnumTipoMovimentoFieldUpdateOperationsInput | $Enums.TipoMovimento
   quantidade?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataHora?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -371,6 +389,7 @@ export type MovimentoEstoqueUncheckedUpdateManyInput = {
   usuarioId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   tipo?: Prisma.EnumTipoMovimentoFieldUpdateOperationsInput | $Enums.TipoMovimento
   quantidade?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataHora?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -391,6 +410,7 @@ export type MovimentoEstoqueCountOrderByAggregateInput = {
   usuarioId?: Prisma.SortOrder
   tipo?: Prisma.SortOrder
   quantidade?: Prisma.SortOrder
+  comentario?: Prisma.SortOrder
   dataHora?: Prisma.SortOrder
 }
 
@@ -409,6 +429,7 @@ export type MovimentoEstoqueMaxOrderByAggregateInput = {
   usuarioId?: Prisma.SortOrder
   tipo?: Prisma.SortOrder
   quantidade?: Prisma.SortOrder
+  comentario?: Prisma.SortOrder
   dataHora?: Prisma.SortOrder
 }
 
@@ -419,6 +440,7 @@ export type MovimentoEstoqueMinOrderByAggregateInput = {
   usuarioId?: Prisma.SortOrder
   tipo?: Prisma.SortOrder
   quantidade?: Prisma.SortOrder
+  comentario?: Prisma.SortOrder
   dataHora?: Prisma.SortOrder
 }
 
@@ -563,6 +585,7 @@ export type EnumTipoMovimentoFieldUpdateOperationsInput = {
 export type MovimentoEstoqueCreateWithoutUsuarioInput = {
   tipo: $Enums.TipoMovimento
   quantidade: runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: string | null
   dataHora?: Date | string
   produto: Prisma.ProdutoCreateNestedOneWithoutMovimentosInput
   localEstoque: Prisma.LocalEstoqueCreateNestedOneWithoutMovimentosInput
@@ -574,6 +597,7 @@ export type MovimentoEstoqueUncheckedCreateWithoutUsuarioInput = {
   localEstoqueId: number
   tipo: $Enums.TipoMovimento
   quantidade: runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: string | null
   dataHora?: Date | string
 }
 
@@ -613,12 +637,14 @@ export type MovimentoEstoqueScalarWhereInput = {
   usuarioId?: Prisma.IntNullableFilter<"MovimentoEstoque"> | number | null
   tipo?: Prisma.EnumTipoMovimentoFilter<"MovimentoEstoque"> | $Enums.TipoMovimento
   quantidade?: Prisma.DecimalFilter<"MovimentoEstoque"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: Prisma.StringNullableFilter<"MovimentoEstoque"> | string | null
   dataHora?: Prisma.DateTimeFilter<"MovimentoEstoque"> | Date | string
 }
 
 export type MovimentoEstoqueCreateWithoutLocalEstoqueInput = {
   tipo: $Enums.TipoMovimento
   quantidade: runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: string | null
   dataHora?: Date | string
   produto: Prisma.ProdutoCreateNestedOneWithoutMovimentosInput
   usuario?: Prisma.UsuarioCreateNestedOneWithoutMovimentosInput
@@ -630,6 +656,7 @@ export type MovimentoEstoqueUncheckedCreateWithoutLocalEstoqueInput = {
   usuarioId?: number | null
   tipo: $Enums.TipoMovimento
   quantidade: runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: string | null
   dataHora?: Date | string
 }
 
@@ -662,6 +689,7 @@ export type MovimentoEstoqueUpdateManyWithWhereWithoutLocalEstoqueInput = {
 export type MovimentoEstoqueCreateWithoutProdutoInput = {
   tipo: $Enums.TipoMovimento
   quantidade: runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: string | null
   dataHora?: Date | string
   localEstoque: Prisma.LocalEstoqueCreateNestedOneWithoutMovimentosInput
   usuario?: Prisma.UsuarioCreateNestedOneWithoutMovimentosInput
@@ -673,6 +701,7 @@ export type MovimentoEstoqueUncheckedCreateWithoutProdutoInput = {
   usuarioId?: number | null
   tipo: $Enums.TipoMovimento
   quantidade: runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: string | null
   dataHora?: Date | string
 }
 
@@ -708,12 +737,14 @@ export type MovimentoEstoqueCreateManyUsuarioInput = {
   localEstoqueId: number
   tipo: $Enums.TipoMovimento
   quantidade: runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: string | null
   dataHora?: Date | string
 }
 
 export type MovimentoEstoqueUpdateWithoutUsuarioInput = {
   tipo?: Prisma.EnumTipoMovimentoFieldUpdateOperationsInput | $Enums.TipoMovimento
   quantidade?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataHora?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   produto?: Prisma.ProdutoUpdateOneRequiredWithoutMovimentosNestedInput
   localEstoque?: Prisma.LocalEstoqueUpdateOneRequiredWithoutMovimentosNestedInput
@@ -725,6 +756,7 @@ export type MovimentoEstoqueUncheckedUpdateWithoutUsuarioInput = {
   localEstoqueId?: Prisma.IntFieldUpdateOperationsInput | number
   tipo?: Prisma.EnumTipoMovimentoFieldUpdateOperationsInput | $Enums.TipoMovimento
   quantidade?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataHora?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -734,6 +766,7 @@ export type MovimentoEstoqueUncheckedUpdateManyWithoutUsuarioInput = {
   localEstoqueId?: Prisma.IntFieldUpdateOperationsInput | number
   tipo?: Prisma.EnumTipoMovimentoFieldUpdateOperationsInput | $Enums.TipoMovimento
   quantidade?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataHora?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -743,12 +776,14 @@ export type MovimentoEstoqueCreateManyLocalEstoqueInput = {
   usuarioId?: number | null
   tipo: $Enums.TipoMovimento
   quantidade: runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: string | null
   dataHora?: Date | string
 }
 
 export type MovimentoEstoqueUpdateWithoutLocalEstoqueInput = {
   tipo?: Prisma.EnumTipoMovimentoFieldUpdateOperationsInput | $Enums.TipoMovimento
   quantidade?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataHora?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   produto?: Prisma.ProdutoUpdateOneRequiredWithoutMovimentosNestedInput
   usuario?: Prisma.UsuarioUpdateOneWithoutMovimentosNestedInput
@@ -760,6 +795,7 @@ export type MovimentoEstoqueUncheckedUpdateWithoutLocalEstoqueInput = {
   usuarioId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   tipo?: Prisma.EnumTipoMovimentoFieldUpdateOperationsInput | $Enums.TipoMovimento
   quantidade?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataHora?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -769,6 +805,7 @@ export type MovimentoEstoqueUncheckedUpdateManyWithoutLocalEstoqueInput = {
   usuarioId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   tipo?: Prisma.EnumTipoMovimentoFieldUpdateOperationsInput | $Enums.TipoMovimento
   quantidade?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataHora?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -778,12 +815,14 @@ export type MovimentoEstoqueCreateManyProdutoInput = {
   usuarioId?: number | null
   tipo: $Enums.TipoMovimento
   quantidade: runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: string | null
   dataHora?: Date | string
 }
 
 export type MovimentoEstoqueUpdateWithoutProdutoInput = {
   tipo?: Prisma.EnumTipoMovimentoFieldUpdateOperationsInput | $Enums.TipoMovimento
   quantidade?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataHora?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   localEstoque?: Prisma.LocalEstoqueUpdateOneRequiredWithoutMovimentosNestedInput
   usuario?: Prisma.UsuarioUpdateOneWithoutMovimentosNestedInput
@@ -795,6 +834,7 @@ export type MovimentoEstoqueUncheckedUpdateWithoutProdutoInput = {
   usuarioId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   tipo?: Prisma.EnumTipoMovimentoFieldUpdateOperationsInput | $Enums.TipoMovimento
   quantidade?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataHora?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -804,6 +844,7 @@ export type MovimentoEstoqueUncheckedUpdateManyWithoutProdutoInput = {
   usuarioId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   tipo?: Prisma.EnumTipoMovimentoFieldUpdateOperationsInput | $Enums.TipoMovimento
   quantidade?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataHora?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -816,6 +857,7 @@ export type MovimentoEstoqueSelect<ExtArgs extends runtime.Types.Extensions.Inte
   usuarioId?: boolean
   tipo?: boolean
   quantidade?: boolean
+  comentario?: boolean
   dataHora?: boolean
   produto?: boolean | Prisma.ProdutoDefaultArgs<ExtArgs>
   localEstoque?: boolean | Prisma.LocalEstoqueDefaultArgs<ExtArgs>
@@ -829,6 +871,7 @@ export type MovimentoEstoqueSelectCreateManyAndReturn<ExtArgs extends runtime.Ty
   usuarioId?: boolean
   tipo?: boolean
   quantidade?: boolean
+  comentario?: boolean
   dataHora?: boolean
   produto?: boolean | Prisma.ProdutoDefaultArgs<ExtArgs>
   localEstoque?: boolean | Prisma.LocalEstoqueDefaultArgs<ExtArgs>
@@ -842,6 +885,7 @@ export type MovimentoEstoqueSelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
   usuarioId?: boolean
   tipo?: boolean
   quantidade?: boolean
+  comentario?: boolean
   dataHora?: boolean
   produto?: boolean | Prisma.ProdutoDefaultArgs<ExtArgs>
   localEstoque?: boolean | Prisma.LocalEstoqueDefaultArgs<ExtArgs>
@@ -855,10 +899,11 @@ export type MovimentoEstoqueSelectScalar = {
   usuarioId?: boolean
   tipo?: boolean
   quantidade?: boolean
+  comentario?: boolean
   dataHora?: boolean
 }
 
-export type MovimentoEstoqueOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "produtoId" | "localEstoqueId" | "usuarioId" | "tipo" | "quantidade" | "dataHora", ExtArgs["result"]["movimentoEstoque"]>
+export type MovimentoEstoqueOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "produtoId" | "localEstoqueId" | "usuarioId" | "tipo" | "quantidade" | "comentario" | "dataHora", ExtArgs["result"]["movimentoEstoque"]>
 export type MovimentoEstoqueInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   produto?: boolean | Prisma.ProdutoDefaultArgs<ExtArgs>
   localEstoque?: boolean | Prisma.LocalEstoqueDefaultArgs<ExtArgs>
@@ -889,6 +934,7 @@ export type $MovimentoEstoquePayload<ExtArgs extends runtime.Types.Extensions.In
     usuarioId: number | null
     tipo: $Enums.TipoMovimento
     quantidade: runtime.Decimal
+    comentario: string | null
     dataHora: Date
   }, ExtArgs["result"]["movimentoEstoque"]>
   composites: {}
@@ -1322,6 +1368,7 @@ export interface MovimentoEstoqueFieldRefs {
   readonly usuarioId: Prisma.FieldRef<"MovimentoEstoque", 'Int'>
   readonly tipo: Prisma.FieldRef<"MovimentoEstoque", 'TipoMovimento'>
   readonly quantidade: Prisma.FieldRef<"MovimentoEstoque", 'Decimal'>
+  readonly comentario: Prisma.FieldRef<"MovimentoEstoque", 'String'>
   readonly dataHora: Prisma.FieldRef<"MovimentoEstoque", 'DateTime'>
 }
     

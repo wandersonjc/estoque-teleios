@@ -1876,6 +1876,7 @@ export const MovimentoEstoqueScalarFieldEnum = {
   usuarioId: 'usuarioId',
   tipo: 'tipo',
   quantidade: 'quantidade',
+  comentario: 'comentario',
   dataHora: 'dataHora'
 } as const
 

@@ -827,9 +827,28 @@ export async function registrarMovimento(
   _estadoAnterior: EstadoMovimento,
   formData: FormData
 ): Promise<EstadoMovimento> {
+  const comentarioInformado = formData.get("comentario");
+  const comentario =
+    typeof comentarioInformado === "string"
+      ? comentarioInformado.trim()
+      : "";
+  const estadoComComentario = { comentario };
+
+  if (comentario.length > 500) {
+    return {
+      erroGeral: "O comentário pode ter no máximo 500 caracteres.",
+      valores: lerQuantidades(formData),
+      ...estadoComComentario,
+    };
+  }
+
   const atual = await verificarPermissao("estoque.movimento.registrar");
   if (!atual) {
-    return { erroGeral: MENSAGEM_SEM_PERMISSAO, valores: lerQuantidades(formData) };
+    return {
+      erroGeral: MENSAGEM_SEM_PERMISSAO,
+      valores: lerQuantidades(formData),
+      ...estadoComComentario,
+    };
   }
 
   const valores = lerQuantidades(formData);
@@ -838,11 +857,15 @@ export async function registrarMovimento(
   const tipo = String(formData.get("tipo") ?? "");
 
   if (!Number.isInteger(produtoId) || produtoId <= 0) {
-    return { erroGeral: "Produto inválido.", valores };
+    return { erroGeral: "Produto inválido.", valores, ...estadoComComentario };
   }
 
   if (!TIPOS_MOVIMENTO.includes(tipo as TipoMovimento)) {
-    return { erroGeral: "Tipo de movimentação inválido.", valores };
+    return {
+      erroGeral: "Tipo de movimentação inválido.",
+      valores,
+      ...estadoComComentario,
+    };
   }
 
   const tipoMovimento = tipo as TipoMovimento;
@@ -864,7 +887,13 @@ export async function registrarMovimento(
       },
     },
   });
-  if (!produto) return { erroGeral: "Produto não encontrado.", valores };
+  if (!produto) {
+    return {
+      erroGeral: "Produto não encontrado.",
+      valores,
+      ...estadoComComentario,
+    };
+  }
 
   let multiplicador = new Prisma.Decimal(1);
   let rotuloEmbalagem = produto.unidade;
@@ -875,6 +904,7 @@ export async function registrarMovimento(
         erroGeral: "Selecione uma embalagem válida.",
         valores,
         embalagemId: embalagemIdInformado,
+        ...estadoComComentario,
       };
     }
     const embalagem = produto.embalagens.find(
@@ -885,6 +915,7 @@ export async function registrarMovimento(
         erroGeral: "A embalagem selecionada não pertence a este produto.",
         valores,
         embalagemId: embalagemIdInformado,
+        ...estadoComComentario,
       };
     }
     multiplicador = embalagem.quantidadeBase;
@@ -929,7 +960,12 @@ export async function registrarMovimento(
   }
 
   if (Object.keys(erros).length > 0) {
-    return { erros, valores, embalagemId: embalagemIdInformado };
+    return {
+      erros,
+      valores,
+      embalagemId: embalagemIdInformado,
+      ...estadoComComentario,
+    };
   }
 
   if (informadas.length === 0) {
@@ -937,6 +973,7 @@ export async function registrarMovimento(
       erroGeral: "Informe a quantidade de pelo menos um local.",
       valores,
       embalagemId: embalagemIdInformado,
+      ...estadoComComentario,
     };
   }
 
@@ -1000,7 +1037,12 @@ export async function registrarMovimento(
   }
 
   if (Object.keys(errosSaldo).length > 0) {
-    return { erros: errosSaldo, valores, embalagemId: embalagemIdInformado };
+    return {
+      erros: errosSaldo,
+      valores,
+      embalagemId: embalagemIdInformado,
+      ...estadoComComentario,
+    };
   }
 
   if (linhas.length === 0) {
@@ -1008,6 +1050,7 @@ export async function registrarMovimento(
       erroGeral: "Nada a alterar: as quantidades informadas são iguais às atuais.",
       valores,
       embalagemId: embalagemIdInformado,
+      ...estadoComComentario,
     };
   }
 
@@ -1044,6 +1087,7 @@ export async function registrarMovimento(
             usuarioId: atual.id,
             tipo: tipoMovimento,
             quantidade: linha.quantidadeRegistrada,
+            comentario: comentario || null,
             dataHora: agora,
           },
         });
@@ -1058,7 +1102,7 @@ export async function registrarMovimento(
               Number(linha.quantidadeInformada)
             )} ${rotuloEmbalagem} em "${produto.nome}" (${linha.localNome}) — equivalente a ${formatarQuantidade(
               Number(linha.quantidadeRegistrada)
-            )} ${produto.unidade}`,
+            )} ${produto.unidade}${comentario ? ` — Comentário: ${comentario}` : ""}`,
             dados: {
               produtoId,
               localEstoqueId: linha.localEstoqueId,
@@ -1069,6 +1113,7 @@ export async function registrarMovimento(
               unidadeBase: produto.unidade,
               saldoAnterior: linha.saldoAnterior,
               saldoNovo: linha.saldoNovo,
+              comentario: comentario || null,
             },
             usuarioId: atual.id,
           },
@@ -1082,6 +1127,7 @@ export async function registrarMovimento(
       erroGeral: "Não foi possível registrar a movimentação. Tente novamente.",
       valores,
       embalagemId: embalagemIdInformado,
+      ...estadoComComentario,
     };
   }
 

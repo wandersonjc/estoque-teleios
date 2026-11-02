@@ -109,6 +109,7 @@ export type EstadoMovimento = {
   // Um erro por local de estoque (chave = id do local)
   erros?: Record<string, string>;
   embalagemId?: string;
+  comentario?: string;
   // Quantidades digitadas, para não perder o conteúdo quando houver erro
   valores: QuantidadesPorLocal;
 };

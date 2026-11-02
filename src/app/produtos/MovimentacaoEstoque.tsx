@@ -30,6 +30,7 @@ import {
 
 type Props = {
   produtoId: number;
+  produtoNome: string;
   locais: LocalDeEstoque[];
   unidadeBase: string;
   embalagens: EmbalagemMovimento[];
@@ -60,6 +61,7 @@ const AJUDA: Record<TipoMovimento, string> = {
 
 export default function MovimentacaoEstoque({
   produtoId,
+  produtoNome,
   locais,
   unidadeBase,
   embalagens,
@@ -123,6 +125,7 @@ export default function MovimentacaoEstoque({
             key={tipoAberto}
             tipo={tipoAberto}
             produtoId={produtoId}
+            produtoNome={produtoNome}
             locais={locais}
             unidadeBase={unidadeBase}
             embalagens={embalagens}
@@ -160,6 +163,7 @@ export default function MovimentacaoEstoque({
           key={tipoAberto}
           tipo={tipoAberto}
           produtoId={produtoId}
+          produtoNome={produtoNome}
           locais={locais}
           unidadeBase={unidadeBase}
           embalagens={embalagens}
@@ -175,6 +179,7 @@ export default function MovimentacaoEstoque({
 type PropsPopup = {
   tipo: TipoMovimento;
   produtoId: number;
+  produtoNome: string;
   locais: LocalDeEstoque[];
   unidadeBase: string;
   embalagens: EmbalagemMovimento[];
@@ -186,6 +191,7 @@ type PropsPopup = {
 function PopupMovimento({
   tipo,
   produtoId,
+  produtoNome,
   locais,
   unidadeBase,
   embalagens,
@@ -218,7 +224,7 @@ function PopupMovimento({
         role="dialog"
         aria-modal="true"
         aria-label={ROTULO_MOVIMENTO[tipo]}
-        className="max-h-full w-full max-w-md overflow-y-auto rounded-t-2xl bg-white p-4 sm:rounded-2xl"
+        className="max-h-full w-full max-w-md min-w-0 overflow-x-hidden overflow-y-auto rounded-t-2xl bg-white p-4 sm:rounded-2xl"
       >
         <div className="flex items-center justify-between gap-3">
           <h3 className="text-lg font-semibold text-zinc-900">
@@ -233,7 +239,12 @@ function PopupMovimento({
           </button>
         </div>
 
-        <p className="mt-2 text-sm text-zinc-500">{AJUDA[tipo]}</p>
+        <p className="mt-2 break-words text-sm font-semibold text-zinc-800">
+          {produtoNome}
+        </p>
+        <p className="mt-1 whitespace-normal break-words text-sm text-zinc-500">
+          {AJUDA[tipo]}
+        </p>
 
         <form action={enviarFormulario} className="mt-4 flex flex-col gap-4">
           <input type="hidden" name="produtoId" value={produtoId} />
@@ -305,6 +316,24 @@ function PopupMovimento({
               </div>
             );
           })}
+
+          <div className="flex flex-col gap-1">
+            <label
+              htmlFor="comentario-movimento"
+              className="text-sm font-medium text-zinc-800"
+            >
+              Comentário
+            </label>
+            <textarea
+              id="comentario-movimento"
+              name="comentario"
+              rows={3}
+              maxLength={500}
+              defaultValue={estado.comentario ?? ""}
+              placeholder="Opcional"
+              className="w-full resize-y rounded-lg border border-zinc-300 bg-white px-3 py-2 text-base text-zinc-900 outline-none focus:border-zinc-900"
+            />
+          </div>
 
           <div className="mt-1 flex flex-col gap-3 sm:flex-row">
             <button

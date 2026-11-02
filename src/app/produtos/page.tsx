@@ -525,6 +525,7 @@ export default async function ProdutosPage({
                         {podeMovimentar && locais.length > 0 && (
                           <MovimentacaoEstoque
                             produtoId={produto.id}
+                            produtoNome={produto.nome}
                             locais={locais}
                             unidadeBase={produto.unidade}
                             embalagens={embalagensMovimento}
@@ -742,6 +743,7 @@ export default async function ProdutosPage({
                       {podeMovimentar && locais.length > 0 && (
                         <MovimentacaoEstoque
                           produtoId={produto.id}
+                          produtoNome={produto.nome}
                           locais={locais}
                           unidadeBase={produto.unidade}
                           embalagens={embalagensMovimento}

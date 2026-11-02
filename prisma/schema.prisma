@@ -277,6 +277,7 @@ model MovimentoEstoque {
   usuarioId      Int?          @map("usuario_id")
   tipo           TipoMovimento
   quantidade     Decimal       @db.Decimal(12, 3)
+  comentario     String?       @db.VarChar(500)
   dataHora       DateTime      @default(now()) @map("data_hora")
 
   produto      Produto      @relation(fields: [produtoId], references: [id])
