@@ -28,7 +28,7 @@ O sistema deve:
 
 ## 2. Usuários, login e permissões
 
-**Não existem perfis nem grupos de permissões.** Cargos são informações descritivas associadas aos usuários e **não concedem acesso**. O acesso de cada usuário é definido por **permissões individuais**, concedidas na tela `/permissoes` (Módulos e Permissões). Uma permissão que não foi concedida está **negada**.
+**Não existem perfis nem grupos de permissões.** Cargos são informações descritivas associadas aos usuários e **não concedem acesso**, exceto quando uma regra de negócio de um módulo declarar explicitamente uma exceção. O acesso de cada usuário é definido por **permissões individuais**, concedidas na tela `/permissoes` (Módulos e Permissões). Uma permissão que não foi concedida está **negada**.
 
 O catálogo de permissões é organizado em **módulo → funcionalidade → operação**. Cada permissão tem um **código único e estável** no formato `modulo.funcionalidade.operacao` (ex.: `produtos.produto.criar`).
 
@@ -40,7 +40,7 @@ Exemplos de permissões já existentes: `produtos.produto.consultar`, `produtos.
 - **RN-30. Autorização no servidor:** toda página e toda operação confere a permissão **no servidor** (funções `exigirPermissao` e `verificarPermissao` em `src/lib/autorizacao.ts`). Esconder um botão na tela **não** é suficiente: tentar executar a ação sem permissão é bloqueado no backend.
 - **RN-31. Permissões nascem negadas:** uma permissão nova (recem-registrada no catálogo) **não é concedida a ninguém** até que um administrador marque a caixa e salve.
 - **RN-32. Trava contra auto-bloqueio:** ninguém pode remover de si mesmo a permissão `permissoes.permissao.conceder`, para não trancar todos para fora da administração.
-- **RN-33. Cargos informativos:** um usuário pode ter vários cargos e um cargo pode pertencer a vários usuários. Cargos não concedem permissões; os acessos continuam individuais. O módulo `/cargos` permite consultar, cadastrar, renomear e excluir cargos. A lista é uma tabela pesquisável e ordenável pelo cabeçalho, começa por nome ascendente, usa 10 itens por página por padrão e oferece 10, 25, 50, 75 ou 100 itens. Os 31 cargos iniciais são cadastrados pelo seed e apresentados em ordem alfabética. Um cargo só pode ser excluído quando não estiver associado a nenhum usuário.
+- **RN-33. Cargos informativos:** um usuário pode ter vários cargos e um cargo pode pertencer a vários usuários. Cargos não concedem permissões, exceto quando uma regra de negócio declarar explicitamente uma exceção; os acessos continuam individuais nos demais casos. O módulo `/cargos` permite consultar, cadastrar, renomear e excluir cargos. A lista é uma tabela pesquisável e ordenável pelo cabeçalho, começa por nome ascendente, usa 10 itens por página por padrão e oferece 10, 25, 50, 75 ou 100 itens. Os 31 cargos iniciais são cadastrados pelo seed e apresentados em ordem alfabética. Um cargo só pode ser excluído quando não estiver associado a nenhum usuário.
 - **RN-34. Funções informativas:** um usuário pode ter várias funções e uma função pode estar associada a vários usuários. Funções não concedem permissões; os acessos continuam individuais. O módulo `/funcoes` permite consultar, cadastrar, renomear e excluir funções. A lista é uma tabela pesquisável e ordenável pelo cabeçalho, começa por nome ascendente, usa 10 itens por página por padrão e oferece 10, 25, 50, 75 ou 100 itens. As 40 funções iniciais são cadastradas pelo seed e armazenadas em ordem alfabética. Uma função só pode ser excluída quando não estiver associada a nenhum usuário.
 - **RN-35. Dashboard:** a página `/dashboard` é o destino inicial após o login e fica disponível no menu para qualquer usuário autenticado. Cada indicador e link só exibe dados de módulos para os quais o usuário possui permissão de consulta; a visão geral não concede acesso adicional.
 
@@ -81,7 +81,7 @@ Começam cadastrados os 3 locais abaixo, criados pelo script `scripts/seed.ts`:
 - **RN-06. Produto baixo:** um produto está **baixo** quando seu total é menor ou igual ao estoque mínimo.
 - **RN-07. Pedido a caminho:** quantidades de pedidos com status *Enviado* (ainda não recebidos) contam como **"a caminho"**. Para decidir se um produto precisa de novo pedido, considerar `total + a caminho`. O painel mostra a quantidade a caminho ao lado do total. **Só passa a valer no Módulo 3**, quando existirem pedidos. Antes disso, o painel de produtos baixos usa apenas o total.
 - **RN-08. Estoque do ERP não é usado:** os números de estoque do ERP não são confiáveis. O sistema **nunca importa quantidade de estoque** do ERP.
-- **RN-26. Histórico geral de ações (log):** toda ação relevante de qualquer módulo (produtos, estoque, locais, fornecedores, pedidos, usuários) grava uma linha na tabela `log_sistema`, com **módulo**, **ação** (criar, alterar, excluir, entrada, saída, contagem, recebimento), **descrição** legível, **registro afetado**, **detalhes** (JSON, guardando o "antes x depois" quando fizer sentido), **usuário** (em branco até existir login) e **data/hora**. O log é gravado na mesma transação da ação, para nunca ficar pela metade.
+- **RN-26. Histórico geral de ações (log):** toda ação relevante de qualquer módulo (produtos, estoque, locais, fornecedores, pedidos, transferências e usuários) grava uma linha na tabela `log_sistema`, com **módulo**, **ação** (criar, alterar, excluir, entrada, saída, contagem, recebimento, solicitar, enviar e concluir transferência), **descrição** legível, **registro afetado**, **detalhes** (JSON, guardando o "antes x depois" quando fizer sentido), **usuário** (em branco até existir login) e **data/hora**. O log é gravado na mesma transação da ação, para nunca ficar pela metade.
 
 ## 5. Regras de fornecedores e preços
 
@@ -117,6 +117,39 @@ Campos obrigatórios: **comprador** (usuário logado), **data da compra** (data 
 - **RN-20. Edição:** só pedidos em *Rascunho* podem ter itens alterados. Pedidos *Enviado*, *Recebido* ou *Cancelado* ficam travados para edição de itens.
 - **RN-21. Recebimento:** ao marcar como *Recebido*, o usuário informa a quantidade recebida por item (pode ser **parcial**) e o local de entrada. A quantidade soma ao estoque (RN-04).
 
+## 7.1. Regras de transferência entre locais de estoque
+
+A transferência permite que um usuário solicite produtos de um local de estoque para outro. A origem e o destino são escolhidos pelo solicitante; não há restrição de local associada ao usuário. Origem e destino devem ser locais diferentes.
+
+**Estados e fluxo:**
+
+| Estado | Ação e dados registrados | Próximo estado |
+|---|---|---|
+| **Pendente** | O solicitante informa origem, destino, produtos e quantidades solicitadas. O sistema registra solicitante e data/hora da solicitação. A solicitação não altera nem reserva o estoque. | **Em trânsito**, quando um usuário com permissão de envio registra as quantidades enviadas. |
+| **Em trânsito** | O sistema registra quem enviou e quando. As quantidades solicitadas e enviadas ficam bloqueadas para edição. As quantidades enviadas são reservadas no local de origem para não ficarem disponíveis em outro envio. | **Concluído**, quando um usuário com permissão de recebimento confirma as quantidades recebidas. |
+| **Concluído** | O sistema registra quem recebeu e quando, as quantidades recebidas e as justificativas das divergências. Registra as movimentações de saída na origem e entrada no destino. | Estado final; somente consulta. |
+
+**Regras de autorização e edição:**
+
+- Consultar, solicitar, enviar e receber são operações controladas por permissões individuais, conferidas no servidor. As permissões nascem negadas e não ficam limitadas a um local específico. A edição e a exclusão de pedidos pendentes seguem a regra específica de autoria ou cargo Administrador descrita abaixo.
+- Enquanto estiver **Pendente**, somente o solicitante ou um usuário com o cargo **Administrador** pode editar ou excluir a solicitação. O cargo Administrador é uma exceção explícita à regra geral de que cargos não concedem acesso: neste módulo, ele permite editar ou excluir solicitações pendentes, mas não concede por si só permissão para enviar ou receber.
+- Somente usuários com a permissão de envio podem enviar uma solicitação. O envio é irreversível: depois que a solicitação passa para **Em trânsito**, ninguém pode editar, excluir ou cancelar o pedido, inclusive o solicitante, o remetente e o Administrador.
+- Somente usuários com a permissão de recebimento podem confirmar o recebimento. Após a conclusão, ninguém pode editar ou excluir o registro; ele fica disponível para consulta.
+
+**Reserva e atualização de estoque:**
+
+- Ao enviar, o sistema valida que a quantidade a enviar está disponível na origem, descontando as quantidades já reservadas por outras transferências **Em trânsito**. O envio deve gravar as quantidades enviadas, mudar o estado e reservar o saldo de forma atômica, para que duas solicitações concorrentes não reservem a mesma quantidade.
+- A reserva não altera o saldo físico registrado no estoque. Enquanto a transferência estiver **Em trânsito**, a quantidade reservada não pode ser usada para outra transferência.
+- No recebimento, a transação baixa da origem a quantidade **enviada** e credita no destino a quantidade **efetivamente recebida**. A reserva correspondente é liberada na conclusão.
+- A quantidade recebida pode ser diferente da enviada, inclusive parcial. Quando houver divergência, é obrigatório informar uma justificativa. A divergência fica registrada no item da transferência e no log; as movimentações refletem os valores enviados e recebidos reais informados, sem ajustar silenciosamente as quantidades.
+- A conclusão, as movimentações da origem e do destino, a liberação da reserva e o log devem ocorrer na mesma transação. Não pode haver conclusão parcial nem saldo negativo na origem.
+
+**Dados de auditoria:**
+
+- Registrar os identificadores dos usuários solicitante, remetente e recebedor, além da data e hora de cada etapa. Exibir os nomes associados aos identificadores nas telas e preservar esses vínculos para o histórico.
+- Cada item guarda produto, quantidade solicitada, quantidade enviada e quantidade recebida. A justificativa de divergência é registrada no item quando enviado e recebido forem diferentes.
+- As movimentações geradas na conclusão devem manter vínculo com a transferência que as originou.
+
 ## 8. Regras do catálogo de produtos
 
 - **RN-22.** O produto tem um campo opcional **`codigo_erp`**, **único** quando preenchido. Será a chave para importar e atualizar produtos do ERP no futuro, sem duplicar.
@@ -142,8 +175,10 @@ Campos obrigatórios: **comprador** (usuário logado), **data da compra** (data 
 | `historico_preco` | 2 e 3 | produto, fornecedor, preco_unitario, data, origem (pago ou cotado), pedido (opcional). Módulo 2 grava os preços *cotados*; o Módulo 3 grava os *pagos* |
 | `pedido_compra` | 3 | comprador, fornecedor, data_compra, previsao_entrega, status, observacao |
 | `item_pedido` | 3 | pedido, produto, quantidade, preco_unitario, quantidade_recebida |
+| `pedido_transferencia` | 4 | origem, destino, solicitante, criado_em, status, enviado_por, enviado_em, recebido_por, recebido_em |
+| `item_transferencia` | 4 | transferencia, produto, quantidade_solicitada, quantidade_enviada, quantidade_recebida, justificativa_divergencia (opcional) |
 
-> As tabelas `usuario`, `local_estoque`, `produto`, `fornecedor`, `produto_fornecedor`, `estoque`, `movimento_estoque`, `log_sistema`, `permissao`, `permissao_usuario` e `sessao` já existem no banco. As tabelas `fornecedor` e `produto_fornecedor` ficam sem uso até o Módulo 2. O **catálogo de permissões** (`permissao`) é separado das **concessões aos usuários** (`permissao_usuario`).
+> As tabelas `usuario`, `local_estoque`, `produto`, `fornecedor`, `produto_fornecedor`, `estoque`, `movimento_estoque`, `log_sistema`, `permissao`, `permissao_usuario` e `sessao` já existem no banco. As tabelas `fornecedor` e `produto_fornecedor` ficam sem uso até o Módulo 2. As entidades de transferência são conceituais e ainda precisam ser implementadas no Módulo 4. As quantidades reservadas são calculadas a partir dos itens enviados em transferências Em trânsito; não representam uma alteração antecipada do saldo físico. O **catálogo de permissões** (`permissao`) é separado das **concessões aos usuários** (`permissao_usuario`).
 
 ## 10. Módulos e itens de construção (um por vez)
 
@@ -172,9 +207,18 @@ Também no Módulo 1: **importação da planilha de produtos do ERP** (RN-24), a
 3. **Status, previsão de entrega e pedido a caminho** (RN-07 e seção 7).
 4. **Recebimento**, com entrada no estoque (RN-04, RN-20 e RN-21).
 
+### Módulo 4: Transferência entre locais de estoque
+
+1. **Solicitação:** usuário com permissão escolhe os locais de origem e destino e informa produtos e quantidades. O pedido começa Pendente e registra solicitante e data/hora.
+2. **Edição e exclusão da solicitação:** enquanto Pendente, somente o solicitante ou um usuário com cargo Administrador pode editar ou excluir.
+3. **Envio:** usuário com permissão registra as quantidades enviadas. O sistema identifica remetente e data/hora, valida e reserva o saldo disponível na origem. A transferência passa para Em trânsito e não pode mais ser editada, excluída ou cancelada.
+4. **Recebimento:** usuário com permissão informa a quantidade recebida de cada produto. Diferenças, inclusive recebimentos parciais, exigem justificativa.
+5. **Conclusão:** em uma transação, o sistema baixa da origem o que foi enviado, credita no destino o que foi recebido, libera as reservas e registra recebedor, data/hora, movimentações e log. O pedido concluído fica somente para consulta.
+6. **Permissões:** consultar, solicitar, enviar e receber são permissões individuais, sem restrição por local. O cargo Administrador é exceção somente para editar ou excluir solicitações ainda Pendentes; não substitui as permissões de envio e recebimento.
+
 ### Futuro
 
-Relatório de vendas e correção de preço no recebimento.
+Notificações para usuários, relatório de vendas e correção de preço no recebimento.
 
 ## 11. Decisões pendentes (perguntar ao usuário antes de implementar)
 
