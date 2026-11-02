@@ -35,7 +35,14 @@ export default async function EditarLocalPage({
   const local = await prisma.localEstoque.findUnique({
     where: { id: numero },
     include: {
-      _count: { select: { estoques: true, movimentos: true } },
+      _count: {
+        select: {
+          estoques: true,
+          movimentos: true,
+          transferenciasOrigem: true,
+          transferenciasDestino: true,
+        },
+      },
     },
   });
 
@@ -43,7 +50,9 @@ export default async function EditarLocalPage({
 
   const temEstoque = local._count.estoques > 0;
   const temMovimentos = local._count.movimentos > 0;
-  const emUso = temEstoque || temMovimentos;
+  const totalTransferencias =
+    local._count.transferenciasOrigem + local._count.transferenciasDestino;
+  const emUso = temEstoque || temMovimentos || totalTransferencias > 0;
 
   return (
     <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-5">
@@ -69,8 +78,8 @@ export default async function EditarLocalPage({
 
       {erro === "em-uso" && (
         <p role="alert" className="mt-4 rounded-lg bg-red-50 p-3 text-base text-red-700">
-          Não é possível excluir este local: ele já tem estoque ou movimentações
-          registradas. O histórico de movimentação não é apagado.
+          Não é possível excluir este local: ele já tem estoque, movimentações
+          ou pedidos de transferência vinculados. O histórico não é apagado.
         </p>
       )}
 
@@ -91,14 +100,16 @@ export default async function EditarLocalPage({
 
         {emUso ? (
           <p className="mt-1 text-sm text-zinc-600">
-            Em uso: {local._count.estoques} produto(s) com estoque e{" "}
-            {local._count.movimentos} movimentação(ões). Para excluir, primeiro
-            deixe o local sem estoque e sem movimentações.
+            Em uso: {local._count.estoques} produto(s) com estoque,{" "}
+            {local._count.movimentos} movimentação(ões) e {totalTransferencias}{" "}
+            pedido(s) de transferência. Um local vinculado ao histórico não pode
+            ser excluído.
           </p>
         ) : (
           <>
             <p className="mt-1 text-sm text-zinc-600">
-              Este local não tem estoque nem movimentações e pode ser excluído.
+              Este local não tem estoque, movimentações nem transferências e pode
+              ser excluído.
             </p>
 
             <form action={excluirLocal} className="mt-3">

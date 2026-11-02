@@ -1,8 +1,8 @@
 // ============================================================
 // Módulo 1 - Usuários: tela de edição
 // A senha só muda se o campo for preenchido (em branco = mantém).
-// O usuário só pode ser excluído quando não tem nenhuma
-// movimentação nem log associado; caso contrário, só desativado.
+// O usuário só pode ser excluído quando não tem movimentações,
+// logs ou pedidos de transferência associados; caso contrário, só desativado.
 // Regras: docs/regras-de-negocio.md (seção 2)
 // ============================================================
 
@@ -87,7 +87,15 @@ export default async function EditarUsuarioPage({
         funcoes: {
           select: { funcaoId: true, funcao: { select: { nome: true } } },
         },
-        _count: { select: { movimentos: true, logs: true } },
+        _count: {
+          select: {
+            movimentos: true,
+            logs: true,
+            transferenciasSolicitadas: true,
+            transferenciasEnviadas: true,
+            transferenciasRecebidas: true,
+          },
+        },
       },
     }),
     prisma.cargo.findMany({
@@ -104,7 +112,11 @@ export default async function EditarUsuarioPage({
 
   const temMovimentos = usuario._count.movimentos > 0;
   const temLogs = usuario._count.logs > 0;
-  const emUso = temMovimentos || temLogs;
+  const totalTransferencias =
+    usuario._count.transferenciasSolicitadas +
+    usuario._count.transferenciasEnviadas +
+    usuario._count.transferenciasRecebidas;
+  const emUso = temMovimentos || temLogs || totalTransferencias > 0;
   const cargosVinculados = [...usuario.cargos].sort((a, b) =>
     a.cargo.nome.localeCompare(b.cargo.nome, "pt-BR")
   );
@@ -164,9 +176,9 @@ export default async function EditarUsuarioPage({
           role="alert"
           className="mt-4 rounded-lg bg-red-50 p-3 text-base text-red-700"
         >
-          Não é possível excluir este usuário: ele já tem movimentações ou
-          registros no log do sistema. Nesse caso, desative-o em vez de excluir,
-          para não perder o histórico.
+          Não é possível excluir este usuário: ele já tem movimentações,
+          registros no log ou pedidos de transferência associados. Nesse caso,
+          desative-o em vez de excluir, para preservar o histórico.
         </p>
       )}
 
@@ -388,15 +400,17 @@ export default async function EditarUsuarioPage({
 
         {emUso ? (
           <p className="mt-1 text-sm text-zinc-600">
-            Em uso: {usuario._count.movimentos} movimentação(ões) e{" "}
-            {usuario._count.logs} registro(s) no log. Para excluir, o usuário
-            não pode ter nenhum registro associado.
+            Em uso: {usuario._count.movimentos} movimentação(ões),{" "}
+            {usuario._count.logs} registro(s) no log e {totalTransferencias}{" "}
+            vínculo(s) com pedidos de transferência. Para excluir, o usuário não
+            pode ter nenhum registro associado.
           </p>
         ) : (
           <>
             <p className="mt-1 text-sm text-zinc-600">
-              Este usuário não tem movimentações nem registros no log e pode ser
-              excluído. A exclusão é definitiva.
+              Este usuário não tem movimentações, registros no log nem pedidos
+              de transferência associados e pode ser excluído. A exclusão é
+              definitiva.
             </p>
             <form action={excluirUsuario} className="mt-3">
               <input type="hidden" name="id" value={usuario.id} />

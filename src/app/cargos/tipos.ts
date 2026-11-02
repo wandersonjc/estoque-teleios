@@ -1,4 +1,10 @@
 export const LIMITE_NOME_CARGO = 100;
+export const NOME_CARGO_PROTEGIDO = "Administrador";
+
+export function cargoProtegido(nome: string): boolean {
+  return nome.trim().toLocaleLowerCase("pt-BR") ===
+    NOME_CARGO_PROTEGIDO.toLocaleLowerCase("pt-BR");
+}
 
 export const TAMANHOS_PAGINA_CARGOS = [10, 25, 50, 75, 100] as const;
 export const TAMANHO_PAGINA_CARGOS_PADRAO = 10;

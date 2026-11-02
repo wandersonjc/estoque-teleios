@@ -177,8 +177,11 @@ export async function excluirLocal(formData: FormData): Promise<void> {
   const movimentos = await prisma.movimentoEstoque.count({
     where: { localEstoqueId: id },
   });
+  const transferencias = await prisma.pedidoTransferencia.count({
+    where: { OR: [{ origemId: id }, { destinoId: id }] },
+  });
 
-  if (estoques > 0 || movimentos > 0) {
+  if (estoques > 0 || movimentos > 0 || transferencias > 0) {
     redirect(`/locais/${id}?erro=em-uso`);
   }
 

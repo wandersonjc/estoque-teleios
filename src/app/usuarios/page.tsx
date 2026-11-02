@@ -134,7 +134,15 @@ export default async function UsuariosPage({
       funcoes: {
         select: { funcao: { select: { id: true, nome: true } } },
       },
-      _count: { select: { movimentos: true, logs: true } },
+      _count: {
+        select: {
+          movimentos: true,
+          logs: true,
+          transferenciasSolicitadas: true,
+          transferenciasEnviadas: true,
+          transferenciasRecebidas: true,
+        },
+      },
     },
   });
 
@@ -251,7 +259,10 @@ export default async function UsuariosPage({
         )}
         {podeExcluir &&
           usuario._count.movimentos === 0 &&
-          usuario._count.logs === 0 && (
+          usuario._count.logs === 0 &&
+          usuario._count.transferenciasSolicitadas === 0 &&
+          usuario._count.transferenciasEnviadas === 0 &&
+          usuario._count.transferenciasRecebidas === 0 && (
             <form action={excluirUsuario}>
               <input type="hidden" name="id" value={usuario.id} />
               <BotaoAcao

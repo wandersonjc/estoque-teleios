@@ -11,6 +11,7 @@ import Link from "next/link";
 
 import { excluirCargo } from "./actions";
 import {
+  cargoProtegido,
   TAMANHOS_PAGINA_CARGOS,
   TAMANHO_PAGINA_CARGOS_PADRAO,
 } from "./tipos";
@@ -105,6 +106,11 @@ export default async function CargosPage({
       {erro === "em-uso" && (
         <p role="alert" className="mt-4 rounded-lg bg-red-50 p-3 text-base text-red-700">
           Não é possível excluir um cargo associado a usuários.
+        </p>
+      )}
+      {erro === "protegido" && (
+        <p role="alert" className="mt-4 rounded-lg bg-amber-50 p-3 text-base text-amber-800">
+          O cargo Administrador é protegido e não pode ser editado ou excluído.
         </p>
       )}
 
@@ -204,6 +210,7 @@ export default async function CargosPage({
             <tbody>
               {cargos.map((cargo) => {
                 const associado = cargo._count.usuarios > 0;
+                const protegido = cargoProtegido(cargo.nome);
                 return (
                   <tr
                     key={cargo.id}
@@ -217,30 +224,50 @@ export default async function CargosPage({
                     </td>
                     <td className="whitespace-nowrap px-3 py-3">
                       <div className="flex items-center gap-2">
-                        <LinkAcaoComCarregamento
-                          href={`/cargos/${cargo.id}`}
-                          title="Editar cargo"
-                          ariaLabel={`Editar cargo ${cargo.nome}`}
-                          className="flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200 text-zinc-800 hover:bg-zinc-50"
-                          tamanhoIconeCarregando="h-4 w-4"
-                        >
-                          <IconeEditar className="h-4 w-4" />
-                        </LinkAcaoComCarregamento>
+                        {protegido ? (
+                          <button
+                            type="button"
+                            title="O cargo Administrador não pode ser editado"
+                            aria-label="O cargo Administrador não pode ser editado"
+                            disabled
+                            className="flex h-10 w-10 cursor-not-allowed items-center justify-center rounded-lg border border-zinc-200 text-zinc-300"
+                          >
+                            <IconeEditar className="h-4 w-4" />
+                          </button>
+                        ) : (
+                          <LinkAcaoComCarregamento
+                            href={`/cargos/${cargo.id}`}
+                            title="Editar cargo"
+                            ariaLabel={`Editar cargo ${cargo.nome}`}
+                            className="flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200 text-zinc-800 hover:bg-zinc-50"
+                            tamanhoIconeCarregando="h-4 w-4"
+                          >
+                            <IconeEditar className="h-4 w-4" />
+                          </LinkAcaoComCarregamento>
+                        )}
                         <form action={excluirCargo}>
                           <input type="hidden" name="id" value={cargo.id} />
                           <BotaoAcao
                             title={
-                              associado
+                              protegido
+                                ? "O cargo Administrador é protegido"
+                                : associado
                                 ? "Cargo associado a usuários"
                                 : "Excluir cargo"
                             }
                             ariaLabel={
-                              associado
+                              protegido
+                                ? "O cargo Administrador não pode ser excluído"
+                                : associado
                                 ? `Cargo ${cargo.nome} não pode ser excluído porque está associado a usuários`
                                 : `Excluir cargo ${cargo.nome}`
                             }
-                            disabled={associado}
-                            confirmacao={`Excluir o cargo "${cargo.nome}"? Esta ação não pode ser desfeita.`}
+                            disabled={associado || protegido}
+                            confirmacao={
+                              protegido
+                                ? undefined
+                                : `Excluir o cargo "${cargo.nome}"? Esta ação não pode ser desfeita.`
+                            }
                             className="flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200 text-red-700 hover:bg-red-50 disabled:cursor-not-allowed disabled:text-zinc-300 disabled:hover:bg-white"
                           >
                             <IconeExcluir className="h-4 w-4" />

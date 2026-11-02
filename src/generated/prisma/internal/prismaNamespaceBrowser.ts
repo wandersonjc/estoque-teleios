@@ -64,6 +64,8 @@ export const ModelName = {
   HistoricoPreco: 'HistoricoPreco',
   Estoque: 'Estoque',
   MovimentoEstoque: 'MovimentoEstoque',
+  PedidoTransferencia: 'PedidoTransferencia',
+  ItemTransferencia: 'ItemTransferencia',
   LogSistema: 'LogSistema',
   Permissao: 'Permissao',
   PermissaoUsuario: 'PermissaoUsuario',
@@ -233,10 +235,50 @@ export const MovimentoEstoqueScalarFieldEnum = {
   tipo: 'tipo',
   quantidade: 'quantidade',
   comentario: 'comentario',
-  dataHora: 'dataHora'
+  dataHora: 'dataHora',
+  transferenciaId: 'transferenciaId'
 } as const
 
 export type MovimentoEstoqueScalarFieldEnum = (typeof MovimentoEstoqueScalarFieldEnum)[keyof typeof MovimentoEstoqueScalarFieldEnum]
+
+
+export const PedidoTransferenciaScalarFieldEnum = {
+  id: 'id',
+  origemId: 'origemId',
+  destinoId: 'destinoId',
+  solicitanteId: 'solicitanteId',
+  criadoEm: 'criadoEm',
+  status: 'status',
+  enviadoPorId: 'enviadoPorId',
+  enviadoEm: 'enviadoEm',
+  recebidoPorId: 'recebidoPorId',
+  recebidoEm: 'recebidoEm'
+} as const
+
+export type PedidoTransferenciaScalarFieldEnum = (typeof PedidoTransferenciaScalarFieldEnum)[keyof typeof PedidoTransferenciaScalarFieldEnum]
+
+
+export const ItemTransferenciaScalarFieldEnum = {
+  id: 'id',
+  transferenciaId: 'transferenciaId',
+  produtoId: 'produtoId',
+  quantidadeSolicitada: 'quantidadeSolicitada',
+  quantidadeSolicitadaInformada: 'quantidadeSolicitadaInformada',
+  unidadeSolicitada: 'unidadeSolicitada',
+  fatorSolicitado: 'fatorSolicitado',
+  quantidadeEnviada: 'quantidadeEnviada',
+  quantidadeEnviadaInformada: 'quantidadeEnviadaInformada',
+  unidadeEnviada: 'unidadeEnviada',
+  fatorEnviado: 'fatorEnviado',
+  quantidadeRecebida: 'quantidadeRecebida',
+  quantidadeRecebidaInformada: 'quantidadeRecebidaInformada',
+  unidadeRecebida: 'unidadeRecebida',
+  fatorRecebido: 'fatorRecebido',
+  justificativaEnvio: 'justificativaEnvio',
+  justificativaDivergencia: 'justificativaDivergencia'
+} as const
+
+export type ItemTransferenciaScalarFieldEnum = (typeof ItemTransferenciaScalarFieldEnum)[keyof typeof ItemTransferenciaScalarFieldEnum]
 
 
 export const LogSistemaScalarFieldEnum = {

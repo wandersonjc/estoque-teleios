@@ -11,6 +11,7 @@ type Movimento = {
   dataHora: Date;
   quantidade: string;
   comentario: string | null;
+  transferenciaId: number | null;
   usuarioNome: string;
 };
 
@@ -26,6 +27,7 @@ type Props = {
   totalPaginas: number;
   ordenacao: ColunaOrdenavel;
   direcao: DirecaoOrdenacao;
+  podeConsultarTransferencias: boolean;
 };
 
 const COLUNAS: { chave: ColunaOrdenavel; rotulo: string }[] = [
@@ -49,6 +51,7 @@ export default function HistoricoMovimentacoes({
   totalPaginas,
   ordenacao,
   direcao,
+  podeConsultarTransferencias,
 }: Props) {
   const caminho = `/produtos/${produtoId}`;
 
@@ -191,6 +194,19 @@ export default function HistoricoMovimentacoes({
                         {movimento.comentario}
                       </p>
                     )}
+                    {movimento.transferenciaId !== null &&
+                      (podeConsultarTransferencias ? (
+                        <Link
+                          href={`/transferencias/${movimento.transferenciaId}`}
+                          className="mt-1 inline-block text-xs font-medium text-[#002855] underline underline-offset-2"
+                        >
+                          Transferência #{movimento.transferenciaId}
+                        </Link>
+                      ) : (
+                        <p className="mt-1 text-xs text-zinc-600">
+                          Transferência #{movimento.transferenciaId}
+                        </p>
+                      ))}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3 text-zinc-800">
                     {formatarDataHoraBr(movimento.dataHora)}

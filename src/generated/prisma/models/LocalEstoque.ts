@@ -194,6 +194,8 @@ export type LocalEstoqueWhereInput = {
   nome?: Prisma.StringFilter<"LocalEstoque"> | string
   estoques?: Prisma.EstoqueListRelationFilter
   movimentos?: Prisma.MovimentoEstoqueListRelationFilter
+  transferenciasOrigem?: Prisma.PedidoTransferenciaListRelationFilter
+  transferenciasDestino?: Prisma.PedidoTransferenciaListRelationFilter
 }
 
 export type LocalEstoqueOrderByWithRelationInput = {
@@ -201,6 +203,8 @@ export type LocalEstoqueOrderByWithRelationInput = {
   nome?: Prisma.SortOrder
   estoques?: Prisma.EstoqueOrderByRelationAggregateInput
   movimentos?: Prisma.MovimentoEstoqueOrderByRelationAggregateInput
+  transferenciasOrigem?: Prisma.PedidoTransferenciaOrderByRelationAggregateInput
+  transferenciasDestino?: Prisma.PedidoTransferenciaOrderByRelationAggregateInput
 }
 
 export type LocalEstoqueWhereUniqueInput = Prisma.AtLeast<{
@@ -211,6 +215,8 @@ export type LocalEstoqueWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.LocalEstoqueWhereInput | Prisma.LocalEstoqueWhereInput[]
   estoques?: Prisma.EstoqueListRelationFilter
   movimentos?: Prisma.MovimentoEstoqueListRelationFilter
+  transferenciasOrigem?: Prisma.PedidoTransferenciaListRelationFilter
+  transferenciasDestino?: Prisma.PedidoTransferenciaListRelationFilter
 }, "id" | "nome">
 
 export type LocalEstoqueOrderByWithAggregationInput = {
@@ -235,6 +241,8 @@ export type LocalEstoqueCreateInput = {
   nome: string
   estoques?: Prisma.EstoqueCreateNestedManyWithoutLocalEstoqueInput
   movimentos?: Prisma.MovimentoEstoqueCreateNestedManyWithoutLocalEstoqueInput
+  transferenciasOrigem?: Prisma.PedidoTransferenciaCreateNestedManyWithoutOrigemInput
+  transferenciasDestino?: Prisma.PedidoTransferenciaCreateNestedManyWithoutDestinoInput
 }
 
 export type LocalEstoqueUncheckedCreateInput = {
@@ -242,12 +250,16 @@ export type LocalEstoqueUncheckedCreateInput = {
   nome: string
   estoques?: Prisma.EstoqueUncheckedCreateNestedManyWithoutLocalEstoqueInput
   movimentos?: Prisma.MovimentoEstoqueUncheckedCreateNestedManyWithoutLocalEstoqueInput
+  transferenciasOrigem?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutOrigemInput
+  transferenciasDestino?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutDestinoInput
 }
 
 export type LocalEstoqueUpdateInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   estoques?: Prisma.EstoqueUpdateManyWithoutLocalEstoqueNestedInput
   movimentos?: Prisma.MovimentoEstoqueUpdateManyWithoutLocalEstoqueNestedInput
+  transferenciasOrigem?: Prisma.PedidoTransferenciaUpdateManyWithoutOrigemNestedInput
+  transferenciasDestino?: Prisma.PedidoTransferenciaUpdateManyWithoutDestinoNestedInput
 }
 
 export type LocalEstoqueUncheckedUpdateInput = {
@@ -255,6 +267,8 @@ export type LocalEstoqueUncheckedUpdateInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   estoques?: Prisma.EstoqueUncheckedUpdateManyWithoutLocalEstoqueNestedInput
   movimentos?: Prisma.MovimentoEstoqueUncheckedUpdateManyWithoutLocalEstoqueNestedInput
+  transferenciasOrigem?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutOrigemNestedInput
+  transferenciasDestino?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutDestinoNestedInput
 }
 
 export type LocalEstoqueCreateManyInput = {
@@ -327,15 +341,47 @@ export type LocalEstoqueUpdateOneRequiredWithoutMovimentosNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.LocalEstoqueUpdateToOneWithWhereWithoutMovimentosInput, Prisma.LocalEstoqueUpdateWithoutMovimentosInput>, Prisma.LocalEstoqueUncheckedUpdateWithoutMovimentosInput>
 }
 
+export type LocalEstoqueCreateNestedOneWithoutTransferenciasOrigemInput = {
+  create?: Prisma.XOR<Prisma.LocalEstoqueCreateWithoutTransferenciasOrigemInput, Prisma.LocalEstoqueUncheckedCreateWithoutTransferenciasOrigemInput>
+  connectOrCreate?: Prisma.LocalEstoqueCreateOrConnectWithoutTransferenciasOrigemInput
+  connect?: Prisma.LocalEstoqueWhereUniqueInput
+}
+
+export type LocalEstoqueCreateNestedOneWithoutTransferenciasDestinoInput = {
+  create?: Prisma.XOR<Prisma.LocalEstoqueCreateWithoutTransferenciasDestinoInput, Prisma.LocalEstoqueUncheckedCreateWithoutTransferenciasDestinoInput>
+  connectOrCreate?: Prisma.LocalEstoqueCreateOrConnectWithoutTransferenciasDestinoInput
+  connect?: Prisma.LocalEstoqueWhereUniqueInput
+}
+
+export type LocalEstoqueUpdateOneRequiredWithoutTransferenciasOrigemNestedInput = {
+  create?: Prisma.XOR<Prisma.LocalEstoqueCreateWithoutTransferenciasOrigemInput, Prisma.LocalEstoqueUncheckedCreateWithoutTransferenciasOrigemInput>
+  connectOrCreate?: Prisma.LocalEstoqueCreateOrConnectWithoutTransferenciasOrigemInput
+  upsert?: Prisma.LocalEstoqueUpsertWithoutTransferenciasOrigemInput
+  connect?: Prisma.LocalEstoqueWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.LocalEstoqueUpdateToOneWithWhereWithoutTransferenciasOrigemInput, Prisma.LocalEstoqueUpdateWithoutTransferenciasOrigemInput>, Prisma.LocalEstoqueUncheckedUpdateWithoutTransferenciasOrigemInput>
+}
+
+export type LocalEstoqueUpdateOneRequiredWithoutTransferenciasDestinoNestedInput = {
+  create?: Prisma.XOR<Prisma.LocalEstoqueCreateWithoutTransferenciasDestinoInput, Prisma.LocalEstoqueUncheckedCreateWithoutTransferenciasDestinoInput>
+  connectOrCreate?: Prisma.LocalEstoqueCreateOrConnectWithoutTransferenciasDestinoInput
+  upsert?: Prisma.LocalEstoqueUpsertWithoutTransferenciasDestinoInput
+  connect?: Prisma.LocalEstoqueWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.LocalEstoqueUpdateToOneWithWhereWithoutTransferenciasDestinoInput, Prisma.LocalEstoqueUpdateWithoutTransferenciasDestinoInput>, Prisma.LocalEstoqueUncheckedUpdateWithoutTransferenciasDestinoInput>
+}
+
 export type LocalEstoqueCreateWithoutEstoquesInput = {
   nome: string
   movimentos?: Prisma.MovimentoEstoqueCreateNestedManyWithoutLocalEstoqueInput
+  transferenciasOrigem?: Prisma.PedidoTransferenciaCreateNestedManyWithoutOrigemInput
+  transferenciasDestino?: Prisma.PedidoTransferenciaCreateNestedManyWithoutDestinoInput
 }
 
 export type LocalEstoqueUncheckedCreateWithoutEstoquesInput = {
   id?: number
   nome: string
   movimentos?: Prisma.MovimentoEstoqueUncheckedCreateNestedManyWithoutLocalEstoqueInput
+  transferenciasOrigem?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutOrigemInput
+  transferenciasDestino?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutDestinoInput
 }
 
 export type LocalEstoqueCreateOrConnectWithoutEstoquesInput = {
@@ -357,23 +403,31 @@ export type LocalEstoqueUpdateToOneWithWhereWithoutEstoquesInput = {
 export type LocalEstoqueUpdateWithoutEstoquesInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   movimentos?: Prisma.MovimentoEstoqueUpdateManyWithoutLocalEstoqueNestedInput
+  transferenciasOrigem?: Prisma.PedidoTransferenciaUpdateManyWithoutOrigemNestedInput
+  transferenciasDestino?: Prisma.PedidoTransferenciaUpdateManyWithoutDestinoNestedInput
 }
 
 export type LocalEstoqueUncheckedUpdateWithoutEstoquesInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   movimentos?: Prisma.MovimentoEstoqueUncheckedUpdateManyWithoutLocalEstoqueNestedInput
+  transferenciasOrigem?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutOrigemNestedInput
+  transferenciasDestino?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutDestinoNestedInput
 }
 
 export type LocalEstoqueCreateWithoutMovimentosInput = {
   nome: string
   estoques?: Prisma.EstoqueCreateNestedManyWithoutLocalEstoqueInput
+  transferenciasOrigem?: Prisma.PedidoTransferenciaCreateNestedManyWithoutOrigemInput
+  transferenciasDestino?: Prisma.PedidoTransferenciaCreateNestedManyWithoutDestinoInput
 }
 
 export type LocalEstoqueUncheckedCreateWithoutMovimentosInput = {
   id?: number
   nome: string
   estoques?: Prisma.EstoqueUncheckedCreateNestedManyWithoutLocalEstoqueInput
+  transferenciasOrigem?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutOrigemInput
+  transferenciasDestino?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutDestinoInput
 }
 
 export type LocalEstoqueCreateOrConnectWithoutMovimentosInput = {
@@ -395,12 +449,108 @@ export type LocalEstoqueUpdateToOneWithWhereWithoutMovimentosInput = {
 export type LocalEstoqueUpdateWithoutMovimentosInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   estoques?: Prisma.EstoqueUpdateManyWithoutLocalEstoqueNestedInput
+  transferenciasOrigem?: Prisma.PedidoTransferenciaUpdateManyWithoutOrigemNestedInput
+  transferenciasDestino?: Prisma.PedidoTransferenciaUpdateManyWithoutDestinoNestedInput
 }
 
 export type LocalEstoqueUncheckedUpdateWithoutMovimentosInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   nome?: Prisma.StringFieldUpdateOperationsInput | string
   estoques?: Prisma.EstoqueUncheckedUpdateManyWithoutLocalEstoqueNestedInput
+  transferenciasOrigem?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutOrigemNestedInput
+  transferenciasDestino?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutDestinoNestedInput
+}
+
+export type LocalEstoqueCreateWithoutTransferenciasOrigemInput = {
+  nome: string
+  estoques?: Prisma.EstoqueCreateNestedManyWithoutLocalEstoqueInput
+  movimentos?: Prisma.MovimentoEstoqueCreateNestedManyWithoutLocalEstoqueInput
+  transferenciasDestino?: Prisma.PedidoTransferenciaCreateNestedManyWithoutDestinoInput
+}
+
+export type LocalEstoqueUncheckedCreateWithoutTransferenciasOrigemInput = {
+  id?: number
+  nome: string
+  estoques?: Prisma.EstoqueUncheckedCreateNestedManyWithoutLocalEstoqueInput
+  movimentos?: Prisma.MovimentoEstoqueUncheckedCreateNestedManyWithoutLocalEstoqueInput
+  transferenciasDestino?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutDestinoInput
+}
+
+export type LocalEstoqueCreateOrConnectWithoutTransferenciasOrigemInput = {
+  where: Prisma.LocalEstoqueWhereUniqueInput
+  create: Prisma.XOR<Prisma.LocalEstoqueCreateWithoutTransferenciasOrigemInput, Prisma.LocalEstoqueUncheckedCreateWithoutTransferenciasOrigemInput>
+}
+
+export type LocalEstoqueCreateWithoutTransferenciasDestinoInput = {
+  nome: string
+  estoques?: Prisma.EstoqueCreateNestedManyWithoutLocalEstoqueInput
+  movimentos?: Prisma.MovimentoEstoqueCreateNestedManyWithoutLocalEstoqueInput
+  transferenciasOrigem?: Prisma.PedidoTransferenciaCreateNestedManyWithoutOrigemInput
+}
+
+export type LocalEstoqueUncheckedCreateWithoutTransferenciasDestinoInput = {
+  id?: number
+  nome: string
+  estoques?: Prisma.EstoqueUncheckedCreateNestedManyWithoutLocalEstoqueInput
+  movimentos?: Prisma.MovimentoEstoqueUncheckedCreateNestedManyWithoutLocalEstoqueInput
+  transferenciasOrigem?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutOrigemInput
+}
+
+export type LocalEstoqueCreateOrConnectWithoutTransferenciasDestinoInput = {
+  where: Prisma.LocalEstoqueWhereUniqueInput
+  create: Prisma.XOR<Prisma.LocalEstoqueCreateWithoutTransferenciasDestinoInput, Prisma.LocalEstoqueUncheckedCreateWithoutTransferenciasDestinoInput>
+}
+
+export type LocalEstoqueUpsertWithoutTransferenciasOrigemInput = {
+  update: Prisma.XOR<Prisma.LocalEstoqueUpdateWithoutTransferenciasOrigemInput, Prisma.LocalEstoqueUncheckedUpdateWithoutTransferenciasOrigemInput>
+  create: Prisma.XOR<Prisma.LocalEstoqueCreateWithoutTransferenciasOrigemInput, Prisma.LocalEstoqueUncheckedCreateWithoutTransferenciasOrigemInput>
+  where?: Prisma.LocalEstoqueWhereInput
+}
+
+export type LocalEstoqueUpdateToOneWithWhereWithoutTransferenciasOrigemInput = {
+  where?: Prisma.LocalEstoqueWhereInput
+  data: Prisma.XOR<Prisma.LocalEstoqueUpdateWithoutTransferenciasOrigemInput, Prisma.LocalEstoqueUncheckedUpdateWithoutTransferenciasOrigemInput>
+}
+
+export type LocalEstoqueUpdateWithoutTransferenciasOrigemInput = {
+  nome?: Prisma.StringFieldUpdateOperationsInput | string
+  estoques?: Prisma.EstoqueUpdateManyWithoutLocalEstoqueNestedInput
+  movimentos?: Prisma.MovimentoEstoqueUpdateManyWithoutLocalEstoqueNestedInput
+  transferenciasDestino?: Prisma.PedidoTransferenciaUpdateManyWithoutDestinoNestedInput
+}
+
+export type LocalEstoqueUncheckedUpdateWithoutTransferenciasOrigemInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  nome?: Prisma.StringFieldUpdateOperationsInput | string
+  estoques?: Prisma.EstoqueUncheckedUpdateManyWithoutLocalEstoqueNestedInput
+  movimentos?: Prisma.MovimentoEstoqueUncheckedUpdateManyWithoutLocalEstoqueNestedInput
+  transferenciasDestino?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutDestinoNestedInput
+}
+
+export type LocalEstoqueUpsertWithoutTransferenciasDestinoInput = {
+  update: Prisma.XOR<Prisma.LocalEstoqueUpdateWithoutTransferenciasDestinoInput, Prisma.LocalEstoqueUncheckedUpdateWithoutTransferenciasDestinoInput>
+  create: Prisma.XOR<Prisma.LocalEstoqueCreateWithoutTransferenciasDestinoInput, Prisma.LocalEstoqueUncheckedCreateWithoutTransferenciasDestinoInput>
+  where?: Prisma.LocalEstoqueWhereInput
+}
+
+export type LocalEstoqueUpdateToOneWithWhereWithoutTransferenciasDestinoInput = {
+  where?: Prisma.LocalEstoqueWhereInput
+  data: Prisma.XOR<Prisma.LocalEstoqueUpdateWithoutTransferenciasDestinoInput, Prisma.LocalEstoqueUncheckedUpdateWithoutTransferenciasDestinoInput>
+}
+
+export type LocalEstoqueUpdateWithoutTransferenciasDestinoInput = {
+  nome?: Prisma.StringFieldUpdateOperationsInput | string
+  estoques?: Prisma.EstoqueUpdateManyWithoutLocalEstoqueNestedInput
+  movimentos?: Prisma.MovimentoEstoqueUpdateManyWithoutLocalEstoqueNestedInput
+  transferenciasOrigem?: Prisma.PedidoTransferenciaUpdateManyWithoutOrigemNestedInput
+}
+
+export type LocalEstoqueUncheckedUpdateWithoutTransferenciasDestinoInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  nome?: Prisma.StringFieldUpdateOperationsInput | string
+  estoques?: Prisma.EstoqueUncheckedUpdateManyWithoutLocalEstoqueNestedInput
+  movimentos?: Prisma.MovimentoEstoqueUncheckedUpdateManyWithoutLocalEstoqueNestedInput
+  transferenciasOrigem?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutOrigemNestedInput
 }
 
 
@@ -411,11 +561,15 @@ export type LocalEstoqueUncheckedUpdateWithoutMovimentosInput = {
 export type LocalEstoqueCountOutputType = {
   estoques: number
   movimentos: number
+  transferenciasOrigem: number
+  transferenciasDestino: number
 }
 
 export type LocalEstoqueCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   estoques?: boolean | LocalEstoqueCountOutputTypeCountEstoquesArgs
   movimentos?: boolean | LocalEstoqueCountOutputTypeCountMovimentosArgs
+  transferenciasOrigem?: boolean | LocalEstoqueCountOutputTypeCountTransferenciasOrigemArgs
+  transferenciasDestino?: boolean | LocalEstoqueCountOutputTypeCountTransferenciasDestinoArgs
 }
 
 /**
@@ -442,12 +596,28 @@ export type LocalEstoqueCountOutputTypeCountMovimentosArgs<ExtArgs extends runti
   where?: Prisma.MovimentoEstoqueWhereInput
 }
 
+/**
+ * LocalEstoqueCountOutputType without action
+ */
+export type LocalEstoqueCountOutputTypeCountTransferenciasOrigemArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PedidoTransferenciaWhereInput
+}
+
+/**
+ * LocalEstoqueCountOutputType without action
+ */
+export type LocalEstoqueCountOutputTypeCountTransferenciasDestinoArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PedidoTransferenciaWhereInput
+}
+
 
 export type LocalEstoqueSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   nome?: boolean
   estoques?: boolean | Prisma.LocalEstoque$estoquesArgs<ExtArgs>
   movimentos?: boolean | Prisma.LocalEstoque$movimentosArgs<ExtArgs>
+  transferenciasOrigem?: boolean | Prisma.LocalEstoque$transferenciasOrigemArgs<ExtArgs>
+  transferenciasDestino?: boolean | Prisma.LocalEstoque$transferenciasDestinoArgs<ExtArgs>
   _count?: boolean | Prisma.LocalEstoqueCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["localEstoque"]>
 
@@ -470,6 +640,8 @@ export type LocalEstoqueOmit<ExtArgs extends runtime.Types.Extensions.InternalAr
 export type LocalEstoqueInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   estoques?: boolean | Prisma.LocalEstoque$estoquesArgs<ExtArgs>
   movimentos?: boolean | Prisma.LocalEstoque$movimentosArgs<ExtArgs>
+  transferenciasOrigem?: boolean | Prisma.LocalEstoque$transferenciasOrigemArgs<ExtArgs>
+  transferenciasDestino?: boolean | Prisma.LocalEstoque$transferenciasDestinoArgs<ExtArgs>
   _count?: boolean | Prisma.LocalEstoqueCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type LocalEstoqueIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -480,6 +652,8 @@ export type $LocalEstoquePayload<ExtArgs extends runtime.Types.Extensions.Intern
   objects: {
     estoques: Prisma.$EstoquePayload<ExtArgs>[]
     movimentos: Prisma.$MovimentoEstoquePayload<ExtArgs>[]
+    transferenciasOrigem: Prisma.$PedidoTransferenciaPayload<ExtArgs>[]
+    transferenciasDestino: Prisma.$PedidoTransferenciaPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -880,6 +1054,8 @@ export interface Prisma__LocalEstoqueClient<T, Null = never, ExtArgs extends run
   readonly [Symbol.toStringTag]: "PrismaPromise"
   estoques<T extends Prisma.LocalEstoque$estoquesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LocalEstoque$estoquesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EstoquePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   movimentos<T extends Prisma.LocalEstoque$movimentosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LocalEstoque$movimentosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MovimentoEstoquePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  transferenciasOrigem<T extends Prisma.LocalEstoque$transferenciasOrigemArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LocalEstoque$transferenciasOrigemArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PedidoTransferenciaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  transferenciasDestino<T extends Prisma.LocalEstoque$transferenciasDestinoArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LocalEstoque$transferenciasDestinoArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PedidoTransferenciaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1349,6 +1525,54 @@ export type LocalEstoque$movimentosArgs<ExtArgs extends runtime.Types.Extensions
   take?: number
   skip?: number
   distinct?: Prisma.MovimentoEstoqueScalarFieldEnum | Prisma.MovimentoEstoqueScalarFieldEnum[]
+}
+
+/**
+ * LocalEstoque.transferenciasOrigem
+ */
+export type LocalEstoque$transferenciasOrigemArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PedidoTransferencia
+   */
+  select?: Prisma.PedidoTransferenciaSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PedidoTransferencia
+   */
+  omit?: Prisma.PedidoTransferenciaOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PedidoTransferenciaInclude<ExtArgs> | null
+  where?: Prisma.PedidoTransferenciaWhereInput
+  orderBy?: Prisma.PedidoTransferenciaOrderByWithRelationInput | Prisma.PedidoTransferenciaOrderByWithRelationInput[]
+  cursor?: Prisma.PedidoTransferenciaWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PedidoTransferenciaScalarFieldEnum | Prisma.PedidoTransferenciaScalarFieldEnum[]
+}
+
+/**
+ * LocalEstoque.transferenciasDestino
+ */
+export type LocalEstoque$transferenciasDestinoArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PedidoTransferencia
+   */
+  select?: Prisma.PedidoTransferenciaSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PedidoTransferencia
+   */
+  omit?: Prisma.PedidoTransferenciaOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PedidoTransferenciaInclude<ExtArgs> | null
+  where?: Prisma.PedidoTransferenciaWhereInput
+  orderBy?: Prisma.PedidoTransferenciaOrderByWithRelationInput | Prisma.PedidoTransferenciaOrderByWithRelationInput[]
+  cursor?: Prisma.PedidoTransferenciaWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PedidoTransferenciaScalarFieldEnum | Prisma.PedidoTransferenciaScalarFieldEnum[]
 }
 
 /**

@@ -10,6 +10,7 @@ import prisma from "@/lib/prisma";
 
 import {
   LIMITE_NOME_CARGO,
+  cargoProtegido,
   type EstadoFormularioCargo,
   type ValoresFormularioCargo,
 } from "./tipos";
@@ -97,6 +98,12 @@ export async function atualizarCargo(
     select: { nome: true },
   });
   if (!cargo) return { erroGeral: "Cargo não encontrado.", valores };
+  if (cargoProtegido(cargo.nome)) {
+    return {
+      erroGeral: `O cargo "${cargo.nome}" é protegido e não pode ser editado.`,
+      valores,
+    };
+  }
 
   const duplicado = await prisma.cargo.findFirst({
     where: { nome: valores.nome, id: { not: id } },
@@ -149,6 +156,7 @@ export async function excluirCargo(formData: FormData): Promise<void> {
     select: { nome: true, _count: { select: { usuarios: true } } },
   });
   if (!cargo) redirect("/cargos");
+  if (cargoProtegido(cargo.nome)) redirect("/cargos?erro=protegido");
   if (cargo._count.usuarios > 0) redirect("/cargos?erro=em-uso");
 
   try {

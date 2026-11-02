@@ -254,6 +254,9 @@ export type UsuarioWhereInput = {
   permissoes?: Prisma.PermissaoUsuarioListRelationFilter
   cargos?: Prisma.UsuarioCargoListRelationFilter
   funcoes?: Prisma.UsuarioFuncaoListRelationFilter
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaListRelationFilter
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaListRelationFilter
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaListRelationFilter
 }
 
 export type UsuarioOrderByWithRelationInput = {
@@ -272,6 +275,9 @@ export type UsuarioOrderByWithRelationInput = {
   permissoes?: Prisma.PermissaoUsuarioOrderByRelationAggregateInput
   cargos?: Prisma.UsuarioCargoOrderByRelationAggregateInput
   funcoes?: Prisma.UsuarioFuncaoOrderByRelationAggregateInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaOrderByRelationAggregateInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaOrderByRelationAggregateInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaOrderByRelationAggregateInput
 }
 
 export type UsuarioWhereUniqueInput = Prisma.AtLeast<{
@@ -293,6 +299,9 @@ export type UsuarioWhereUniqueInput = Prisma.AtLeast<{
   permissoes?: Prisma.PermissaoUsuarioListRelationFilter
   cargos?: Prisma.UsuarioCargoListRelationFilter
   funcoes?: Prisma.UsuarioFuncaoListRelationFilter
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaListRelationFilter
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaListRelationFilter
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaListRelationFilter
 }, "id" | "email">
 
 export type UsuarioOrderByWithAggregationInput = {
@@ -342,6 +351,9 @@ export type UsuarioCreateInput = {
   permissoes?: Prisma.PermissaoUsuarioCreateNestedManyWithoutUsuarioInput
   cargos?: Prisma.UsuarioCargoCreateNestedManyWithoutUsuarioInput
   funcoes?: Prisma.UsuarioFuncaoCreateNestedManyWithoutUsuarioInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaCreateNestedManyWithoutSolicitanteInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaCreateNestedManyWithoutEnviadoPorInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaCreateNestedManyWithoutRecebidoPorInput
 }
 
 export type UsuarioUncheckedCreateInput = {
@@ -360,6 +372,9 @@ export type UsuarioUncheckedCreateInput = {
   permissoes?: Prisma.PermissaoUsuarioUncheckedCreateNestedManyWithoutUsuarioInput
   cargos?: Prisma.UsuarioCargoUncheckedCreateNestedManyWithoutUsuarioInput
   funcoes?: Prisma.UsuarioFuncaoUncheckedCreateNestedManyWithoutUsuarioInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutSolicitanteInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutEnviadoPorInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutRecebidoPorInput
 }
 
 export type UsuarioUpdateInput = {
@@ -377,6 +392,9 @@ export type UsuarioUpdateInput = {
   permissoes?: Prisma.PermissaoUsuarioUpdateManyWithoutUsuarioNestedInput
   cargos?: Prisma.UsuarioCargoUpdateManyWithoutUsuarioNestedInput
   funcoes?: Prisma.UsuarioFuncaoUpdateManyWithoutUsuarioNestedInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaUpdateManyWithoutSolicitanteNestedInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaUpdateManyWithoutEnviadoPorNestedInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaUpdateManyWithoutRecebidoPorNestedInput
 }
 
 export type UsuarioUncheckedUpdateInput = {
@@ -395,6 +413,9 @@ export type UsuarioUncheckedUpdateInput = {
   permissoes?: Prisma.PermissaoUsuarioUncheckedUpdateManyWithoutUsuarioNestedInput
   cargos?: Prisma.UsuarioCargoUncheckedUpdateManyWithoutUsuarioNestedInput
   funcoes?: Prisma.UsuarioFuncaoUncheckedUpdateManyWithoutUsuarioNestedInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutSolicitanteNestedInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutEnviadoPorNestedInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutRecebidoPorNestedInput
 }
 
 export type UsuarioCreateManyInput = {
@@ -558,6 +579,52 @@ export type UsuarioUpdateOneWithoutMovimentosNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UsuarioUpdateToOneWithWhereWithoutMovimentosInput, Prisma.UsuarioUpdateWithoutMovimentosInput>, Prisma.UsuarioUncheckedUpdateWithoutMovimentosInput>
 }
 
+export type UsuarioCreateNestedOneWithoutTransferenciasSolicitadasInput = {
+  create?: Prisma.XOR<Prisma.UsuarioCreateWithoutTransferenciasSolicitadasInput, Prisma.UsuarioUncheckedCreateWithoutTransferenciasSolicitadasInput>
+  connectOrCreate?: Prisma.UsuarioCreateOrConnectWithoutTransferenciasSolicitadasInput
+  connect?: Prisma.UsuarioWhereUniqueInput
+}
+
+export type UsuarioCreateNestedOneWithoutTransferenciasEnviadasInput = {
+  create?: Prisma.XOR<Prisma.UsuarioCreateWithoutTransferenciasEnviadasInput, Prisma.UsuarioUncheckedCreateWithoutTransferenciasEnviadasInput>
+  connectOrCreate?: Prisma.UsuarioCreateOrConnectWithoutTransferenciasEnviadasInput
+  connect?: Prisma.UsuarioWhereUniqueInput
+}
+
+export type UsuarioCreateNestedOneWithoutTransferenciasRecebidasInput = {
+  create?: Prisma.XOR<Prisma.UsuarioCreateWithoutTransferenciasRecebidasInput, Prisma.UsuarioUncheckedCreateWithoutTransferenciasRecebidasInput>
+  connectOrCreate?: Prisma.UsuarioCreateOrConnectWithoutTransferenciasRecebidasInput
+  connect?: Prisma.UsuarioWhereUniqueInput
+}
+
+export type UsuarioUpdateOneRequiredWithoutTransferenciasSolicitadasNestedInput = {
+  create?: Prisma.XOR<Prisma.UsuarioCreateWithoutTransferenciasSolicitadasInput, Prisma.UsuarioUncheckedCreateWithoutTransferenciasSolicitadasInput>
+  connectOrCreate?: Prisma.UsuarioCreateOrConnectWithoutTransferenciasSolicitadasInput
+  upsert?: Prisma.UsuarioUpsertWithoutTransferenciasSolicitadasInput
+  connect?: Prisma.UsuarioWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UsuarioUpdateToOneWithWhereWithoutTransferenciasSolicitadasInput, Prisma.UsuarioUpdateWithoutTransferenciasSolicitadasInput>, Prisma.UsuarioUncheckedUpdateWithoutTransferenciasSolicitadasInput>
+}
+
+export type UsuarioUpdateOneWithoutTransferenciasEnviadasNestedInput = {
+  create?: Prisma.XOR<Prisma.UsuarioCreateWithoutTransferenciasEnviadasInput, Prisma.UsuarioUncheckedCreateWithoutTransferenciasEnviadasInput>
+  connectOrCreate?: Prisma.UsuarioCreateOrConnectWithoutTransferenciasEnviadasInput
+  upsert?: Prisma.UsuarioUpsertWithoutTransferenciasEnviadasInput
+  disconnect?: Prisma.UsuarioWhereInput | boolean
+  delete?: Prisma.UsuarioWhereInput | boolean
+  connect?: Prisma.UsuarioWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UsuarioUpdateToOneWithWhereWithoutTransferenciasEnviadasInput, Prisma.UsuarioUpdateWithoutTransferenciasEnviadasInput>, Prisma.UsuarioUncheckedUpdateWithoutTransferenciasEnviadasInput>
+}
+
+export type UsuarioUpdateOneWithoutTransferenciasRecebidasNestedInput = {
+  create?: Prisma.XOR<Prisma.UsuarioCreateWithoutTransferenciasRecebidasInput, Prisma.UsuarioUncheckedCreateWithoutTransferenciasRecebidasInput>
+  connectOrCreate?: Prisma.UsuarioCreateOrConnectWithoutTransferenciasRecebidasInput
+  upsert?: Prisma.UsuarioUpsertWithoutTransferenciasRecebidasInput
+  disconnect?: Prisma.UsuarioWhereInput | boolean
+  delete?: Prisma.UsuarioWhereInput | boolean
+  connect?: Prisma.UsuarioWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UsuarioUpdateToOneWithWhereWithoutTransferenciasRecebidasInput, Prisma.UsuarioUpdateWithoutTransferenciasRecebidasInput>, Prisma.UsuarioUncheckedUpdateWithoutTransferenciasRecebidasInput>
+}
+
 export type UsuarioCreateNestedOneWithoutLogsInput = {
   create?: Prisma.XOR<Prisma.UsuarioCreateWithoutLogsInput, Prisma.UsuarioUncheckedCreateWithoutLogsInput>
   connectOrCreate?: Prisma.UsuarioCreateOrConnectWithoutLogsInput
@@ -616,6 +683,9 @@ export type UsuarioCreateWithoutCargosInput = {
   sessoes?: Prisma.SessaoCreateNestedManyWithoutUsuarioInput
   permissoes?: Prisma.PermissaoUsuarioCreateNestedManyWithoutUsuarioInput
   funcoes?: Prisma.UsuarioFuncaoCreateNestedManyWithoutUsuarioInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaCreateNestedManyWithoutSolicitanteInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaCreateNestedManyWithoutEnviadoPorInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaCreateNestedManyWithoutRecebidoPorInput
 }
 
 export type UsuarioUncheckedCreateWithoutCargosInput = {
@@ -633,6 +703,9 @@ export type UsuarioUncheckedCreateWithoutCargosInput = {
   sessoes?: Prisma.SessaoUncheckedCreateNestedManyWithoutUsuarioInput
   permissoes?: Prisma.PermissaoUsuarioUncheckedCreateNestedManyWithoutUsuarioInput
   funcoes?: Prisma.UsuarioFuncaoUncheckedCreateNestedManyWithoutUsuarioInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutSolicitanteInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutEnviadoPorInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutRecebidoPorInput
 }
 
 export type UsuarioCreateOrConnectWithoutCargosInput = {
@@ -665,6 +738,9 @@ export type UsuarioUpdateWithoutCargosInput = {
   sessoes?: Prisma.SessaoUpdateManyWithoutUsuarioNestedInput
   permissoes?: Prisma.PermissaoUsuarioUpdateManyWithoutUsuarioNestedInput
   funcoes?: Prisma.UsuarioFuncaoUpdateManyWithoutUsuarioNestedInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaUpdateManyWithoutSolicitanteNestedInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaUpdateManyWithoutEnviadoPorNestedInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaUpdateManyWithoutRecebidoPorNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutCargosInput = {
@@ -682,6 +758,9 @@ export type UsuarioUncheckedUpdateWithoutCargosInput = {
   sessoes?: Prisma.SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
   permissoes?: Prisma.PermissaoUsuarioUncheckedUpdateManyWithoutUsuarioNestedInput
   funcoes?: Prisma.UsuarioFuncaoUncheckedUpdateManyWithoutUsuarioNestedInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutSolicitanteNestedInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutEnviadoPorNestedInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutRecebidoPorNestedInput
 }
 
 export type UsuarioCreateWithoutFuncoesInput = {
@@ -698,6 +777,9 @@ export type UsuarioCreateWithoutFuncoesInput = {
   sessoes?: Prisma.SessaoCreateNestedManyWithoutUsuarioInput
   permissoes?: Prisma.PermissaoUsuarioCreateNestedManyWithoutUsuarioInput
   cargos?: Prisma.UsuarioCargoCreateNestedManyWithoutUsuarioInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaCreateNestedManyWithoutSolicitanteInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaCreateNestedManyWithoutEnviadoPorInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaCreateNestedManyWithoutRecebidoPorInput
 }
 
 export type UsuarioUncheckedCreateWithoutFuncoesInput = {
@@ -715,6 +797,9 @@ export type UsuarioUncheckedCreateWithoutFuncoesInput = {
   sessoes?: Prisma.SessaoUncheckedCreateNestedManyWithoutUsuarioInput
   permissoes?: Prisma.PermissaoUsuarioUncheckedCreateNestedManyWithoutUsuarioInput
   cargos?: Prisma.UsuarioCargoUncheckedCreateNestedManyWithoutUsuarioInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutSolicitanteInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutEnviadoPorInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutRecebidoPorInput
 }
 
 export type UsuarioCreateOrConnectWithoutFuncoesInput = {
@@ -747,6 +832,9 @@ export type UsuarioUpdateWithoutFuncoesInput = {
   sessoes?: Prisma.SessaoUpdateManyWithoutUsuarioNestedInput
   permissoes?: Prisma.PermissaoUsuarioUpdateManyWithoutUsuarioNestedInput
   cargos?: Prisma.UsuarioCargoUpdateManyWithoutUsuarioNestedInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaUpdateManyWithoutSolicitanteNestedInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaUpdateManyWithoutEnviadoPorNestedInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaUpdateManyWithoutRecebidoPorNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutFuncoesInput = {
@@ -764,6 +852,9 @@ export type UsuarioUncheckedUpdateWithoutFuncoesInput = {
   sessoes?: Prisma.SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
   permissoes?: Prisma.PermissaoUsuarioUncheckedUpdateManyWithoutUsuarioNestedInput
   cargos?: Prisma.UsuarioCargoUncheckedUpdateManyWithoutUsuarioNestedInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutSolicitanteNestedInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutEnviadoPorNestedInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutRecebidoPorNestedInput
 }
 
 export type UsuarioCreateWithoutMovimentosInput = {
@@ -780,6 +871,9 @@ export type UsuarioCreateWithoutMovimentosInput = {
   permissoes?: Prisma.PermissaoUsuarioCreateNestedManyWithoutUsuarioInput
   cargos?: Prisma.UsuarioCargoCreateNestedManyWithoutUsuarioInput
   funcoes?: Prisma.UsuarioFuncaoCreateNestedManyWithoutUsuarioInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaCreateNestedManyWithoutSolicitanteInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaCreateNestedManyWithoutEnviadoPorInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaCreateNestedManyWithoutRecebidoPorInput
 }
 
 export type UsuarioUncheckedCreateWithoutMovimentosInput = {
@@ -797,6 +891,9 @@ export type UsuarioUncheckedCreateWithoutMovimentosInput = {
   permissoes?: Prisma.PermissaoUsuarioUncheckedCreateNestedManyWithoutUsuarioInput
   cargos?: Prisma.UsuarioCargoUncheckedCreateNestedManyWithoutUsuarioInput
   funcoes?: Prisma.UsuarioFuncaoUncheckedCreateNestedManyWithoutUsuarioInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutSolicitanteInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutEnviadoPorInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutRecebidoPorInput
 }
 
 export type UsuarioCreateOrConnectWithoutMovimentosInput = {
@@ -829,6 +926,9 @@ export type UsuarioUpdateWithoutMovimentosInput = {
   permissoes?: Prisma.PermissaoUsuarioUpdateManyWithoutUsuarioNestedInput
   cargos?: Prisma.UsuarioCargoUpdateManyWithoutUsuarioNestedInput
   funcoes?: Prisma.UsuarioFuncaoUpdateManyWithoutUsuarioNestedInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaUpdateManyWithoutSolicitanteNestedInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaUpdateManyWithoutEnviadoPorNestedInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaUpdateManyWithoutRecebidoPorNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutMovimentosInput = {
@@ -846,6 +946,291 @@ export type UsuarioUncheckedUpdateWithoutMovimentosInput = {
   permissoes?: Prisma.PermissaoUsuarioUncheckedUpdateManyWithoutUsuarioNestedInput
   cargos?: Prisma.UsuarioCargoUncheckedUpdateManyWithoutUsuarioNestedInput
   funcoes?: Prisma.UsuarioFuncaoUncheckedUpdateManyWithoutUsuarioNestedInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutSolicitanteNestedInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutEnviadoPorNestedInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutRecebidoPorNestedInput
+}
+
+export type UsuarioCreateWithoutTransferenciasSolicitadasInput = {
+  nome: string
+  email: string
+  senhaHash: string
+  imagemChave?: string | null
+  tema?: $Enums.TemaUsuario
+  ativo?: boolean
+  criadoEm?: Date | string
+  atualizadoEm?: Date | string
+  movimentos?: Prisma.MovimentoEstoqueCreateNestedManyWithoutUsuarioInput
+  logs?: Prisma.LogSistemaCreateNestedManyWithoutUsuarioInput
+  sessoes?: Prisma.SessaoCreateNestedManyWithoutUsuarioInput
+  permissoes?: Prisma.PermissaoUsuarioCreateNestedManyWithoutUsuarioInput
+  cargos?: Prisma.UsuarioCargoCreateNestedManyWithoutUsuarioInput
+  funcoes?: Prisma.UsuarioFuncaoCreateNestedManyWithoutUsuarioInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaCreateNestedManyWithoutEnviadoPorInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaCreateNestedManyWithoutRecebidoPorInput
+}
+
+export type UsuarioUncheckedCreateWithoutTransferenciasSolicitadasInput = {
+  id?: number
+  nome: string
+  email: string
+  senhaHash: string
+  imagemChave?: string | null
+  tema?: $Enums.TemaUsuario
+  ativo?: boolean
+  criadoEm?: Date | string
+  atualizadoEm?: Date | string
+  movimentos?: Prisma.MovimentoEstoqueUncheckedCreateNestedManyWithoutUsuarioInput
+  logs?: Prisma.LogSistemaUncheckedCreateNestedManyWithoutUsuarioInput
+  sessoes?: Prisma.SessaoUncheckedCreateNestedManyWithoutUsuarioInput
+  permissoes?: Prisma.PermissaoUsuarioUncheckedCreateNestedManyWithoutUsuarioInput
+  cargos?: Prisma.UsuarioCargoUncheckedCreateNestedManyWithoutUsuarioInput
+  funcoes?: Prisma.UsuarioFuncaoUncheckedCreateNestedManyWithoutUsuarioInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutEnviadoPorInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutRecebidoPorInput
+}
+
+export type UsuarioCreateOrConnectWithoutTransferenciasSolicitadasInput = {
+  where: Prisma.UsuarioWhereUniqueInput
+  create: Prisma.XOR<Prisma.UsuarioCreateWithoutTransferenciasSolicitadasInput, Prisma.UsuarioUncheckedCreateWithoutTransferenciasSolicitadasInput>
+}
+
+export type UsuarioCreateWithoutTransferenciasEnviadasInput = {
+  nome: string
+  email: string
+  senhaHash: string
+  imagemChave?: string | null
+  tema?: $Enums.TemaUsuario
+  ativo?: boolean
+  criadoEm?: Date | string
+  atualizadoEm?: Date | string
+  movimentos?: Prisma.MovimentoEstoqueCreateNestedManyWithoutUsuarioInput
+  logs?: Prisma.LogSistemaCreateNestedManyWithoutUsuarioInput
+  sessoes?: Prisma.SessaoCreateNestedManyWithoutUsuarioInput
+  permissoes?: Prisma.PermissaoUsuarioCreateNestedManyWithoutUsuarioInput
+  cargos?: Prisma.UsuarioCargoCreateNestedManyWithoutUsuarioInput
+  funcoes?: Prisma.UsuarioFuncaoCreateNestedManyWithoutUsuarioInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaCreateNestedManyWithoutSolicitanteInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaCreateNestedManyWithoutRecebidoPorInput
+}
+
+export type UsuarioUncheckedCreateWithoutTransferenciasEnviadasInput = {
+  id?: number
+  nome: string
+  email: string
+  senhaHash: string
+  imagemChave?: string | null
+  tema?: $Enums.TemaUsuario
+  ativo?: boolean
+  criadoEm?: Date | string
+  atualizadoEm?: Date | string
+  movimentos?: Prisma.MovimentoEstoqueUncheckedCreateNestedManyWithoutUsuarioInput
+  logs?: Prisma.LogSistemaUncheckedCreateNestedManyWithoutUsuarioInput
+  sessoes?: Prisma.SessaoUncheckedCreateNestedManyWithoutUsuarioInput
+  permissoes?: Prisma.PermissaoUsuarioUncheckedCreateNestedManyWithoutUsuarioInput
+  cargos?: Prisma.UsuarioCargoUncheckedCreateNestedManyWithoutUsuarioInput
+  funcoes?: Prisma.UsuarioFuncaoUncheckedCreateNestedManyWithoutUsuarioInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutSolicitanteInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutRecebidoPorInput
+}
+
+export type UsuarioCreateOrConnectWithoutTransferenciasEnviadasInput = {
+  where: Prisma.UsuarioWhereUniqueInput
+  create: Prisma.XOR<Prisma.UsuarioCreateWithoutTransferenciasEnviadasInput, Prisma.UsuarioUncheckedCreateWithoutTransferenciasEnviadasInput>
+}
+
+export type UsuarioCreateWithoutTransferenciasRecebidasInput = {
+  nome: string
+  email: string
+  senhaHash: string
+  imagemChave?: string | null
+  tema?: $Enums.TemaUsuario
+  ativo?: boolean
+  criadoEm?: Date | string
+  atualizadoEm?: Date | string
+  movimentos?: Prisma.MovimentoEstoqueCreateNestedManyWithoutUsuarioInput
+  logs?: Prisma.LogSistemaCreateNestedManyWithoutUsuarioInput
+  sessoes?: Prisma.SessaoCreateNestedManyWithoutUsuarioInput
+  permissoes?: Prisma.PermissaoUsuarioCreateNestedManyWithoutUsuarioInput
+  cargos?: Prisma.UsuarioCargoCreateNestedManyWithoutUsuarioInput
+  funcoes?: Prisma.UsuarioFuncaoCreateNestedManyWithoutUsuarioInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaCreateNestedManyWithoutSolicitanteInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaCreateNestedManyWithoutEnviadoPorInput
+}
+
+export type UsuarioUncheckedCreateWithoutTransferenciasRecebidasInput = {
+  id?: number
+  nome: string
+  email: string
+  senhaHash: string
+  imagemChave?: string | null
+  tema?: $Enums.TemaUsuario
+  ativo?: boolean
+  criadoEm?: Date | string
+  atualizadoEm?: Date | string
+  movimentos?: Prisma.MovimentoEstoqueUncheckedCreateNestedManyWithoutUsuarioInput
+  logs?: Prisma.LogSistemaUncheckedCreateNestedManyWithoutUsuarioInput
+  sessoes?: Prisma.SessaoUncheckedCreateNestedManyWithoutUsuarioInput
+  permissoes?: Prisma.PermissaoUsuarioUncheckedCreateNestedManyWithoutUsuarioInput
+  cargos?: Prisma.UsuarioCargoUncheckedCreateNestedManyWithoutUsuarioInput
+  funcoes?: Prisma.UsuarioFuncaoUncheckedCreateNestedManyWithoutUsuarioInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutSolicitanteInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutEnviadoPorInput
+}
+
+export type UsuarioCreateOrConnectWithoutTransferenciasRecebidasInput = {
+  where: Prisma.UsuarioWhereUniqueInput
+  create: Prisma.XOR<Prisma.UsuarioCreateWithoutTransferenciasRecebidasInput, Prisma.UsuarioUncheckedCreateWithoutTransferenciasRecebidasInput>
+}
+
+export type UsuarioUpsertWithoutTransferenciasSolicitadasInput = {
+  update: Prisma.XOR<Prisma.UsuarioUpdateWithoutTransferenciasSolicitadasInput, Prisma.UsuarioUncheckedUpdateWithoutTransferenciasSolicitadasInput>
+  create: Prisma.XOR<Prisma.UsuarioCreateWithoutTransferenciasSolicitadasInput, Prisma.UsuarioUncheckedCreateWithoutTransferenciasSolicitadasInput>
+  where?: Prisma.UsuarioWhereInput
+}
+
+export type UsuarioUpdateToOneWithWhereWithoutTransferenciasSolicitadasInput = {
+  where?: Prisma.UsuarioWhereInput
+  data: Prisma.XOR<Prisma.UsuarioUpdateWithoutTransferenciasSolicitadasInput, Prisma.UsuarioUncheckedUpdateWithoutTransferenciasSolicitadasInput>
+}
+
+export type UsuarioUpdateWithoutTransferenciasSolicitadasInput = {
+  nome?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  senhaHash?: Prisma.StringFieldUpdateOperationsInput | string
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tema?: Prisma.EnumTemaUsuarioFieldUpdateOperationsInput | $Enums.TemaUsuario
+  ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  movimentos?: Prisma.MovimentoEstoqueUpdateManyWithoutUsuarioNestedInput
+  logs?: Prisma.LogSistemaUpdateManyWithoutUsuarioNestedInput
+  sessoes?: Prisma.SessaoUpdateManyWithoutUsuarioNestedInput
+  permissoes?: Prisma.PermissaoUsuarioUpdateManyWithoutUsuarioNestedInput
+  cargos?: Prisma.UsuarioCargoUpdateManyWithoutUsuarioNestedInput
+  funcoes?: Prisma.UsuarioFuncaoUpdateManyWithoutUsuarioNestedInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaUpdateManyWithoutEnviadoPorNestedInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaUpdateManyWithoutRecebidoPorNestedInput
+}
+
+export type UsuarioUncheckedUpdateWithoutTransferenciasSolicitadasInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  nome?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  senhaHash?: Prisma.StringFieldUpdateOperationsInput | string
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tema?: Prisma.EnumTemaUsuarioFieldUpdateOperationsInput | $Enums.TemaUsuario
+  ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  movimentos?: Prisma.MovimentoEstoqueUncheckedUpdateManyWithoutUsuarioNestedInput
+  logs?: Prisma.LogSistemaUncheckedUpdateManyWithoutUsuarioNestedInput
+  sessoes?: Prisma.SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
+  permissoes?: Prisma.PermissaoUsuarioUncheckedUpdateManyWithoutUsuarioNestedInput
+  cargos?: Prisma.UsuarioCargoUncheckedUpdateManyWithoutUsuarioNestedInput
+  funcoes?: Prisma.UsuarioFuncaoUncheckedUpdateManyWithoutUsuarioNestedInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutEnviadoPorNestedInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutRecebidoPorNestedInput
+}
+
+export type UsuarioUpsertWithoutTransferenciasEnviadasInput = {
+  update: Prisma.XOR<Prisma.UsuarioUpdateWithoutTransferenciasEnviadasInput, Prisma.UsuarioUncheckedUpdateWithoutTransferenciasEnviadasInput>
+  create: Prisma.XOR<Prisma.UsuarioCreateWithoutTransferenciasEnviadasInput, Prisma.UsuarioUncheckedCreateWithoutTransferenciasEnviadasInput>
+  where?: Prisma.UsuarioWhereInput
+}
+
+export type UsuarioUpdateToOneWithWhereWithoutTransferenciasEnviadasInput = {
+  where?: Prisma.UsuarioWhereInput
+  data: Prisma.XOR<Prisma.UsuarioUpdateWithoutTransferenciasEnviadasInput, Prisma.UsuarioUncheckedUpdateWithoutTransferenciasEnviadasInput>
+}
+
+export type UsuarioUpdateWithoutTransferenciasEnviadasInput = {
+  nome?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  senhaHash?: Prisma.StringFieldUpdateOperationsInput | string
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tema?: Prisma.EnumTemaUsuarioFieldUpdateOperationsInput | $Enums.TemaUsuario
+  ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  movimentos?: Prisma.MovimentoEstoqueUpdateManyWithoutUsuarioNestedInput
+  logs?: Prisma.LogSistemaUpdateManyWithoutUsuarioNestedInput
+  sessoes?: Prisma.SessaoUpdateManyWithoutUsuarioNestedInput
+  permissoes?: Prisma.PermissaoUsuarioUpdateManyWithoutUsuarioNestedInput
+  cargos?: Prisma.UsuarioCargoUpdateManyWithoutUsuarioNestedInput
+  funcoes?: Prisma.UsuarioFuncaoUpdateManyWithoutUsuarioNestedInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaUpdateManyWithoutSolicitanteNestedInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaUpdateManyWithoutRecebidoPorNestedInput
+}
+
+export type UsuarioUncheckedUpdateWithoutTransferenciasEnviadasInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  nome?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  senhaHash?: Prisma.StringFieldUpdateOperationsInput | string
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tema?: Prisma.EnumTemaUsuarioFieldUpdateOperationsInput | $Enums.TemaUsuario
+  ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  movimentos?: Prisma.MovimentoEstoqueUncheckedUpdateManyWithoutUsuarioNestedInput
+  logs?: Prisma.LogSistemaUncheckedUpdateManyWithoutUsuarioNestedInput
+  sessoes?: Prisma.SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
+  permissoes?: Prisma.PermissaoUsuarioUncheckedUpdateManyWithoutUsuarioNestedInput
+  cargos?: Prisma.UsuarioCargoUncheckedUpdateManyWithoutUsuarioNestedInput
+  funcoes?: Prisma.UsuarioFuncaoUncheckedUpdateManyWithoutUsuarioNestedInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutSolicitanteNestedInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutRecebidoPorNestedInput
+}
+
+export type UsuarioUpsertWithoutTransferenciasRecebidasInput = {
+  update: Prisma.XOR<Prisma.UsuarioUpdateWithoutTransferenciasRecebidasInput, Prisma.UsuarioUncheckedUpdateWithoutTransferenciasRecebidasInput>
+  create: Prisma.XOR<Prisma.UsuarioCreateWithoutTransferenciasRecebidasInput, Prisma.UsuarioUncheckedCreateWithoutTransferenciasRecebidasInput>
+  where?: Prisma.UsuarioWhereInput
+}
+
+export type UsuarioUpdateToOneWithWhereWithoutTransferenciasRecebidasInput = {
+  where?: Prisma.UsuarioWhereInput
+  data: Prisma.XOR<Prisma.UsuarioUpdateWithoutTransferenciasRecebidasInput, Prisma.UsuarioUncheckedUpdateWithoutTransferenciasRecebidasInput>
+}
+
+export type UsuarioUpdateWithoutTransferenciasRecebidasInput = {
+  nome?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  senhaHash?: Prisma.StringFieldUpdateOperationsInput | string
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tema?: Prisma.EnumTemaUsuarioFieldUpdateOperationsInput | $Enums.TemaUsuario
+  ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  movimentos?: Prisma.MovimentoEstoqueUpdateManyWithoutUsuarioNestedInput
+  logs?: Prisma.LogSistemaUpdateManyWithoutUsuarioNestedInput
+  sessoes?: Prisma.SessaoUpdateManyWithoutUsuarioNestedInput
+  permissoes?: Prisma.PermissaoUsuarioUpdateManyWithoutUsuarioNestedInput
+  cargos?: Prisma.UsuarioCargoUpdateManyWithoutUsuarioNestedInput
+  funcoes?: Prisma.UsuarioFuncaoUpdateManyWithoutUsuarioNestedInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaUpdateManyWithoutSolicitanteNestedInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaUpdateManyWithoutEnviadoPorNestedInput
+}
+
+export type UsuarioUncheckedUpdateWithoutTransferenciasRecebidasInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  nome?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  senhaHash?: Prisma.StringFieldUpdateOperationsInput | string
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tema?: Prisma.EnumTemaUsuarioFieldUpdateOperationsInput | $Enums.TemaUsuario
+  ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  movimentos?: Prisma.MovimentoEstoqueUncheckedUpdateManyWithoutUsuarioNestedInput
+  logs?: Prisma.LogSistemaUncheckedUpdateManyWithoutUsuarioNestedInput
+  sessoes?: Prisma.SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
+  permissoes?: Prisma.PermissaoUsuarioUncheckedUpdateManyWithoutUsuarioNestedInput
+  cargos?: Prisma.UsuarioCargoUncheckedUpdateManyWithoutUsuarioNestedInput
+  funcoes?: Prisma.UsuarioFuncaoUncheckedUpdateManyWithoutUsuarioNestedInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutSolicitanteNestedInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutEnviadoPorNestedInput
 }
 
 export type UsuarioCreateWithoutLogsInput = {
@@ -862,6 +1247,9 @@ export type UsuarioCreateWithoutLogsInput = {
   permissoes?: Prisma.PermissaoUsuarioCreateNestedManyWithoutUsuarioInput
   cargos?: Prisma.UsuarioCargoCreateNestedManyWithoutUsuarioInput
   funcoes?: Prisma.UsuarioFuncaoCreateNestedManyWithoutUsuarioInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaCreateNestedManyWithoutSolicitanteInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaCreateNestedManyWithoutEnviadoPorInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaCreateNestedManyWithoutRecebidoPorInput
 }
 
 export type UsuarioUncheckedCreateWithoutLogsInput = {
@@ -879,6 +1267,9 @@ export type UsuarioUncheckedCreateWithoutLogsInput = {
   permissoes?: Prisma.PermissaoUsuarioUncheckedCreateNestedManyWithoutUsuarioInput
   cargos?: Prisma.UsuarioCargoUncheckedCreateNestedManyWithoutUsuarioInput
   funcoes?: Prisma.UsuarioFuncaoUncheckedCreateNestedManyWithoutUsuarioInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutSolicitanteInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutEnviadoPorInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutRecebidoPorInput
 }
 
 export type UsuarioCreateOrConnectWithoutLogsInput = {
@@ -911,6 +1302,9 @@ export type UsuarioUpdateWithoutLogsInput = {
   permissoes?: Prisma.PermissaoUsuarioUpdateManyWithoutUsuarioNestedInput
   cargos?: Prisma.UsuarioCargoUpdateManyWithoutUsuarioNestedInput
   funcoes?: Prisma.UsuarioFuncaoUpdateManyWithoutUsuarioNestedInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaUpdateManyWithoutSolicitanteNestedInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaUpdateManyWithoutEnviadoPorNestedInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaUpdateManyWithoutRecebidoPorNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutLogsInput = {
@@ -928,6 +1322,9 @@ export type UsuarioUncheckedUpdateWithoutLogsInput = {
   permissoes?: Prisma.PermissaoUsuarioUncheckedUpdateManyWithoutUsuarioNestedInput
   cargos?: Prisma.UsuarioCargoUncheckedUpdateManyWithoutUsuarioNestedInput
   funcoes?: Prisma.UsuarioFuncaoUncheckedUpdateManyWithoutUsuarioNestedInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutSolicitanteNestedInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutEnviadoPorNestedInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutRecebidoPorNestedInput
 }
 
 export type UsuarioCreateWithoutPermissoesInput = {
@@ -944,6 +1341,9 @@ export type UsuarioCreateWithoutPermissoesInput = {
   sessoes?: Prisma.SessaoCreateNestedManyWithoutUsuarioInput
   cargos?: Prisma.UsuarioCargoCreateNestedManyWithoutUsuarioInput
   funcoes?: Prisma.UsuarioFuncaoCreateNestedManyWithoutUsuarioInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaCreateNestedManyWithoutSolicitanteInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaCreateNestedManyWithoutEnviadoPorInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaCreateNestedManyWithoutRecebidoPorInput
 }
 
 export type UsuarioUncheckedCreateWithoutPermissoesInput = {
@@ -961,6 +1361,9 @@ export type UsuarioUncheckedCreateWithoutPermissoesInput = {
   sessoes?: Prisma.SessaoUncheckedCreateNestedManyWithoutUsuarioInput
   cargos?: Prisma.UsuarioCargoUncheckedCreateNestedManyWithoutUsuarioInput
   funcoes?: Prisma.UsuarioFuncaoUncheckedCreateNestedManyWithoutUsuarioInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutSolicitanteInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutEnviadoPorInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutRecebidoPorInput
 }
 
 export type UsuarioCreateOrConnectWithoutPermissoesInput = {
@@ -993,6 +1396,9 @@ export type UsuarioUpdateWithoutPermissoesInput = {
   sessoes?: Prisma.SessaoUpdateManyWithoutUsuarioNestedInput
   cargos?: Prisma.UsuarioCargoUpdateManyWithoutUsuarioNestedInput
   funcoes?: Prisma.UsuarioFuncaoUpdateManyWithoutUsuarioNestedInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaUpdateManyWithoutSolicitanteNestedInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaUpdateManyWithoutEnviadoPorNestedInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaUpdateManyWithoutRecebidoPorNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutPermissoesInput = {
@@ -1010,6 +1416,9 @@ export type UsuarioUncheckedUpdateWithoutPermissoesInput = {
   sessoes?: Prisma.SessaoUncheckedUpdateManyWithoutUsuarioNestedInput
   cargos?: Prisma.UsuarioCargoUncheckedUpdateManyWithoutUsuarioNestedInput
   funcoes?: Prisma.UsuarioFuncaoUncheckedUpdateManyWithoutUsuarioNestedInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutSolicitanteNestedInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutEnviadoPorNestedInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutRecebidoPorNestedInput
 }
 
 export type UsuarioCreateWithoutSessoesInput = {
@@ -1026,6 +1435,9 @@ export type UsuarioCreateWithoutSessoesInput = {
   permissoes?: Prisma.PermissaoUsuarioCreateNestedManyWithoutUsuarioInput
   cargos?: Prisma.UsuarioCargoCreateNestedManyWithoutUsuarioInput
   funcoes?: Prisma.UsuarioFuncaoCreateNestedManyWithoutUsuarioInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaCreateNestedManyWithoutSolicitanteInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaCreateNestedManyWithoutEnviadoPorInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaCreateNestedManyWithoutRecebidoPorInput
 }
 
 export type UsuarioUncheckedCreateWithoutSessoesInput = {
@@ -1043,6 +1455,9 @@ export type UsuarioUncheckedCreateWithoutSessoesInput = {
   permissoes?: Prisma.PermissaoUsuarioUncheckedCreateNestedManyWithoutUsuarioInput
   cargos?: Prisma.UsuarioCargoUncheckedCreateNestedManyWithoutUsuarioInput
   funcoes?: Prisma.UsuarioFuncaoUncheckedCreateNestedManyWithoutUsuarioInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutSolicitanteInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutEnviadoPorInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaUncheckedCreateNestedManyWithoutRecebidoPorInput
 }
 
 export type UsuarioCreateOrConnectWithoutSessoesInput = {
@@ -1075,6 +1490,9 @@ export type UsuarioUpdateWithoutSessoesInput = {
   permissoes?: Prisma.PermissaoUsuarioUpdateManyWithoutUsuarioNestedInput
   cargos?: Prisma.UsuarioCargoUpdateManyWithoutUsuarioNestedInput
   funcoes?: Prisma.UsuarioFuncaoUpdateManyWithoutUsuarioNestedInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaUpdateManyWithoutSolicitanteNestedInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaUpdateManyWithoutEnviadoPorNestedInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaUpdateManyWithoutRecebidoPorNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutSessoesInput = {
@@ -1092,6 +1510,9 @@ export type UsuarioUncheckedUpdateWithoutSessoesInput = {
   permissoes?: Prisma.PermissaoUsuarioUncheckedUpdateManyWithoutUsuarioNestedInput
   cargos?: Prisma.UsuarioCargoUncheckedUpdateManyWithoutUsuarioNestedInput
   funcoes?: Prisma.UsuarioFuncaoUncheckedUpdateManyWithoutUsuarioNestedInput
+  transferenciasSolicitadas?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutSolicitanteNestedInput
+  transferenciasEnviadas?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutEnviadoPorNestedInput
+  transferenciasRecebidas?: Prisma.PedidoTransferenciaUncheckedUpdateManyWithoutRecebidoPorNestedInput
 }
 
 
@@ -1106,6 +1527,9 @@ export type UsuarioCountOutputType = {
   permissoes: number
   cargos: number
   funcoes: number
+  transferenciasSolicitadas: number
+  transferenciasEnviadas: number
+  transferenciasRecebidas: number
 }
 
 export type UsuarioCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1115,6 +1539,9 @@ export type UsuarioCountOutputTypeSelect<ExtArgs extends runtime.Types.Extension
   permissoes?: boolean | UsuarioCountOutputTypeCountPermissoesArgs
   cargos?: boolean | UsuarioCountOutputTypeCountCargosArgs
   funcoes?: boolean | UsuarioCountOutputTypeCountFuncoesArgs
+  transferenciasSolicitadas?: boolean | UsuarioCountOutputTypeCountTransferenciasSolicitadasArgs
+  transferenciasEnviadas?: boolean | UsuarioCountOutputTypeCountTransferenciasEnviadasArgs
+  transferenciasRecebidas?: boolean | UsuarioCountOutputTypeCountTransferenciasRecebidasArgs
 }
 
 /**
@@ -1169,6 +1596,27 @@ export type UsuarioCountOutputTypeCountFuncoesArgs<ExtArgs extends runtime.Types
   where?: Prisma.UsuarioFuncaoWhereInput
 }
 
+/**
+ * UsuarioCountOutputType without action
+ */
+export type UsuarioCountOutputTypeCountTransferenciasSolicitadasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PedidoTransferenciaWhereInput
+}
+
+/**
+ * UsuarioCountOutputType without action
+ */
+export type UsuarioCountOutputTypeCountTransferenciasEnviadasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PedidoTransferenciaWhereInput
+}
+
+/**
+ * UsuarioCountOutputType without action
+ */
+export type UsuarioCountOutputTypeCountTransferenciasRecebidasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PedidoTransferenciaWhereInput
+}
+
 
 export type UsuarioSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1186,6 +1634,9 @@ export type UsuarioSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   permissoes?: boolean | Prisma.Usuario$permissoesArgs<ExtArgs>
   cargos?: boolean | Prisma.Usuario$cargosArgs<ExtArgs>
   funcoes?: boolean | Prisma.Usuario$funcoesArgs<ExtArgs>
+  transferenciasSolicitadas?: boolean | Prisma.Usuario$transferenciasSolicitadasArgs<ExtArgs>
+  transferenciasEnviadas?: boolean | Prisma.Usuario$transferenciasEnviadasArgs<ExtArgs>
+  transferenciasRecebidas?: boolean | Prisma.Usuario$transferenciasRecebidasArgs<ExtArgs>
   _count?: boolean | Prisma.UsuarioCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["usuario"]>
 
@@ -1233,6 +1684,9 @@ export type UsuarioInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   permissoes?: boolean | Prisma.Usuario$permissoesArgs<ExtArgs>
   cargos?: boolean | Prisma.Usuario$cargosArgs<ExtArgs>
   funcoes?: boolean | Prisma.Usuario$funcoesArgs<ExtArgs>
+  transferenciasSolicitadas?: boolean | Prisma.Usuario$transferenciasSolicitadasArgs<ExtArgs>
+  transferenciasEnviadas?: boolean | Prisma.Usuario$transferenciasEnviadasArgs<ExtArgs>
+  transferenciasRecebidas?: boolean | Prisma.Usuario$transferenciasRecebidasArgs<ExtArgs>
   _count?: boolean | Prisma.UsuarioCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UsuarioIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1247,6 +1701,9 @@ export type $UsuarioPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     permissoes: Prisma.$PermissaoUsuarioPayload<ExtArgs>[]
     cargos: Prisma.$UsuarioCargoPayload<ExtArgs>[]
     funcoes: Prisma.$UsuarioFuncaoPayload<ExtArgs>[]
+    transferenciasSolicitadas: Prisma.$PedidoTransferenciaPayload<ExtArgs>[]
+    transferenciasEnviadas: Prisma.$PedidoTransferenciaPayload<ExtArgs>[]
+    transferenciasRecebidas: Prisma.$PedidoTransferenciaPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1658,6 +2115,9 @@ export interface Prisma__UsuarioClient<T, Null = never, ExtArgs extends runtime.
   permissoes<T extends Prisma.Usuario$permissoesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$permissoesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PermissaoUsuarioPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   cargos<T extends Prisma.Usuario$cargosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$cargosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UsuarioCargoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   funcoes<T extends Prisma.Usuario$funcoesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$funcoesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UsuarioFuncaoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  transferenciasSolicitadas<T extends Prisma.Usuario$transferenciasSolicitadasArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$transferenciasSolicitadasArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PedidoTransferenciaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  transferenciasEnviadas<T extends Prisma.Usuario$transferenciasEnviadasArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$transferenciasEnviadasArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PedidoTransferenciaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  transferenciasRecebidas<T extends Prisma.Usuario$transferenciasRecebidasArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$transferenciasRecebidasArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PedidoTransferenciaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2230,6 +2690,78 @@ export type Usuario$funcoesArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   distinct?: Prisma.UsuarioFuncaoScalarFieldEnum | Prisma.UsuarioFuncaoScalarFieldEnum[]
+}
+
+/**
+ * Usuario.transferenciasSolicitadas
+ */
+export type Usuario$transferenciasSolicitadasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PedidoTransferencia
+   */
+  select?: Prisma.PedidoTransferenciaSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PedidoTransferencia
+   */
+  omit?: Prisma.PedidoTransferenciaOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PedidoTransferenciaInclude<ExtArgs> | null
+  where?: Prisma.PedidoTransferenciaWhereInput
+  orderBy?: Prisma.PedidoTransferenciaOrderByWithRelationInput | Prisma.PedidoTransferenciaOrderByWithRelationInput[]
+  cursor?: Prisma.PedidoTransferenciaWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PedidoTransferenciaScalarFieldEnum | Prisma.PedidoTransferenciaScalarFieldEnum[]
+}
+
+/**
+ * Usuario.transferenciasEnviadas
+ */
+export type Usuario$transferenciasEnviadasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PedidoTransferencia
+   */
+  select?: Prisma.PedidoTransferenciaSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PedidoTransferencia
+   */
+  omit?: Prisma.PedidoTransferenciaOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PedidoTransferenciaInclude<ExtArgs> | null
+  where?: Prisma.PedidoTransferenciaWhereInput
+  orderBy?: Prisma.PedidoTransferenciaOrderByWithRelationInput | Prisma.PedidoTransferenciaOrderByWithRelationInput[]
+  cursor?: Prisma.PedidoTransferenciaWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PedidoTransferenciaScalarFieldEnum | Prisma.PedidoTransferenciaScalarFieldEnum[]
+}
+
+/**
+ * Usuario.transferenciasRecebidas
+ */
+export type Usuario$transferenciasRecebidasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PedidoTransferencia
+   */
+  select?: Prisma.PedidoTransferenciaSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PedidoTransferencia
+   */
+  omit?: Prisma.PedidoTransferenciaOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PedidoTransferenciaInclude<ExtArgs> | null
+  where?: Prisma.PedidoTransferenciaWhereInput
+  orderBy?: Prisma.PedidoTransferenciaOrderByWithRelationInput | Prisma.PedidoTransferenciaOrderByWithRelationInput[]
+  cursor?: Prisma.PedidoTransferenciaWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PedidoTransferenciaScalarFieldEnum | Prisma.PedidoTransferenciaScalarFieldEnum[]
 }
 
 /**

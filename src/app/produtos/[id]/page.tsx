@@ -97,6 +97,7 @@ export default async function EditarProdutoPage({
     historico,
     fornecedoresAtivos,
     totalMovimentosProduto,
+    totalItensTransferencia,
   ] =
     await Promise.all([
       prisma.produto.findUnique({
@@ -125,6 +126,7 @@ export default async function EditarProdutoPage({
         orderBy: { nome: "asc" },
       }),
       prisma.movimentoEstoque.count({ where: { produtoId: numero } }),
+      prisma.itemTransferencia.count({ where: { produtoId: numero } }),
     ]);
 
   if (!produto) notFound();
@@ -226,7 +228,8 @@ export default async function EditarProdutoPage({
     vinculos.length === 0 &&
     historico.length === 0 &&
     produto.estoques.length === 0 &&
-    totalMovimentosProduto === 0;
+    totalMovimentosProduto === 0 &&
+    totalItensTransferencia === 0;
 
   return (
     <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-5">
@@ -499,6 +502,7 @@ export default async function EditarProdutoPage({
                 dataHora: movimento.dataHora,
                 quantidade: movimento.quantidade.toString(),
                 comentario: movimento.comentario,
+                transferenciaId: movimento.transferenciaId,
                 usuarioNome: movimento.usuario?.nome ?? "Sistema",
               }))}
               pagina={paginaHistorico}
@@ -507,6 +511,9 @@ export default async function EditarProdutoPage({
               totalPaginas={totalPaginasHistorico}
               ordenacao={ordenacaoHistorico}
               direcao={direcaoHistorico}
+              podeConsultarTransferencias={atual.permissoes.has(
+                "transferencias.pedido.consultar"
+              )}
             />
           </div>
         }

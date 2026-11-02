@@ -13,6 +13,9 @@
 - Valores em dinheiro: **nunca usar `float`**. Usar `Decimal` (ou inteiro em centavos).
 - Interface em português do Brasil (pt-BR), moeda em R$, datas no formato dd/mm/aaaa, fuso `America/Sao_Paulo`.
 - Interface **responsiva e pensada primeiro para celular** (o estoquista usa em pé, no depósito).
+- Em toda tabela de dados, os cabeçalhos das colunas de dados devem permitir alternar entre ordenação ascendente e descendente. A coluna “Ações”, quando existir, não é ordenável.
+- **Atualização de listas sem recarregar a página:** buscas e filtros de listas — incluindo checkboxes e listas suspensas — devem atualizar os resultados automaticamente por navegação interna do Next.js, sem recarga completa do documento. Durante a atualização, exiba “Carregando...” com indicador visual na área dos resultados, mantendo o restante da tela utilizável. Preserve os demais filtros, a ordenação e o tamanho de página; ao mudar um filtro que altera o conjunto de resultados, volte à primeira página. Aplique este padrão progressivamente aos módulos existentes e obrigatoriamente a todos os novos módulos e listas.
+- **Accordion de busca e filtros:** em toda tela com campos de pesquisa ou filtro, agrupe esses controles em um accordion nativo e acessível com o título “Busca e Filtros”, fechado por padrão. Ao abrir, exiba todos os campos relacionados e um botão “Limpar buscas e filtros”, que restaura os filtros aos valores padrão e volta à primeira página, preservando a ordenação e a quantidade de resultados por página. Essa convenção vale para telas existentes ao serem atualizadas e para todas as novas telas.
 - Dúvida sobre uma regra? Veja a seção 11 (decisões pendentes) e pergunte ao usuário.
 
 ## 1. Contexto
@@ -34,13 +37,13 @@ O catálogo de permissões é organizado em **módulo → funcionalidade → ope
 
 Exemplos de permissões já existentes: `produtos.produto.consultar`, `produtos.produto.criar`, `produtos.produto.editar`, `produtos.produto.desativar`, `estoque.movimento.registrar`, `locais.local.*`, `usuarios.usuario.*` e `permissoes.permissao.*`.
 
-- **RN-27. Gestão de usuários:** na tela `/usuarios` são **cadastrados, alterados, desativados/reativados e excluídos** os usuários (nome, e-mail e senha). O usuário **só pode ser excluído quando não tem nenhuma movimentação nem registro no log**; se tiver, a exclusão é bloqueada e ele só pode ser desativado, para não perder o histórico. O **e-mail é único**. A **senha é guardada como hash** (nunca em texto puro) e nunca aparece nas telas nem no log do sistema. Na edição, o campo de senha em branco **mantém a senha atual**. A lista possui busca por nome/e-mail, filtro para usuários inativos, visualização em cards ou tabela, ordenação e paginação de 10, 25, 50, 75 ou 100 registros. Pode ser agrupada por cargo ou função, nunca pelos dois ao mesmo tempo.
+- **RN-27. Gestão de usuários:** na tela `/usuarios` são **cadastrados, alterados, desativados/reativados e excluídos** os usuários (nome, e-mail e senha). O usuário **só pode ser excluído quando não tem movimentações, registros no log nem vínculos com pedidos de transferência**; se tiver, a exclusão é bloqueada e ele só pode ser desativado, para preservar o histórico. O **e-mail é único**. A **senha é guardada como hash** (nunca em texto puro) e nunca aparece nas telas nem no log do sistema. Na edição, o campo de senha em branco **mantém a senha atual**. A lista possui busca por nome/e-mail, filtro para usuários inativos, visualização em cards ou tabela, ordenação e paginação de 10, 25, 50, 75 ou 100 registros. Pode ser agrupada por cargo ou função, nunca pelos dois ao mesmo tempo.
 - **RN-28. Login e sessão:** o acesso ao sistema exige **e-mail e senha**. A sessão fica guardada no banco (tabela `sessao`) e é identificada por um token aleatório em cookie **httpOnly**, com validade de **7 dias**. Usuário **inativo não entra**. O botão **Sair** encerra a sessão.
 - **RN-29. Permissões por usuário:** a tela `/permissoes` (ver seção 2.1) mostra uma **matriz expansível** por módulo, funcionalidade e operação, com caixas de seleção para **conceder (marcar)** e **revogar (desmarcar)** as permissões de um usuário escolhido na busca do topo.
 - **RN-30. Autorização no servidor:** toda página e toda operação confere a permissão **no servidor** (funções `exigirPermissao` e `verificarPermissao` em `src/lib/autorizacao.ts`). Esconder um botão na tela **não** é suficiente: tentar executar a ação sem permissão é bloqueado no backend.
 - **RN-31. Permissões nascem negadas:** uma permissão nova (recem-registrada no catálogo) **não é concedida a ninguém** até que um administrador marque a caixa e salve.
 - **RN-32. Trava contra auto-bloqueio:** ninguém pode remover de si mesmo a permissão `permissoes.permissao.conceder`, para não trancar todos para fora da administração.
-- **RN-33. Cargos informativos:** um usuário pode ter vários cargos e um cargo pode pertencer a vários usuários. Cargos não concedem permissões, exceto quando uma regra de negócio declarar explicitamente uma exceção; os acessos continuam individuais nos demais casos. O módulo `/cargos` permite consultar, cadastrar, renomear e excluir cargos. A lista é uma tabela pesquisável e ordenável pelo cabeçalho, começa por nome ascendente, usa 10 itens por página por padrão e oferece 10, 25, 50, 75 ou 100 itens. Os 31 cargos iniciais são cadastrados pelo seed e apresentados em ordem alfabética. Um cargo só pode ser excluído quando não estiver associado a nenhum usuário.
+- **RN-33. Cargos informativos:** um usuário pode ter vários cargos e um cargo pode pertencer a vários usuários. Cargos não concedem permissões, exceto quando uma regra de negócio declarar explicitamente uma exceção; os acessos continuam individuais nos demais casos. O módulo `/cargos` permite consultar, cadastrar, renomear e excluir cargos. A lista é uma tabela pesquisável e ordenável pelo cabeçalho, começa por nome ascendente, usa 10 itens por página por padrão e oferece 10, 25, 50, 75 ou 100 itens. Os 31 cargos iniciais são cadastrados pelo seed e apresentados em ordem alfabética. O cargo "Administrador" é protegido e não pode ser editado nem excluído. Os demais cargos só podem ser excluídos quando não estiverem associados a nenhum usuário.
 - **RN-34. Funções informativas:** um usuário pode ter várias funções e uma função pode estar associada a vários usuários. Funções não concedem permissões; os acessos continuam individuais. O módulo `/funcoes` permite consultar, cadastrar, renomear e excluir funções. A lista é uma tabela pesquisável e ordenável pelo cabeçalho, começa por nome ascendente, usa 10 itens por página por padrão e oferece 10, 25, 50, 75 ou 100 itens. As 40 funções iniciais são cadastradas pelo seed e armazenadas em ordem alfabética. Uma função só pode ser excluída quando não estiver associada a nenhum usuário.
 - **RN-35. Dashboard:** a página `/dashboard` é o destino inicial após o login e fica disponível no menu para qualquer usuário autenticado. Cada indicador e link só exibe dados de módulos para os quais o usuário possui permissão de consulta; a visão geral não concede acesso adicional.
 
@@ -64,7 +67,7 @@ Começam cadastrados os 3 locais abaixo, criados pelo script `scripts/seed.ts`:
 - Loja Mesquita
 - Galpão
 
-- **RN-25. Locais gerenciáveis:** o comprador pode **cadastrar, renomear e excluir** locais de estoque na tela `/locais`. Um local só pode ser excluído quando **não tem estoque nem movimentações**; se tiver, a exclusão é bloqueada para não perder o histórico. Renomear um local não altera as movimentações já gravadas.
+- **RN-25. Locais gerenciáveis:** o comprador pode **cadastrar, renomear e excluir** locais de estoque na tela `/locais`. Um local só pode ser excluído quando **não tem estoque, movimentações nem pedidos de transferência associados**; se tiver, a exclusão é bloqueada para preservar o histórico. Renomear um local não altera as movimentações já gravadas.
 
 ## 4. Regras de estoque
 
@@ -126,7 +129,7 @@ A transferência permite que um usuário solicite produtos de um local de estoqu
 | Estado | Ação e dados registrados | Próximo estado |
 |---|---|---|
 | **Pendente** | O solicitante informa origem, destino, produtos e quantidades solicitadas. O sistema registra solicitante e data/hora da solicitação. A solicitação não altera nem reserva o estoque. | **Em trânsito**, quando um usuário com permissão de envio registra as quantidades enviadas. |
-| **Em trânsito** | O sistema registra quem enviou e quando. As quantidades solicitadas e enviadas ficam bloqueadas para edição. As quantidades enviadas são reservadas no local de origem para não ficarem disponíveis em outro envio. | **Concluído**, quando um usuário com permissão de recebimento confirma as quantidades recebidas. |
+| **Em trânsito** | O sistema registra quem enviou e quando. Se a quantidade enviada for diferente da solicitada, o remetente deve informar a justificativa nesse momento. As quantidades solicitadas e enviadas ficam bloqueadas para edição. As quantidades enviadas são reservadas no local de origem para não ficarem disponíveis em outro envio. | **Concluído**, quando um usuário com permissão de recebimento confirma as quantidades recebidas. |
 | **Concluído** | O sistema registra quem recebeu e quando, as quantidades recebidas e as justificativas das divergências. Registra as movimentações de saída na origem e entrada no destino. | Estado final; somente consulta. |
 
 **Regras de autorização e edição:**
@@ -141,13 +144,14 @@ A transferência permite que um usuário solicite produtos de um local de estoqu
 - Ao enviar, o sistema valida que a quantidade a enviar está disponível na origem, descontando as quantidades já reservadas por outras transferências **Em trânsito**. O envio deve gravar as quantidades enviadas, mudar o estado e reservar o saldo de forma atômica, para que duas solicitações concorrentes não reservem a mesma quantidade.
 - A reserva não altera o saldo físico registrado no estoque. Enquanto a transferência estiver **Em trânsito**, a quantidade reservada não pode ser usada para outra transferência.
 - No recebimento, a transação baixa da origem a quantidade **enviada** e credita no destino a quantidade **efetivamente recebida**. A reserva correspondente é liberada na conclusão.
-- A quantidade recebida pode ser diferente da enviada, inclusive parcial. Quando houver divergência, é obrigatório informar uma justificativa. A divergência fica registrada no item da transferência e no log; as movimentações refletem os valores enviados e recebidos reais informados, sem ajustar silenciosamente as quantidades.
+- A quantidade recebida pode ser diferente da enviada, inclusive parcial ou maior que a enviada. Quando houver divergência, o recebimento exige justificativa, registrada no item e no log. A quantidade efetivamente recebida é creditada no destino; a quantidade enviada continua sendo baixada da origem.
 - A conclusão, as movimentações da origem e do destino, a liberação da reserva e o log devem ocorrer na mesma transação. Não pode haver conclusão parcial nem saldo negativo na origem.
 
 **Dados de auditoria:**
 
 - Registrar os identificadores dos usuários solicitante, remetente e recebedor, além da data e hora de cada etapa. Exibir os nomes associados aos identificadores nas telas e preservar esses vínculos para o histórico.
-- Cada item guarda produto, quantidade solicitada, quantidade enviada e quantidade recebida. A justificativa de divergência é registrada no item quando enviado e recebido forem diferentes.
+- Cada item guarda produto, quantidade solicitada, quantidade enviada e quantidade recebida. Quando a quantidade enviada divergir da solicitada, a justificativa obrigatória é registrada no item durante o envio. Quando a quantidade recebida divergir da enviada, inclusive quando for maior, a justificativa obrigatória é registrada no item durante o recebimento.
+- A quantidade pode ser informada em uma embalagem cadastrada para o produto ou na unidade-base. O sistema converte cada etapa para a unidade-base antes das validações e atualizações de estoque. Também preserva a quantidade digitada, a unidade escolhida e o fator de conversão daquela etapa, para que alterações futuras no cadastro de embalagens não modifiquem o histórico.
 - As movimentações geradas na conclusão devem manter vínculo com a transferência que as originou.
 
 ## 8. Regras do catálogo de produtos
@@ -176,9 +180,9 @@ A transferência permite que um usuário solicite produtos de um local de estoqu
 | `pedido_compra` | 3 | comprador, fornecedor, data_compra, previsao_entrega, status, observacao |
 | `item_pedido` | 3 | pedido, produto, quantidade, preco_unitario, quantidade_recebida |
 | `pedido_transferencia` | 4 | origem, destino, solicitante, criado_em, status, enviado_por, enviado_em, recebido_por, recebido_em |
-| `item_transferencia` | 4 | transferencia, produto, quantidade_solicitada, quantidade_enviada, quantidade_recebida, justificativa_divergencia (opcional) |
+| `item_transferencia` | 4 | transferencia, produto, quantidade_solicitada/quantidade_enviada/quantidade_recebida na unidade-base; quantidade_*_informada, unidade_* e fator_* preservam os valores escolhidos em cada etapa; justificativa_envio e justificativa_divergencia |
 
-> As tabelas `usuario`, `local_estoque`, `produto`, `fornecedor`, `produto_fornecedor`, `estoque`, `movimento_estoque`, `log_sistema`, `permissao`, `permissao_usuario` e `sessao` já existem no banco. As tabelas `fornecedor` e `produto_fornecedor` ficam sem uso até o Módulo 2. As entidades de transferência são conceituais e ainda precisam ser implementadas no Módulo 4. As quantidades reservadas são calculadas a partir dos itens enviados em transferências Em trânsito; não representam uma alteração antecipada do saldo físico. O **catálogo de permissões** (`permissao`) é separado das **concessões aos usuários** (`permissao_usuario`).
+> As tabelas `usuario`, `local_estoque`, `produto`, `fornecedor`, `produto_fornecedor`, `estoque`, `movimento_estoque`, `log_sistema`, `permissao`, `permissao_usuario` e `sessao` já existem no banco. O schema Prisma também define `pedido_transferencia` e `item_transferencia`, além do vínculo entre movimentações e transferências. Antes de usar o módulo em um ambiente, aplique as alterações do schema com `npx prisma db push` no banco correto e sincronize o catálogo com `npm run db:sync-permissoes`; depois, conceda individualmente as permissões na tela `/permissoes`. As tabelas `fornecedor` e `produto_fornecedor` ficam sem uso até o Módulo 2. As quantidades reservadas são calculadas a partir dos itens enviados em transferências Em trânsito; não representam uma alteração antecipada do saldo físico. O **catálogo de permissões** (`permissao`) é separado das **concessões aos usuários** (`permissao_usuario`).
 
 ## 10. Módulos e itens de construção (um por vez)
 
@@ -215,6 +219,7 @@ Também no Módulo 1: **importação da planilha de produtos do ERP** (RN-24), a
 4. **Recebimento:** usuário com permissão informa a quantidade recebida de cada produto. Diferenças, inclusive recebimentos parciais, exigem justificativa.
 5. **Conclusão:** em uma transação, o sistema baixa da origem o que foi enviado, credita no destino o que foi recebido, libera as reservas e registra recebedor, data/hora, movimentações e log. O pedido concluído fica somente para consulta.
 6. **Permissões:** consultar, solicitar, enviar e receber são permissões individuais, sem restrição por local. O cargo Administrador é exceção somente para editar ou excluir solicitações ainda Pendentes; não substitui as permissões de envio e recebimento.
+7. **Disponibilização:** o módulo está implementado nas telas `/transferencias`, `/transferencias/novo` e `/transferencias/[id]`, com validações no servidor, controle de saldo reservado, histórico de movimentações e auditoria. Para disponibilizá-lo em um ambiente, aplique o schema Prisma no banco correto e sincronize/conceda as permissões conforme a seção 2.1.
 
 ### Futuro
 

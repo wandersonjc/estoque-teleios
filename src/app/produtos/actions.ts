@@ -47,6 +47,8 @@ import {
 // ser exportadas funções assíncronas)
 // ------------------------------------------------------------
 
+class ErroEstoqueReservado extends Error {}
+
 // Lê os campos do formulário. Tudo chega como texto.
 function lerValores(formData: FormData): ValoresFormularioProduto {
   const texto = (campo: string): string => {
@@ -758,14 +760,22 @@ export async function excluirProduto(formData: FormData): Promise<void> {
     });
     if (!produto) return { tipo: "inexistente" as const };
 
-    const [vinculos, precos, estoques, movimentos] = await Promise.all([
+    const [vinculos, precos, estoques, movimentos, itensTransferencia] =
+      await Promise.all([
       tx.produtoFornecedor.count({ where: { produtoId: id } }),
       tx.historicoPreco.count({ where: { produtoId: id } }),
       tx.estoque.count({ where: { produtoId: id } }),
       tx.movimentoEstoque.count({ where: { produtoId: id } }),
+      tx.itemTransferencia.count({ where: { produtoId: id } }),
     ]);
 
-    if (vinculos > 0 || precos > 0 || estoques > 0 || movimentos > 0) {
+    if (
+      vinculos > 0 ||
+      precos > 0 ||
+      estoques > 0 ||
+      movimentos > 0 ||
+      itensTransferencia > 0
+    ) {
       return { tipo: "em-uso" as const };
     }
 
@@ -1058,23 +1068,103 @@ export async function registrarMovimento(
 
   try {
     await prisma.$transaction(async (tx) => {
-      for (const linha of linhas) {
-        // Atualiza o estoque atual do local (RN-01: o total é a soma disto)
+      const locaisParaBloquear = linhas
+        .map((linha) => linha.localEstoqueId)
+        .sort((a, b) => a - b);
+      for (const localEstoqueId of locaisParaBloquear) {
         await tx.estoque.upsert({
+          where: {
+            produtoId_localEstoqueId: { produtoId, localEstoqueId },
+          },
+          update: {},
+          create: { produtoId, localEstoqueId, quantidade: "0" },
+        });
+      }
+      await tx.$queryRaw<{ id: number }[]>(
+        Prisma.sql`SELECT id FROM estoque
+          WHERE produto_id = ${produtoId}
+            AND local_estoque_id IN (${Prisma.join(locaisParaBloquear)})
+          ORDER BY local_estoque_id
+          FOR UPDATE`
+      );
+      const saldosAtualizados = await tx.estoque.findMany({
+        where: {
+          produtoId,
+          localEstoqueId: { in: locaisParaBloquear },
+        },
+        select: { localEstoqueId: true, quantidade: true },
+      });
+      const saldoAtualizadoPorLocal = new Map(
+        saldosAtualizados.map((estoque) => [
+          estoque.localEstoqueId,
+          estoque.quantidade,
+        ])
+      );
+      const reservas = await tx.$queryRaw<
+        { localEstoqueId: number; quantidade: string }[]
+      >(
+        Prisma.sql`SELECT transferencia.origem_id AS "localEstoqueId",
+            SUM(item.quantidade_enviada)::text AS quantidade
+          FROM item_transferencia item
+          INNER JOIN pedido_transferencia transferencia
+            ON transferencia.id = item.transferencia_id
+          WHERE item.produto_id = ${produtoId}
+            AND transferencia.status = 'EM_TRANSITO'
+            AND transferencia.origem_id IN (${Prisma.join(locaisParaBloquear)})
+          GROUP BY transferencia.origem_id`
+      );
+      const reservaPorLocal = new Map(
+        reservas.map((reserva) => [
+          reserva.localEstoqueId,
+          new Prisma.Decimal(reserva.quantidade),
+        ])
+      );
+
+      for (const linha of linhas) {
+        const saldoAnterior =
+          saldoAtualizadoPorLocal.get(linha.localEstoqueId) ??
+          new Prisma.Decimal(0);
+        const quantidade = new Prisma.Decimal(linha.quantidadeRegistrada);
+        const saldoNovo =
+          tipoMovimento === "ENTRADA"
+            ? saldoAnterior.add(quantidade)
+            : tipoMovimento === "SAIDA"
+              ? saldoAnterior.sub(quantidade)
+              : quantidade;
+        if (tipoMovimento === "SAIDA" && saldoNovo.lt(0)) {
+          throw new ErroEstoqueReservado(
+            `Saída maior que o estoque atual (${formatarQuantidade(Number(saldoAnterior.toString()))}) em ${linha.localNome}.`
+          );
+        }
+
+        const reservado = reservaPorLocal.get(linha.localEstoqueId) ??
+          new Prisma.Decimal(0);
+        if (
+          (tipoMovimento === "SAIDA" || tipoMovimento === "CONTAGEM") &&
+          saldoNovo.lt(reservado)
+        ) {
+          throw new ErroEstoqueReservado(
+            `Esta quantidade deixaria o saldo abaixo das ${formatarQuantidade(Number(reservado.toString()))} unidades reservadas para transferências em trânsito em ${linha.localNome}.`
+          );
+        }
+
+        if (
+          tipoMovimento === "CONTAGEM" &&
+          saldoNovo.equals(saldoAnterior)
+        ) {
+          continue;
+        }
+
+        // Atualiza o estoque atual do local (RN-01: o total é a soma disto)
+        await tx.estoque.update({
           where: {
             produtoId_localEstoqueId: {
               produtoId,
               localEstoqueId: linha.localEstoqueId,
             },
           },
-          update: {
-            quantidade: String(linha.saldoNovo),
-            dataUltimaContagem: agora,
-          },
-          create: {
-            produtoId,
-            localEstoqueId: linha.localEstoqueId,
-            quantidade: String(linha.saldoNovo),
+          data: {
+            quantidade: saldoNovo,
             dataUltimaContagem: agora,
           },
         });
@@ -1111,8 +1201,8 @@ export async function registrarMovimento(
               unidadeInformada: rotuloEmbalagem,
               quantidadeBase: Number(linha.quantidadeRegistrada),
               unidadeBase: produto.unidade,
-              saldoAnterior: linha.saldoAnterior,
-              saldoNovo: linha.saldoNovo,
+              saldoAnterior: Number(saldoAnterior.toString()),
+              saldoNovo: Number(saldoNovo.toString()),
               comentario: comentario || null,
             },
             usuarioId: atual.id,
@@ -1122,6 +1212,14 @@ export async function registrarMovimento(
       }
     });
   } catch (erro) {
+    if (erro instanceof ErroEstoqueReservado) {
+      return {
+        erroGeral: erro.message,
+        valores,
+        embalagemId: embalagemIdInformado,
+        ...estadoComComentario,
+      };
+    }
     console.error("Erro ao registrar movimentação:", erro);
     return {
       erroGeral: "Não foi possível registrar a movimentação. Tente novamente.",

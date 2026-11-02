@@ -75,7 +75,7 @@ export const CATALOGO_DE_PERMISSOES: PermissaoCatalogo[] = [
     modulo: "Produtos",
     funcionalidade: "Produto",
     operacao: "Excluir",
-    descricao: "Excluir produtos sem vínculos, preços, estoque ou movimentações",
+    descricao: "Excluir produtos sem vínculos, preços, estoque, movimentações ou transferências",
     ordem: 150,
   },
 
@@ -119,7 +119,7 @@ export const CATALOGO_DE_PERMISSOES: PermissaoCatalogo[] = [
     modulo: "Locais de estoque",
     funcionalidade: "Local",
     operacao: "Excluir",
-    descricao: "Excluir locais de estoque sem estoque nem movimentações",
+    descricao: "Excluir locais de estoque sem estoque, movimentações ou transferências",
     ordem: 340,
   },
 
@@ -322,6 +322,39 @@ export const CATALOGO_DE_PERMISSOES: PermissaoCatalogo[] = [
     descricao: "Associar e remover funções dos usuários",
     ordem: 950,
   },
+  // Módulo Transferências
+  {
+    codigo: "transferencias.pedido.consultar",
+    modulo: "Transferências",
+    funcionalidade: "Pedido de transferência",
+    operacao: "Consultar",
+    descricao: "Ver pedidos de transferência entre locais de estoque",
+    ordem: 1010,
+  },
+  {
+    codigo: "transferencias.pedido.solicitar",
+    modulo: "Transferências",
+    funcionalidade: "Pedido de transferência",
+    operacao: "Solicitar",
+    descricao: "Criar solicitações de transferência entre locais de estoque",
+    ordem: 1020,
+  },
+  {
+    codigo: "transferencias.pedido.enviar",
+    modulo: "Transferências",
+    funcionalidade: "Pedido de transferência",
+    operacao: "Enviar",
+    descricao: "Registrar o envio de produtos em pedidos de transferência",
+    ordem: 1030,
+  },
+  {
+    codigo: "transferencias.pedido.receber",
+    modulo: "Transferências",
+    funcionalidade: "Pedido de transferência",
+    operacao: "Receber",
+    descricao: "Confirmar o recebimento de pedidos de transferência",
+    ordem: 1040,
+  },
 ];
 
 // Códigos válidos hoje (útil para validar o que chega do formulário)
@@ -354,6 +387,13 @@ export const MENU_PRINCIPAL: ItemMenu[][] = [
       href: "/fornecedores",
       rotulo: "Fornecedores",
       permissao: "fornecedores.fornecedor.consultar",
+    },
+  ],
+  [
+    {
+      href: "/transferencias",
+      rotulo: "Transferências",
+      permissao: "transferencias.pedido.consultar",
     },
   ],
   [

@@ -1,10 +1,11 @@
 import { exigirPermissao } from "@/lib/autorizacao";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import CargoForm from "../CargoForm";
 import { atualizarCargo } from "../actions";
+import { cargoProtegido } from "../tipos";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +27,7 @@ export default async function EditarCargoPage({
 
   const cargo = await prisma.cargo.findUnique({ where: { id: numero } });
   if (!cargo) notFound();
+  if (cargoProtegido(cargo.nome)) redirect("/cargos?erro=protegido");
 
   return (
     <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-5">

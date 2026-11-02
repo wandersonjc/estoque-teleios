@@ -54,7 +54,7 @@ export type LocalEstoque = Prisma.LocalEstoqueModel
 export type Produto = Prisma.ProdutoModel
 /**
  * Model EmbalagemProduto
- *
+ * 
  */
 export type EmbalagemProduto = Prisma.EmbalagemProdutoModel
 /**
@@ -82,6 +82,16 @@ export type Estoque = Prisma.EstoqueModel
  * 
  */
 export type MovimentoEstoque = Prisma.MovimentoEstoqueModel
+/**
+ * Model PedidoTransferencia
+ * 
+ */
+export type PedidoTransferencia = Prisma.PedidoTransferenciaModel
+/**
+ * Model ItemTransferencia
+ * 
+ */
+export type ItemTransferencia = Prisma.ItemTransferenciaModel
 /**
  * Model LogSistema
  * 

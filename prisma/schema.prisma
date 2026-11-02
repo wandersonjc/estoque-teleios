@@ -33,31 +33,34 @@ enum TemaUsuario {
 // PermissaoUsuario), concedidas na tela /permissoes.
 // ------------------------------------------------------------
 model Usuario {
-  id           Int      @id @default(autoincrement())
+  id           Int         @id @default(autoincrement())
   nome         String
-  email        String   @unique
-  senhaHash    String   @map("senha_hash") // NUNCA guardar a senha pura
-  imagemChave  String?  @map("imagem_chave")
+  email        String      @unique
+  senhaHash    String      @map("senha_hash") // NUNCA guardar a senha pura
+  imagemChave  String?     @map("imagem_chave")
   tema         TemaUsuario @default(CLARO)
-  ativo        Boolean  @default(true)
-  criadoEm     DateTime @default(now()) @map("criado_em")
-  atualizadoEm DateTime @updatedAt @map("atualizado_em")
+  ativo        Boolean     @default(true)
+  criadoEm     DateTime    @default(now()) @map("criado_em")
+  atualizadoEm DateTime    @updatedAt @map("atualizado_em")
 
-  movimentos MovimentoEstoque[]
-  logs       LogSistema[]
-  sessoes    Sessao[]
-  permissoes PermissaoUsuario[]
-  cargos     UsuarioCargo[]
-  funcoes    UsuarioFuncao[]
+  movimentos                MovimentoEstoque[]
+  logs                      LogSistema[]
+  sessoes                   Sessao[]
+  permissoes                PermissaoUsuario[]
+  cargos                    UsuarioCargo[]
+  funcoes                   UsuarioFuncao[]
+  transferenciasSolicitadas PedidoTransferencia[] @relation("TransferenciaSolicitante")
+  transferenciasEnviadas    PedidoTransferencia[] @relation("TransferenciaRemetente")
+  transferenciasRecebidas   PedidoTransferencia[] @relation("TransferenciaRecebedor")
 
   @@map("usuario")
 }
 
 // Cargo é informativo e não concede permissões ao usuário.
 model Cargo {
-  id       Int             @id @default(autoincrement())
-  nome     String          @unique
-  criadoEm DateTime        @default(now()) @map("criado_em")
+  id       Int            @id @default(autoincrement())
+  nome     String         @unique
+  criadoEm DateTime       @default(now()) @map("criado_em")
   usuarios UsuarioCargo[]
 
   @@map("cargo")
@@ -103,11 +106,13 @@ model UsuarioFuncao {
 // gerenciados pelas telas em /locais (criar, renomear e excluir).
 // ------------------------------------------------------------
 model LocalEstoque {
-  id   Int     @id @default(autoincrement())
-  nome String  @unique
+  id   Int    @id @default(autoincrement())
+  nome String @unique
 
-  estoques   Estoque[]
-  movimentos MovimentoEstoque[]
+  estoques              Estoque[]
+  movimentos            MovimentoEstoque[]
+  transferenciasOrigem  PedidoTransferencia[] @relation("TransferenciaOrigem")
+  transferenciasDestino PedidoTransferencia[] @relation("TransferenciaDestino")
 
   @@map("local_estoque")
 }
@@ -133,24 +138,25 @@ model Produto {
   criadoEm      DateTime @default(now()) @map("criado_em")
   atualizadoEm  DateTime @updatedAt @map("atualizado_em")
 
-  fornecedores    ProdutoFornecedor[]
-  historicoPrecos HistoricoPreco[]
-  estoques        Estoque[]
-  movimentos      MovimentoEstoque[]
-  embalagens      EmbalagemProduto[]
+  fornecedores       ProdutoFornecedor[]
+  historicoPrecos    HistoricoPreco[]
+  estoques           Estoque[]
+  movimentos         MovimentoEstoque[]
+  embalagens         EmbalagemProduto[]
+  itensTransferencia ItemTransferencia[]
 
   @@map("produto")
 }
 
 model EmbalagemProduto {
-  id              Int      @id @default(autoincrement())
-  produtoId       Int      @map("produto_id")
+  id             Int      @id @default(autoincrement())
+  produtoId      Int      @map("produto_id")
   codigoBarras   String   @unique @map("codigo_barras")
-  unidade         String
+  unidade        String
   quantidadeBase Decimal  @map("quantidade_base") @db.Decimal(12, 3)
-  principal       Boolean  @default(false)
-  criadoEm        DateTime @default(now()) @map("criado_em")
-  atualizadoEm    DateTime @updatedAt @map("atualizado_em")
+  principal      Boolean  @default(false)
+  criadoEm       DateTime @default(now()) @map("criado_em")
+  atualizadoEm   DateTime @updatedAt @map("atualizado_em")
 
   produto Produto @relation(fields: [produtoId], references: [id], onDelete: Cascade)
 
@@ -162,11 +168,11 @@ model EmbalagemProduto {
 // Fornecedor
 // ------------------------------------------------------------
 model Fornecedor {
-  id               Int      @id @default(autoincrement())
-  nome             String
-  contato          String? // Telefone, e-mail, nome do vendedor etc.
-  imagemChave      String?  @map("imagem_chave")
-  prazoEntregaDias Int?     @map("prazo_entrega_dias") // Prazo médio de entrega
+  id                Int      @id @default(autoincrement())
+  nome              String
+  contato           String? // Telefone, e-mail, nome do vendedor etc.
+  imagemChave       String?  @map("imagem_chave")
+  prazoEntregaDias  Int?     @map("prazo_entrega_dias") // Prazo médio de entrega
   // Valor mínimo de pedido e frete (RN-17). Opcionais.
   valorMinimoPedido Decimal? @map("valor_minimo_pedido") @db.Decimal(12, 2)
   frete             Decimal? @db.Decimal(12, 2)
@@ -185,11 +191,11 @@ model Fornecedor {
 // O preço NÃO fica aqui: ele vai para o histórico de preços (etapa 3).
 // ------------------------------------------------------------
 model ProdutoFornecedor {
-  id                Int     @id @default(autoincrement())
-  produtoId         Int     @map("produto_id")
-  fornecedorId      Int     @map("fornecedor_id")
+  id                 Int     @id @default(autoincrement())
+  produtoId          Int     @map("produto_id")
+  fornecedorId       Int     @map("fornecedor_id")
   codigoNoFornecedor String? @map("codigo_no_fornecedor")
-  ativo             Boolean @default(true)
+  ativo              Boolean @default(true)
 
   produto    Produto    @relation(fields: [produtoId], references: [id])
   fornecedor Fornecedor @relation(fields: [fornecedorId], references: [id])
@@ -280,14 +286,77 @@ model MovimentoEstoque {
   comentario     String?       @db.VarChar(500)
   dataHora       DateTime      @default(now()) @map("data_hora")
 
-  produto      Produto      @relation(fields: [produtoId], references: [id])
-  localEstoque LocalEstoque @relation(fields: [localEstoqueId], references: [id])
-  usuario      Usuario?     @relation(fields: [usuarioId], references: [id])
+  produto         Produto              @relation(fields: [produtoId], references: [id])
+  localEstoque    LocalEstoque         @relation(fields: [localEstoqueId], references: [id])
+  usuario         Usuario?             @relation(fields: [usuarioId], references: [id])
+  transferenciaId Int?                 @map("transferencia_id")
+  transferencia   PedidoTransferencia? @relation(fields: [transferenciaId], references: [id], onDelete: Restrict)
 
   @@index([produtoId])
   @@index([localEstoqueId])
   @@index([usuarioId])
+  @@index([transferenciaId])
   @@map("movimento_estoque")
+}
+
+enum StatusTransferencia {
+  PENDENTE
+  EM_TRANSITO
+  CONCLUIDO
+}
+
+model PedidoTransferencia {
+  id            Int                 @id @default(autoincrement())
+  origemId      Int                 @map("origem_id")
+  destinoId     Int                 @map("destino_id")
+  solicitanteId Int                 @map("solicitante_id")
+  criadoEm      DateTime            @default(now()) @map("criado_em")
+  status        StatusTransferencia @default(PENDENTE)
+  enviadoPorId  Int?                @map("enviado_por_id")
+  enviadoEm     DateTime?           @map("enviado_em")
+  recebidoPorId Int?                @map("recebido_por_id")
+  recebidoEm    DateTime?           @map("recebido_em")
+
+  origem      LocalEstoque        @relation("TransferenciaOrigem", fields: [origemId], references: [id], onDelete: Restrict)
+  destino     LocalEstoque        @relation("TransferenciaDestino", fields: [destinoId], references: [id], onDelete: Restrict)
+  solicitante Usuario             @relation("TransferenciaSolicitante", fields: [solicitanteId], references: [id], onDelete: Restrict)
+  enviadoPor  Usuario?            @relation("TransferenciaRemetente", fields: [enviadoPorId], references: [id], onDelete: Restrict)
+  recebidoPor Usuario?            @relation("TransferenciaRecebedor", fields: [recebidoPorId], references: [id], onDelete: Restrict)
+  itens       ItemTransferencia[]
+  movimentos  MovimentoEstoque[]
+
+  @@index([status, criadoEm])
+  @@index([origemId, status])
+  @@index([destinoId, status])
+  @@index([solicitanteId])
+  @@map("pedido_transferencia")
+}
+
+model ItemTransferencia {
+  id                            Int      @id @default(autoincrement())
+  transferenciaId               Int      @map("transferencia_id")
+  produtoId                     Int      @map("produto_id")
+  quantidadeSolicitada          Decimal  @map("quantidade_solicitada") @db.Decimal(12, 3)
+  quantidadeSolicitadaInformada Decimal? @map("quantidade_solicitada_informada") @db.Decimal(12, 3)
+  unidadeSolicitada             String?  @map("unidade_solicitada")
+  fatorSolicitado               Decimal? @map("fator_solicitado") @db.Decimal(12, 3)
+  quantidadeEnviada             Decimal? @map("quantidade_enviada") @db.Decimal(12, 3)
+  quantidadeEnviadaInformada    Decimal? @map("quantidade_enviada_informada") @db.Decimal(12, 3)
+  unidadeEnviada                String?  @map("unidade_enviada")
+  fatorEnviado                  Decimal? @map("fator_enviado") @db.Decimal(12, 3)
+  quantidadeRecebida            Decimal? @map("quantidade_recebida") @db.Decimal(12, 3)
+  quantidadeRecebidaInformada   Decimal? @map("quantidade_recebida_informada") @db.Decimal(12, 3)
+  unidadeRecebida               String?  @map("unidade_recebida")
+  fatorRecebido                 Decimal? @map("fator_recebido") @db.Decimal(12, 3)
+  justificativaEnvio            String?  @map("justificativa_envio") @db.VarChar(500)
+  justificativaDivergencia      String?  @map("justificativa_divergencia") @db.VarChar(500)
+
+  transferencia PedidoTransferencia @relation(fields: [transferenciaId], references: [id], onDelete: Cascade)
+  produto       Produto             @relation(fields: [produtoId], references: [id], onDelete: Restrict)
+
+  @@unique([transferenciaId, produtoId])
+  @@index([produtoId])
+  @@map("item_transferencia")
 }
 
 // ------------------------------------------------------------
@@ -307,6 +376,7 @@ enum ModuloSistema {
   PEDIDOS
   USUARIOS
   PERMISSOES
+  TRANSFERENCIAS
 }
 
 enum AcaoSistema {
@@ -317,6 +387,9 @@ enum AcaoSistema {
   SAIDA
   CONTAGEM
   RECEBIMENTO
+  SOLICITAR
+  ENVIAR
+  CONCLUIR
 }
 
 model LogSistema {

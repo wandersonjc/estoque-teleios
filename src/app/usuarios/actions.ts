@@ -598,9 +598,8 @@ export async function reativarUsuario(formData: FormData): Promise<void> {
   revalidatePath(`/usuarios/${id}`);
 }
 
-// Só exclui usuário que não tem nenhuma movimentação nem log: o
-// histórico nunca é apagado por causa de um cadastro. Nos demais
-// casos, o usuário só pode ser desativado.
+// Só exclui usuário sem movimentações, logs ou pedidos de transferência,
+// para preservar o histórico associado à conta.
 export async function excluirUsuario(formData: FormData): Promise<void> {
   const atual = await verificarPermissao("usuarios.usuario.excluir");
   if (!atual) return;
@@ -614,12 +613,27 @@ export async function excluirUsuario(formData: FormData): Promise<void> {
   });
   if (!usuario) return;
 
-  const movimentos = await prisma.movimentoEstoque.count({
-    where: { usuarioId: id },
-  });
-  const logs = await prisma.logSistema.count({ where: { usuarioId: id } });
+  const [
+    movimentos,
+    logs,
+    transferenciasSolicitadas,
+    transferenciasEnviadas,
+    transferenciasRecebidas,
+  ] = await Promise.all([
+    prisma.movimentoEstoque.count({ where: { usuarioId: id } }),
+    prisma.logSistema.count({ where: { usuarioId: id } }),
+    prisma.pedidoTransferencia.count({ where: { solicitanteId: id } }),
+    prisma.pedidoTransferencia.count({ where: { enviadoPorId: id } }),
+    prisma.pedidoTransferencia.count({ where: { recebidoPorId: id } }),
+  ]);
 
-  if (movimentos > 0 || logs > 0) {
+  if (
+    movimentos > 0 ||
+    logs > 0 ||
+    transferenciasSolicitadas > 0 ||
+    transferenciasEnviadas > 0 ||
+    transferenciasRecebidas > 0
+  ) {
     redirect(`/usuarios/${id}?erro=em-uso`);
   }
 

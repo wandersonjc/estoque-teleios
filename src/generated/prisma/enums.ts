@@ -35,6 +35,15 @@ export const TipoMovimento = {
 export type TipoMovimento = (typeof TipoMovimento)[keyof typeof TipoMovimento]
 
 
+export const StatusTransferencia = {
+  PENDENTE: 'PENDENTE',
+  EM_TRANSITO: 'EM_TRANSITO',
+  CONCLUIDO: 'CONCLUIDO'
+} as const
+
+export type StatusTransferencia = (typeof StatusTransferencia)[keyof typeof StatusTransferencia]
+
+
 export const ModuloSistema = {
   PRODUTOS: 'PRODUTOS',
   ESTOQUE: 'ESTOQUE',
@@ -44,7 +53,8 @@ export const ModuloSistema = {
   FORNECEDORES: 'FORNECEDORES',
   PEDIDOS: 'PEDIDOS',
   USUARIOS: 'USUARIOS',
-  PERMISSOES: 'PERMISSOES'
+  PERMISSOES: 'PERMISSOES',
+  TRANSFERENCIAS: 'TRANSFERENCIAS'
 } as const
 
 export type ModuloSistema = (typeof ModuloSistema)[keyof typeof ModuloSistema]
@@ -57,7 +67,10 @@ export const AcaoSistema = {
   ENTRADA: 'ENTRADA',
   SAIDA: 'SAIDA',
   CONTAGEM: 'CONTAGEM',
-  RECEBIMENTO: 'RECEBIMENTO'
+  RECEBIMENTO: 'RECEBIMENTO',
+  SOLICITAR: 'SOLICITAR',
+  ENVIAR: 'ENVIAR',
+  CONCLUIR: 'CONCLUIR'
 } as const
 
 export type AcaoSistema = (typeof AcaoSistema)[keyof typeof AcaoSistema]
