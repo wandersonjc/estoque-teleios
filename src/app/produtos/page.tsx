@@ -279,15 +279,23 @@ export default async function ProdutosPage({
 
   return (
     <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-5">
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-lg font-semibold text-zinc-900 sm:text-xl">Produtos</h1>
         {podeCriar && (
-          <Link
-            href="/produtos/novo"
-            className="flex h-12 items-center rounded-lg bg-zinc-900 px-4 text-base font-medium text-white"
-          >
-            Novo produto
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href="/produtos/importar"
+              className="flex h-12 items-center rounded-lg border border-zinc-300 px-4 text-base font-medium text-zinc-800 hover:bg-zinc-50"
+            >
+              Importar do ERP
+            </Link>
+            <Link
+              href="/produtos/novo"
+              className="flex h-12 items-center rounded-lg bg-zinc-900 px-4 text-base font-medium text-white"
+            >
+              Novo produto
+            </Link>
+          </div>
         )}
       </div>
 
