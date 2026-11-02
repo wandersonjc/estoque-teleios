@@ -82,9 +82,11 @@ export default function CampoImagem({
   circular = false,
 }: Props) {
   const seletorArquivoRef = useRef<HTMLInputElement>(null);
+  const capturaCameraRef = useRef<HTMLInputElement>(null);
   const arquivoEnvioRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const cameraStreamRef = useRef<MediaStream | null>(null);
+  const requisicaoCameraRef = useRef(0);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [origemRecorte, setOrigemRecorte] = useState<string | null>(null);
   const [modoDialogo, setModoDialogo] = useState<ModoDialogo>(null);
@@ -111,42 +113,27 @@ export default function CampoImagem({
   useEffect(() => {
     if (modoDialogo !== "camera") return;
 
-    let desmontado = false;
-
-    async function iniciarCamera() {
-      try {
-        if (!navigator.mediaDevices?.getUserMedia) {
-          throw new Error("Este navegador não permite acessar a câmera.");
-        }
-
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { ideal: "environment" } },
-          audio: false,
-        });
-
-        if (desmontado) {
-          stream.getTracks().forEach((faixa) => faixa.stop());
-          return;
-        }
-
-        cameraStreamRef.current = stream;
-        if (videoRef.current) videoRef.current.srcObject = stream;
-        setCameraPronta(true);
-      } catch {
-        if (!desmontado) {
-          setErro("Não foi possível acessar a câmera. Verifique a permissão do navegador.");
-        }
-      }
-    }
-
-    void iniciarCamera();
-
     return () => {
-      desmontado = true;
+      requisicaoCameraRef.current += 1;
       cameraStreamRef.current?.getTracks().forEach((faixa) => faixa.stop());
       cameraStreamRef.current = null;
     };
   }, [modoDialogo]);
+
+  useEffect(() => {
+    return () => {
+      requisicaoCameraRef.current += 1;
+      cameraStreamRef.current?.getTracks().forEach((faixa) => faixa.stop());
+      cameraStreamRef.current = null;
+    };
+  }, []);
+
+  function associarVideo(video: HTMLVideoElement | null) {
+    videoRef.current = video;
+    if (video && cameraStreamRef.current) {
+      video.srcObject = cameraStreamRef.current;
+    }
+  }
 
   function abrirRecorte(src: string) {
     setOrigemRecorte(src);
@@ -173,6 +160,41 @@ export default function CampoImagem({
     }
 
     abrirRecorte(URL.createObjectURL(arquivo));
+  }
+
+  function abrirCamera() {
+    setErro("");
+    setCameraPronta(false);
+
+    if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
+      capturaCameraRef.current?.click();
+      return;
+    }
+
+    setModoDialogo("camera");
+    const requisicao = ++requisicaoCameraRef.current;
+    void navigator.mediaDevices
+      .getUserMedia({
+        video: { facingMode: { ideal: "environment" } },
+        audio: false,
+      })
+      .then((stream) => {
+        if (requisicao !== requisicaoCameraRef.current) {
+          stream.getTracks().forEach((faixa) => faixa.stop());
+          return;
+        }
+
+        cameraStreamRef.current = stream;
+        if (videoRef.current) videoRef.current.srcObject = stream;
+        setCameraPronta(true);
+      })
+      .catch(() => {
+        if (requisicao === requisicaoCameraRef.current) {
+          setErro(
+            "Não foi possível acessar a câmera. Verifique a permissão do navegador."
+          );
+        }
+      });
   }
 
   async function capturarCamera() {
@@ -279,6 +301,16 @@ export default function CampoImagem({
         aria-hidden="true"
       />
       <input
+        ref={capturaCameraRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        onChange={selecionarImagem}
+        className="hidden"
+        tabIndex={-1}
+        aria-hidden="true"
+      />
+      <input
         ref={arquivoEnvioRef}
         id="imagem"
         name="imagem"
@@ -308,11 +340,7 @@ export default function CampoImagem({
           type="button"
           title="Abrir câmera"
           aria-label="Abrir câmera"
-          onClick={() => {
-            setErro("");
-            setCameraPronta(false);
-            setModoDialogo("camera");
-          }}
+          onClick={abrirCamera}
           className="flex h-11 w-11 items-center justify-center rounded-lg border border-zinc-300 bg-white text-zinc-800 hover:bg-zinc-50"
         >
           <IconeCamera className="h-5 w-5" />
@@ -368,7 +396,7 @@ export default function CampoImagem({
             {modoDialogo === "camera" ? (
               <div className="flex flex-col gap-4">
                 <video
-                  ref={videoRef}
+                  ref={associarVideo}
                   autoPlay
                   playsInline
                   muted
