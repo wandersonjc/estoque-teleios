@@ -6,8 +6,10 @@
 // indicador de carregamento enquanto a sessão é criada.
 // ============================================================
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 
+import { IconeCarregando } from "@/components/icones";
 import { entrar } from "./actions";
 import { VALORES_LOGIN_VAZIOS, type EstadoLogin } from "./tipos";
 
@@ -20,9 +22,44 @@ export default function FormularioLogin() {
     EstadoLogin,
     FormData
   >(entrar, { valores: VALORES_LOGIN_VAZIOS });
+  const [envioIniciado, setEnvioIniciado] = useState(false);
+  const envioIniciadoRef = useRef(false);
+  const inicioEnvioRef = useRef<number | null>(null);
+  const estadoAnteriorRef = useRef(estado);
+  const aguardandoFeedback = entrando || envioIniciado;
+
+  useEffect(() => {
+    if (estado === estadoAnteriorRef.current) return;
+    estadoAnteriorRef.current = estado;
+    if (!envioIniciadoRef.current || inicioEnvioRef.current === null) return;
+
+    const tempoRestante = Math.max(
+      0,
+      450 - (Date.now() - inicioEnvioRef.current)
+    );
+    const temporizador = setTimeout(() => {
+      envioIniciadoRef.current = false;
+      inicioEnvioRef.current = null;
+      setEnvioIniciado(false);
+    }, tempoRestante);
+
+    return () => clearTimeout(temporizador);
+  }, [estado]);
 
   return (
-    <form action={enviarFormulario} className="flex flex-col gap-4">
+    <form
+      action={enviarFormulario}
+      onSubmit={(evento) => {
+        if (envioIniciadoRef.current) {
+          evento.preventDefault();
+          return;
+        }
+        envioIniciadoRef.current = true;
+        inicioEnvioRef.current = Date.now();
+        flushSync(() => setEnvioIniciado(true));
+      }}
+      className="flex flex-col gap-4"
+    >
       {estado.erroGeral && (
         <p role="alert" className="rounded-lg bg-red-50 p-3 text-base text-red-700">
           {estado.erroGeral}
@@ -62,10 +99,18 @@ export default function FormularioLogin() {
 
       <button
         type="submit"
-        disabled={entrando}
-        className="h-12 rounded-lg bg-zinc-900 px-5 text-base font-medium text-white disabled:opacity-60"
+        disabled={aguardandoFeedback}
+        aria-busy={aguardandoFeedback}
+        className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-zinc-900 px-5 text-base font-medium text-white disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {entrando ? "Entrando..." : "Entrar"}
+        {aguardandoFeedback ? (
+          <>
+            <IconeCarregando className="h-5 w-5 animate-spin" />
+            Entrando...
+          </>
+        ) : (
+          "Entrar"
+        )}
       </button>
     </form>
   );
