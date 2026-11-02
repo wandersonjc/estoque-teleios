@@ -66,6 +66,7 @@ export const ModelName = {
   MovimentoEstoque: 'MovimentoEstoque',
   PedidoTransferencia: 'PedidoTransferencia',
   ItemTransferencia: 'ItemTransferencia',
+  Notificacao: 'Notificacao',
   LogSistema: 'LogSistema',
   Permissao: 'Permissao',
   PermissaoUsuario: 'PermissaoUsuario',
@@ -279,6 +280,19 @@ export const ItemTransferenciaScalarFieldEnum = {
 } as const
 
 export type ItemTransferenciaScalarFieldEnum = (typeof ItemTransferenciaScalarFieldEnum)[keyof typeof ItemTransferenciaScalarFieldEnum]
+
+
+export const NotificacaoScalarFieldEnum = {
+  id: 'id',
+  usuarioId: 'usuarioId',
+  transferenciaId: 'transferenciaId',
+  tipo: 'tipo',
+  mensagem: 'mensagem',
+  criadoEm: 'criadoEm',
+  lidaEm: 'lidaEm'
+} as const
+
+export type NotificacaoScalarFieldEnum = (typeof NotificacaoScalarFieldEnum)[keyof typeof NotificacaoScalarFieldEnum]
 
 
 export const LogSistemaScalarFieldEnum = {

@@ -93,6 +93,11 @@ export type PedidoTransferencia = Prisma.PedidoTransferenciaModel
  */
 export type ItemTransferencia = Prisma.ItemTransferenciaModel
 /**
+ * Model Notificacao
+ *
+ */
+export type Notificacao = Prisma.NotificacaoModel
+/**
  * Model LogSistema
  * 
  */

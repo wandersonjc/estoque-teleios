@@ -3,7 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { Prisma } from "@/generated/prisma/client";
+import {
+  Prisma,
+  TipoNotificacaoTransferencia,
+} from "@/generated/prisma/client";
 import { MENSAGEM_SEM_PERMISSAO, verificarPermissao } from "@/lib/autorizacao";
 import { registrarLog } from "@/lib/log";
 import prisma from "@/lib/prisma";
@@ -286,6 +289,78 @@ async function bloquearEstoques(
   );
 }
 
+async function criarNotificacoesTransferencia(
+  tx: Prisma.TransactionClient,
+  valores: {
+    transferenciaId: number;
+    tipo: TipoNotificacaoTransferencia;
+    mensagem: string;
+    usuarioAutorId: number;
+    permissaoAdicional?: string;
+    destinatariosDiretos?: number[];
+  }
+): Promise<void> {
+  const destinatariosDiretos = [
+    ...new Set(valores.destinatariosDiretos ?? []),
+  ].filter((id) => id !== valores.usuarioAutorId);
+  const codigosConsultados = [
+    "transferencias.pedido.consultar",
+    ...(valores.permissaoAdicional ? [valores.permissaoAdicional] : []),
+  ];
+  const condicoesCandidatos: Prisma.UsuarioWhereInput[] = [];
+
+  if (valores.permissaoAdicional) {
+    condicoesCandidatos.push({
+      permissoes: {
+        some: {
+          permissao: { is: { codigo: valores.permissaoAdicional } },
+        },
+      },
+    });
+  }
+  if (destinatariosDiretos.length > 0) {
+    condicoesCandidatos.push({ id: { in: destinatariosDiretos } });
+  }
+  if (condicoesCandidatos.length === 0) return;
+
+  const candidatos = await tx.usuario.findMany({
+    where: {
+      ativo: true,
+      id: { not: valores.usuarioAutorId },
+      OR: condicoesCandidatos,
+    },
+    select: {
+      id: true,
+      permissoes: {
+        where: { permissao: { codigo: { in: codigosConsultados } } },
+        select: { permissao: { select: { codigo: true } } },
+      },
+    },
+  });
+  const diretos = new Set(destinatariosDiretos);
+  const destinatarios = candidatos.filter((candidato) => {
+    const codigos = new Set(
+      candidato.permissoes.map((concessao) => concessao.permissao.codigo)
+    );
+    if (!codigos.has("transferencias.pedido.consultar")) return false;
+    return (
+      diretos.has(candidato.id) ||
+      (valores.permissaoAdicional !== undefined &&
+        codigos.has(valores.permissaoAdicional))
+    );
+  });
+  if (destinatarios.length === 0) return;
+
+  await tx.notificacao.createMany({
+    data: destinatarios.map((destinatario) => ({
+      usuarioId: destinatario.id,
+      transferenciaId: valores.transferenciaId,
+      tipo: valores.tipo,
+      mensagem: valores.mensagem,
+    })),
+  });
+}
+
 function decimalDoEstoque(valor: Prisma.Decimal | null | undefined) {
   return valor ?? new Prisma.Decimal(0);
 }
@@ -361,6 +436,13 @@ export async function criarPedidoTransferencia(
           },
         },
         select: { id: true },
+      });
+      await criarNotificacoesTransferencia(tx, {
+        transferenciaId: registro.id,
+        tipo: TipoNotificacaoTransferencia.SOLICITADO,
+        mensagem: `Novo pedido de transferência #${registro.id} solicitado.`,
+        usuarioAutorId: atual.id,
+        permissaoAdicional: "transferencias.pedido.enviar",
       });
       await registrarLog(
         {
@@ -674,6 +756,14 @@ export async function enviarPedidoTransferencia(
           enviadoEm: agora,
         },
       });
+      await criarNotificacoesTransferencia(tx, {
+        transferenciaId: id,
+        tipo: TipoNotificacaoTransferencia.ENVIADO,
+        mensagem: `Pedido de transferência #${id} enviado.`,
+        usuarioAutorId: atual.id,
+        permissaoAdicional: "transferencias.pedido.receber",
+        destinatariosDiretos: [pedido.solicitanteId],
+      });
       await registrarLog(
         {
           modulo: "TRANSFERENCIAS",
@@ -926,6 +1016,16 @@ export async function receberPedidoTransferencia(
           recebidoPorId: atual.id,
           recebidoEm: agora,
         },
+      });
+      await criarNotificacoesTransferencia(tx, {
+        transferenciaId: id,
+        tipo: TipoNotificacaoTransferencia.CONCLUIDO,
+        mensagem: `Pedido de transferência #${id} concluído.`,
+        usuarioAutorId: atual.id,
+        destinatariosDiretos: [
+          pedido.solicitanteId,
+          ...(pedido.enviadoPorId === null ? [] : [pedido.enviadoPorId]),
+        ],
       });
       await registrarLog(
         {

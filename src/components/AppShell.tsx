@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 
 import { IconeUser } from "@/components/icones";
 import IndicadorCarregando from "@/components/IndicadorCarregando";
+import NotificacoesTransferencia from "@/components/NotificacoesTransferencia";
 import SeletorTema from "@/components/SeletorTema";
 import { sair } from "@/app/login/actions";
 
@@ -18,6 +19,7 @@ type ItemMenu = {
 type Props = {
   children: React.ReactNode;
   gruposDoMenu: ItemMenu[][];
+  podeConsultarTransferencias: boolean;
   usuario: {
     id: number;
     nome: string;
@@ -140,7 +142,12 @@ function IconeNavegacao({ href }: { href: string }) {
   );
 }
 
-export default function AppShell({ children, gruposDoMenu, usuario }: Props) {
+export default function AppShell({
+  children,
+  gruposDoMenu,
+  podeConsultarTransferencias,
+  usuario,
+}: Props) {
   const pathname = usePathname();
   const [menuRecolhido, setMenuRecolhido] = useState(false);
   const [menuMovelAberto, setMenuMovelAberto] = useState(false);
@@ -225,6 +232,8 @@ export default function AppShell({ children, gruposDoMenu, usuario }: Props) {
                 Gestão inteligente para o seu negócio
               </p>
             </div>
+
+            {podeConsultarTransferencias && <NotificacoesTransferencia />}
 
             <details className="group relative ml-auto shrink-0">
               <summary

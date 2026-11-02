@@ -44,6 +44,15 @@ export const StatusTransferencia = {
 export type StatusTransferencia = (typeof StatusTransferencia)[keyof typeof StatusTransferencia]
 
 
+export const TipoNotificacaoTransferencia = {
+  SOLICITADO: 'SOLICITADO',
+  ENVIADO: 'ENVIADO',
+  CONCLUIDO: 'CONCLUIDO'
+} as const
+
+export type TipoNotificacaoTransferencia = (typeof TipoNotificacaoTransferencia)[keyof typeof TipoNotificacaoTransferencia]
+
+
 export const ModuloSistema = {
   PRODUTOS: 'PRODUTOS',
   ESTOQUE: 'ESTOQUE',

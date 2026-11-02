@@ -324,6 +324,23 @@ export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedDateTimeNullableFilter<$PrismaModel>
 }
 
+export type EnumTipoNotificacaoTransferenciaFilter<$PrismaModel = never> = {
+  equals?: $Enums.TipoNotificacaoTransferencia | Prisma.EnumTipoNotificacaoTransferenciaFieldRefInput<$PrismaModel>
+  in?: $Enums.TipoNotificacaoTransferencia[] | Prisma.ListEnumTipoNotificacaoTransferenciaFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TipoNotificacaoTransferencia[] | Prisma.ListEnumTipoNotificacaoTransferenciaFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTipoNotificacaoTransferenciaFilter<$PrismaModel> | $Enums.TipoNotificacaoTransferencia
+}
+
+export type EnumTipoNotificacaoTransferenciaWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TipoNotificacaoTransferencia | Prisma.EnumTipoNotificacaoTransferenciaFieldRefInput<$PrismaModel>
+  in?: $Enums.TipoNotificacaoTransferencia[] | Prisma.ListEnumTipoNotificacaoTransferenciaFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TipoNotificacaoTransferencia[] | Prisma.ListEnumTipoNotificacaoTransferenciaFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTipoNotificacaoTransferenciaWithAggregatesFilter<$PrismaModel> | $Enums.TipoNotificacaoTransferencia
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTipoNotificacaoTransferenciaFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTipoNotificacaoTransferenciaFilter<$PrismaModel>
+}
+
 export type EnumModuloSistemaFilter<$PrismaModel = never> = {
   equals?: $Enums.ModuloSistema | Prisma.EnumModuloSistemaFieldRefInput<$PrismaModel>
   in?: $Enums.ModuloSistema[] | Prisma.ListEnumModuloSistemaFieldRefInput<$PrismaModel>
@@ -730,6 +747,23 @@ export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedDateTimeNullableFilter<$PrismaModel>
   _max?: Prisma.NestedDateTimeNullableFilter<$PrismaModel>
+}
+
+export type NestedEnumTipoNotificacaoTransferenciaFilter<$PrismaModel = never> = {
+  equals?: $Enums.TipoNotificacaoTransferencia | Prisma.EnumTipoNotificacaoTransferenciaFieldRefInput<$PrismaModel>
+  in?: $Enums.TipoNotificacaoTransferencia[] | Prisma.ListEnumTipoNotificacaoTransferenciaFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TipoNotificacaoTransferencia[] | Prisma.ListEnumTipoNotificacaoTransferenciaFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTipoNotificacaoTransferenciaFilter<$PrismaModel> | $Enums.TipoNotificacaoTransferencia
+}
+
+export type NestedEnumTipoNotificacaoTransferenciaWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TipoNotificacaoTransferencia | Prisma.EnumTipoNotificacaoTransferenciaFieldRefInput<$PrismaModel>
+  in?: $Enums.TipoNotificacaoTransferencia[] | Prisma.ListEnumTipoNotificacaoTransferenciaFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TipoNotificacaoTransferencia[] | Prisma.ListEnumTipoNotificacaoTransferenciaFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTipoNotificacaoTransferenciaWithAggregatesFilter<$PrismaModel> | $Enums.TipoNotificacaoTransferencia
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTipoNotificacaoTransferenciaFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTipoNotificacaoTransferenciaFilter<$PrismaModel>
 }
 
 export type NestedEnumModuloSistemaFilter<$PrismaModel = never> = {

@@ -46,6 +46,7 @@ Exemplos de permissões já existentes: `produtos.produto.consultar`, `produtos.
 - **RN-33. Cargos informativos:** um usuário pode ter vários cargos e um cargo pode pertencer a vários usuários. Cargos não concedem permissões, exceto quando uma regra de negócio declarar explicitamente uma exceção; os acessos continuam individuais nos demais casos. O módulo `/cargos` permite consultar, cadastrar, renomear e excluir cargos. A lista é uma tabela pesquisável e ordenável pelo cabeçalho, começa por nome ascendente, usa 10 itens por página por padrão e oferece 10, 25, 50, 75 ou 100 itens. Os 31 cargos iniciais são cadastrados pelo seed e apresentados em ordem alfabética. O cargo "Administrador" é protegido e não pode ser editado nem excluído. Os demais cargos só podem ser excluídos quando não estiverem associados a nenhum usuário.
 - **RN-34. Funções informativas:** um usuário pode ter várias funções e uma função pode estar associada a vários usuários. Funções não concedem permissões; os acessos continuam individuais. O módulo `/funcoes` permite consultar, cadastrar, renomear e excluir funções. A lista é uma tabela pesquisável e ordenável pelo cabeçalho, começa por nome ascendente, usa 10 itens por página por padrão e oferece 10, 25, 50, 75 ou 100 itens. As 40 funções iniciais são cadastradas pelo seed e armazenadas em ordem alfabética. Uma função só pode ser excluída quando não estiver associada a nenhum usuário.
 - **RN-35. Dashboard:** a página `/dashboard` é o destino inicial após o login e fica disponível no menu para qualquer usuário autenticado. Cada indicador e link só exibe dados de módulos para os quais o usuário possui permissão de consulta; a visão geral não concede acesso adicional.
+- **RN-36. Notificações de transferências:** as notificações são internas, persistidas e exibidas no sino do cabeçalho, com contador, lista das 10 mais recentes, marcação individual ou em lote como lidas e atualização periódica a cada 30 segundos. Na solicitação, notificam-se usuários ativos com permissões de consulta e envio; no envio, o solicitante e usuários ativos com permissões de consulta e recebimento; na conclusão, o solicitante e quem enviou. O autor de cada evento não recebe notificação sobre a própria ação. Os destinatários diretos também precisam da permissão de consulta; notificação não concede acesso. E-mail e push não fazem parte desta versão.
 
 Todo registro importante (movimentação de estoque, pedido, preço, ação administrativa) guarda **quem fez** e **quando** (data e hora).
 
@@ -219,11 +220,11 @@ Também no Módulo 1: **importação da planilha de produtos do ERP** (RN-24), a
 4. **Recebimento:** usuário com permissão informa a quantidade recebida de cada produto. Diferenças, inclusive recebimentos parciais, exigem justificativa.
 5. **Conclusão:** em uma transação, o sistema baixa da origem o que foi enviado, credita no destino o que foi recebido, libera as reservas e registra recebedor, data/hora, movimentações e log. O pedido concluído fica somente para consulta.
 6. **Permissões:** consultar, solicitar, enviar e receber são permissões individuais, sem restrição por local. O cargo Administrador é exceção somente para editar ou excluir solicitações ainda Pendentes; não substitui as permissões de envio e recebimento.
-7. **Disponibilização:** o módulo está implementado nas telas `/transferencias`, `/transferencias/novo` e `/transferencias/[id]`, com validações no servidor, controle de saldo reservado, histórico de movimentações e auditoria. Para disponibilizá-lo em um ambiente, aplique o schema Prisma no banco correto e sincronize/conceda as permissões conforme a seção 2.1.
+7. **Disponibilização:** o módulo está implementado nas telas `/transferencias`, `/transferencias/novo` e `/transferencias/[id]`, com validações no servidor, controle de saldo reservado, histórico de movimentações, auditoria e notificações internas (RN-36). Para disponibilizá-lo em um ambiente, aplique o schema Prisma no banco correto e sincronize/conceda as permissões conforme a seção 2.1.
 
 ### Futuro
 
-Notificações para usuários, relatório de vendas e correção de preço no recebimento.
+Relatório de vendas e correção de preço no recebimento.
 
 ## 11. Decisões pendentes (perguntar ao usuário antes de implementar)
 

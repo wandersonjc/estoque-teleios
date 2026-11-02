@@ -283,6 +283,7 @@ export type PedidoTransferenciaWhereInput = {
   recebidoPor?: Prisma.XOR<Prisma.UsuarioNullableScalarRelationFilter, Prisma.UsuarioWhereInput> | null
   itens?: Prisma.ItemTransferenciaListRelationFilter
   movimentos?: Prisma.MovimentoEstoqueListRelationFilter
+  notificacoes?: Prisma.NotificacaoListRelationFilter
 }
 
 export type PedidoTransferenciaOrderByWithRelationInput = {
@@ -303,6 +304,7 @@ export type PedidoTransferenciaOrderByWithRelationInput = {
   recebidoPor?: Prisma.UsuarioOrderByWithRelationInput
   itens?: Prisma.ItemTransferenciaOrderByRelationAggregateInput
   movimentos?: Prisma.MovimentoEstoqueOrderByRelationAggregateInput
+  notificacoes?: Prisma.NotificacaoOrderByRelationAggregateInput
 }
 
 export type PedidoTransferenciaWhereUniqueInput = Prisma.AtLeast<{
@@ -326,6 +328,7 @@ export type PedidoTransferenciaWhereUniqueInput = Prisma.AtLeast<{
   recebidoPor?: Prisma.XOR<Prisma.UsuarioNullableScalarRelationFilter, Prisma.UsuarioWhereInput> | null
   itens?: Prisma.ItemTransferenciaListRelationFilter
   movimentos?: Prisma.MovimentoEstoqueListRelationFilter
+  notificacoes?: Prisma.NotificacaoListRelationFilter
 }, "id">
 
 export type PedidoTransferenciaOrderByWithAggregationInput = {
@@ -374,6 +377,7 @@ export type PedidoTransferenciaCreateInput = {
   recebidoPor?: Prisma.UsuarioCreateNestedOneWithoutTransferenciasRecebidasInput
   itens?: Prisma.ItemTransferenciaCreateNestedManyWithoutTransferenciaInput
   movimentos?: Prisma.MovimentoEstoqueCreateNestedManyWithoutTransferenciaInput
+  notificacoes?: Prisma.NotificacaoCreateNestedManyWithoutTransferenciaInput
 }
 
 export type PedidoTransferenciaUncheckedCreateInput = {
@@ -389,6 +393,7 @@ export type PedidoTransferenciaUncheckedCreateInput = {
   recebidoEm?: Date | string | null
   itens?: Prisma.ItemTransferenciaUncheckedCreateNestedManyWithoutTransferenciaInput
   movimentos?: Prisma.MovimentoEstoqueUncheckedCreateNestedManyWithoutTransferenciaInput
+  notificacoes?: Prisma.NotificacaoUncheckedCreateNestedManyWithoutTransferenciaInput
 }
 
 export type PedidoTransferenciaUpdateInput = {
@@ -403,6 +408,7 @@ export type PedidoTransferenciaUpdateInput = {
   recebidoPor?: Prisma.UsuarioUpdateOneWithoutTransferenciasRecebidasNestedInput
   itens?: Prisma.ItemTransferenciaUpdateManyWithoutTransferenciaNestedInput
   movimentos?: Prisma.MovimentoEstoqueUpdateManyWithoutTransferenciaNestedInput
+  notificacoes?: Prisma.NotificacaoUpdateManyWithoutTransferenciaNestedInput
 }
 
 export type PedidoTransferenciaUncheckedUpdateInput = {
@@ -418,6 +424,7 @@ export type PedidoTransferenciaUncheckedUpdateInput = {
   recebidoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   itens?: Prisma.ItemTransferenciaUncheckedUpdateManyWithoutTransferenciaNestedInput
   movimentos?: Prisma.MovimentoEstoqueUncheckedUpdateManyWithoutTransferenciaNestedInput
+  notificacoes?: Prisma.NotificacaoUncheckedUpdateManyWithoutTransferenciaNestedInput
 }
 
 export type PedidoTransferenciaCreateManyInput = {
@@ -778,6 +785,20 @@ export type PedidoTransferenciaUpdateOneRequiredWithoutItensNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.PedidoTransferenciaUpdateToOneWithWhereWithoutItensInput, Prisma.PedidoTransferenciaUpdateWithoutItensInput>, Prisma.PedidoTransferenciaUncheckedUpdateWithoutItensInput>
 }
 
+export type PedidoTransferenciaCreateNestedOneWithoutNotificacoesInput = {
+  create?: Prisma.XOR<Prisma.PedidoTransferenciaCreateWithoutNotificacoesInput, Prisma.PedidoTransferenciaUncheckedCreateWithoutNotificacoesInput>
+  connectOrCreate?: Prisma.PedidoTransferenciaCreateOrConnectWithoutNotificacoesInput
+  connect?: Prisma.PedidoTransferenciaWhereUniqueInput
+}
+
+export type PedidoTransferenciaUpdateOneRequiredWithoutNotificacoesNestedInput = {
+  create?: Prisma.XOR<Prisma.PedidoTransferenciaCreateWithoutNotificacoesInput, Prisma.PedidoTransferenciaUncheckedCreateWithoutNotificacoesInput>
+  connectOrCreate?: Prisma.PedidoTransferenciaCreateOrConnectWithoutNotificacoesInput
+  upsert?: Prisma.PedidoTransferenciaUpsertWithoutNotificacoesInput
+  connect?: Prisma.PedidoTransferenciaWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PedidoTransferenciaUpdateToOneWithWhereWithoutNotificacoesInput, Prisma.PedidoTransferenciaUpdateWithoutNotificacoesInput>, Prisma.PedidoTransferenciaUncheckedUpdateWithoutNotificacoesInput>
+}
+
 export type PedidoTransferenciaCreateWithoutSolicitanteInput = {
   criadoEm?: Date | string
   status?: $Enums.StatusTransferencia
@@ -789,6 +810,7 @@ export type PedidoTransferenciaCreateWithoutSolicitanteInput = {
   recebidoPor?: Prisma.UsuarioCreateNestedOneWithoutTransferenciasRecebidasInput
   itens?: Prisma.ItemTransferenciaCreateNestedManyWithoutTransferenciaInput
   movimentos?: Prisma.MovimentoEstoqueCreateNestedManyWithoutTransferenciaInput
+  notificacoes?: Prisma.NotificacaoCreateNestedManyWithoutTransferenciaInput
 }
 
 export type PedidoTransferenciaUncheckedCreateWithoutSolicitanteInput = {
@@ -803,6 +825,7 @@ export type PedidoTransferenciaUncheckedCreateWithoutSolicitanteInput = {
   recebidoEm?: Date | string | null
   itens?: Prisma.ItemTransferenciaUncheckedCreateNestedManyWithoutTransferenciaInput
   movimentos?: Prisma.MovimentoEstoqueUncheckedCreateNestedManyWithoutTransferenciaInput
+  notificacoes?: Prisma.NotificacaoUncheckedCreateNestedManyWithoutTransferenciaInput
 }
 
 export type PedidoTransferenciaCreateOrConnectWithoutSolicitanteInput = {
@@ -826,6 +849,7 @@ export type PedidoTransferenciaCreateWithoutEnviadoPorInput = {
   recebidoPor?: Prisma.UsuarioCreateNestedOneWithoutTransferenciasRecebidasInput
   itens?: Prisma.ItemTransferenciaCreateNestedManyWithoutTransferenciaInput
   movimentos?: Prisma.MovimentoEstoqueCreateNestedManyWithoutTransferenciaInput
+  notificacoes?: Prisma.NotificacaoCreateNestedManyWithoutTransferenciaInput
 }
 
 export type PedidoTransferenciaUncheckedCreateWithoutEnviadoPorInput = {
@@ -840,6 +864,7 @@ export type PedidoTransferenciaUncheckedCreateWithoutEnviadoPorInput = {
   recebidoEm?: Date | string | null
   itens?: Prisma.ItemTransferenciaUncheckedCreateNestedManyWithoutTransferenciaInput
   movimentos?: Prisma.MovimentoEstoqueUncheckedCreateNestedManyWithoutTransferenciaInput
+  notificacoes?: Prisma.NotificacaoUncheckedCreateNestedManyWithoutTransferenciaInput
 }
 
 export type PedidoTransferenciaCreateOrConnectWithoutEnviadoPorInput = {
@@ -863,6 +888,7 @@ export type PedidoTransferenciaCreateWithoutRecebidoPorInput = {
   enviadoPor?: Prisma.UsuarioCreateNestedOneWithoutTransferenciasEnviadasInput
   itens?: Prisma.ItemTransferenciaCreateNestedManyWithoutTransferenciaInput
   movimentos?: Prisma.MovimentoEstoqueCreateNestedManyWithoutTransferenciaInput
+  notificacoes?: Prisma.NotificacaoCreateNestedManyWithoutTransferenciaInput
 }
 
 export type PedidoTransferenciaUncheckedCreateWithoutRecebidoPorInput = {
@@ -877,6 +903,7 @@ export type PedidoTransferenciaUncheckedCreateWithoutRecebidoPorInput = {
   recebidoEm?: Date | string | null
   itens?: Prisma.ItemTransferenciaUncheckedCreateNestedManyWithoutTransferenciaInput
   movimentos?: Prisma.MovimentoEstoqueUncheckedCreateNestedManyWithoutTransferenciaInput
+  notificacoes?: Prisma.NotificacaoUncheckedCreateNestedManyWithoutTransferenciaInput
 }
 
 export type PedidoTransferenciaCreateOrConnectWithoutRecebidoPorInput = {
@@ -964,6 +991,7 @@ export type PedidoTransferenciaCreateWithoutOrigemInput = {
   recebidoPor?: Prisma.UsuarioCreateNestedOneWithoutTransferenciasRecebidasInput
   itens?: Prisma.ItemTransferenciaCreateNestedManyWithoutTransferenciaInput
   movimentos?: Prisma.MovimentoEstoqueCreateNestedManyWithoutTransferenciaInput
+  notificacoes?: Prisma.NotificacaoCreateNestedManyWithoutTransferenciaInput
 }
 
 export type PedidoTransferenciaUncheckedCreateWithoutOrigemInput = {
@@ -978,6 +1006,7 @@ export type PedidoTransferenciaUncheckedCreateWithoutOrigemInput = {
   recebidoEm?: Date | string | null
   itens?: Prisma.ItemTransferenciaUncheckedCreateNestedManyWithoutTransferenciaInput
   movimentos?: Prisma.MovimentoEstoqueUncheckedCreateNestedManyWithoutTransferenciaInput
+  notificacoes?: Prisma.NotificacaoUncheckedCreateNestedManyWithoutTransferenciaInput
 }
 
 export type PedidoTransferenciaCreateOrConnectWithoutOrigemInput = {
@@ -1001,6 +1030,7 @@ export type PedidoTransferenciaCreateWithoutDestinoInput = {
   recebidoPor?: Prisma.UsuarioCreateNestedOneWithoutTransferenciasRecebidasInput
   itens?: Prisma.ItemTransferenciaCreateNestedManyWithoutTransferenciaInput
   movimentos?: Prisma.MovimentoEstoqueCreateNestedManyWithoutTransferenciaInput
+  notificacoes?: Prisma.NotificacaoCreateNestedManyWithoutTransferenciaInput
 }
 
 export type PedidoTransferenciaUncheckedCreateWithoutDestinoInput = {
@@ -1015,6 +1045,7 @@ export type PedidoTransferenciaUncheckedCreateWithoutDestinoInput = {
   recebidoEm?: Date | string | null
   itens?: Prisma.ItemTransferenciaUncheckedCreateNestedManyWithoutTransferenciaInput
   movimentos?: Prisma.MovimentoEstoqueUncheckedCreateNestedManyWithoutTransferenciaInput
+  notificacoes?: Prisma.NotificacaoUncheckedCreateNestedManyWithoutTransferenciaInput
 }
 
 export type PedidoTransferenciaCreateOrConnectWithoutDestinoInput = {
@@ -1070,6 +1101,7 @@ export type PedidoTransferenciaCreateWithoutMovimentosInput = {
   enviadoPor?: Prisma.UsuarioCreateNestedOneWithoutTransferenciasEnviadasInput
   recebidoPor?: Prisma.UsuarioCreateNestedOneWithoutTransferenciasRecebidasInput
   itens?: Prisma.ItemTransferenciaCreateNestedManyWithoutTransferenciaInput
+  notificacoes?: Prisma.NotificacaoCreateNestedManyWithoutTransferenciaInput
 }
 
 export type PedidoTransferenciaUncheckedCreateWithoutMovimentosInput = {
@@ -1084,6 +1116,7 @@ export type PedidoTransferenciaUncheckedCreateWithoutMovimentosInput = {
   recebidoPorId?: number | null
   recebidoEm?: Date | string | null
   itens?: Prisma.ItemTransferenciaUncheckedCreateNestedManyWithoutTransferenciaInput
+  notificacoes?: Prisma.NotificacaoUncheckedCreateNestedManyWithoutTransferenciaInput
 }
 
 export type PedidoTransferenciaCreateOrConnectWithoutMovimentosInput = {
@@ -1113,6 +1146,7 @@ export type PedidoTransferenciaUpdateWithoutMovimentosInput = {
   enviadoPor?: Prisma.UsuarioUpdateOneWithoutTransferenciasEnviadasNestedInput
   recebidoPor?: Prisma.UsuarioUpdateOneWithoutTransferenciasRecebidasNestedInput
   itens?: Prisma.ItemTransferenciaUpdateManyWithoutTransferenciaNestedInput
+  notificacoes?: Prisma.NotificacaoUpdateManyWithoutTransferenciaNestedInput
 }
 
 export type PedidoTransferenciaUncheckedUpdateWithoutMovimentosInput = {
@@ -1127,6 +1161,7 @@ export type PedidoTransferenciaUncheckedUpdateWithoutMovimentosInput = {
   recebidoPorId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   recebidoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   itens?: Prisma.ItemTransferenciaUncheckedUpdateManyWithoutTransferenciaNestedInput
+  notificacoes?: Prisma.NotificacaoUncheckedUpdateManyWithoutTransferenciaNestedInput
 }
 
 export type PedidoTransferenciaCreateWithoutItensInput = {
@@ -1140,6 +1175,7 @@ export type PedidoTransferenciaCreateWithoutItensInput = {
   enviadoPor?: Prisma.UsuarioCreateNestedOneWithoutTransferenciasEnviadasInput
   recebidoPor?: Prisma.UsuarioCreateNestedOneWithoutTransferenciasRecebidasInput
   movimentos?: Prisma.MovimentoEstoqueCreateNestedManyWithoutTransferenciaInput
+  notificacoes?: Prisma.NotificacaoCreateNestedManyWithoutTransferenciaInput
 }
 
 export type PedidoTransferenciaUncheckedCreateWithoutItensInput = {
@@ -1154,6 +1190,7 @@ export type PedidoTransferenciaUncheckedCreateWithoutItensInput = {
   recebidoPorId?: number | null
   recebidoEm?: Date | string | null
   movimentos?: Prisma.MovimentoEstoqueUncheckedCreateNestedManyWithoutTransferenciaInput
+  notificacoes?: Prisma.NotificacaoUncheckedCreateNestedManyWithoutTransferenciaInput
 }
 
 export type PedidoTransferenciaCreateOrConnectWithoutItensInput = {
@@ -1183,6 +1220,7 @@ export type PedidoTransferenciaUpdateWithoutItensInput = {
   enviadoPor?: Prisma.UsuarioUpdateOneWithoutTransferenciasEnviadasNestedInput
   recebidoPor?: Prisma.UsuarioUpdateOneWithoutTransferenciasRecebidasNestedInput
   movimentos?: Prisma.MovimentoEstoqueUpdateManyWithoutTransferenciaNestedInput
+  notificacoes?: Prisma.NotificacaoUpdateManyWithoutTransferenciaNestedInput
 }
 
 export type PedidoTransferenciaUncheckedUpdateWithoutItensInput = {
@@ -1196,6 +1234,81 @@ export type PedidoTransferenciaUncheckedUpdateWithoutItensInput = {
   enviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   recebidoPorId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   recebidoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  movimentos?: Prisma.MovimentoEstoqueUncheckedUpdateManyWithoutTransferenciaNestedInput
+  notificacoes?: Prisma.NotificacaoUncheckedUpdateManyWithoutTransferenciaNestedInput
+}
+
+export type PedidoTransferenciaCreateWithoutNotificacoesInput = {
+  criadoEm?: Date | string
+  status?: $Enums.StatusTransferencia
+  enviadoEm?: Date | string | null
+  recebidoEm?: Date | string | null
+  origem: Prisma.LocalEstoqueCreateNestedOneWithoutTransferenciasOrigemInput
+  destino: Prisma.LocalEstoqueCreateNestedOneWithoutTransferenciasDestinoInput
+  solicitante: Prisma.UsuarioCreateNestedOneWithoutTransferenciasSolicitadasInput
+  enviadoPor?: Prisma.UsuarioCreateNestedOneWithoutTransferenciasEnviadasInput
+  recebidoPor?: Prisma.UsuarioCreateNestedOneWithoutTransferenciasRecebidasInput
+  itens?: Prisma.ItemTransferenciaCreateNestedManyWithoutTransferenciaInput
+  movimentos?: Prisma.MovimentoEstoqueCreateNestedManyWithoutTransferenciaInput
+}
+
+export type PedidoTransferenciaUncheckedCreateWithoutNotificacoesInput = {
+  id?: number
+  origemId: number
+  destinoId: number
+  solicitanteId: number
+  criadoEm?: Date | string
+  status?: $Enums.StatusTransferencia
+  enviadoPorId?: number | null
+  enviadoEm?: Date | string | null
+  recebidoPorId?: number | null
+  recebidoEm?: Date | string | null
+  itens?: Prisma.ItemTransferenciaUncheckedCreateNestedManyWithoutTransferenciaInput
+  movimentos?: Prisma.MovimentoEstoqueUncheckedCreateNestedManyWithoutTransferenciaInput
+}
+
+export type PedidoTransferenciaCreateOrConnectWithoutNotificacoesInput = {
+  where: Prisma.PedidoTransferenciaWhereUniqueInput
+  create: Prisma.XOR<Prisma.PedidoTransferenciaCreateWithoutNotificacoesInput, Prisma.PedidoTransferenciaUncheckedCreateWithoutNotificacoesInput>
+}
+
+export type PedidoTransferenciaUpsertWithoutNotificacoesInput = {
+  update: Prisma.XOR<Prisma.PedidoTransferenciaUpdateWithoutNotificacoesInput, Prisma.PedidoTransferenciaUncheckedUpdateWithoutNotificacoesInput>
+  create: Prisma.XOR<Prisma.PedidoTransferenciaCreateWithoutNotificacoesInput, Prisma.PedidoTransferenciaUncheckedCreateWithoutNotificacoesInput>
+  where?: Prisma.PedidoTransferenciaWhereInput
+}
+
+export type PedidoTransferenciaUpdateToOneWithWhereWithoutNotificacoesInput = {
+  where?: Prisma.PedidoTransferenciaWhereInput
+  data: Prisma.XOR<Prisma.PedidoTransferenciaUpdateWithoutNotificacoesInput, Prisma.PedidoTransferenciaUncheckedUpdateWithoutNotificacoesInput>
+}
+
+export type PedidoTransferenciaUpdateWithoutNotificacoesInput = {
+  criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumStatusTransferenciaFieldUpdateOperationsInput | $Enums.StatusTransferencia
+  enviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  recebidoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  origem?: Prisma.LocalEstoqueUpdateOneRequiredWithoutTransferenciasOrigemNestedInput
+  destino?: Prisma.LocalEstoqueUpdateOneRequiredWithoutTransferenciasDestinoNestedInput
+  solicitante?: Prisma.UsuarioUpdateOneRequiredWithoutTransferenciasSolicitadasNestedInput
+  enviadoPor?: Prisma.UsuarioUpdateOneWithoutTransferenciasEnviadasNestedInput
+  recebidoPor?: Prisma.UsuarioUpdateOneWithoutTransferenciasRecebidasNestedInput
+  itens?: Prisma.ItemTransferenciaUpdateManyWithoutTransferenciaNestedInput
+  movimentos?: Prisma.MovimentoEstoqueUpdateManyWithoutTransferenciaNestedInput
+}
+
+export type PedidoTransferenciaUncheckedUpdateWithoutNotificacoesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  origemId?: Prisma.IntFieldUpdateOperationsInput | number
+  destinoId?: Prisma.IntFieldUpdateOperationsInput | number
+  solicitanteId?: Prisma.IntFieldUpdateOperationsInput | number
+  criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumStatusTransferenciaFieldUpdateOperationsInput | $Enums.StatusTransferencia
+  enviadoPorId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  enviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  recebidoPorId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  recebidoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  itens?: Prisma.ItemTransferenciaUncheckedUpdateManyWithoutTransferenciaNestedInput
   movimentos?: Prisma.MovimentoEstoqueUncheckedUpdateManyWithoutTransferenciaNestedInput
 }
 
@@ -1246,6 +1359,7 @@ export type PedidoTransferenciaUpdateWithoutSolicitanteInput = {
   recebidoPor?: Prisma.UsuarioUpdateOneWithoutTransferenciasRecebidasNestedInput
   itens?: Prisma.ItemTransferenciaUpdateManyWithoutTransferenciaNestedInput
   movimentos?: Prisma.MovimentoEstoqueUpdateManyWithoutTransferenciaNestedInput
+  notificacoes?: Prisma.NotificacaoUpdateManyWithoutTransferenciaNestedInput
 }
 
 export type PedidoTransferenciaUncheckedUpdateWithoutSolicitanteInput = {
@@ -1260,6 +1374,7 @@ export type PedidoTransferenciaUncheckedUpdateWithoutSolicitanteInput = {
   recebidoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   itens?: Prisma.ItemTransferenciaUncheckedUpdateManyWithoutTransferenciaNestedInput
   movimentos?: Prisma.MovimentoEstoqueUncheckedUpdateManyWithoutTransferenciaNestedInput
+  notificacoes?: Prisma.NotificacaoUncheckedUpdateManyWithoutTransferenciaNestedInput
 }
 
 export type PedidoTransferenciaUncheckedUpdateManyWithoutSolicitanteInput = {
@@ -1285,6 +1400,7 @@ export type PedidoTransferenciaUpdateWithoutEnviadoPorInput = {
   recebidoPor?: Prisma.UsuarioUpdateOneWithoutTransferenciasRecebidasNestedInput
   itens?: Prisma.ItemTransferenciaUpdateManyWithoutTransferenciaNestedInput
   movimentos?: Prisma.MovimentoEstoqueUpdateManyWithoutTransferenciaNestedInput
+  notificacoes?: Prisma.NotificacaoUpdateManyWithoutTransferenciaNestedInput
 }
 
 export type PedidoTransferenciaUncheckedUpdateWithoutEnviadoPorInput = {
@@ -1299,6 +1415,7 @@ export type PedidoTransferenciaUncheckedUpdateWithoutEnviadoPorInput = {
   recebidoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   itens?: Prisma.ItemTransferenciaUncheckedUpdateManyWithoutTransferenciaNestedInput
   movimentos?: Prisma.MovimentoEstoqueUncheckedUpdateManyWithoutTransferenciaNestedInput
+  notificacoes?: Prisma.NotificacaoUncheckedUpdateManyWithoutTransferenciaNestedInput
 }
 
 export type PedidoTransferenciaUncheckedUpdateManyWithoutEnviadoPorInput = {
@@ -1324,6 +1441,7 @@ export type PedidoTransferenciaUpdateWithoutRecebidoPorInput = {
   enviadoPor?: Prisma.UsuarioUpdateOneWithoutTransferenciasEnviadasNestedInput
   itens?: Prisma.ItemTransferenciaUpdateManyWithoutTransferenciaNestedInput
   movimentos?: Prisma.MovimentoEstoqueUpdateManyWithoutTransferenciaNestedInput
+  notificacoes?: Prisma.NotificacaoUpdateManyWithoutTransferenciaNestedInput
 }
 
 export type PedidoTransferenciaUncheckedUpdateWithoutRecebidoPorInput = {
@@ -1338,6 +1456,7 @@ export type PedidoTransferenciaUncheckedUpdateWithoutRecebidoPorInput = {
   recebidoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   itens?: Prisma.ItemTransferenciaUncheckedUpdateManyWithoutTransferenciaNestedInput
   movimentos?: Prisma.MovimentoEstoqueUncheckedUpdateManyWithoutTransferenciaNestedInput
+  notificacoes?: Prisma.NotificacaoUncheckedUpdateManyWithoutTransferenciaNestedInput
 }
 
 export type PedidoTransferenciaUncheckedUpdateManyWithoutRecebidoPorInput = {
@@ -1387,6 +1506,7 @@ export type PedidoTransferenciaUpdateWithoutOrigemInput = {
   recebidoPor?: Prisma.UsuarioUpdateOneWithoutTransferenciasRecebidasNestedInput
   itens?: Prisma.ItemTransferenciaUpdateManyWithoutTransferenciaNestedInput
   movimentos?: Prisma.MovimentoEstoqueUpdateManyWithoutTransferenciaNestedInput
+  notificacoes?: Prisma.NotificacaoUpdateManyWithoutTransferenciaNestedInput
 }
 
 export type PedidoTransferenciaUncheckedUpdateWithoutOrigemInput = {
@@ -1401,6 +1521,7 @@ export type PedidoTransferenciaUncheckedUpdateWithoutOrigemInput = {
   recebidoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   itens?: Prisma.ItemTransferenciaUncheckedUpdateManyWithoutTransferenciaNestedInput
   movimentos?: Prisma.MovimentoEstoqueUncheckedUpdateManyWithoutTransferenciaNestedInput
+  notificacoes?: Prisma.NotificacaoUncheckedUpdateManyWithoutTransferenciaNestedInput
 }
 
 export type PedidoTransferenciaUncheckedUpdateManyWithoutOrigemInput = {
@@ -1426,6 +1547,7 @@ export type PedidoTransferenciaUpdateWithoutDestinoInput = {
   recebidoPor?: Prisma.UsuarioUpdateOneWithoutTransferenciasRecebidasNestedInput
   itens?: Prisma.ItemTransferenciaUpdateManyWithoutTransferenciaNestedInput
   movimentos?: Prisma.MovimentoEstoqueUpdateManyWithoutTransferenciaNestedInput
+  notificacoes?: Prisma.NotificacaoUpdateManyWithoutTransferenciaNestedInput
 }
 
 export type PedidoTransferenciaUncheckedUpdateWithoutDestinoInput = {
@@ -1440,6 +1562,7 @@ export type PedidoTransferenciaUncheckedUpdateWithoutDestinoInput = {
   recebidoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   itens?: Prisma.ItemTransferenciaUncheckedUpdateManyWithoutTransferenciaNestedInput
   movimentos?: Prisma.MovimentoEstoqueUncheckedUpdateManyWithoutTransferenciaNestedInput
+  notificacoes?: Prisma.NotificacaoUncheckedUpdateManyWithoutTransferenciaNestedInput
 }
 
 export type PedidoTransferenciaUncheckedUpdateManyWithoutDestinoInput = {
@@ -1462,11 +1585,13 @@ export type PedidoTransferenciaUncheckedUpdateManyWithoutDestinoInput = {
 export type PedidoTransferenciaCountOutputType = {
   itens: number
   movimentos: number
+  notificacoes: number
 }
 
 export type PedidoTransferenciaCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   itens?: boolean | PedidoTransferenciaCountOutputTypeCountItensArgs
   movimentos?: boolean | PedidoTransferenciaCountOutputTypeCountMovimentosArgs
+  notificacoes?: boolean | PedidoTransferenciaCountOutputTypeCountNotificacoesArgs
 }
 
 /**
@@ -1493,6 +1618,13 @@ export type PedidoTransferenciaCountOutputTypeCountMovimentosArgs<ExtArgs extend
   where?: Prisma.MovimentoEstoqueWhereInput
 }
 
+/**
+ * PedidoTransferenciaCountOutputType without action
+ */
+export type PedidoTransferenciaCountOutputTypeCountNotificacoesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NotificacaoWhereInput
+}
+
 
 export type PedidoTransferenciaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1512,6 +1644,7 @@ export type PedidoTransferenciaSelect<ExtArgs extends runtime.Types.Extensions.I
   recebidoPor?: boolean | Prisma.PedidoTransferencia$recebidoPorArgs<ExtArgs>
   itens?: boolean | Prisma.PedidoTransferencia$itensArgs<ExtArgs>
   movimentos?: boolean | Prisma.PedidoTransferencia$movimentosArgs<ExtArgs>
+  notificacoes?: boolean | Prisma.PedidoTransferencia$notificacoesArgs<ExtArgs>
   _count?: boolean | Prisma.PedidoTransferenciaCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["pedidoTransferencia"]>
 
@@ -1573,6 +1706,7 @@ export type PedidoTransferenciaInclude<ExtArgs extends runtime.Types.Extensions.
   recebidoPor?: boolean | Prisma.PedidoTransferencia$recebidoPorArgs<ExtArgs>
   itens?: boolean | Prisma.PedidoTransferencia$itensArgs<ExtArgs>
   movimentos?: boolean | Prisma.PedidoTransferencia$movimentosArgs<ExtArgs>
+  notificacoes?: boolean | Prisma.PedidoTransferencia$notificacoesArgs<ExtArgs>
   _count?: boolean | Prisma.PedidoTransferenciaCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type PedidoTransferenciaIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1600,6 +1734,7 @@ export type $PedidoTransferenciaPayload<ExtArgs extends runtime.Types.Extensions
     recebidoPor: Prisma.$UsuarioPayload<ExtArgs> | null
     itens: Prisma.$ItemTransferenciaPayload<ExtArgs>[]
     movimentos: Prisma.$MovimentoEstoquePayload<ExtArgs>[]
+    notificacoes: Prisma.$NotificacaoPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -2013,6 +2148,7 @@ export interface Prisma__PedidoTransferenciaClient<T, Null = never, ExtArgs exte
   recebidoPor<T extends Prisma.PedidoTransferencia$recebidoPorArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PedidoTransferencia$recebidoPorArgs<ExtArgs>>): Prisma.Prisma__UsuarioClient<runtime.Types.Result.GetResult<Prisma.$UsuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   itens<T extends Prisma.PedidoTransferencia$itensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PedidoTransferencia$itensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ItemTransferenciaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   movimentos<T extends Prisma.PedidoTransferencia$movimentosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PedidoTransferencia$movimentosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MovimentoEstoquePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  notificacoes<T extends Prisma.PedidoTransferencia$notificacoesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PedidoTransferencia$notificacoesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificacaoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2536,6 +2672,30 @@ export type PedidoTransferencia$movimentosArgs<ExtArgs extends runtime.Types.Ext
   take?: number
   skip?: number
   distinct?: Prisma.MovimentoEstoqueScalarFieldEnum | Prisma.MovimentoEstoqueScalarFieldEnum[]
+}
+
+/**
+ * PedidoTransferencia.notificacoes
+ */
+export type PedidoTransferencia$notificacoesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Notificacao
+   */
+  select?: Prisma.NotificacaoSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Notificacao
+   */
+  omit?: Prisma.NotificacaoOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NotificacaoInclude<ExtArgs> | null
+  where?: Prisma.NotificacaoWhereInput
+  orderBy?: Prisma.NotificacaoOrderByWithRelationInput | Prisma.NotificacaoOrderByWithRelationInput[]
+  cursor?: Prisma.NotificacaoWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NotificacaoScalarFieldEnum | Prisma.NotificacaoScalarFieldEnum[]
 }
 
 /**

@@ -63,7 +63,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 : undefined,
               tema,
             }}
-          >
+              podeConsultarTransferencias={usuario.permissoes.has(
+                "transferencias.pedido.consultar"
+              )}
+            >
             {children}
           </AppShell>
         ) : (

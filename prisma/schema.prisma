@@ -52,6 +52,7 @@ model Usuario {
   transferenciasSolicitadas PedidoTransferencia[] @relation("TransferenciaSolicitante")
   transferenciasEnviadas    PedidoTransferencia[] @relation("TransferenciaRemetente")
   transferenciasRecebidas   PedidoTransferencia[] @relation("TransferenciaRecebedor")
+  notificacoes              Notificacao[]
 
   @@map("usuario")
 }
@@ -305,6 +306,12 @@ enum StatusTransferencia {
   CONCLUIDO
 }
 
+enum TipoNotificacaoTransferencia {
+  SOLICITADO
+  ENVIADO
+  CONCLUIDO
+}
+
 model PedidoTransferencia {
   id            Int                 @id @default(autoincrement())
   origemId      Int                 @map("origem_id")
@@ -324,6 +331,7 @@ model PedidoTransferencia {
   recebidoPor Usuario?            @relation("TransferenciaRecebedor", fields: [recebidoPorId], references: [id], onDelete: Restrict)
   itens       ItemTransferencia[]
   movimentos  MovimentoEstoque[]
+  notificacoes Notificacao[]
 
   @@index([status, criadoEm])
   @@index([origemId, status])
@@ -357,6 +365,23 @@ model ItemTransferencia {
   @@unique([transferenciaId, produtoId])
   @@index([produtoId])
   @@map("item_transferencia")
+}
+
+model Notificacao {
+  id              Int                           @id @default(autoincrement())
+  usuarioId       Int                           @map("usuario_id")
+  transferenciaId Int                           @map("transferencia_id")
+  tipo            TipoNotificacaoTransferencia
+  mensagem        String                        @db.VarChar(300)
+  criadoEm        DateTime                      @default(now()) @map("criado_em")
+  lidaEm          DateTime?                     @map("lida_em")
+
+  usuario       Usuario             @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  transferencia PedidoTransferencia @relation(fields: [transferenciaId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId, lidaEm, criadoEm])
+  @@index([transferenciaId])
+  @@map("notificacao")
 }
 
 // ------------------------------------------------------------
