@@ -242,6 +242,7 @@ export type NotificacaoWhereInput = {
   lidaEm?: Prisma.DateTimeNullableFilter<"Notificacao"> | Date | string | null
   usuario?: Prisma.XOR<Prisma.UsuarioScalarRelationFilter, Prisma.UsuarioWhereInput>
   transferencia?: Prisma.XOR<Prisma.PedidoTransferenciaScalarRelationFilter, Prisma.PedidoTransferenciaWhereInput>
+  entregasPush?: Prisma.EntregaPushListRelationFilter
 }
 
 export type NotificacaoOrderByWithRelationInput = {
@@ -254,6 +255,7 @@ export type NotificacaoOrderByWithRelationInput = {
   lidaEm?: Prisma.SortOrderInput | Prisma.SortOrder
   usuario?: Prisma.UsuarioOrderByWithRelationInput
   transferencia?: Prisma.PedidoTransferenciaOrderByWithRelationInput
+  entregasPush?: Prisma.EntregaPushOrderByRelationAggregateInput
 }
 
 export type NotificacaoWhereUniqueInput = Prisma.AtLeast<{
@@ -269,6 +271,7 @@ export type NotificacaoWhereUniqueInput = Prisma.AtLeast<{
   lidaEm?: Prisma.DateTimeNullableFilter<"Notificacao"> | Date | string | null
   usuario?: Prisma.XOR<Prisma.UsuarioScalarRelationFilter, Prisma.UsuarioWhereInput>
   transferencia?: Prisma.XOR<Prisma.PedidoTransferenciaScalarRelationFilter, Prisma.PedidoTransferenciaWhereInput>
+  entregasPush?: Prisma.EntregaPushListRelationFilter
 }, "id">
 
 export type NotificacaoOrderByWithAggregationInput = {
@@ -306,6 +309,7 @@ export type NotificacaoCreateInput = {
   lidaEm?: Date | string | null
   usuario: Prisma.UsuarioCreateNestedOneWithoutNotificacoesInput
   transferencia: Prisma.PedidoTransferenciaCreateNestedOneWithoutNotificacoesInput
+  entregasPush?: Prisma.EntregaPushCreateNestedManyWithoutNotificacaoInput
 }
 
 export type NotificacaoUncheckedCreateInput = {
@@ -316,6 +320,7 @@ export type NotificacaoUncheckedCreateInput = {
   mensagem: string
   criadoEm?: Date | string
   lidaEm?: Date | string | null
+  entregasPush?: Prisma.EntregaPushUncheckedCreateNestedManyWithoutNotificacaoInput
 }
 
 export type NotificacaoUpdateInput = {
@@ -325,6 +330,7 @@ export type NotificacaoUpdateInput = {
   lidaEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   usuario?: Prisma.UsuarioUpdateOneRequiredWithoutNotificacoesNestedInput
   transferencia?: Prisma.PedidoTransferenciaUpdateOneRequiredWithoutNotificacoesNestedInput
+  entregasPush?: Prisma.EntregaPushUpdateManyWithoutNotificacaoNestedInput
 }
 
 export type NotificacaoUncheckedUpdateInput = {
@@ -335,6 +341,7 @@ export type NotificacaoUncheckedUpdateInput = {
   mensagem?: Prisma.StringFieldUpdateOperationsInput | string
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lidaEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  entregasPush?: Prisma.EntregaPushUncheckedUpdateManyWithoutNotificacaoNestedInput
 }
 
 export type NotificacaoCreateManyInput = {
@@ -414,6 +421,11 @@ export type NotificacaoSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   usuarioId?: Prisma.SortOrder
   transferenciaId?: Prisma.SortOrder
+}
+
+export type NotificacaoScalarRelationFilter = {
+  is?: Prisma.NotificacaoWhereInput
+  isNot?: Prisma.NotificacaoWhereInput
 }
 
 export type NotificacaoCreateNestedManyWithoutUsuarioInput = {
@@ -504,12 +516,27 @@ export type EnumTipoNotificacaoTransferenciaFieldUpdateOperationsInput = {
   set?: $Enums.TipoNotificacaoTransferencia
 }
 
+export type NotificacaoCreateNestedOneWithoutEntregasPushInput = {
+  create?: Prisma.XOR<Prisma.NotificacaoCreateWithoutEntregasPushInput, Prisma.NotificacaoUncheckedCreateWithoutEntregasPushInput>
+  connectOrCreate?: Prisma.NotificacaoCreateOrConnectWithoutEntregasPushInput
+  connect?: Prisma.NotificacaoWhereUniqueInput
+}
+
+export type NotificacaoUpdateOneRequiredWithoutEntregasPushNestedInput = {
+  create?: Prisma.XOR<Prisma.NotificacaoCreateWithoutEntregasPushInput, Prisma.NotificacaoUncheckedCreateWithoutEntregasPushInput>
+  connectOrCreate?: Prisma.NotificacaoCreateOrConnectWithoutEntregasPushInput
+  upsert?: Prisma.NotificacaoUpsertWithoutEntregasPushInput
+  connect?: Prisma.NotificacaoWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.NotificacaoUpdateToOneWithWhereWithoutEntregasPushInput, Prisma.NotificacaoUpdateWithoutEntregasPushInput>, Prisma.NotificacaoUncheckedUpdateWithoutEntregasPushInput>
+}
+
 export type NotificacaoCreateWithoutUsuarioInput = {
   tipo: $Enums.TipoNotificacaoTransferencia
   mensagem: string
   criadoEm?: Date | string
   lidaEm?: Date | string | null
   transferencia: Prisma.PedidoTransferenciaCreateNestedOneWithoutNotificacoesInput
+  entregasPush?: Prisma.EntregaPushCreateNestedManyWithoutNotificacaoInput
 }
 
 export type NotificacaoUncheckedCreateWithoutUsuarioInput = {
@@ -519,6 +546,7 @@ export type NotificacaoUncheckedCreateWithoutUsuarioInput = {
   mensagem: string
   criadoEm?: Date | string
   lidaEm?: Date | string | null
+  entregasPush?: Prisma.EntregaPushUncheckedCreateNestedManyWithoutNotificacaoInput
 }
 
 export type NotificacaoCreateOrConnectWithoutUsuarioInput = {
@@ -566,6 +594,7 @@ export type NotificacaoCreateWithoutTransferenciaInput = {
   criadoEm?: Date | string
   lidaEm?: Date | string | null
   usuario: Prisma.UsuarioCreateNestedOneWithoutNotificacoesInput
+  entregasPush?: Prisma.EntregaPushCreateNestedManyWithoutNotificacaoInput
 }
 
 export type NotificacaoUncheckedCreateWithoutTransferenciaInput = {
@@ -575,6 +604,7 @@ export type NotificacaoUncheckedCreateWithoutTransferenciaInput = {
   mensagem: string
   criadoEm?: Date | string
   lidaEm?: Date | string | null
+  entregasPush?: Prisma.EntregaPushUncheckedCreateNestedManyWithoutNotificacaoInput
 }
 
 export type NotificacaoCreateOrConnectWithoutTransferenciaInput = {
@@ -603,6 +633,60 @@ export type NotificacaoUpdateManyWithWhereWithoutTransferenciaInput = {
   data: Prisma.XOR<Prisma.NotificacaoUpdateManyMutationInput, Prisma.NotificacaoUncheckedUpdateManyWithoutTransferenciaInput>
 }
 
+export type NotificacaoCreateWithoutEntregasPushInput = {
+  tipo: $Enums.TipoNotificacaoTransferencia
+  mensagem: string
+  criadoEm?: Date | string
+  lidaEm?: Date | string | null
+  usuario: Prisma.UsuarioCreateNestedOneWithoutNotificacoesInput
+  transferencia: Prisma.PedidoTransferenciaCreateNestedOneWithoutNotificacoesInput
+}
+
+export type NotificacaoUncheckedCreateWithoutEntregasPushInput = {
+  id?: number
+  usuarioId: number
+  transferenciaId: number
+  tipo: $Enums.TipoNotificacaoTransferencia
+  mensagem: string
+  criadoEm?: Date | string
+  lidaEm?: Date | string | null
+}
+
+export type NotificacaoCreateOrConnectWithoutEntregasPushInput = {
+  where: Prisma.NotificacaoWhereUniqueInput
+  create: Prisma.XOR<Prisma.NotificacaoCreateWithoutEntregasPushInput, Prisma.NotificacaoUncheckedCreateWithoutEntregasPushInput>
+}
+
+export type NotificacaoUpsertWithoutEntregasPushInput = {
+  update: Prisma.XOR<Prisma.NotificacaoUpdateWithoutEntregasPushInput, Prisma.NotificacaoUncheckedUpdateWithoutEntregasPushInput>
+  create: Prisma.XOR<Prisma.NotificacaoCreateWithoutEntregasPushInput, Prisma.NotificacaoUncheckedCreateWithoutEntregasPushInput>
+  where?: Prisma.NotificacaoWhereInput
+}
+
+export type NotificacaoUpdateToOneWithWhereWithoutEntregasPushInput = {
+  where?: Prisma.NotificacaoWhereInput
+  data: Prisma.XOR<Prisma.NotificacaoUpdateWithoutEntregasPushInput, Prisma.NotificacaoUncheckedUpdateWithoutEntregasPushInput>
+}
+
+export type NotificacaoUpdateWithoutEntregasPushInput = {
+  tipo?: Prisma.EnumTipoNotificacaoTransferenciaFieldUpdateOperationsInput | $Enums.TipoNotificacaoTransferencia
+  mensagem?: Prisma.StringFieldUpdateOperationsInput | string
+  criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lidaEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  usuario?: Prisma.UsuarioUpdateOneRequiredWithoutNotificacoesNestedInput
+  transferencia?: Prisma.PedidoTransferenciaUpdateOneRequiredWithoutNotificacoesNestedInput
+}
+
+export type NotificacaoUncheckedUpdateWithoutEntregasPushInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  usuarioId?: Prisma.IntFieldUpdateOperationsInput | number
+  transferenciaId?: Prisma.IntFieldUpdateOperationsInput | number
+  tipo?: Prisma.EnumTipoNotificacaoTransferenciaFieldUpdateOperationsInput | $Enums.TipoNotificacaoTransferencia
+  mensagem?: Prisma.StringFieldUpdateOperationsInput | string
+  criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lidaEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
 export type NotificacaoCreateManyUsuarioInput = {
   id?: number
   transferenciaId: number
@@ -618,6 +702,7 @@ export type NotificacaoUpdateWithoutUsuarioInput = {
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lidaEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   transferencia?: Prisma.PedidoTransferenciaUpdateOneRequiredWithoutNotificacoesNestedInput
+  entregasPush?: Prisma.EntregaPushUpdateManyWithoutNotificacaoNestedInput
 }
 
 export type NotificacaoUncheckedUpdateWithoutUsuarioInput = {
@@ -627,6 +712,7 @@ export type NotificacaoUncheckedUpdateWithoutUsuarioInput = {
   mensagem?: Prisma.StringFieldUpdateOperationsInput | string
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lidaEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  entregasPush?: Prisma.EntregaPushUncheckedUpdateManyWithoutNotificacaoNestedInput
 }
 
 export type NotificacaoUncheckedUpdateManyWithoutUsuarioInput = {
@@ -653,6 +739,7 @@ export type NotificacaoUpdateWithoutTransferenciaInput = {
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lidaEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   usuario?: Prisma.UsuarioUpdateOneRequiredWithoutNotificacoesNestedInput
+  entregasPush?: Prisma.EntregaPushUpdateManyWithoutNotificacaoNestedInput
 }
 
 export type NotificacaoUncheckedUpdateWithoutTransferenciaInput = {
@@ -662,6 +749,7 @@ export type NotificacaoUncheckedUpdateWithoutTransferenciaInput = {
   mensagem?: Prisma.StringFieldUpdateOperationsInput | string
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lidaEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  entregasPush?: Prisma.EntregaPushUncheckedUpdateManyWithoutNotificacaoNestedInput
 }
 
 export type NotificacaoUncheckedUpdateManyWithoutTransferenciaInput = {
@@ -674,6 +762,35 @@ export type NotificacaoUncheckedUpdateManyWithoutTransferenciaInput = {
 }
 
 
+/**
+ * Count Type NotificacaoCountOutputType
+ */
+
+export type NotificacaoCountOutputType = {
+  entregasPush: number
+}
+
+export type NotificacaoCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  entregasPush?: boolean | NotificacaoCountOutputTypeCountEntregasPushArgs
+}
+
+/**
+ * NotificacaoCountOutputType without action
+ */
+export type NotificacaoCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NotificacaoCountOutputType
+   */
+  select?: Prisma.NotificacaoCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * NotificacaoCountOutputType without action
+ */
+export type NotificacaoCountOutputTypeCountEntregasPushArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EntregaPushWhereInput
+}
+
 
 export type NotificacaoSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -685,6 +802,8 @@ export type NotificacaoSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   lidaEm?: boolean
   usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
   transferencia?: boolean | Prisma.PedidoTransferenciaDefaultArgs<ExtArgs>
+  entregasPush?: boolean | Prisma.Notificacao$entregasPushArgs<ExtArgs>
+  _count?: boolean | Prisma.NotificacaoCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["notificacao"]>
 
 export type NotificacaoSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -725,6 +844,8 @@ export type NotificacaoOmit<ExtArgs extends runtime.Types.Extensions.InternalArg
 export type NotificacaoInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
   transferencia?: boolean | Prisma.PedidoTransferenciaDefaultArgs<ExtArgs>
+  entregasPush?: boolean | Prisma.Notificacao$entregasPushArgs<ExtArgs>
+  _count?: boolean | Prisma.NotificacaoCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type NotificacaoIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
@@ -740,6 +861,7 @@ export type $NotificacaoPayload<ExtArgs extends runtime.Types.Extensions.Interna
   objects: {
     usuario: Prisma.$UsuarioPayload<ExtArgs>
     transferencia: Prisma.$PedidoTransferenciaPayload<ExtArgs>
+    entregasPush: Prisma.$EntregaPushPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1145,6 +1267,7 @@ export interface Prisma__NotificacaoClient<T, Null = never, ExtArgs extends runt
   readonly [Symbol.toStringTag]: "PrismaPromise"
   usuario<T extends Prisma.UsuarioDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UsuarioDefaultArgs<ExtArgs>>): Prisma.Prisma__UsuarioClient<runtime.Types.Result.GetResult<Prisma.$UsuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   transferencia<T extends Prisma.PedidoTransferenciaDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PedidoTransferenciaDefaultArgs<ExtArgs>>): Prisma.Prisma__PedidoTransferenciaClient<runtime.Types.Result.GetResult<Prisma.$PedidoTransferenciaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  entregasPush<T extends Prisma.Notificacao$entregasPushArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Notificacao$entregasPushArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EntregaPushPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1579,6 +1702,30 @@ export type NotificacaoDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * Limit how many Notificacaos to delete.
    */
   limit?: number
+}
+
+/**
+ * Notificacao.entregasPush
+ */
+export type Notificacao$entregasPushArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EntregaPush
+   */
+  select?: Prisma.EntregaPushSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EntregaPush
+   */
+  omit?: Prisma.EntregaPushOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EntregaPushInclude<ExtArgs> | null
+  where?: Prisma.EntregaPushWhereInput
+  orderBy?: Prisma.EntregaPushOrderByWithRelationInput | Prisma.EntregaPushOrderByWithRelationInput[]
+  cursor?: Prisma.EntregaPushWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EntregaPushScalarFieldEnum | Prisma.EntregaPushScalarFieldEnum[]
 }
 
 /**

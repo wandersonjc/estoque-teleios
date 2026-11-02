@@ -53,6 +53,16 @@ export const TipoNotificacaoTransferencia = {
 export type TipoNotificacaoTransferencia = (typeof TipoNotificacaoTransferencia)[keyof typeof TipoNotificacaoTransferencia]
 
 
+export const StatusEntregaPush = {
+  PENDENTE: 'PENDENTE',
+  PROCESSANDO: 'PROCESSANDO',
+  ENVIADA: 'ENVIADA',
+  FALHOU: 'FALHOU'
+} as const
+
+export type StatusEntregaPush = (typeof StatusEntregaPush)[keyof typeof StatusEntregaPush]
+
+
 export const ModuloSistema = {
   PRODUTOS: 'PRODUTOS',
   ESTOQUE: 'ESTOQUE',

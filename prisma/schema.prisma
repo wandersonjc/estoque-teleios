@@ -53,6 +53,7 @@ model Usuario {
   transferenciasEnviadas    PedidoTransferencia[] @relation("TransferenciaRemetente")
   transferenciasRecebidas   PedidoTransferencia[] @relation("TransferenciaRecebedor")
   notificacoes              Notificacao[]
+  assinaturasPush           AssinaturaPush[]
 
   @@map("usuario")
 }
@@ -312,6 +313,13 @@ enum TipoNotificacaoTransferencia {
   CONCLUIDO
 }
 
+enum StatusEntregaPush {
+  PENDENTE
+  PROCESSANDO
+  ENVIADA
+  FALHOU
+}
+
 model PedidoTransferencia {
   id            Int                 @id @default(autoincrement())
   origemId      Int                 @map("origem_id")
@@ -324,13 +332,13 @@ model PedidoTransferencia {
   recebidoPorId Int?                @map("recebido_por_id")
   recebidoEm    DateTime?           @map("recebido_em")
 
-  origem      LocalEstoque        @relation("TransferenciaOrigem", fields: [origemId], references: [id], onDelete: Restrict)
-  destino     LocalEstoque        @relation("TransferenciaDestino", fields: [destinoId], references: [id], onDelete: Restrict)
-  solicitante Usuario             @relation("TransferenciaSolicitante", fields: [solicitanteId], references: [id], onDelete: Restrict)
-  enviadoPor  Usuario?            @relation("TransferenciaRemetente", fields: [enviadoPorId], references: [id], onDelete: Restrict)
-  recebidoPor Usuario?            @relation("TransferenciaRecebedor", fields: [recebidoPorId], references: [id], onDelete: Restrict)
-  itens       ItemTransferencia[]
-  movimentos  MovimentoEstoque[]
+  origem       LocalEstoque        @relation("TransferenciaOrigem", fields: [origemId], references: [id], onDelete: Restrict)
+  destino      LocalEstoque        @relation("TransferenciaDestino", fields: [destinoId], references: [id], onDelete: Restrict)
+  solicitante  Usuario             @relation("TransferenciaSolicitante", fields: [solicitanteId], references: [id], onDelete: Restrict)
+  enviadoPor   Usuario?            @relation("TransferenciaRemetente", fields: [enviadoPorId], references: [id], onDelete: Restrict)
+  recebidoPor  Usuario?            @relation("TransferenciaRecebedor", fields: [recebidoPorId], references: [id], onDelete: Restrict)
+  itens        ItemTransferencia[]
+  movimentos   MovimentoEstoque[]
   notificacoes Notificacao[]
 
   @@index([status, criadoEm])
@@ -368,20 +376,58 @@ model ItemTransferencia {
 }
 
 model Notificacao {
-  id              Int                           @id @default(autoincrement())
-  usuarioId       Int                           @map("usuario_id")
-  transferenciaId Int                           @map("transferencia_id")
+  id              Int                          @id @default(autoincrement())
+  usuarioId       Int                          @map("usuario_id")
+  transferenciaId Int                          @map("transferencia_id")
   tipo            TipoNotificacaoTransferencia
-  mensagem        String                        @db.VarChar(300)
-  criadoEm        DateTime                      @default(now()) @map("criado_em")
-  lidaEm          DateTime?                     @map("lida_em")
+  mensagem        String                       @db.VarChar(300)
+  criadoEm        DateTime                     @default(now()) @map("criado_em")
+  lidaEm          DateTime?                    @map("lida_em")
 
   usuario       Usuario             @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
   transferencia PedidoTransferencia @relation(fields: [transferenciaId], references: [id], onDelete: Cascade)
+  entregasPush  EntregaPush[]
 
   @@index([usuarioId, lidaEm, criadoEm])
   @@index([transferenciaId])
   @@map("notificacao")
+}
+
+model AssinaturaPush {
+  id           Int      @id @default(autoincrement())
+  usuarioId    Int      @map("usuario_id")
+  endpoint     String   @unique @db.VarChar(2048)
+  chaveP256dh  String   @map("chave_p256dh") @db.VarChar(255)
+  chaveAuth    String   @map("chave_auth") @db.VarChar(255)
+  criadoEm     DateTime @default(now()) @map("criado_em")
+  atualizadoEm DateTime @updatedAt @map("atualizado_em")
+
+  usuario  Usuario       @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  entregas EntregaPush[]
+
+  @@index([usuarioId])
+  @@map("assinatura_push")
+}
+
+model EntregaPush {
+  id                 Int               @id @default(autoincrement())
+  notificacaoId      Int               @map("notificacao_id")
+  assinaturaId       Int               @map("assinatura_id")
+  status             StatusEntregaPush @default(PENDENTE)
+  tentativas         Int               @default(0)
+  proximaTentativaEm DateTime          @default(now()) @map("proxima_tentativa_em")
+  bloqueioAte        DateTime?         @map("bloqueio_ate")
+  criadoEm           DateTime          @default(now()) @map("criado_em")
+  atualizadoEm       DateTime          @updatedAt @map("atualizado_em")
+  enviadaEm          DateTime?         @map("enviada_em")
+  ultimoErro         String?           @map("ultimo_erro") @db.VarChar(500)
+
+  notificacao Notificacao    @relation(fields: [notificacaoId], references: [id], onDelete: Cascade)
+  assinatura  AssinaturaPush @relation(fields: [assinaturaId], references: [id], onDelete: Cascade)
+
+  @@unique([notificacaoId, assinaturaId])
+  @@index([status, proximaTentativaEm])
+  @@map("entrega_push")
 }
 
 // ------------------------------------------------------------

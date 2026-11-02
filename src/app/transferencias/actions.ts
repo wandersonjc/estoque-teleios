@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 import { redirect } from "next/navigation";
 
 import {
@@ -10,6 +11,7 @@ import {
 import { MENSAGEM_SEM_PERMISSAO, verificarPermissao } from "@/lib/autorizacao";
 import { registrarLog } from "@/lib/log";
 import prisma from "@/lib/prisma";
+import { processarFilaPush } from "@/lib/push";
 
 import {
   LIMITE_JUSTIFICATIVA_DIVERGENCIA,
@@ -335,6 +337,7 @@ async function criarNotificacoesTransferencia(
         where: { permissao: { codigo: { in: codigosConsultados } } },
         select: { permissao: { select: { codigo: true } } },
       },
+      assinaturasPush: { select: { id: true } },
     },
   });
   const diretos = new Set(destinatariosDiretos);
@@ -351,14 +354,25 @@ async function criarNotificacoesTransferencia(
   });
   if (destinatarios.length === 0) return;
 
-  await tx.notificacao.createMany({
-    data: destinatarios.map((destinatario) => ({
-      usuarioId: destinatario.id,
-      transferenciaId: valores.transferenciaId,
-      tipo: valores.tipo,
-      mensagem: valores.mensagem,
-    })),
-  });
+  for (const destinatario of destinatarios) {
+    const notificacao = await tx.notificacao.create({
+      data: {
+        usuarioId: destinatario.id,
+        transferenciaId: valores.transferenciaId,
+        tipo: valores.tipo,
+        mensagem: valores.mensagem,
+      },
+      select: { id: true },
+    });
+    if (destinatario.assinaturasPush.length > 0) {
+      await tx.entregaPush.createMany({
+        data: destinatario.assinaturasPush.map((assinatura) => ({
+          notificacaoId: notificacao.id,
+          assinaturaId: assinatura.id,
+        })),
+      });
+    }
+  }
 }
 
 function decimalDoEstoque(valor: Prisma.Decimal | null | undefined) {
@@ -400,6 +414,16 @@ function erroDeBanco(erro: unknown, contexto: string): string {
   if (erro instanceof ErroDeRegra) return erro.message;
   console.error(contexto, erro);
   return "Não foi possível concluir a operação. Tente novamente.";
+}
+
+function agendarEnvioPush() {
+  after(async () => {
+    try {
+      await processarFilaPush(1);
+    } catch (erro) {
+      console.error("Não foi possível processar a fila de notificações push:", erro);
+    }
+  });
 }
 
 export async function criarPedidoTransferencia(
@@ -472,6 +496,7 @@ export async function criarPedidoTransferencia(
     const mensagem = erroDeBanco(erro, "Erro ao criar pedido de transferência:");
     return { erroGeral: mensagem, valores };
   }
+  agendarEnvioPush();
   revalidatePath("/transferencias");
   redirect(`/transferencias/${pedidoId}`);
 }
@@ -794,6 +819,7 @@ export async function enviarPedidoTransferencia(
     };
   }
 
+  agendarEnvioPush();
   revalidatePath("/transferencias");
   revalidatePath(`/transferencias/${id}`);
   redirect(`/transferencias/${id}`);
@@ -1074,6 +1100,7 @@ export async function receberPedidoTransferencia(
     };
   }
 
+  agendarEnvioPush();
   revalidatePath("/transferencias");
   revalidatePath(`/transferencias/${id}`);
   revalidatePath("/produtos");

@@ -67,6 +67,8 @@ export const ModelName = {
   PedidoTransferencia: 'PedidoTransferencia',
   ItemTransferencia: 'ItemTransferencia',
   Notificacao: 'Notificacao',
+  AssinaturaPush: 'AssinaturaPush',
+  EntregaPush: 'EntregaPush',
   LogSistema: 'LogSistema',
   Permissao: 'Permissao',
   PermissaoUsuario: 'PermissaoUsuario',
@@ -293,6 +295,36 @@ export const NotificacaoScalarFieldEnum = {
 } as const
 
 export type NotificacaoScalarFieldEnum = (typeof NotificacaoScalarFieldEnum)[keyof typeof NotificacaoScalarFieldEnum]
+
+
+export const AssinaturaPushScalarFieldEnum = {
+  id: 'id',
+  usuarioId: 'usuarioId',
+  endpoint: 'endpoint',
+  chaveP256dh: 'chaveP256dh',
+  chaveAuth: 'chaveAuth',
+  criadoEm: 'criadoEm',
+  atualizadoEm: 'atualizadoEm'
+} as const
+
+export type AssinaturaPushScalarFieldEnum = (typeof AssinaturaPushScalarFieldEnum)[keyof typeof AssinaturaPushScalarFieldEnum]
+
+
+export const EntregaPushScalarFieldEnum = {
+  id: 'id',
+  notificacaoId: 'notificacaoId',
+  assinaturaId: 'assinaturaId',
+  status: 'status',
+  tentativas: 'tentativas',
+  proximaTentativaEm: 'proximaTentativaEm',
+  bloqueioAte: 'bloqueioAte',
+  criadoEm: 'criadoEm',
+  atualizadoEm: 'atualizadoEm',
+  enviadaEm: 'enviadaEm',
+  ultimoErro: 'ultimoErro'
+} as const
+
+export type EntregaPushScalarFieldEnum = (typeof EntregaPushScalarFieldEnum)[keyof typeof EntregaPushScalarFieldEnum]
 
 
 export const LogSistemaScalarFieldEnum = {

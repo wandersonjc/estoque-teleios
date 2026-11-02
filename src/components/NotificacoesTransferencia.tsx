@@ -18,6 +18,11 @@ type RespostaNotificacoes = {
   naoLidas: number;
 };
 
+type ConfiguracaoPush = {
+  disponivel: boolean;
+  publicKey: string | null;
+};
+
 const RESPOSTA_VAZIA: RespostaNotificacoes = {
   notificacoes: [],
   naoLidas: 0,
@@ -57,6 +62,32 @@ export default function NotificacoesTransferencia() {
   const [carregando, setCarregando] = useState(true);
   const [atualizandoLeitura, setAtualizandoLeitura] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const [pushAtivo, setPushAtivo] = useState(false);
+  const [pushCarregando, setPushCarregando] = useState(false);
+  const [erroPush, setErroPush] = useState<string | null>(null);
+
+  useEffect(() => {
+    let montado = true;
+    const inicializador = window.setTimeout(() => {
+      if (!("serviceWorker" in navigator)) return;
+      void navigator.serviceWorker
+        .getRegistration("/")
+        .then((registro) => registro?.pushManager.getSubscription())
+        .then((assinatura) => {
+          if (montado) setPushAtivo(Boolean(assinatura));
+        })
+        .catch(() => {
+          if (montado) {
+            setErroPush("Não foi possível verificar a assinatura deste dispositivo.");
+          }
+        });
+    }, 0);
+
+    return () => {
+      montado = false;
+      window.clearTimeout(inicializador);
+    };
+  }, []);
 
   const carregar = useCallback(async () => {
     if (requisicaoAtiva.current) return;
@@ -147,6 +178,100 @@ export default function NotificacoesTransferencia() {
     });
   }
 
+  async function alterarPush() {
+    setPushCarregando(true);
+    setErroPush(null);
+    try {
+      if (pushAtivo) {
+        const registro = await navigator.serviceWorker.getRegistration("/");
+        const assinatura = await registro?.pushManager.getSubscription();
+        if (assinatura) {
+          const endpoint = assinatura.endpoint;
+          await assinatura.unsubscribe();
+          const resposta = await fetch("/api/notificacoes/push", {
+            method: "DELETE",
+            credentials: "same-origin",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ endpoint }),
+          });
+          if (!resposta.ok) {
+            throw new Error("Não foi possível remover a assinatura deste dispositivo.");
+          }
+        }
+        setPushAtivo(false);
+        return;
+      }
+
+      if (
+        !("serviceWorker" in navigator) ||
+        !("PushManager" in window) ||
+        !("Notification" in window)
+      ) {
+        throw new Error("Este navegador não oferece suporte a notificações push.");
+      }
+
+      const respostaConfiguracao = await fetch("/api/notificacoes/push", {
+        cache: "no-store",
+        credentials: "same-origin",
+      });
+      if (!respostaConfiguracao.ok) {
+        throw new Error("Não foi possível carregar a configuração de push.");
+      }
+      const configuracao =
+        (await respostaConfiguracao.json()) as ConfiguracaoPush;
+      if (!configuracao.disponivel || !configuracao.publicKey) {
+        throw new Error("As notificações push ainda não foram configuradas no servidor.");
+      }
+
+      const permissao =
+        Notification.permission === "granted"
+          ? "granted"
+          : await Notification.requestPermission();
+      if (permissao !== "granted") {
+        throw new Error(
+          permissao === "denied"
+            ? "A permissão foi bloqueada nas configurações do navegador."
+            : "Permita as notificações para ativá-las neste dispositivo."
+        );
+      }
+
+      const registro = await navigator.serviceWorker.register("/sw.js");
+      await navigator.serviceWorker.ready;
+      const chave = Uint8Array.from(
+        atob(configuracao.publicKey.replace(/-/g, "+").replace(/_/g, "/")),
+        (caractere) => caractere.charCodeAt(0)
+      );
+      const assinatura =
+        (await registro.pushManager.getSubscription()) ??
+        (await registro.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: chave,
+        }));
+      const resposta = await fetch("/api/notificacoes/push", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(assinatura.toJSON()),
+      });
+      if (!resposta.ok) {
+        const resultado = (await resposta.json()) as { erro?: string };
+        await assinatura.unsubscribe();
+        throw new Error(
+          resultado.erro ?? "Não foi possível salvar a assinatura push."
+        );
+      }
+      setPushAtivo(true);
+    } catch (falha) {
+      setErroPush(
+        falha instanceof Error
+          ? falha.message
+          : "Não foi possível atualizar as notificações push."
+      );
+    } finally {
+      setPushCarregando(false);
+    }
+  }
+
   return (
     <div className="relative shrink-0">
       <button
@@ -184,6 +309,36 @@ export default function NotificacoesTransferencia() {
             >
               Marcar todas como lidas
             </button>
+          </div>
+
+          <div className="border-b border-zinc-200 px-4 py-3">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-sm font-medium">Notificações push</p>
+                <p className="text-xs text-zinc-600">
+                  {pushAtivo
+                    ? "Ativadas neste dispositivo."
+                    : "Receba avisos mesmo com o Atria em segundo plano."}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => void alterarPush()}
+                disabled={pushCarregando}
+                className="shrink-0 rounded-md border border-zinc-300 px-3 py-2 text-xs font-medium text-[#002855] hover:bg-zinc-50 disabled:cursor-wait disabled:opacity-60"
+              >
+                {pushCarregando
+                  ? "Aguarde..."
+                  : pushAtivo
+                    ? "Desativar"
+                    : "Ativar"}
+              </button>
+            </div>
+            {erroPush && (
+              <p role="alert" className="mt-2 text-xs text-red-700">
+                {erroPush}
+              </p>
+            )}
           </div>
 
           {erro && (

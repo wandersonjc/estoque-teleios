@@ -233,9 +233,10 @@ export default function AppShell({
               </p>
             </div>
 
-            {podeConsultarTransferencias && <NotificacoesTransferencia />}
+            <div className="ml-auto flex shrink-0 items-center gap-2">
+              {podeConsultarTransferencias && <NotificacoesTransferencia />}
 
-            <details className="group relative ml-auto shrink-0">
+              <details className="group relative shrink-0">
               <summary
                 aria-label="Abrir menu da conta"
                 title={usuario.nome}
@@ -296,7 +297,8 @@ export default function AppShell({
                   </button>
                 </form>
               </div>
-            </details>
+              </details>
+            </div>
           </div>
         </header>
 
