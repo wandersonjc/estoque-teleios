@@ -297,10 +297,10 @@ export default function NotificacoesTransferencia() {
         <section
           id="painel-notificacoes-transferencia"
           aria-label="Notificações de transferências"
-          className="absolute right-0 top-full z-50 mt-2 w-[min(24rem,calc(100vw-1rem))] overflow-hidden rounded-xl border border-zinc-200 bg-white text-zinc-900 shadow-xl"
+          className="fixed right-2 top-16 z-50 flex max-h-[calc(100dvh-5rem)] w-[min(24rem,calc(100vw-2rem))] flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white text-zinc-900 shadow-xl sm:absolute sm:right-0 sm:top-full sm:mt-2 sm:max-h-[min(90vh,48rem)]"
         >
-          <div className="flex items-center justify-between gap-3 border-b border-zinc-200 px-4 py-3">
-            <h2 className="text-sm font-semibold">Notificações</h2>
+          <div className="flex shrink-0 items-center justify-between gap-3 border-b border-zinc-200 px-3 py-2.5">
+            <h2 className="text-xs font-semibold">Notificações</h2>
             <button
               type="button"
               onClick={() => void marcarComoLidas()}
@@ -311,10 +311,10 @@ export default function NotificacoesTransferencia() {
             </button>
           </div>
 
-          <div className="border-b border-zinc-200 px-4 py-3">
+          <div className="shrink-0 border-b border-zinc-200 px-3 py-2.5">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <p className="text-sm font-medium">Notificações push</p>
+                <p className="text-xs font-medium">Notificações push</p>
                 <p className="text-xs text-zinc-600">
                   {pushAtivo
                     ? "Ativadas neste dispositivo."
@@ -342,20 +342,20 @@ export default function NotificacoesTransferencia() {
           </div>
 
           {erro && (
-            <p role="alert" className="px-4 py-3 text-sm text-red-700">
+            <p role="alert" className="shrink-0 px-3 py-2 text-xs text-red-700">
               {erro}
             </p>
           )}
           {carregando && dados.notificacoes.length === 0 ? (
-            <p className="px-4 py-5 text-center text-sm text-zinc-600">
+            <p className="px-3 py-4 text-center text-xs text-zinc-600">
               Carregando notificações...
             </p>
           ) : dados.notificacoes.length === 0 ? (
-            <p className="px-4 py-5 text-center text-sm text-zinc-600">
+            <p className="px-3 py-4 text-center text-xs text-zinc-600">
               Você não tem notificações.
             </p>
           ) : (
-            <ul className="max-h-[min(28rem,70vh)] overflow-y-auto">
+            <ul className="min-h-0 flex-1 overflow-y-auto">
               {dados.notificacoes.map((notificacao) => (
                 <li key={notificacao.id}>
                   <Link
@@ -363,7 +363,7 @@ export default function NotificacoesTransferencia() {
                     onClick={(evento) =>
                       abrirNotificacao(evento, notificacao)
                     }
-                    className={`block border-b border-zinc-100 px-4 py-3 transition-colors hover:bg-zinc-50 ${
+                    className={`block border-b border-zinc-100 px-3 py-2.5 transition-colors hover:bg-zinc-50 ${
                       notificacao.lidaEm ? "" : "bg-blue-50/70"
                     }`}
                   >
@@ -375,10 +375,10 @@ export default function NotificacoesTransferencia() {
                         />
                       )}
                       <span className="min-w-0 flex-1">
-                        <span className="block text-sm">{notificacao.mensagem}</span>
+                        <span className="block text-xs">{notificacao.mensagem}</span>
                         <time
                           dateTime={notificacao.criadoEm}
-                          className="mt-1 block text-xs text-zinc-500"
+                          className="mt-1 block text-[11px] text-zinc-500"
                         >
                           {dataFormatada(notificacao.criadoEm)}
                         </time>
