@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 
 import { IconeUser } from "@/components/icones";
 import IndicadorCarregando from "@/components/IndicadorCarregando";
+import InstalacaoAplicativo from "@/components/InstalacaoAplicativo";
 import NotificacoesTransferencia from "@/components/NotificacoesTransferencia";
 import SeletorTema from "@/components/SeletorTema";
 import { sair } from "@/app/login/actions";
@@ -234,6 +235,7 @@ export default function AppShell({
             </div>
 
             <div className="ml-auto flex shrink-0 items-center gap-2">
+              <InstalacaoAplicativo />
               {podeConsultarTransferencias && <NotificacoesTransferencia />}
 
               <details className="group relative shrink-0">
