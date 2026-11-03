@@ -9,6 +9,7 @@ type Props = {
   label: string;
   className?: string;
   checkboxClassName?: string;
+  aoNavegar?: (destino: string) => void;
 };
 
 export default function CheckboxEnvioAutomatico({
@@ -18,6 +19,7 @@ export default function CheckboxEnvioAutomatico({
   label,
   className = "flex items-center gap-2 text-base text-zinc-800",
   checkboxClassName = "h-5 w-5",
+  aoNavegar,
 }: Props) {
   const router = useRouter();
 
@@ -31,7 +33,12 @@ export default function CheckboxEnvioAutomatico({
 
     const caminho = form.getAttribute("action") || window.location.pathname;
     const query = parametros.toString();
-    router.push(query ? `${caminho}?${query}` : caminho, { scroll: false });
+    const destino = query ? `${caminho}?${query}` : caminho;
+    if (aoNavegar) {
+      aoNavegar(destino);
+    } else {
+      router.push(destino, { scroll: false });
+    }
   }
 
   return (

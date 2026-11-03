@@ -13,7 +13,6 @@ import type {
 } from "@/generated/prisma/models";
 import Image from "next/image";
 import BotaoAcao from "@/components/BotaoAcao";
-import CheckboxEnvioAutomatico from "@/components/CheckboxEnvioAutomatico";
 import LinkAcaoComCarregamento from "@/components/LinkAcaoComCarregamento";
 import {
   IconeBarras,
@@ -27,7 +26,7 @@ import { exigirPermissao } from "@/lib/autorizacao";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 
-import AlternadorVisualizacao from "./AlternadorVisualizacao";
+import BuscaFiltrosProdutos from "./BuscaFiltrosProdutos";
 import DicaEstoque from "./DicaEstoque";
 import { desativarProduto, reativarProduto } from "./actions";
 import MovimentacaoEstoque from "./MovimentacaoEstoque";
@@ -78,7 +77,7 @@ export default async function ProdutosPage({
   const mostrarInativos = textoDoParametro(parametros.inativos) === "1";
   const movRegistrado = textoDoParametro(parametros.mov) === "1";
   const visualizacao =
-    textoDoParametro(parametros.visualizacao) === "tabela" ? "tabela" : "cards";
+    textoDoParametro(parametros.visualizacao) === "cards" ? "cards" : "tabela";
   const ordenacaoSolicitada = textoDoParametro(parametros.ordenacao);
   const ordenacao = COLUNAS_ORDENACAO.includes(
     ordenacaoSolicitada as ColunaOrdenacao
@@ -261,14 +260,6 @@ export default async function ProdutosPage({
   const urlRetorno = urlDaLista(
     pagina > 1 ? { pagina: String(pagina), mov: "1" } : { mov: "1" }
   );
-  const hrefVisualizacaoCards = urlDaLista({
-    visualizacao: "cards",
-    pagina: "1",
-  });
-  const hrefVisualizacaoTabela = urlDaLista({
-    visualizacao: "tabela",
-    pagina: "1",
-  });
   const colunasTabela: { chave: ColunaOrdenacao; rotulo: string }[] = [
     { chave: "codigoErp", rotulo: "Código ERP" },
     { chave: "nome", rotulo: "Nome do Produto" },
@@ -299,68 +290,6 @@ export default async function ProdutosPage({
         )}
       </div>
 
-      {/* Filtros: envio por GET, então os filtros ficam na URL */}
-      <form
-        action="/produtos"
-        method="get"
-        className="mt-4 flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-3"
-      >
-        <input type="hidden" name="visualizacao" value={visualizacao} />
-        <input type="hidden" name="ordenacao" value={ordenacao} />
-        <input type="hidden" name="direcao" value={direcao} />
-
-        <div className="flex flex-col gap-1">
-          <label htmlFor="busca" className="text-base font-medium text-zinc-800">
-            Buscar
-          </label>
-          <input
-            id="busca"
-            name="busca"
-            type="search"
-            defaultValue={busca}
-            placeholder="Nome, código de barras ou código do ERP"
-            className="h-12 w-full rounded-lg border border-zinc-300 bg-white px-3 text-base text-zinc-900 outline-none focus:border-zinc-900"
-          />
-        </div>
-
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
-          <CheckboxEnvioAutomatico
-            name="inativos"
-            value="1"
-            defaultChecked={mostrarInativos}
-            label="Mostrar inativos"
-          />
-
-          <label className="flex items-center gap-2 text-base text-zinc-800">
-            Itens por página
-            <select
-              name="tamanho"
-              defaultValue={String(tamanho)}
-              className="h-11 rounded-lg border border-zinc-300 bg-white px-2 text-base text-zinc-900"
-            >
-              {TAMANHOS_PAGINA_PRODUTOS.map((opcao) => (
-                <option key={opcao} value={opcao}>
-                  {opcao}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <AlternadorVisualizacao
-            tabelaAtiva={visualizacao === "tabela"}
-            hrefCards={hrefVisualizacaoCards}
-            hrefTabela={hrefVisualizacaoTabela}
-          />
-
-          <button
-            type="submit"
-            className="h-12 rounded-lg border border-zinc-300 px-5 text-base font-medium text-zinc-900"
-          >
-            Buscar
-          </button>
-        </div>
-      </form>
-
       {movRegistrado && (
         <p
           role="status"
@@ -370,12 +299,22 @@ export default async function ProdutosPage({
         </p>
       )}
 
-      <p className="mt-4 text-sm text-zinc-600" role="status">
-        {total === 0
-          ? "Nenhum produto encontrado."
-          : `${total} produto(s) — página ${pagina} de ${totalPaginas}`}
-      </p>
-
+      <BuscaFiltrosProdutos
+        busca={busca}
+        mostrarInativos={mostrarInativos}
+        tamanho={tamanho}
+        visualizacao={visualizacao}
+        ordenacao={ordenacao}
+        direcao={direcao}
+        resumo={
+          <p className="mt-4 text-sm text-zinc-600" role="status">
+            {total === 0
+              ? "Nenhum produto encontrado."
+              : `${total} produto(s) — página ${pagina} de ${totalPaginas}`}
+          </p>
+        }
+      >
+      <>
       {produtos.length > 0 && visualizacao === "tabela" && (
         <div className="mt-3 overflow-x-auto rounded-xl border border-zinc-200 bg-white">
           <table className="w-full min-w-[980px] border-collapse text-left text-sm">
@@ -790,6 +729,8 @@ export default async function ProdutosPage({
           )}
         </div>
       )}
+      </>
+      </BuscaFiltrosProdutos>
     </main>
   );
 }
