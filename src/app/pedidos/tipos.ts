@@ -12,9 +12,12 @@ export const DIAS_POR_PERIODO: Record<PeriodoConsumoTela, number> = {
 export type ValoresConfiguracaoCompra = {
   produtoId: string;
   consumoInformado: string;
+  unidadeConsumo: string;
   periodoConsumo: PeriodoConsumoTela | "";
   estoqueSeguranca: string;
+  unidadeEstoqueSeguranca: string;
   estoqueMaximoDesejado: string;
+  unidadeEstoqueMaximo: string;
 };
 
 export type EstadoConfiguracaoCompra = {
@@ -37,9 +40,11 @@ export function normalizarQuantidadeCompra(valorOriginal: string): string | null
 
 export function calcularConsumoDiario(
   consumoInformado: string,
-  periodo: PeriodoConsumoTela
+  periodo: PeriodoConsumoTela,
+  fator = "1"
 ): string {
   return new Prisma.Decimal(consumoInformado)
+    .mul(fator)
     .div(DIAS_POR_PERIODO[periodo])
     .toDecimalPlaces(3)
     .toFixed(3);

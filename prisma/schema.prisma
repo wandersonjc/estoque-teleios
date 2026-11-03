@@ -319,15 +319,23 @@ model MovimentoEstoque {
 }
 
 model ConfiguracaoCompra {
-  id                    Int           @id @default(autoincrement())
-  produtoId             Int           @unique @map("produto_id")
-  consumoInformado      Decimal       @map("consumo_informado") @db.Decimal(12, 3)
-  periodoConsumo        PeriodoConsumo @map("periodo_consumo")
-  consumoDiario         Decimal       @map("consumo_diario") @db.Decimal(12, 3)
-  estoqueSeguranca      Decimal       @map("estoque_seguranca") @db.Decimal(12, 3)
-  estoqueMaximoDesejado Decimal       @map("estoque_maximo_desejado") @db.Decimal(12, 3)
-  criadoEm              DateTime      @default(now()) @map("criado_em")
-  atualizadoEm          DateTime      @updatedAt @map("atualizado_em")
+  id                             Int            @id @default(autoincrement())
+  produtoId                      Int            @unique @map("produto_id")
+  consumoInformado               Decimal        @map("consumo_informado") @db.Decimal(12, 3)
+  periodoConsumo                 PeriodoConsumo @map("periodo_consumo")
+  consumoDiario                  Decimal        @map("consumo_diario") @db.Decimal(12, 3)
+  estoqueSeguranca               Decimal        @map("estoque_seguranca") @db.Decimal(12, 3)
+  estoqueMaximoDesejado          Decimal        @map("estoque_maximo_desejado") @db.Decimal(12, 3)
+  consumoUnidade                 String?        @map("consumo_unidade")
+  consumoFator                   Decimal?       @map("consumo_fator") @db.Decimal(12, 3)
+  estoqueSegurancaInformado      Decimal?       @map("estoque_seguranca_informado") @db.Decimal(12, 3)
+  estoqueSegurancaUnidade        String?        @map("estoque_seguranca_unidade")
+  estoqueSegurancaFator          Decimal?       @map("estoque_seguranca_fator") @db.Decimal(12, 3)
+  estoqueMaximoDesejadoInformado Decimal?       @map("estoque_maximo_desejado_informado") @db.Decimal(12, 3)
+  estoqueMaximoDesejadoUnidade   String?        @map("estoque_maximo_desejado_unidade")
+  estoqueMaximoDesejadoFator     Decimal?       @map("estoque_maximo_desejado_fator") @db.Decimal(12, 3)
+  criadoEm                       DateTime       @default(now()) @map("criado_em")
+  atualizadoEm                   DateTime       @updatedAt @map("atualizado_em")
 
   produto Produto @relation(fields: [produtoId], references: [id], onDelete: Cascade)
 

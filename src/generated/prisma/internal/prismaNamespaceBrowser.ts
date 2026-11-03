@@ -256,6 +256,14 @@ export const ConfiguracaoCompraScalarFieldEnum = {
   consumoDiario: 'consumoDiario',
   estoqueSeguranca: 'estoqueSeguranca',
   estoqueMaximoDesejado: 'estoqueMaximoDesejado',
+  consumoUnidade: 'consumoUnidade',
+  consumoFator: 'consumoFator',
+  estoqueSegurancaInformado: 'estoqueSegurancaInformado',
+  estoqueSegurancaUnidade: 'estoqueSegurancaUnidade',
+  estoqueSegurancaFator: 'estoqueSegurancaFator',
+  estoqueMaximoDesejadoInformado: 'estoqueMaximoDesejadoInformado',
+  estoqueMaximoDesejadoUnidade: 'estoqueMaximoDesejadoUnidade',
+  estoqueMaximoDesejadoFator: 'estoqueMaximoDesejadoFator',
   criadoEm: 'criadoEm',
   atualizadoEm: 'atualizadoEm'
 } as const

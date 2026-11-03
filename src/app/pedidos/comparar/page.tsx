@@ -5,7 +5,11 @@ import type { ProdutoWhereInput } from "@/generated/prisma/models";
 import { exigirPermissao } from "@/lib/autorizacao";
 import { calcularIndicadoresReposicao } from "@/lib/calculos-reposicao";
 import prisma from "@/lib/prisma";
-import { formatarDecimalBr, formatarDataBr } from "@/app/produtos/tipos";
+import {
+  formatarDecimalBr,
+  formatarDataBr,
+  formatarQuantidade,
+} from "@/app/produtos/tipos";
 
 import BuscaFiltrosPedidos from "../BuscaFiltrosPedidos";
 import FormularioComparativo, {
@@ -43,6 +47,33 @@ function compararDecimal(
   if (primeiro === null) return 1;
   if (segundo === null) return -1;
   return primeiro.comparedTo(segundo);
+}
+
+function quantidadesEmbalagem(
+  quantidade: Prisma.Decimal | null,
+  embalagens: {
+    id: number;
+    unidade: string;
+    quantidadeBase: Prisma.Decimal;
+    principal: boolean;
+  }[]
+): { id: number; texto: string }[] {
+  if (!quantidade) return [];
+
+  return [...embalagens]
+    .sort((a, b) => {
+      if (a.principal !== b.principal) return a.principal ? -1 : 1;
+      return a.unidade.localeCompare(b.unidade, "pt-BR") || a.id - b.id;
+    })
+    .slice(0, 2)
+    .map((embalagem) => ({
+      id: embalagem.id,
+      texto: `${formatarQuantidade(
+        Number(
+          quantidade.div(embalagem.quantidadeBase).toDecimalPlaces(3).toString()
+        )
+      )} ${embalagem.unidade}`,
+    }));
 }
 
 export default async function CompararReposicaoPage({
@@ -98,6 +129,14 @@ export default async function CompararReposicaoPage({
       include: {
         configuracaoCompra: true,
         estoques: { select: { quantidade: true } },
+        embalagens: {
+          select: {
+            id: true,
+            unidade: true,
+            quantidadeBase: true,
+            principal: true,
+          },
+        },
         fornecedores: {
           where: {
             ativo: true,
@@ -207,14 +246,26 @@ export default async function CompararReposicaoPage({
         situacao: indicadores.situacao,
         estoqueDisponivel: formatarDecimalBr(estoqueDisponivel.toString()),
         estoqueDisponivelValor: estoqueDisponivel,
+        embalagensEstoque: quantidadesEmbalagem(
+          estoqueDisponivel,
+          produto.embalagens
+        ),
         quantidadeACaminho: formatarDecimalBr(
           indicadores.quantidadeACaminho.toString()
         ),
         pontoReposicao: indicadores.pontoReposicao,
+        embalagensPonto: quantidadesEmbalagem(
+          indicadores.pontoReposicao,
+          produto.embalagens
+        ),
         quantidadeSugerida: formatarDecimalBr(
           indicadores.quantidadeSugerida.toString()
         ),
         quantidadeSugeridaValor: indicadores.quantidadeSugerida.toString(),
+        embalagensSugeridas: quantidadesEmbalagem(
+          indicadores.quantidadeSugerida,
+          produto.embalagens
+        ),
         fornecedorEmPedido: pedidoAberto
           ? `#${pedidoAberto.pedido.id} · ${pedidoAberto.pedido.status === "RASCUNHO" ? "rascunho" : "enviado"}`
           : null,
@@ -277,12 +328,15 @@ export default async function CompararReposicaoPage({
     unidade: linha.unidade,
     situacao: linha.situacao,
     estoqueDisponivel: linha.estoqueDisponivel,
+    embalagensEstoque: linha.embalagensEstoque,
     quantidadeACaminho: linha.quantidadeACaminho,
     pontoReposicao: linha.pontoReposicao
       ? formatarDecimalBr(linha.pontoReposicao.toString())
       : null,
+    embalagensPonto: linha.embalagensPonto,
     quantidadeSugerida: linha.quantidadeSugerida,
     quantidadeSugeridaValor: linha.quantidadeSugeridaValor,
+    embalagensSugeridas: linha.embalagensSugeridas,
     fornecedorEmPedido: linha.fornecedorEmPedido,
     fornecedores: linha.fornecedores,
   }));

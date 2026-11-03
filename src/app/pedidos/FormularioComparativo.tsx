@@ -21,10 +21,13 @@ export type LinhaComparacao = {
   unidade: string;
   situacao: "CRITICO" | "COMPRAR" | "ADEQUADO";
   estoqueDisponivel: string;
+  embalagensEstoque: { id: number; texto: string }[];
   quantidadeACaminho: string;
   pontoReposicao: string | null;
+  embalagensPonto: { id: number; texto: string }[];
   quantidadeSugerida: string;
   quantidadeSugeridaValor: string;
+  embalagensSugeridas: { id: number; texto: string }[];
   fornecedorEmPedido: string | null;
   fornecedores: FornecedorComparacao[];
 };
@@ -226,14 +229,38 @@ export default function FormularioComparativo({
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {linha.estoqueDisponivel} {linha.unidade}
+                    {linha.embalagensEstoque.map((embalagem) => (
+                      <div
+                        key={embalagem.id}
+                        className="mt-1 text-xs text-zinc-500"
+                      >
+                        {embalagem.texto}
+                      </div>
+                    ))}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {linha.pontoReposicao
                       ? `${linha.pontoReposicao} ${linha.unidade}`
                       : "Prazo não informado"}
+                    {linha.embalagensPonto.map((embalagem) => (
+                      <div
+                        key={embalagem.id}
+                        className="mt-1 text-xs text-zinc-500"
+                      >
+                        {embalagem.texto}
+                      </div>
+                    ))}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {linha.quantidadeSugerida} {linha.unidade}
+                    {linha.embalagensSugeridas.map((embalagem) => (
+                      <div
+                        key={embalagem.id}
+                        className="mt-1 text-xs text-zinc-500"
+                      >
+                        {embalagem.texto}
+                      </div>
+                    ))}
                   </td>
                   <td className="px-3 py-3">{NOMES_SITUACAO[linha.situacao]}</td>
                   <td className="px-3 py-3">

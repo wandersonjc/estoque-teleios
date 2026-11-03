@@ -51,11 +51,44 @@ const COLUNAS_ORDENACAO = [
   "codigoErp",
   "nome",
   "totalEstoque",
+  "pontoReposicao",
+  "quantidadeSugerida",
   "codigoBarras",
+  "situacaoCompra",
 ] as const;
 
 type ColunaOrdenacao = (typeof COLUNAS_ORDENACAO)[number];
 type DirecaoOrdenacao = "asc" | "desc";
+
+function quantidadesEmbalagem(
+  quantidade: Prisma.Decimal | null | undefined,
+  embalagens: {
+    id: number;
+    unidade: string;
+    quantidadeBase: Prisma.Decimal;
+    principal: boolean;
+  }[],
+): { id: number; texto: string }[] {
+  if (!quantidade) return [];
+
+  return [...embalagens]
+    .sort((a, b) => {
+      if (a.principal !== b.principal) return a.principal ? -1 : 1;
+      return (
+        a.unidade.localeCompare(b.unidade, "pt-BR") || a.id - b.id
+      );
+    })
+    .slice(0, 2)
+    .map((embalagem) => {
+      const convertido = quantidade.div(embalagem.quantidadeBase);
+      return {
+        id: embalagem.id,
+        texto: `${formatarQuantidade(
+          Number(convertido.toDecimalPlaces(3).toString())
+        )} ${embalagem.unidade}`,
+      };
+    });
+}
 
 // Um parâmetro pode chegar repetido na URL (vira vetor); usamos o primeiro
 function textoDoParametro(valor: string | string[] | undefined): string {
@@ -134,10 +167,19 @@ export default async function ProdutosPage({
   const offset = (pagina - 1) * tamanho;
   let idsOrdenados: number[] | null = null;
 
-  if (ordenacao === "totalEstoque" || ordenacao === "codigoBarras") {
+  if (
+    ordenacao === "totalEstoque" ||
+    ordenacao === "pontoReposicao" ||
+    ordenacao === "quantidadeSugerida" ||
+    ordenacao === "situacaoCompra" ||
+    ordenacao === "codigoBarras"
+  ) {
     const padraoBusca = `%${busca}%`;
     const ordenarAscendente = direcao === "asc";
     const ordenarEstoque = ordenacao === "totalEstoque";
+    const ordenarPonto = ordenacao === "pontoReposicao";
+    const ordenarSugerida = ordenacao === "quantidadeSugerida";
+    const ordenarSituacao = ordenacao === "situacaoCompra";
     const ordenarCodigoBarras = ordenacao === "codigoBarras";
     const linhasOrdenadas = await prisma.$queryRaw<{ id: number }[]>(Prisma.sql`
       SELECT produto.id
@@ -147,6 +189,23 @@ export default async function ProdutosPage({
         FROM estoque
         GROUP BY produto_id
       ) AS totais ON totais.produto_id = produto.id
+      LEFT JOIN configuracao_compra configuracao
+        ON configuracao.produto_id = produto.id
+      LEFT JOIN LATERAL (
+        SELECT MAX(fornecedor.prazo_entrega_dias) AS prazo_maximo
+        FROM produto_fornecedor vinculo
+        JOIN fornecedor ON fornecedor.id = vinculo.fornecedor_id
+        WHERE vinculo.produto_id = produto.id
+          AND vinculo.ativo = TRUE
+          AND fornecedor.ativo = TRUE
+      ) AS prazos ON TRUE
+      LEFT JOIN LATERAL (
+        SELECT SUM(GREATEST(item.quantidade - item.quantidade_recebida, 0)) AS quantidade
+        FROM item_pedido item
+        JOIN pedido_compra pedido ON pedido.id = item.pedido_id
+        WHERE item.produto_id = produto.id
+          AND pedido.status = 'ENVIADO'
+      ) AS a_caminho ON TRUE
       WHERE (${mostrarInativos} OR produto.ativo = TRUE)
         AND (
           ${busca === ""}
@@ -161,6 +220,55 @@ export default async function ProdutosPage({
           )
         )
       ORDER BY
+        CASE WHEN ${ordenarSituacao} AND configuracao.id IS NULL
+          THEN 1 ELSE 0 END ASC,
+        CASE WHEN ${ordenarSituacao} AND ${ordenarAscendente} THEN
+          CASE
+            WHEN COALESCE(totais.total, 0) <= configuracao.estoque_seguranca
+              THEN 0
+            WHEN prazos.prazo_maximo IS NOT NULL
+              AND COALESCE(totais.total, 0) + COALESCE(a_caminho.quantidade, 0)
+                <= configuracao.consumo_diario * prazos.prazo_maximo
+                  + configuracao.estoque_seguranca
+              THEN 1
+            ELSE 2
+          END
+        END ASC,
+        CASE WHEN ${ordenarSituacao} AND NOT ${ordenarAscendente} THEN
+          CASE
+            WHEN COALESCE(totais.total, 0) <= configuracao.estoque_seguranca
+              THEN 0
+            WHEN prazos.prazo_maximo IS NOT NULL
+              AND COALESCE(totais.total, 0) + COALESCE(a_caminho.quantidade, 0)
+                <= configuracao.consumo_diario * prazos.prazo_maximo
+                  + configuracao.estoque_seguranca
+              THEN 1
+            ELSE 2
+          END
+        END DESC,
+        CASE WHEN ${ordenarPonto} AND configuracao.id IS NOT NULL
+          AND prazos.prazo_maximo IS NOT NULL THEN 0
+          WHEN ${ordenarPonto} THEN 1 END ASC,
+        CASE WHEN ${ordenarPonto} AND ${ordenarAscendente}
+          AND configuracao.id IS NOT NULL AND prazos.prazo_maximo IS NOT NULL
+          THEN configuracao.consumo_diario * prazos.prazo_maximo
+            + configuracao.estoque_seguranca END ASC,
+        CASE WHEN ${ordenarPonto} AND NOT ${ordenarAscendente}
+          AND configuracao.id IS NOT NULL AND prazos.prazo_maximo IS NOT NULL
+          THEN configuracao.consumo_diario * prazos.prazo_maximo
+            + configuracao.estoque_seguranca END DESC,
+        CASE WHEN ${ordenarSugerida} AND configuracao.id IS NOT NULL
+          THEN 0 WHEN ${ordenarSugerida} THEN 1 END ASC,
+        CASE WHEN ${ordenarSugerida} AND ${ordenarAscendente}
+          AND configuracao.id IS NOT NULL
+          THEN GREATEST(configuracao.estoque_maximo_desejado
+            - (COALESCE(totais.total, 0) + COALESCE(a_caminho.quantidade, 0)), 0)
+          END ASC,
+        CASE WHEN ${ordenarSugerida} AND NOT ${ordenarAscendente}
+          AND configuracao.id IS NOT NULL
+          THEN GREATEST(configuracao.estoque_maximo_desejado
+            - (COALESCE(totais.total, 0) + COALESCE(a_caminho.quantidade, 0)), 0)
+          END DESC,
         CASE WHEN ${ordenarEstoque} AND ${ordenarAscendente}
           THEN COALESCE(totais.total, 0) END ASC,
         CASE WHEN ${ordenarEstoque} AND NOT ${ordenarAscendente}
@@ -323,7 +431,10 @@ export default async function ProdutosPage({
     { chave: "codigoErp", rotulo: "Código ERP" },
     { chave: "nome", rotulo: "Nome do Produto" },
     { chave: "totalEstoque", rotulo: "Total em Estoque" },
+    { chave: "pontoReposicao", rotulo: "Ponto de Reposição" },
+    { chave: "quantidadeSugerida", rotulo: "Quantidade Sugerida" },
     { chave: "codigoBarras", rotulo: "Código de Barras" },
+    { chave: "situacaoCompra", rotulo: "Situação de Compra" },
   ];
 
   return (
@@ -378,7 +489,7 @@ export default async function ProdutosPage({
           <table className="w-full min-w-[1450px] border-collapse text-left text-sm">
             <thead className="bg-zinc-50 text-zinc-600">
               <tr className="border-b border-zinc-200">
-                {colunasTabela.slice(0, 3).map((coluna) => (
+                {colunasTabela.slice(0, 6).map((coluna) => (
                   <th
                     key={coluna.chave}
                     scope="col"
@@ -406,13 +517,7 @@ export default async function ProdutosPage({
                     </Link>
                   </th>
                 ))}
-                <th scope="col" className="whitespace-nowrap px-3 py-3 font-semibold">
-                  Ponto de Reposição
-                </th>
-                <th scope="col" className="whitespace-nowrap px-3 py-3 font-semibold">
-                  Quantidade Sugerida
-                </th>
-                {colunasTabela.slice(3).map((coluna) => (
+                {colunasTabela.slice(6).map((coluna) => (
                   <th
                     key={coluna.chave}
                     scope="col"
@@ -440,9 +545,6 @@ export default async function ProdutosPage({
                     </Link>
                   </th>
                 ))}
-                <th scope="col" className="whitespace-nowrap px-3 py-3 font-semibold">
-                  Situação de Compra
-                </th>
                 <th scope="col" className="whitespace-nowrap px-3 py-3 font-semibold">
                   Status
                 </th>
@@ -457,6 +559,18 @@ export default async function ProdutosPage({
                 const resumoReposicao = indicadoresPorProduto.get(produto.id);
                 const indicadores = resumoReposicao?.indicadores;
                 const dataUltima = ultimaContagem(produto.estoques);
+                const embalagensEstoque = quantidadesEmbalagem(
+                  new Prisma.Decimal(totalEstoque),
+                  produto.embalagens
+                );
+                const embalagensPonto = quantidadesEmbalagem(
+                  indicadores?.pontoReposicao,
+                  produto.embalagens
+                );
+                const embalagensSugeridas = quantidadesEmbalagem(
+                  indicadores?.quantidadeSugerida,
+                  produto.embalagens
+                );
                 const embalagensMovimento = produto.embalagens.map((embalagem) => ({
                   id: embalagem.id,
                   codigoBarras: embalagem.codigoBarras,
@@ -510,6 +624,14 @@ export default async function ProdutosPage({
                           }
                         />
                       </div>
+                      {embalagensEstoque.map((quantidade) => (
+                        <div
+                          key={quantidade.id}
+                          className="mt-1 text-xs text-zinc-500"
+                        >
+                          {quantidade.texto}
+                        </div>
+                      ))}
                       {resumoReposicao && (
                         <div className="mt-1 text-xs text-zinc-500">
                           A caminho:{" "}
@@ -521,16 +643,50 @@ export default async function ProdutosPage({
                       )}
                     </td>
                     <td className="whitespace-nowrap px-3 py-3 text-zinc-900">
-                      {indicadores?.pontoReposicao
-                        ? `${formatarDecimalBr(indicadores.pontoReposicao.toString())} ${produto.unidade}`
-                        : indicadores
-                          ? "Prazo não informado"
-                          : "—"}
+                      {indicadores?.pontoReposicao ? (
+                        <>
+                          <div>
+                            {formatarDecimalBr(
+                              indicadores.pontoReposicao.toString()
+                            )}{" "}
+                            {produto.unidade}
+                          </div>
+                          {embalagensPonto.map((quantidade) => (
+                            <div
+                              key={quantidade.id}
+                              className="mt-1 text-xs text-zinc-500"
+                            >
+                              {quantidade.texto}
+                            </div>
+                          ))}
+                        </>
+                      ) : indicadores ? (
+                        "Prazo não informado"
+                      ) : (
+                        "—"
+                      )}
                     </td>
                     <td className="whitespace-nowrap px-3 py-3 text-zinc-900">
-                      {indicadores
-                        ? `${formatarDecimalBr(indicadores.quantidadeSugerida.toString())} ${produto.unidade}`
-                        : "—"}
+                      {indicadores ? (
+                        <>
+                          <div>
+                            {formatarDecimalBr(
+                              indicadores.quantidadeSugerida.toString()
+                            )}{" "}
+                            {produto.unidade}
+                          </div>
+                          {embalagensSugeridas.map((quantidade) => (
+                            <div
+                              key={quantidade.id}
+                              className="mt-1 text-xs text-zinc-500"
+                            >
+                              {quantidade.texto}
+                            </div>
+                          ))}
+                        </>
+                      ) : (
+                        "—"
+                      )}
                     </td>
                     <td className="whitespace-nowrap px-3 py-3 text-zinc-700">
                       {codigoBarrasPrincipal || "—"}
@@ -637,6 +793,18 @@ export default async function ProdutosPage({
             const resumoReposicao = indicadoresPorProduto.get(produto.id);
             const indicadores = resumoReposicao?.indicadores;
             const dataUltima = ultimaContagem(produto.estoques);
+            const embalagensEstoque = quantidadesEmbalagem(
+              new Prisma.Decimal(totalEstoque),
+              produto.embalagens
+            );
+            const embalagensPonto = quantidadesEmbalagem(
+              indicadores?.pontoReposicao,
+              produto.embalagens
+            );
+            const embalagensSugeridas = quantidadesEmbalagem(
+              indicadores?.quantidadeSugerida,
+              produto.embalagens
+            );
             const codigoBarrasPrincipal =
               produto.embalagens.find((embalagem) => embalagem.principal)
                 ?.codigoBarras ?? produto.codigoBarras;
@@ -801,6 +969,14 @@ export default async function ProdutosPage({
                                 {produto.unidade}
                               </span>
                             )}
+                            {embalagensEstoque.map((quantidade) => (
+                              <span
+                                key={quantidade.id}
+                                className="mt-1 block text-xs text-zinc-500"
+                              >
+                                {quantidade.texto}
+                              </span>
+                            ))}
                           </p>
                         </div>
                       </div>
@@ -820,6 +996,14 @@ export default async function ProdutosPage({
                                 ? "Prazo não informado"
                                 : "Não configurado"}
                           </p>
+                          {embalagensPonto.map((quantidade) => (
+                            <p
+                              key={quantidade.id}
+                              className="mt-1 text-xs text-zinc-500"
+                            >
+                              {quantidade.texto}
+                            </p>
+                          ))}
                         </div>
                       </div>
 
@@ -836,6 +1020,14 @@ export default async function ProdutosPage({
                               ? `${formatarDecimalBr(indicadores.quantidadeSugerida.toString())} ${produto.unidade}`
                               : "Não configurada"}
                           </p>
+                          {embalagensSugeridas.map((quantidade) => (
+                            <p
+                              key={quantidade.id}
+                              className="mt-1 text-xs text-zinc-500"
+                            >
+                              {quantidade.texto}
+                            </p>
+                          ))}
                         </div>
                       </div>
 

@@ -33,6 +33,11 @@ export type ConfiguracaoCompraAvgAggregateOutputType = {
   consumoDiario: runtime.Decimal | null
   estoqueSeguranca: runtime.Decimal | null
   estoqueMaximoDesejado: runtime.Decimal | null
+  consumoFator: runtime.Decimal | null
+  estoqueSegurancaInformado: runtime.Decimal | null
+  estoqueSegurancaFator: runtime.Decimal | null
+  estoqueMaximoDesejadoInformado: runtime.Decimal | null
+  estoqueMaximoDesejadoFator: runtime.Decimal | null
 }
 
 export type ConfiguracaoCompraSumAggregateOutputType = {
@@ -42,6 +47,11 @@ export type ConfiguracaoCompraSumAggregateOutputType = {
   consumoDiario: runtime.Decimal | null
   estoqueSeguranca: runtime.Decimal | null
   estoqueMaximoDesejado: runtime.Decimal | null
+  consumoFator: runtime.Decimal | null
+  estoqueSegurancaInformado: runtime.Decimal | null
+  estoqueSegurancaFator: runtime.Decimal | null
+  estoqueMaximoDesejadoInformado: runtime.Decimal | null
+  estoqueMaximoDesejadoFator: runtime.Decimal | null
 }
 
 export type ConfiguracaoCompraMinAggregateOutputType = {
@@ -52,6 +62,14 @@ export type ConfiguracaoCompraMinAggregateOutputType = {
   consumoDiario: runtime.Decimal | null
   estoqueSeguranca: runtime.Decimal | null
   estoqueMaximoDesejado: runtime.Decimal | null
+  consumoUnidade: string | null
+  consumoFator: runtime.Decimal | null
+  estoqueSegurancaInformado: runtime.Decimal | null
+  estoqueSegurancaUnidade: string | null
+  estoqueSegurancaFator: runtime.Decimal | null
+  estoqueMaximoDesejadoInformado: runtime.Decimal | null
+  estoqueMaximoDesejadoUnidade: string | null
+  estoqueMaximoDesejadoFator: runtime.Decimal | null
   criadoEm: Date | null
   atualizadoEm: Date | null
 }
@@ -64,6 +82,14 @@ export type ConfiguracaoCompraMaxAggregateOutputType = {
   consumoDiario: runtime.Decimal | null
   estoqueSeguranca: runtime.Decimal | null
   estoqueMaximoDesejado: runtime.Decimal | null
+  consumoUnidade: string | null
+  consumoFator: runtime.Decimal | null
+  estoqueSegurancaInformado: runtime.Decimal | null
+  estoqueSegurancaUnidade: string | null
+  estoqueSegurancaFator: runtime.Decimal | null
+  estoqueMaximoDesejadoInformado: runtime.Decimal | null
+  estoqueMaximoDesejadoUnidade: string | null
+  estoqueMaximoDesejadoFator: runtime.Decimal | null
   criadoEm: Date | null
   atualizadoEm: Date | null
 }
@@ -76,6 +102,14 @@ export type ConfiguracaoCompraCountAggregateOutputType = {
   consumoDiario: number
   estoqueSeguranca: number
   estoqueMaximoDesejado: number
+  consumoUnidade: number
+  consumoFator: number
+  estoqueSegurancaInformado: number
+  estoqueSegurancaUnidade: number
+  estoqueSegurancaFator: number
+  estoqueMaximoDesejadoInformado: number
+  estoqueMaximoDesejadoUnidade: number
+  estoqueMaximoDesejadoFator: number
   criadoEm: number
   atualizadoEm: number
   _all: number
@@ -89,6 +123,11 @@ export type ConfiguracaoCompraAvgAggregateInputType = {
   consumoDiario?: true
   estoqueSeguranca?: true
   estoqueMaximoDesejado?: true
+  consumoFator?: true
+  estoqueSegurancaInformado?: true
+  estoqueSegurancaFator?: true
+  estoqueMaximoDesejadoInformado?: true
+  estoqueMaximoDesejadoFator?: true
 }
 
 export type ConfiguracaoCompraSumAggregateInputType = {
@@ -98,6 +137,11 @@ export type ConfiguracaoCompraSumAggregateInputType = {
   consumoDiario?: true
   estoqueSeguranca?: true
   estoqueMaximoDesejado?: true
+  consumoFator?: true
+  estoqueSegurancaInformado?: true
+  estoqueSegurancaFator?: true
+  estoqueMaximoDesejadoInformado?: true
+  estoqueMaximoDesejadoFator?: true
 }
 
 export type ConfiguracaoCompraMinAggregateInputType = {
@@ -108,6 +152,14 @@ export type ConfiguracaoCompraMinAggregateInputType = {
   consumoDiario?: true
   estoqueSeguranca?: true
   estoqueMaximoDesejado?: true
+  consumoUnidade?: true
+  consumoFator?: true
+  estoqueSegurancaInformado?: true
+  estoqueSegurancaUnidade?: true
+  estoqueSegurancaFator?: true
+  estoqueMaximoDesejadoInformado?: true
+  estoqueMaximoDesejadoUnidade?: true
+  estoqueMaximoDesejadoFator?: true
   criadoEm?: true
   atualizadoEm?: true
 }
@@ -120,6 +172,14 @@ export type ConfiguracaoCompraMaxAggregateInputType = {
   consumoDiario?: true
   estoqueSeguranca?: true
   estoqueMaximoDesejado?: true
+  consumoUnidade?: true
+  consumoFator?: true
+  estoqueSegurancaInformado?: true
+  estoqueSegurancaUnidade?: true
+  estoqueSegurancaFator?: true
+  estoqueMaximoDesejadoInformado?: true
+  estoqueMaximoDesejadoUnidade?: true
+  estoqueMaximoDesejadoFator?: true
   criadoEm?: true
   atualizadoEm?: true
 }
@@ -132,6 +192,14 @@ export type ConfiguracaoCompraCountAggregateInputType = {
   consumoDiario?: true
   estoqueSeguranca?: true
   estoqueMaximoDesejado?: true
+  consumoUnidade?: true
+  consumoFator?: true
+  estoqueSegurancaInformado?: true
+  estoqueSegurancaUnidade?: true
+  estoqueSegurancaFator?: true
+  estoqueMaximoDesejadoInformado?: true
+  estoqueMaximoDesejadoUnidade?: true
+  estoqueMaximoDesejadoFator?: true
   criadoEm?: true
   atualizadoEm?: true
   _all?: true
@@ -231,6 +299,14 @@ export type ConfiguracaoCompraGroupByOutputType = {
   consumoDiario: runtime.Decimal
   estoqueSeguranca: runtime.Decimal
   estoqueMaximoDesejado: runtime.Decimal
+  consumoUnidade: string | null
+  consumoFator: runtime.Decimal | null
+  estoqueSegurancaInformado: runtime.Decimal | null
+  estoqueSegurancaUnidade: string | null
+  estoqueSegurancaFator: runtime.Decimal | null
+  estoqueMaximoDesejadoInformado: runtime.Decimal | null
+  estoqueMaximoDesejadoUnidade: string | null
+  estoqueMaximoDesejadoFator: runtime.Decimal | null
   criadoEm: Date
   atualizadoEm: Date
   _count: ConfiguracaoCompraCountAggregateOutputType | null
@@ -266,6 +342,14 @@ export type ConfiguracaoCompraWhereInput = {
   consumoDiario?: Prisma.DecimalFilter<"ConfiguracaoCompra"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   estoqueSeguranca?: Prisma.DecimalFilter<"ConfiguracaoCompra"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   estoqueMaximoDesejado?: Prisma.DecimalFilter<"ConfiguracaoCompra"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  consumoUnidade?: Prisma.StringNullableFilter<"ConfiguracaoCompra"> | string | null
+  consumoFator?: Prisma.DecimalNullableFilter<"ConfiguracaoCompra"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueSegurancaInformado?: Prisma.DecimalNullableFilter<"ConfiguracaoCompra"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueSegurancaUnidade?: Prisma.StringNullableFilter<"ConfiguracaoCompra"> | string | null
+  estoqueSegurancaFator?: Prisma.DecimalNullableFilter<"ConfiguracaoCompra"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueMaximoDesejadoInformado?: Prisma.DecimalNullableFilter<"ConfiguracaoCompra"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueMaximoDesejadoUnidade?: Prisma.StringNullableFilter<"ConfiguracaoCompra"> | string | null
+  estoqueMaximoDesejadoFator?: Prisma.DecimalNullableFilter<"ConfiguracaoCompra"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   criadoEm?: Prisma.DateTimeFilter<"ConfiguracaoCompra"> | Date | string
   atualizadoEm?: Prisma.DateTimeFilter<"ConfiguracaoCompra"> | Date | string
   produto?: Prisma.XOR<Prisma.ProdutoScalarRelationFilter, Prisma.ProdutoWhereInput>
@@ -279,6 +363,14 @@ export type ConfiguracaoCompraOrderByWithRelationInput = {
   consumoDiario?: Prisma.SortOrder
   estoqueSeguranca?: Prisma.SortOrder
   estoqueMaximoDesejado?: Prisma.SortOrder
+  consumoUnidade?: Prisma.SortOrderInput | Prisma.SortOrder
+  consumoFator?: Prisma.SortOrderInput | Prisma.SortOrder
+  estoqueSegurancaInformado?: Prisma.SortOrderInput | Prisma.SortOrder
+  estoqueSegurancaUnidade?: Prisma.SortOrderInput | Prisma.SortOrder
+  estoqueSegurancaFator?: Prisma.SortOrderInput | Prisma.SortOrder
+  estoqueMaximoDesejadoInformado?: Prisma.SortOrderInput | Prisma.SortOrder
+  estoqueMaximoDesejadoUnidade?: Prisma.SortOrderInput | Prisma.SortOrder
+  estoqueMaximoDesejadoFator?: Prisma.SortOrderInput | Prisma.SortOrder
   criadoEm?: Prisma.SortOrder
   atualizadoEm?: Prisma.SortOrder
   produto?: Prisma.ProdutoOrderByWithRelationInput
@@ -295,6 +387,14 @@ export type ConfiguracaoCompraWhereUniqueInput = Prisma.AtLeast<{
   consumoDiario?: Prisma.DecimalFilter<"ConfiguracaoCompra"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   estoqueSeguranca?: Prisma.DecimalFilter<"ConfiguracaoCompra"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   estoqueMaximoDesejado?: Prisma.DecimalFilter<"ConfiguracaoCompra"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  consumoUnidade?: Prisma.StringNullableFilter<"ConfiguracaoCompra"> | string | null
+  consumoFator?: Prisma.DecimalNullableFilter<"ConfiguracaoCompra"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueSegurancaInformado?: Prisma.DecimalNullableFilter<"ConfiguracaoCompra"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueSegurancaUnidade?: Prisma.StringNullableFilter<"ConfiguracaoCompra"> | string | null
+  estoqueSegurancaFator?: Prisma.DecimalNullableFilter<"ConfiguracaoCompra"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueMaximoDesejadoInformado?: Prisma.DecimalNullableFilter<"ConfiguracaoCompra"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueMaximoDesejadoUnidade?: Prisma.StringNullableFilter<"ConfiguracaoCompra"> | string | null
+  estoqueMaximoDesejadoFator?: Prisma.DecimalNullableFilter<"ConfiguracaoCompra"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   criadoEm?: Prisma.DateTimeFilter<"ConfiguracaoCompra"> | Date | string
   atualizadoEm?: Prisma.DateTimeFilter<"ConfiguracaoCompra"> | Date | string
   produto?: Prisma.XOR<Prisma.ProdutoScalarRelationFilter, Prisma.ProdutoWhereInput>
@@ -308,6 +408,14 @@ export type ConfiguracaoCompraOrderByWithAggregationInput = {
   consumoDiario?: Prisma.SortOrder
   estoqueSeguranca?: Prisma.SortOrder
   estoqueMaximoDesejado?: Prisma.SortOrder
+  consumoUnidade?: Prisma.SortOrderInput | Prisma.SortOrder
+  consumoFator?: Prisma.SortOrderInput | Prisma.SortOrder
+  estoqueSegurancaInformado?: Prisma.SortOrderInput | Prisma.SortOrder
+  estoqueSegurancaUnidade?: Prisma.SortOrderInput | Prisma.SortOrder
+  estoqueSegurancaFator?: Prisma.SortOrderInput | Prisma.SortOrder
+  estoqueMaximoDesejadoInformado?: Prisma.SortOrderInput | Prisma.SortOrder
+  estoqueMaximoDesejadoUnidade?: Prisma.SortOrderInput | Prisma.SortOrder
+  estoqueMaximoDesejadoFator?: Prisma.SortOrderInput | Prisma.SortOrder
   criadoEm?: Prisma.SortOrder
   atualizadoEm?: Prisma.SortOrder
   _count?: Prisma.ConfiguracaoCompraCountOrderByAggregateInput
@@ -328,6 +436,14 @@ export type ConfiguracaoCompraScalarWhereWithAggregatesInput = {
   consumoDiario?: Prisma.DecimalWithAggregatesFilter<"ConfiguracaoCompra"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   estoqueSeguranca?: Prisma.DecimalWithAggregatesFilter<"ConfiguracaoCompra"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   estoqueMaximoDesejado?: Prisma.DecimalWithAggregatesFilter<"ConfiguracaoCompra"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  consumoUnidade?: Prisma.StringNullableWithAggregatesFilter<"ConfiguracaoCompra"> | string | null
+  consumoFator?: Prisma.DecimalNullableWithAggregatesFilter<"ConfiguracaoCompra"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueSegurancaInformado?: Prisma.DecimalNullableWithAggregatesFilter<"ConfiguracaoCompra"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueSegurancaUnidade?: Prisma.StringNullableWithAggregatesFilter<"ConfiguracaoCompra"> | string | null
+  estoqueSegurancaFator?: Prisma.DecimalNullableWithAggregatesFilter<"ConfiguracaoCompra"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueMaximoDesejadoInformado?: Prisma.DecimalNullableWithAggregatesFilter<"ConfiguracaoCompra"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueMaximoDesejadoUnidade?: Prisma.StringNullableWithAggregatesFilter<"ConfiguracaoCompra"> | string | null
+  estoqueMaximoDesejadoFator?: Prisma.DecimalNullableWithAggregatesFilter<"ConfiguracaoCompra"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   criadoEm?: Prisma.DateTimeWithAggregatesFilter<"ConfiguracaoCompra"> | Date | string
   atualizadoEm?: Prisma.DateTimeWithAggregatesFilter<"ConfiguracaoCompra"> | Date | string
 }
@@ -338,6 +454,14 @@ export type ConfiguracaoCompraCreateInput = {
   consumoDiario: runtime.Decimal | runtime.DecimalJsLike | number | string
   estoqueSeguranca: runtime.Decimal | runtime.DecimalJsLike | number | string
   estoqueMaximoDesejado: runtime.Decimal | runtime.DecimalJsLike | number | string
+  consumoUnidade?: string | null
+  consumoFator?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueSegurancaInformado?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueSegurancaUnidade?: string | null
+  estoqueSegurancaFator?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueMaximoDesejadoInformado?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueMaximoDesejadoUnidade?: string | null
+  estoqueMaximoDesejadoFator?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   criadoEm?: Date | string
   atualizadoEm?: Date | string
   produto: Prisma.ProdutoCreateNestedOneWithoutConfiguracaoCompraInput
@@ -351,6 +475,14 @@ export type ConfiguracaoCompraUncheckedCreateInput = {
   consumoDiario: runtime.Decimal | runtime.DecimalJsLike | number | string
   estoqueSeguranca: runtime.Decimal | runtime.DecimalJsLike | number | string
   estoqueMaximoDesejado: runtime.Decimal | runtime.DecimalJsLike | number | string
+  consumoUnidade?: string | null
+  consumoFator?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueSegurancaInformado?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueSegurancaUnidade?: string | null
+  estoqueSegurancaFator?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueMaximoDesejadoInformado?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueMaximoDesejadoUnidade?: string | null
+  estoqueMaximoDesejadoFator?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   criadoEm?: Date | string
   atualizadoEm?: Date | string
 }
@@ -361,6 +493,14 @@ export type ConfiguracaoCompraUpdateInput = {
   consumoDiario?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   estoqueSeguranca?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   estoqueMaximoDesejado?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  consumoUnidade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  consumoFator?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueSegurancaInformado?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueSegurancaUnidade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estoqueSegurancaFator?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueMaximoDesejadoInformado?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueMaximoDesejadoUnidade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estoqueMaximoDesejadoFator?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   produto?: Prisma.ProdutoUpdateOneRequiredWithoutConfiguracaoCompraNestedInput
@@ -374,6 +514,14 @@ export type ConfiguracaoCompraUncheckedUpdateInput = {
   consumoDiario?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   estoqueSeguranca?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   estoqueMaximoDesejado?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  consumoUnidade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  consumoFator?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueSegurancaInformado?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueSegurancaUnidade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estoqueSegurancaFator?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueMaximoDesejadoInformado?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueMaximoDesejadoUnidade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estoqueMaximoDesejadoFator?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -386,6 +534,14 @@ export type ConfiguracaoCompraCreateManyInput = {
   consumoDiario: runtime.Decimal | runtime.DecimalJsLike | number | string
   estoqueSeguranca: runtime.Decimal | runtime.DecimalJsLike | number | string
   estoqueMaximoDesejado: runtime.Decimal | runtime.DecimalJsLike | number | string
+  consumoUnidade?: string | null
+  consumoFator?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueSegurancaInformado?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueSegurancaUnidade?: string | null
+  estoqueSegurancaFator?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueMaximoDesejadoInformado?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueMaximoDesejadoUnidade?: string | null
+  estoqueMaximoDesejadoFator?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   criadoEm?: Date | string
   atualizadoEm?: Date | string
 }
@@ -396,6 +552,14 @@ export type ConfiguracaoCompraUpdateManyMutationInput = {
   consumoDiario?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   estoqueSeguranca?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   estoqueMaximoDesejado?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  consumoUnidade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  consumoFator?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueSegurancaInformado?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueSegurancaUnidade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estoqueSegurancaFator?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueMaximoDesejadoInformado?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueMaximoDesejadoUnidade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estoqueMaximoDesejadoFator?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -408,6 +572,14 @@ export type ConfiguracaoCompraUncheckedUpdateManyInput = {
   consumoDiario?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   estoqueSeguranca?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   estoqueMaximoDesejado?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  consumoUnidade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  consumoFator?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueSegurancaInformado?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueSegurancaUnidade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estoqueSegurancaFator?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueMaximoDesejadoInformado?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueMaximoDesejadoUnidade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estoqueMaximoDesejadoFator?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -425,6 +597,14 @@ export type ConfiguracaoCompraCountOrderByAggregateInput = {
   consumoDiario?: Prisma.SortOrder
   estoqueSeguranca?: Prisma.SortOrder
   estoqueMaximoDesejado?: Prisma.SortOrder
+  consumoUnidade?: Prisma.SortOrder
+  consumoFator?: Prisma.SortOrder
+  estoqueSegurancaInformado?: Prisma.SortOrder
+  estoqueSegurancaUnidade?: Prisma.SortOrder
+  estoqueSegurancaFator?: Prisma.SortOrder
+  estoqueMaximoDesejadoInformado?: Prisma.SortOrder
+  estoqueMaximoDesejadoUnidade?: Prisma.SortOrder
+  estoqueMaximoDesejadoFator?: Prisma.SortOrder
   criadoEm?: Prisma.SortOrder
   atualizadoEm?: Prisma.SortOrder
 }
@@ -436,6 +616,11 @@ export type ConfiguracaoCompraAvgOrderByAggregateInput = {
   consumoDiario?: Prisma.SortOrder
   estoqueSeguranca?: Prisma.SortOrder
   estoqueMaximoDesejado?: Prisma.SortOrder
+  consumoFator?: Prisma.SortOrder
+  estoqueSegurancaInformado?: Prisma.SortOrder
+  estoqueSegurancaFator?: Prisma.SortOrder
+  estoqueMaximoDesejadoInformado?: Prisma.SortOrder
+  estoqueMaximoDesejadoFator?: Prisma.SortOrder
 }
 
 export type ConfiguracaoCompraMaxOrderByAggregateInput = {
@@ -446,6 +631,14 @@ export type ConfiguracaoCompraMaxOrderByAggregateInput = {
   consumoDiario?: Prisma.SortOrder
   estoqueSeguranca?: Prisma.SortOrder
   estoqueMaximoDesejado?: Prisma.SortOrder
+  consumoUnidade?: Prisma.SortOrder
+  consumoFator?: Prisma.SortOrder
+  estoqueSegurancaInformado?: Prisma.SortOrder
+  estoqueSegurancaUnidade?: Prisma.SortOrder
+  estoqueSegurancaFator?: Prisma.SortOrder
+  estoqueMaximoDesejadoInformado?: Prisma.SortOrder
+  estoqueMaximoDesejadoUnidade?: Prisma.SortOrder
+  estoqueMaximoDesejadoFator?: Prisma.SortOrder
   criadoEm?: Prisma.SortOrder
   atualizadoEm?: Prisma.SortOrder
 }
@@ -458,6 +651,14 @@ export type ConfiguracaoCompraMinOrderByAggregateInput = {
   consumoDiario?: Prisma.SortOrder
   estoqueSeguranca?: Prisma.SortOrder
   estoqueMaximoDesejado?: Prisma.SortOrder
+  consumoUnidade?: Prisma.SortOrder
+  consumoFator?: Prisma.SortOrder
+  estoqueSegurancaInformado?: Prisma.SortOrder
+  estoqueSegurancaUnidade?: Prisma.SortOrder
+  estoqueSegurancaFator?: Prisma.SortOrder
+  estoqueMaximoDesejadoInformado?: Prisma.SortOrder
+  estoqueMaximoDesejadoUnidade?: Prisma.SortOrder
+  estoqueMaximoDesejadoFator?: Prisma.SortOrder
   criadoEm?: Prisma.SortOrder
   atualizadoEm?: Prisma.SortOrder
 }
@@ -469,6 +670,11 @@ export type ConfiguracaoCompraSumOrderByAggregateInput = {
   consumoDiario?: Prisma.SortOrder
   estoqueSeguranca?: Prisma.SortOrder
   estoqueMaximoDesejado?: Prisma.SortOrder
+  consumoFator?: Prisma.SortOrder
+  estoqueSegurancaInformado?: Prisma.SortOrder
+  estoqueSegurancaFator?: Prisma.SortOrder
+  estoqueMaximoDesejadoInformado?: Prisma.SortOrder
+  estoqueMaximoDesejadoFator?: Prisma.SortOrder
 }
 
 export type ConfiguracaoCompraCreateNestedOneWithoutProdutoInput = {
@@ -513,6 +719,14 @@ export type ConfiguracaoCompraCreateWithoutProdutoInput = {
   consumoDiario: runtime.Decimal | runtime.DecimalJsLike | number | string
   estoqueSeguranca: runtime.Decimal | runtime.DecimalJsLike | number | string
   estoqueMaximoDesejado: runtime.Decimal | runtime.DecimalJsLike | number | string
+  consumoUnidade?: string | null
+  consumoFator?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueSegurancaInformado?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueSegurancaUnidade?: string | null
+  estoqueSegurancaFator?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueMaximoDesejadoInformado?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueMaximoDesejadoUnidade?: string | null
+  estoqueMaximoDesejadoFator?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   criadoEm?: Date | string
   atualizadoEm?: Date | string
 }
@@ -524,6 +738,14 @@ export type ConfiguracaoCompraUncheckedCreateWithoutProdutoInput = {
   consumoDiario: runtime.Decimal | runtime.DecimalJsLike | number | string
   estoqueSeguranca: runtime.Decimal | runtime.DecimalJsLike | number | string
   estoqueMaximoDesejado: runtime.Decimal | runtime.DecimalJsLike | number | string
+  consumoUnidade?: string | null
+  consumoFator?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueSegurancaInformado?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueSegurancaUnidade?: string | null
+  estoqueSegurancaFator?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueMaximoDesejadoInformado?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueMaximoDesejadoUnidade?: string | null
+  estoqueMaximoDesejadoFator?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   criadoEm?: Date | string
   atualizadoEm?: Date | string
 }
@@ -550,6 +772,14 @@ export type ConfiguracaoCompraUpdateWithoutProdutoInput = {
   consumoDiario?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   estoqueSeguranca?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   estoqueMaximoDesejado?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  consumoUnidade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  consumoFator?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueSegurancaInformado?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueSegurancaUnidade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estoqueSegurancaFator?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueMaximoDesejadoInformado?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueMaximoDesejadoUnidade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estoqueMaximoDesejadoFator?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -561,6 +791,14 @@ export type ConfiguracaoCompraUncheckedUpdateWithoutProdutoInput = {
   consumoDiario?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   estoqueSeguranca?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   estoqueMaximoDesejado?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  consumoUnidade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  consumoFator?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueSegurancaInformado?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueSegurancaUnidade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estoqueSegurancaFator?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueMaximoDesejadoInformado?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  estoqueMaximoDesejadoUnidade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estoqueMaximoDesejadoFator?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -575,6 +813,14 @@ export type ConfiguracaoCompraSelect<ExtArgs extends runtime.Types.Extensions.In
   consumoDiario?: boolean
   estoqueSeguranca?: boolean
   estoqueMaximoDesejado?: boolean
+  consumoUnidade?: boolean
+  consumoFator?: boolean
+  estoqueSegurancaInformado?: boolean
+  estoqueSegurancaUnidade?: boolean
+  estoqueSegurancaFator?: boolean
+  estoqueMaximoDesejadoInformado?: boolean
+  estoqueMaximoDesejadoUnidade?: boolean
+  estoqueMaximoDesejadoFator?: boolean
   criadoEm?: boolean
   atualizadoEm?: boolean
   produto?: boolean | Prisma.ProdutoDefaultArgs<ExtArgs>
@@ -588,6 +834,14 @@ export type ConfiguracaoCompraSelectCreateManyAndReturn<ExtArgs extends runtime.
   consumoDiario?: boolean
   estoqueSeguranca?: boolean
   estoqueMaximoDesejado?: boolean
+  consumoUnidade?: boolean
+  consumoFator?: boolean
+  estoqueSegurancaInformado?: boolean
+  estoqueSegurancaUnidade?: boolean
+  estoqueSegurancaFator?: boolean
+  estoqueMaximoDesejadoInformado?: boolean
+  estoqueMaximoDesejadoUnidade?: boolean
+  estoqueMaximoDesejadoFator?: boolean
   criadoEm?: boolean
   atualizadoEm?: boolean
   produto?: boolean | Prisma.ProdutoDefaultArgs<ExtArgs>
@@ -601,6 +855,14 @@ export type ConfiguracaoCompraSelectUpdateManyAndReturn<ExtArgs extends runtime.
   consumoDiario?: boolean
   estoqueSeguranca?: boolean
   estoqueMaximoDesejado?: boolean
+  consumoUnidade?: boolean
+  consumoFator?: boolean
+  estoqueSegurancaInformado?: boolean
+  estoqueSegurancaUnidade?: boolean
+  estoqueSegurancaFator?: boolean
+  estoqueMaximoDesejadoInformado?: boolean
+  estoqueMaximoDesejadoUnidade?: boolean
+  estoqueMaximoDesejadoFator?: boolean
   criadoEm?: boolean
   atualizadoEm?: boolean
   produto?: boolean | Prisma.ProdutoDefaultArgs<ExtArgs>
@@ -614,11 +876,19 @@ export type ConfiguracaoCompraSelectScalar = {
   consumoDiario?: boolean
   estoqueSeguranca?: boolean
   estoqueMaximoDesejado?: boolean
+  consumoUnidade?: boolean
+  consumoFator?: boolean
+  estoqueSegurancaInformado?: boolean
+  estoqueSegurancaUnidade?: boolean
+  estoqueSegurancaFator?: boolean
+  estoqueMaximoDesejadoInformado?: boolean
+  estoqueMaximoDesejadoUnidade?: boolean
+  estoqueMaximoDesejadoFator?: boolean
   criadoEm?: boolean
   atualizadoEm?: boolean
 }
 
-export type ConfiguracaoCompraOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "produtoId" | "consumoInformado" | "periodoConsumo" | "consumoDiario" | "estoqueSeguranca" | "estoqueMaximoDesejado" | "criadoEm" | "atualizadoEm", ExtArgs["result"]["configuracaoCompra"]>
+export type ConfiguracaoCompraOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "produtoId" | "consumoInformado" | "periodoConsumo" | "consumoDiario" | "estoqueSeguranca" | "estoqueMaximoDesejado" | "consumoUnidade" | "consumoFator" | "estoqueSegurancaInformado" | "estoqueSegurancaUnidade" | "estoqueSegurancaFator" | "estoqueMaximoDesejadoInformado" | "estoqueMaximoDesejadoUnidade" | "estoqueMaximoDesejadoFator" | "criadoEm" | "atualizadoEm", ExtArgs["result"]["configuracaoCompra"]>
 export type ConfiguracaoCompraInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   produto?: boolean | Prisma.ProdutoDefaultArgs<ExtArgs>
 }
@@ -642,6 +912,14 @@ export type $ConfiguracaoCompraPayload<ExtArgs extends runtime.Types.Extensions.
     consumoDiario: runtime.Decimal
     estoqueSeguranca: runtime.Decimal
     estoqueMaximoDesejado: runtime.Decimal
+    consumoUnidade: string | null
+    consumoFator: runtime.Decimal | null
+    estoqueSegurancaInformado: runtime.Decimal | null
+    estoqueSegurancaUnidade: string | null
+    estoqueSegurancaFator: runtime.Decimal | null
+    estoqueMaximoDesejadoInformado: runtime.Decimal | null
+    estoqueMaximoDesejadoUnidade: string | null
+    estoqueMaximoDesejadoFator: runtime.Decimal | null
     criadoEm: Date
     atualizadoEm: Date
   }, ExtArgs["result"]["configuracaoCompra"]>
@@ -1075,6 +1353,14 @@ export interface ConfiguracaoCompraFieldRefs {
   readonly consumoDiario: Prisma.FieldRef<"ConfiguracaoCompra", 'Decimal'>
   readonly estoqueSeguranca: Prisma.FieldRef<"ConfiguracaoCompra", 'Decimal'>
   readonly estoqueMaximoDesejado: Prisma.FieldRef<"ConfiguracaoCompra", 'Decimal'>
+  readonly consumoUnidade: Prisma.FieldRef<"ConfiguracaoCompra", 'String'>
+  readonly consumoFator: Prisma.FieldRef<"ConfiguracaoCompra", 'Decimal'>
+  readonly estoqueSegurancaInformado: Prisma.FieldRef<"ConfiguracaoCompra", 'Decimal'>
+  readonly estoqueSegurancaUnidade: Prisma.FieldRef<"ConfiguracaoCompra", 'String'>
+  readonly estoqueSegurancaFator: Prisma.FieldRef<"ConfiguracaoCompra", 'Decimal'>
+  readonly estoqueMaximoDesejadoInformado: Prisma.FieldRef<"ConfiguracaoCompra", 'Decimal'>
+  readonly estoqueMaximoDesejadoUnidade: Prisma.FieldRef<"ConfiguracaoCompra", 'String'>
+  readonly estoqueMaximoDesejadoFator: Prisma.FieldRef<"ConfiguracaoCompra", 'Decimal'>
   readonly criadoEm: Prisma.FieldRef<"ConfiguracaoCompra", 'DateTime'>
   readonly atualizadoEm: Prisma.FieldRef<"ConfiguracaoCompra", 'DateTime'>
 }

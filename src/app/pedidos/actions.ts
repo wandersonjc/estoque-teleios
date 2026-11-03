@@ -27,6 +27,85 @@ function erroDeRegra(mensagem: string): Error {
   return new Error(mensagem);
 }
 
+class ErroConfiguracaoCompra extends Error {}
+
+type UnidadeConfiguracao = {
+  nome: string;
+  fator: Prisma.Decimal;
+};
+
+function resolverUnidadeConfiguracao(
+  valorSelecionado: string,
+  unidadeBase: string,
+  embalagens: { id: number; unidade: string; quantidadeBase: Prisma.Decimal }[],
+  configuracaoAnterior: {
+    consumoUnidade: string | null;
+    consumoFator: Prisma.Decimal | null;
+    estoqueSegurancaUnidade: string | null;
+    estoqueSegurancaFator: Prisma.Decimal | null;
+    estoqueMaximoDesejadoUnidade: string | null;
+    estoqueMaximoDesejadoFator: Prisma.Decimal | null;
+  } | null,
+  campoSnapshot: "consumo" | "seguranca" | "maximo"
+): UnidadeConfiguracao {
+  if (valorSelecionado === "BASE") {
+    return { nome: unidadeBase, fator: new Prisma.Decimal(1) };
+  }
+
+  const embalagemId = /^EMB:(\d+)$/.exec(valorSelecionado);
+  if (embalagemId) {
+    const embalagem = embalagens.find(
+      (item) => item.id === Number(embalagemId[1])
+    );
+    if (!embalagem) {
+      throw new ErroConfiguracaoCompra(
+        "A embalagem selecionada não pertence a este produto ou não está mais cadastrada."
+      );
+    }
+    return {
+      nome: embalagem.unidade,
+      fator: embalagem.quantidadeBase,
+    };
+  }
+
+  const snapshot = /^SALVO:(consumo|seguranca|maximo)$/.exec(
+    valorSelecionado
+  );
+  if (snapshot && snapshot[1] === campoSnapshot && configuracaoAnterior) {
+    const unidade =
+      campoSnapshot === "consumo"
+        ? configuracaoAnterior.consumoUnidade
+        : campoSnapshot === "seguranca"
+          ? configuracaoAnterior.estoqueSegurancaUnidade
+          : configuracaoAnterior.estoqueMaximoDesejadoUnidade;
+    const fator =
+      campoSnapshot === "consumo"
+        ? configuracaoAnterior.consumoFator
+        : campoSnapshot === "seguranca"
+          ? configuracaoAnterior.estoqueSegurancaFator
+          : configuracaoAnterior.estoqueMaximoDesejadoFator;
+    if (unidade && fator) return { nome: unidade, fator };
+  }
+
+  throw new ErroConfiguracaoCompra("Selecione uma unidade de embalagem válida.");
+}
+
+function converterEstoqueParaUnidadeBase(
+  quantidade: string,
+  fator: Prisma.Decimal
+): string {
+  const convertida = new Prisma.Decimal(quantidade).mul(fator);
+  if (
+    convertida.decimalPlaces() > 3 ||
+    convertida.abs().greaterThan("999999999.999")
+  ) {
+    throw new ErroConfiguracaoCompra(
+      "A conversão para a unidade-base deve resultar em até 3 casas decimais e no máximo 9 dígitos."
+    );
+  }
+  return convertida.toFixed(3);
+}
+
 async function bloquearPedidoCompra(
   tx: Prisma.TransactionClient,
   id: number
@@ -661,12 +740,15 @@ function valoresFormulario(formData: FormData): ValoresConfiguracaoCompra {
   return {
     produtoId: texto(formData, "produtoId"),
     consumoInformado: texto(formData, "consumoInformado"),
+    unidadeConsumo: texto(formData, "unidadeConsumo"),
     periodoConsumo:
       periodo === "DIA" || periodo === "SEMANA" || periodo === "MES"
         ? periodo
         : "",
     estoqueSeguranca: texto(formData, "estoqueSeguranca"),
+    unidadeEstoqueSeguranca: texto(formData, "unidadeEstoqueSeguranca"),
     estoqueMaximoDesejado: texto(formData, "estoqueMaximoDesejado"),
+    unidadeEstoqueMaximo: texto(formData, "unidadeEstoqueMaximo"),
   };
 }
 
@@ -710,36 +792,97 @@ export async function salvarConfiguracaoCompra(
   }
 
   const periodo = valores.periodoConsumo;
-  const consumoDiario = calcularConsumoDiario(consumoInformado, periodo);
-
   try {
     await prisma.$transaction(async (tx) => {
       const produto = await tx.produto.findUnique({
         where: { id: produtoId },
-        select: { id: true, nome: true },
+        select: {
+          id: true,
+          nome: true,
+          unidade: true,
+          embalagens: {
+            select: { id: true, unidade: true, quantidadeBase: true },
+          },
+        },
       });
-      if (!produto) throw new Error("Produto não encontrado.");
+      if (!produto) {
+        throw new ErroConfiguracaoCompra("Produto não encontrado.");
+      }
 
       const configuracaoAnterior = await tx.configuracaoCompra.findUnique({
         where: { produtoId },
       });
+
+      const unidadeConsumo = resolverUnidadeConfiguracao(
+        valores.unidadeConsumo,
+        produto.unidade,
+        produto.embalagens,
+        configuracaoAnterior,
+        "consumo"
+      );
+      const unidadeSeguranca = resolverUnidadeConfiguracao(
+        valores.unidadeEstoqueSeguranca,
+        produto.unidade,
+        produto.embalagens,
+        configuracaoAnterior,
+        "seguranca"
+      );
+      const unidadeMaximo = resolverUnidadeConfiguracao(
+        valores.unidadeEstoqueMaximo,
+        produto.unidade,
+        produto.embalagens,
+        configuracaoAnterior,
+        "maximo"
+      );
+      const estoqueSegurancaBase = converterEstoqueParaUnidadeBase(
+        estoqueSeguranca,
+        unidadeSeguranca.fator
+      );
+      const estoqueMaximoDesejadoBase = converterEstoqueParaUnidadeBase(
+        estoqueMaximoDesejado,
+        unidadeMaximo.fator
+      );
+      const consumoDiario = calcularConsumoDiario(
+        consumoInformado,
+        periodo,
+        unidadeConsumo.fator.toString()
+      );
+      if (new Prisma.Decimal(consumoDiario).greaterThan("999999999.999")) {
+        throw new ErroConfiguracaoCompra(
+          "O consumo convertido para a unidade-base excede o limite permitido."
+        );
+      }
+
+      const dadosConfiguracao = {
+        consumoInformado,
+        consumoUnidade: unidadeConsumo.nome,
+        consumoFator: unidadeConsumo.fator,
+        periodoConsumo: periodo,
+        consumoDiario,
+        estoqueSeguranca: estoqueSegurancaBase,
+        estoqueSegurancaInformado: estoqueSeguranca,
+        estoqueSegurancaUnidade: unidadeSeguranca.nome,
+        estoqueSegurancaFator: unidadeSeguranca.fator,
+        estoqueMaximoDesejado: estoqueMaximoDesejadoBase,
+        estoqueMaximoDesejadoInformado: estoqueMaximoDesejado,
+        estoqueMaximoDesejadoUnidade: unidadeMaximo.nome,
+        estoqueMaximoDesejadoFator: unidadeMaximo.fator,
+      };
+      const dadosConfiguracaoLog = {
+        ...dadosConfiguracao,
+        consumoFator: unidadeConsumo.fator.toString(),
+        estoqueSeguranca: estoqueSegurancaBase,
+        estoqueSegurancaFator: unidadeSeguranca.fator.toString(),
+        estoqueMaximoDesejado: estoqueMaximoDesejadoBase,
+        estoqueMaximoDesejadoFator: unidadeMaximo.fator.toString(),
+      };
       await tx.configuracaoCompra.upsert({
         where: { produtoId },
         create: {
           produtoId,
-          consumoInformado,
-          periodoConsumo: periodo,
-          consumoDiario,
-          estoqueSeguranca,
-          estoqueMaximoDesejado,
+          ...dadosConfiguracao,
         },
-        update: {
-          consumoInformado,
-          periodoConsumo: periodo,
-          consumoDiario,
-          estoqueSeguranca,
-          estoqueMaximoDesejado,
-        },
+        update: dadosConfiguracao,
       });
 
       await registrarLog(
@@ -753,22 +896,35 @@ export async function salvarConfiguracaoCompra(
               ? {
                   consumoInformado:
                     configuracaoAnterior.consumoInformado.toString(),
+                  consumoUnidade: configuracaoAnterior.consumoUnidade,
+                  consumoFator:
+                    configuracaoAnterior.consumoFator?.toString() ?? "1",
                   periodoConsumo: configuracaoAnterior.periodoConsumo,
                   consumoDiario:
                     configuracaoAnterior.consumoDiario.toString(),
                   estoqueSeguranca:
                     configuracaoAnterior.estoqueSeguranca.toString(),
+                  estoqueSegurancaInformado:
+                    configuracaoAnterior.estoqueSegurancaInformado?.toString() ??
+                    configuracaoAnterior.estoqueSeguranca.toString(),
+                  estoqueSegurancaUnidade:
+                    configuracaoAnterior.estoqueSegurancaUnidade,
+                  estoqueSegurancaFator:
+                    configuracaoAnterior.estoqueSegurancaFator?.toString() ??
+                    "1",
                   estoqueMaximoDesejado:
                     configuracaoAnterior.estoqueMaximoDesejado.toString(),
+                  estoqueMaximoDesejadoInformado:
+                    configuracaoAnterior.estoqueMaximoDesejadoInformado?.toString() ??
+                    configuracaoAnterior.estoqueMaximoDesejado.toString(),
+                  estoqueMaximoDesejadoUnidade:
+                    configuracaoAnterior.estoqueMaximoDesejadoUnidade,
+                  estoqueMaximoDesejadoFator:
+                    configuracaoAnterior.estoqueMaximoDesejadoFator?.toString() ??
+                    "1",
                 }
               : null,
-            depois: {
-              consumoInformado,
-              periodoConsumo: periodo,
-              consumoDiario,
-              estoqueSeguranca,
-              estoqueMaximoDesejado,
-            },
+            depois: dadosConfiguracaoLog,
           },
           usuarioId: usuario.id,
         },
@@ -776,12 +932,15 @@ export async function salvarConfiguracaoCompra(
       );
     });
   } catch (erro) {
+    if (erro instanceof ErroConfiguracaoCompra) {
+      return { erroGeral: erro.message, valores };
+    }
     console.error("Erro ao salvar configuração de reposição:", erro);
-    const mensagem =
-      erro instanceof Error && erro.message === "Produto não encontrado."
-        ? erro.message
-        : "Não foi possível salvar a configuração de reposição. Tente novamente.";
-    return { erroGeral: mensagem, valores };
+    return {
+      erroGeral:
+        "Não foi possível salvar a configuração de reposição. Tente novamente.",
+      valores,
+    };
   }
 
   revalidatePath("/pedidos");
