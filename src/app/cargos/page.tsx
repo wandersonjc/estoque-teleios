@@ -3,6 +3,7 @@ import type {
   CargoWhereInput,
 } from "@/generated/prisma/models";
 import BotaoAcao from "@/components/BotaoAcao";
+import BuscaFiltrosLista from "@/components/BuscaFiltrosLista";
 import LinkAcaoComCarregamento from "@/components/LinkAcaoComCarregamento";
 import { IconeEditar, IconeExcluir } from "@/components/icones";
 import { exigirPermissao } from "@/lib/autorizacao";
@@ -114,55 +115,26 @@ export default async function CargosPage({
         </p>
       )}
 
-      <form
-        action="/cargos"
-        method="get"
-        className="mt-4 flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-3"
+      <BuscaFiltrosLista
+        rota="/cargos"
+        idBusca="busca-cargo"
+        entidade="cargo"
+        placeholder="Nome do cargo"
+        labelTamanho="Cargos por página"
+        busca={busca}
+        tamanho={tamanho}
+        tamanhos={TAMANHOS_PAGINA_CARGOS}
+        ordenacao={ordenacao}
+        direcao={direcao}
+        resumo={
+          <p className="mt-4 text-sm text-zinc-600" role="status">
+            {total === 0
+              ? "Nenhum cargo encontrado."
+              : `${total} cargo(s) — página ${pagina} de ${totalPaginas}`}
+          </p>
+        }
       >
-        <input type="hidden" name="ordenacao" value={ordenacao} />
-        <input type="hidden" name="direcao" value={direcao} />
-        <div className="flex flex-col gap-1">
-          <label htmlFor="busca-cargo" className="text-base font-medium text-zinc-800">
-            Buscar cargo
-          </label>
-          <input
-            id="busca-cargo"
-            name="busca"
-            type="search"
-            defaultValue={busca}
-            placeholder="Nome do cargo"
-            className="h-12 w-full rounded-lg border border-zinc-300 bg-white px-3 text-base text-zinc-900 outline-none focus:border-zinc-900"
-          />
-        </div>
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
-          <label className="flex items-center gap-2 text-base text-zinc-800">
-            Cargos por página
-            <select
-              name="tamanho"
-              defaultValue={String(tamanho)}
-              className="h-11 rounded-lg border border-zinc-300 bg-white px-2 text-base text-zinc-900"
-            >
-              {TAMANHOS_PAGINA_CARGOS.map((opcao) => (
-                <option key={opcao} value={opcao}>
-                  {opcao}
-                </option>
-              ))}
-            </select>
-          </label>
-          <button
-            type="submit"
-            className="h-12 rounded-lg border border-zinc-300 px-5 text-base font-medium text-zinc-900"
-          >
-            Buscar
-          </button>
-        </div>
-      </form>
-
-      <p className="mt-4 text-sm text-zinc-600" role="status">
-        {total === 0
-          ? "Nenhum cargo encontrado."
-          : `${total} cargo(s) — página ${pagina} de ${totalPaginas}`}
-      </p>
+      <>
 
       {cargos.length > 0 && (
         <div className="mt-3 overflow-x-auto rounded-xl border border-zinc-200 bg-white">
@@ -189,6 +161,7 @@ export default async function CargosPage({
                   >
                     <Link
                       href={urlDaOrdenacao(coluna)}
+                      data-list-navigation="true"
                       className="inline-flex items-center gap-2 hover:text-zinc-900"
                     >
                       {rotulo}
@@ -291,6 +264,7 @@ export default async function CargosPage({
           {pagina > 1 ? (
             <Link
               href={urlDaPagina(pagina - 1)}
+              data-list-navigation="true"
               rel="prev"
               className="flex h-11 items-center rounded-lg border border-zinc-300 px-4 text-sm font-medium text-zinc-800 hover:bg-zinc-50"
             >
@@ -307,6 +281,7 @@ export default async function CargosPage({
           {pagina < totalPaginas ? (
             <Link
               href={urlDaPagina(pagina + 1)}
+              data-list-navigation="true"
               rel="next"
               className="flex h-11 items-center rounded-lg border border-zinc-300 px-4 text-sm font-medium text-zinc-800 hover:bg-zinc-50"
             >
@@ -319,6 +294,8 @@ export default async function CargosPage({
           )}
         </nav>
       )}
+      </>
+      </BuscaFiltrosLista>
     </main>
   );
 }
