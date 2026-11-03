@@ -32,20 +32,31 @@ const connectionString = urlOriginal.split("?")[0];
 const adapter = new PrismaPg({
   connectionString,
   ssl: { ca },
-  // Poucas conexões por instância: em hospedagem serverless (Vercel)
-  // cada função abre as suas, e o plano da Aiven tem limite de conexões.
-  max: 5,
+  // Cada instância serverless abre seu próprio pool no PostgreSQL.
+  // Uma conexão por instância evita multiplicar o limite do banco pela concorrência.
+  max: 1,
+  idleTimeoutMillis: 10_000,
+  connectionTimeoutMillis: 10_000,
 });
 
 // Guarda a instância em "global" no ambiente de desenvolvimento para o
 // hot reload do Next.js não abrir uma conexão nova a cada alteração.
 // A "versao" força a recriação quando o schema do Prisma muda (ex.:
 // tabela historico_preco), porque o hot reload sozinho reusa o cliente velho.
-const VERSAO_DO_CLIENTE_PRISMA = 7;
+const VERSAO_DO_CLIENTE_PRISMA = 8;
 const globalForPrisma = global as unknown as {
   prisma?: PrismaClient;
   prismaVersao?: number;
 };
+
+if (
+  globalForPrisma.prisma &&
+  globalForPrisma.prismaVersao !== VERSAO_DO_CLIENTE_PRISMA
+) {
+  void globalForPrisma.prisma.$disconnect().catch((erro: unknown) => {
+    console.error("Não foi possível encerrar o cliente Prisma anterior:", erro);
+  });
+}
 
 const prisma =
   globalForPrisma.prisma &&
