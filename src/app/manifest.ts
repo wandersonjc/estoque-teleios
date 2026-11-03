@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     id: "/",
     name: "Átria Conecta | Gestão empresarial",
-    short_name: "Átria",
+    short_name: "Átria Conecta",
     description: "Sistema de gestão de produtos e estoque Átria Conecta",
     start_url: "/dashboard",
     scope: "/",
