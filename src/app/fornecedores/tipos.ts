@@ -10,6 +10,7 @@ import { formatarDataBr, normalizarDecimal } from "@/app/produtos/tipos";
 export const LIMITE_NOME_FORNECEDOR = 100;
 export const LIMITE_CONTATO_FORNECEDOR = 200;
 export const LIMITE_CODIGO_NO_FORNECEDOR = 50;
+export const TAMANHOS_PAGINA_FORNECEDORES = [10, 25, 50, 75, 100] as const;
 
 // ------------------------------------------------------------
 // Formulário de cadastro/edição do fornecedor

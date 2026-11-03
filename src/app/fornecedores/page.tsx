@@ -4,13 +4,10 @@
 // ============================================================
 
 import BotaoAcao from "@/components/BotaoAcao";
-import CheckboxEnvioAutomatico from "@/components/CheckboxEnvioAutomatico";
 import LinkAcaoComCarregamento from "@/components/LinkAcaoComCarregamento";
 import {
   IconeCheck,
   IconeLapis,
-  IconeVisualizacaoCards,
-  IconeVisualizacaoTabela,
 } from "@/components/icones";
 import { exigirPermissao } from "@/lib/autorizacao";
 import prisma from "@/lib/prisma";
@@ -22,12 +19,15 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { desativarFornecedor, reativarFornecedor } from "./actions";
+import BuscaFiltrosFornecedores from "./BuscaFiltrosFornecedores";
 import DicaProdutosFornecedor from "./DicaProdutosFornecedor";
-import { formatarMoedaOpcional } from "./tipos";
+import {
+  formatarMoedaOpcional,
+  TAMANHOS_PAGINA_FORNECEDORES,
+} from "./tipos";
 
 export const dynamic = "force-dynamic";
 
-const TAMANHOS_PAGINA = [10, 25, 50, 75, 100] as const;
 const COLUNAS_ORDENACAO = [
   "nome",
   "ativo",
@@ -53,7 +53,7 @@ export default async function PaginaFornecedores({
   const busca = textoDoParametro(parametros.busca).trim();
   const mostrarInativos = textoDoParametro(parametros.inativos) === "1";
   const visualizacao =
-    textoDoParametro(parametros.visualizacao) === "tabela" ? "tabela" : "cards";
+    textoDoParametro(parametros.visualizacao) === "cards" ? "cards" : "tabela";
   const ordenacaoSolicitada = textoDoParametro(parametros.ordenacao);
   const ordenacao = COLUNAS_ORDENACAO.includes(
     ordenacaoSolicitada as ColunaOrdenacao
@@ -63,7 +63,9 @@ export default async function PaginaFornecedores({
   const direcao: DirecaoOrdenacao =
     textoDoParametro(parametros.direcao) === "desc" ? "desc" : "asc";
   const tamanhoPedido = Number(textoDoParametro(parametros.tamanho));
-  const tamanho = (TAMANHOS_PAGINA as readonly number[]).includes(tamanhoPedido)
+  const tamanho = (
+    TAMANHOS_PAGINA_FORNECEDORES as readonly number[]
+  ).includes(tamanhoPedido)
     ? tamanhoPedido
     : 10;
   const paginaPedida = Number(textoDoParametro(parametros.pagina));
@@ -103,9 +105,11 @@ export default async function PaginaFornecedores({
     const parametrosUrl = new URLSearchParams();
     if (busca !== "") parametrosUrl.set("busca", busca);
     if (mostrarInativos) parametrosUrl.set("inativos", "1");
-    if (tamanho !== 10) parametrosUrl.set("tamanho", String(tamanho));
-    if (visualizacao === "tabela") {
-      parametrosUrl.set("visualizacao", "tabela");
+    if (tamanho !== TAMANHOS_PAGINA_FORNECEDORES[0]) {
+      parametrosUrl.set("tamanho", String(tamanho));
+    }
+    if (visualizacao === "cards") {
+      parametrosUrl.set("visualizacao", "cards");
     }
     if (ordenacao !== "nome") parametrosUrl.set("ordenacao", ordenacao);
     if (direcao !== "asc") parametrosUrl.set("direcao", direcao);
@@ -129,14 +133,6 @@ export default async function PaginaFornecedores({
     return urlDaLista({ pagina: String(numero) });
   }
 
-  const hrefVisualizacaoCards = urlDaLista({
-    visualizacao: "cards",
-    pagina: "1",
-  });
-  const hrefVisualizacaoTabela = urlDaLista({
-    visualizacao: "tabela",
-    pagina: "1",
-  });
   const colunasTabela: { chave: ColunaOrdenacao; rotulo: string }[] = [
     { chave: "nome", rotulo: "Nome do Fornecedor" },
     { chave: "ativo", rotulo: "Status" },
@@ -165,94 +161,22 @@ export default async function PaginaFornecedores({
         )}
       </div>
 
-      <form
-        action="/fornecedores"
-        method="get"
-        className="mt-4 flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-3"
+      <BuscaFiltrosFornecedores
+        busca={busca}
+        mostrarInativos={mostrarInativos}
+        tamanho={tamanho}
+        visualizacao={visualizacao}
+        ordenacao={ordenacao}
+        direcao={direcao}
+        resumo={
+          <p className="mt-4 text-sm text-zinc-600" role="status">
+            {total === 0
+              ? "Nenhum fornecedor encontrado."
+              : `${total} fornecedor(es) — página ${pagina} de ${totalPaginas}`}
+          </p>
+        }
       >
-        <input type="hidden" name="visualizacao" value={visualizacao} />
-        <input type="hidden" name="ordenacao" value={ordenacao} />
-        <input type="hidden" name="direcao" value={direcao} />
-        <div className="flex flex-col gap-1">
-          <label htmlFor="busca" className="text-base font-medium text-zinc-800">
-            Buscar
-          </label>
-          <input
-            id="busca"
-            name="busca"
-            type="search"
-            defaultValue={busca}
-            placeholder="Nome do fornecedor"
-            className="h-12 w-full rounded-lg border border-zinc-300 bg-white px-3 text-base text-zinc-900 outline-none focus:border-zinc-900"
-          />
-        </div>
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
-          <CheckboxEnvioAutomatico
-            name="inativos"
-            value="1"
-            defaultChecked={mostrarInativos}
-            label="Mostrar inativos"
-          />
-          <label className="flex items-center gap-2 text-base text-zinc-800">
-            Itens por página
-            <select
-              name="tamanho"
-              defaultValue={String(tamanho)}
-              className="h-11 rounded-lg border border-zinc-300 bg-white px-2 text-base text-zinc-900"
-            >
-              {TAMANHOS_PAGINA.map((opcao) => (
-                <option key={opcao} value={opcao}>
-                  {opcao}
-                </option>
-              ))}
-            </select>
-          </label>
-          <div
-            role="group"
-            aria-label="Modo de visualização dos fornecedores"
-            className="flex items-center gap-1"
-          >
-            <Link
-              href={hrefVisualizacaoCards}
-              title="Visualização em cards"
-              aria-label="Visualização em cards"
-              aria-pressed={visualizacao === "cards"}
-              className={`flex h-11 w-11 items-center justify-center rounded-lg border ${
-                visualizacao === "cards"
-                  ? "border-zinc-900 bg-zinc-900 text-white"
-                  : "border-zinc-300 text-zinc-700 hover:bg-zinc-50"
-              }`}
-            >
-              <IconeVisualizacaoCards className="h-5 w-5" />
-            </Link>
-            <Link
-              href={hrefVisualizacaoTabela}
-              title="Visualização em tabela"
-              aria-label="Visualização em tabela"
-              aria-pressed={visualizacao === "tabela"}
-              className={`flex h-11 w-11 items-center justify-center rounded-lg border ${
-                visualizacao === "tabela"
-                  ? "border-zinc-900 bg-zinc-900 text-white"
-                  : "border-zinc-300 text-zinc-700 hover:bg-zinc-50"
-              }`}
-            >
-              <IconeVisualizacaoTabela className="h-5 w-5" />
-            </Link>
-          </div>
-          <button
-            type="submit"
-            className="h-12 rounded-lg border border-zinc-300 px-5 text-base font-medium text-zinc-900"
-          >
-            Buscar
-          </button>
-        </div>
-      </form>
-
-      <p className="mt-4 text-sm text-zinc-600" role="status">
-        {total === 0
-          ? "Nenhum fornecedor encontrado."
-          : `${total} fornecedor(es) — página ${pagina} de ${totalPaginas}`}
-      </p>
+      <>
 
       {fornecedores.length > 0 && visualizacao === "tabela" && (
         <div className="mt-3 overflow-x-auto rounded-xl border border-zinc-200 bg-white">
@@ -274,6 +198,7 @@ export default async function PaginaFornecedores({
                   >
                     <Link
                       href={urlDaOrdenacao(coluna.chave)}
+                      data-list-navigation="true"
                       className="inline-flex items-center gap-2 hover:text-zinc-900"
                     >
                       {coluna.rotulo}
@@ -508,6 +433,7 @@ export default async function PaginaFornecedores({
           {pagina > 1 ? (
             <Link
               href={urlDaPagina(pagina - 1)}
+              data-list-navigation="true"
               rel="prev"
               className="flex h-11 items-center rounded-lg border border-zinc-300 px-4 text-sm font-medium text-zinc-800 hover:bg-zinc-50"
             >
@@ -524,6 +450,7 @@ export default async function PaginaFornecedores({
           {pagina < totalPaginas ? (
             <Link
               href={urlDaPagina(pagina + 1)}
+              data-list-navigation="true"
               rel="next"
               className="flex h-11 items-center rounded-lg border border-zinc-300 px-4 text-sm font-medium text-zinc-800 hover:bg-zinc-50"
             >
@@ -536,6 +463,8 @@ export default async function PaginaFornecedores({
           )}
         </nav>
       )}
+      </>
+      </BuscaFiltrosFornecedores>
     </main>
   );
 }
