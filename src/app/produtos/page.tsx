@@ -68,10 +68,18 @@ function quantidadesEmbalagem(
     quantidadeBase: Prisma.Decimal;
     principal: boolean;
   }[],
+  unidadeBase: string
 ): { id: number; texto: string }[] {
   if (!quantidade) return [];
 
-  return [...embalagens]
+  return embalagens
+    .filter(
+      (embalagem) =>
+        embalagem.unidade.trim().toLocaleUpperCase("pt-BR") !==
+          unidadeBase.trim().toLocaleUpperCase("pt-BR") ||
+        !embalagem.quantidadeBase.equals(1)
+    )
+    .slice()
     .sort((a, b) => {
       if (a.principal !== b.principal) return a.principal ? -1 : 1;
       return (
@@ -561,15 +569,18 @@ export default async function ProdutosPage({
                 const dataUltima = ultimaContagem(produto.estoques);
                 const embalagensEstoque = quantidadesEmbalagem(
                   new Prisma.Decimal(totalEstoque),
-                  produto.embalagens
+                  produto.embalagens,
+                  produto.unidade
                 );
                 const embalagensPonto = quantidadesEmbalagem(
                   indicadores?.pontoReposicao,
-                  produto.embalagens
+                  produto.embalagens,
+                  produto.unidade
                 );
                 const embalagensSugeridas = quantidadesEmbalagem(
                   indicadores?.quantidadeSugerida,
-                  produto.embalagens
+                  produto.embalagens,
+                  produto.unidade
                 );
                 const embalagensMovimento = produto.embalagens.map((embalagem) => ({
                   id: embalagem.id,
@@ -795,15 +806,18 @@ export default async function ProdutosPage({
             const dataUltima = ultimaContagem(produto.estoques);
             const embalagensEstoque = quantidadesEmbalagem(
               new Prisma.Decimal(totalEstoque),
-              produto.embalagens
+              produto.embalagens,
+              produto.unidade
             );
             const embalagensPonto = quantidadesEmbalagem(
               indicadores?.pontoReposicao,
-              produto.embalagens
+              produto.embalagens,
+              produto.unidade
             );
             const embalagensSugeridas = quantidadesEmbalagem(
               indicadores?.quantidadeSugerida,
-              produto.embalagens
+              produto.embalagens,
+              produto.unidade
             );
             const codigoBarrasPrincipal =
               produto.embalagens.find((embalagem) => embalagem.principal)

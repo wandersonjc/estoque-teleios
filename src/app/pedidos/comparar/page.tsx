@@ -56,11 +56,19 @@ function quantidadesEmbalagem(
     unidade: string;
     quantidadeBase: Prisma.Decimal;
     principal: boolean;
-  }[]
+  }[],
+  unidadeBase: string
 ): { id: number; texto: string }[] {
   if (!quantidade) return [];
 
-  return [...embalagens]
+  return embalagens
+    .filter(
+      (embalagem) =>
+        embalagem.unidade.trim().toLocaleUpperCase("pt-BR") !==
+          unidadeBase.trim().toLocaleUpperCase("pt-BR") ||
+        !embalagem.quantidadeBase.equals(1)
+    )
+    .slice()
     .sort((a, b) => {
       if (a.principal !== b.principal) return a.principal ? -1 : 1;
       return a.unidade.localeCompare(b.unidade, "pt-BR") || a.id - b.id;
@@ -248,7 +256,8 @@ export default async function CompararReposicaoPage({
         estoqueDisponivelValor: estoqueDisponivel,
         embalagensEstoque: quantidadesEmbalagem(
           estoqueDisponivel,
-          produto.embalagens
+          produto.embalagens,
+          produto.unidade
         ),
         quantidadeACaminho: formatarDecimalBr(
           indicadores.quantidadeACaminho.toString()
@@ -256,7 +265,8 @@ export default async function CompararReposicaoPage({
         pontoReposicao: indicadores.pontoReposicao,
         embalagensPonto: quantidadesEmbalagem(
           indicadores.pontoReposicao,
-          produto.embalagens
+          produto.embalagens,
+          produto.unidade
         ),
         quantidadeSugerida: formatarDecimalBr(
           indicadores.quantidadeSugerida.toString()
@@ -264,7 +274,8 @@ export default async function CompararReposicaoPage({
         quantidadeSugeridaValor: indicadores.quantidadeSugerida.toString(),
         embalagensSugeridas: quantidadesEmbalagem(
           indicadores.quantidadeSugerida,
-          produto.embalagens
+          produto.embalagens,
+          produto.unidade
         ),
         fornecedorEmPedido: pedidoAberto
           ? `#${pedidoAberto.pedido.id} · ${pedidoAberto.pedido.status === "RASCUNHO" ? "rascunho" : "enviado"}`
