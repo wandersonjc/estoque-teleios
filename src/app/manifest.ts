@@ -3,9 +3,9 @@ import type { MetadataRoute } from "next";
 export default function manifest(): MetadataRoute.Manifest {
   return {
     id: "/",
-    name: "Atria | Gestão empresarial",
-    short_name: "Atria",
-    description: "Sistema de gestão Atria",
+    name: "Átria Conecta",
+    short_name: "Átria Conecta",
+    description: "Sistema de gestão de produtos e estoque Átria Conecta",
     start_url: "/dashboard",
     scope: "/",
     display: "standalone",

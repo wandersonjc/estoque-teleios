@@ -35,7 +35,7 @@ const adapter = new PrismaPg({
   // Cada instância serverless abre seu próprio pool no PostgreSQL.
   // Uma conexão por instância evita multiplicar o limite do banco pela concorrência.
   max: 1,
-  idleTimeoutMillis: 10_000,
+  idleTimeoutMillis: 5_000,
   connectionTimeoutMillis: 10_000,
 });
 

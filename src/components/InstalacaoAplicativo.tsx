@@ -86,7 +86,7 @@ export default function InstalacaoAplicativo() {
         dialogo.current?.showModal();
       }
     } catch (falha) {
-      console.error("Não foi possível iniciar a instalação do Atria:", falha);
+      console.error("Não foi possível iniciar a instalação do Átria:", falha);
       eventoInstalacao.current = null;
       setInstalacaoDisponivel(false);
       setErro("Não foi possível abrir a instalação. Tente pelo menu do navegador.");
@@ -99,7 +99,7 @@ export default function InstalacaoAplicativo() {
   const instrucoes = {
     ios: (
       <>
-        Abra o Atria no Safari, toque em <strong>Compartilhar</strong> e
+        Abra o Átria no Safari, toque em <strong>Compartilhar</strong> e
         escolha <strong>Adicionar à Tela de Início</strong>.
       </>
     ),
@@ -111,7 +111,7 @@ export default function InstalacaoAplicativo() {
     ),
     desktop: (
       <>
-        Abra o menu do navegador e escolha <strong>Instalar Atria</strong> ou{" "}
+        Abra o menu do navegador e escolha <strong>Instalar Átria</strong> ou{" "}
         <strong>Instalar aplicativo</strong>. No Chrome ou Edge, a opção também
         pode aparecer na barra de endereço.
       </>
@@ -125,8 +125,8 @@ export default function InstalacaoAplicativo() {
         onClick={() => void instalar()}
         aria-label={
           instalacaoDisponivel
-            ? "Instalar aplicativo Atria"
-            : "Como instalar o aplicativo Atria"
+            ? "Instalar aplicativo Átria Conecta"
+            : "Como instalar o aplicativo Átria Conecta"
         }
         title="Instalar aplicativo"
         className="flex h-10 shrink-0 items-center justify-center gap-2 rounded-full border border-white/25 px-2.5 text-sm font-medium text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:px-3"
@@ -158,7 +158,7 @@ export default function InstalacaoAplicativo() {
               id="titulo-instalacao-atria"
               className="text-lg font-semibold"
             >
-              Instalar o Atria
+              Instalar o Átria Conecta
             </h2>
             <button
               type="button"
