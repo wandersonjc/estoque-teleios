@@ -53,9 +53,9 @@ export default async function PaginaHistorico({ searchParams }: Props) {
         <h1 className="text-lg font-semibold text-zinc-900 sm:text-xl">Histórico de Ações</h1>
       </div>
 
-      <FiltrosHistorico 
-        usuarios={usuarios} 
-        modulos={modulos} 
+      <FiltrosHistorico
+        usuarios={usuarios}
+        modulos={modulos}
         acoes={acoes}
         valoresIniciais={{
           modulo,
@@ -63,16 +63,17 @@ export default async function PaginaHistorico({ searchParams }: Props) {
           usuario: parametros.usuario,
           inicio: parametros.inicio,
           fim: parametros.fim,
-          busca
+          busca,
         }}
-      />
-
-      <p className="mt-4 text-sm text-zinc-600" role="status">
-        {total === 0
-          ? "Nenhuma ação encontrada."
-          : `${total} ação(ões) registrada(s) — página ${pagina} de ${paginas}`}
-      </p>
-
+        resumo={
+          <p className="mt-4 text-sm text-zinc-600" role="status">
+            {total === 0
+              ? "Nenhuma ação encontrada."
+              : `${total} ação(ões) registrada(s) — página ${pagina} de ${paginas}`}
+          </p>
+        }
+      >
+      <>
       <div className="mt-4 space-y-3">
         {logs.map((log) => (
           <div
@@ -146,6 +147,7 @@ export default async function PaginaHistorico({ searchParams }: Props) {
               <Link
                 key={n}
                 href={`/historico?${params.toString()}`}
+                data-list-navigation="true"
                 className={`flex h-10 w-10 items-center justify-center rounded-lg border text-sm font-medium transition-colors ${
                   isAtual
                     ? "border-zinc-900 bg-zinc-900 text-white"
@@ -158,6 +160,8 @@ export default async function PaginaHistorico({ searchParams }: Props) {
           })}
         </div>
       )}
+      </>
+      </FiltrosHistorico>
     </main>
   );
 }
