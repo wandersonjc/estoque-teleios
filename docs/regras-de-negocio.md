@@ -9,7 +9,7 @@
 - **Ordem dos módulos (definida pelo usuário):** 1) Estoque, 2) Fornecedores, 3) Pedidos.
 - **Stack:** Next.js, TypeScript, Prisma 7, PostgreSQL (Aiven), hospedagem na Vercel.
 - Entregue código **completo e pronto para usar**, com **comentários explicativos em português**.
-- Use TypeScript em modo `strict`. Nomes de tabelas e campos em português, sem acento (ex.: `pedido_compra`, `estoque_minimo`).
+- Use TypeScript em modo `strict`. Nomes de tabelas e campos em português, sem acento (ex.: `pedido_compra`, `estoque_seguranca`).
 - Valores em dinheiro: **nunca usar `float`**. Usar `Decimal` (ou inteiro em centavos).
 - Interface em português do Brasil (pt-BR), moeda em R$, datas no formato dd/mm/aaaa, fuso `America/Sao_Paulo`.
 - Interface **responsiva e pensada primeiro para celular** (o estoquista usa em pé, no depósito).
@@ -61,6 +61,8 @@ Este é o **mecanismo padronizado** para que a matriz da tela `/permissoes` cres
 
 Resultado: a nova permissão aparece automaticamente na matriz, **negada para todos**, até ser concedida explicitamente. O sincronizador pode ser rodado quantas vezes quiser: não duplica nada e não apaga concessões já feitas.
 
+O Módulo 3 usa as permissões `pedidos.pedido.consultar`, `pedidos.configuracao.gerenciar`, `pedidos.rascunho.gerenciar`, `pedidos.pedido.enviar`, `pedidos.pedido.cancelar` e `pedidos.pedido.receber`. Todas nascem negadas e devem ser concedidas na tela `/permissoes`; não há aprovação separada nem privilégio implícito por cargo.
+
 ## 3. Locais de estoque
 
 Começam cadastrados os 3 locais abaixo, criados pelo script `scripts/seed.ts`:
@@ -79,12 +81,12 @@ Começam cadastrados os 3 locais abaixo, criados pelo script `scripts/seed.ts`:
   - **Saída:** a quantidade informada é **subtraída** do estoque atual do local; a saída não pode deixar o local negativo.
   - **Contagem:** a quantidade informada **substitui** o estoque atual do local.
   Cada movimentação é guardada em histórico (`movimento_estoque`: produto, local, tipo, quantidade, usuário, data e hora). Os popups de movimentação só aparecem **depois que o produto é salvo**. A quantidade **não** é informada no cadastro do produto: ele nasce zerado. Enquanto não existir login (item 5), o usuário da movimentação fica em branco.
-- **RN-02.1. Embalagens e conversão:** todo saldo e estoque mínimo é mantido na unidade-base do produto (por exemplo, UN). Cada embalagem associa um código de barras, uma unidade comercial e uma quantidade equivalente na unidade-base. Entradas e saídas podem ser informadas em uma embalagem e são convertidas para a unidade-base antes de gravar saldo e histórico. Contagens são sempre informadas diretamente na unidade-base. Um produto pode ter no máximo uma embalagem principal; seu código é exibido nas listas e cartões.
+- **RN-02.1. Embalagens e conversão:** todo saldo é mantido na unidade-base do produto (por exemplo, UN). Cada embalagem associa um código de barras, uma unidade comercial e uma quantidade equivalente na unidade-base. Entradas e saídas podem ser informadas em uma embalagem e são convertidas para a unidade-base antes de gravar saldo e histórico. Contagens são sempre informadas diretamente na unidade-base. Um produto pode ter no máximo uma embalagem principal; seu código é exibido nas listas e cartões.
 - **RN-03. Data da movimentação visível:** em qualquer tela que mostre quantidade, mostrar também a **data da última movimentação**, destacando movimentações antigas (ex.: mais de 30 dias, valor configurável).
 - **RN-04. Entradas por recebimento:** quando um pedido é recebido, a quantidade recebida **soma** ao estoque do local de entrada (padrão: Galpão).
-- **RN-05. Estoque mínimo:** cada produto tem **um estoque mínimo único em unidade-base**, comparado com o **total** (soma dos 3 locais), e não com cada local.
-- **RN-06. Produto baixo:** um produto está **baixo** quando seu total é menor ou igual ao estoque mínimo.
-- **RN-07. Pedido a caminho:** quantidades de pedidos com status *Enviado* (ainda não recebidos) contam como **"a caminho"**. Para decidir se um produto precisa de novo pedido, considerar `total + a caminho`. O painel mostra a quantidade a caminho ao lado do total. **Só passa a valer no Módulo 3**, quando existirem pedidos. Antes disso, o painel de produtos baixos usa apenas o total.
+- **RN-07. Pedido a caminho:** quantidades de pedidos com status *Enviado* (ainda não recebidos) contam como **"a caminho"**. Para decidir se um produto precisa de novo pedido, considerar `total + a caminho`. O painel mostra a quantidade a caminho ao lado do total.
+- **RN-38. Configuração de reposição:** os parâmetros de compra são opcionais e definidos por produto, sempre na unidade-base. O comprador informa o consumo no período selecionado (dia, semana ou mês; mês é o padrão), o estoque de segurança e o estoque máximo desejado. Converter dia por 1, semana por 7 e mês por 30 dias; a quantidade informada e o período ficam registrados junto ao consumo diário calculado. Quantidades aceitam até 3 casas decimais (`Decimal(12,3)`).
+- **RN-39. Indicadores de reposição:** o estoque disponível é a soma dos saldos atuais em todos os locais; a quantidade a caminho é a soma de `quantidade - quantidade_recebida` dos itens em pedidos *Enviados*. A posição de estoque é `disponível + a caminho`; o ponto de reposição é `consumo diário × prazo de entrega + estoque de segurança`; a quantidade sugerida é `máximo desejado - posição`, limitada a zero. Para o prazo de reposição, usar o maior prazo informado entre os fornecedores ativos vinculados ao produto. Se não houver prazo informado, não estimar o ponto de reposição. O estado é **Crítico** quando o disponível for menor ou igual ao estoque de segurança; senão, **Comprar** quando a posição for menor ou igual ao ponto de reposição; nos demais casos, **Estoque adequado**. No dashboard, os totais e listas desses estados só aparecem para usuários com permissão de consulta de pedidos. Produtos sem configuração ou sem prazo aparecem em indicador separado de dados pendentes; ainda podem ser classificados como Críticos se houver configuração de segurança.
 - **RN-08. Estoque do ERP não é usado:** os números de estoque do ERP não são confiáveis. O sistema **nunca importa quantidade de estoque** do ERP.
 - **RN-26. Histórico geral de ações (log):** toda ação relevante de qualquer módulo (produtos, estoque, locais, fornecedores, pedidos, transferências e usuários) grava uma linha na tabela `log_sistema`, com **módulo**, **ação** (criar, alterar, excluir, entrada, saída, contagem, recebimento, solicitar, enviar e concluir transferência), **descrição** legível, **registro afetado**, **detalhes** (JSON, guardando o "antes x depois" quando fizer sentido), **usuário** (em branco até existir login) e **data/hora**. O log é gravado na mesma transação da ação, para nunca ficar pela metade.
 
@@ -99,12 +101,13 @@ Começam cadastrados os 3 locais abaixo, criados pelo script `scripts/seed.ts`:
 
 ## 6. Regras de comparação e montagem do pedido
 
-- **RN-13. Critério único de escolha: menor preço unitário.** Para cada produto baixo, listar os fornecedores ordenados do **mais barato para o mais caro**, mostrando origem (pago ou cotado) e data de cada preço. O mais barato vem **pré-selecionado**.
+- **RN-13. Critério único de escolha: menor preço unitário.** Para cada produto com situação **Crítico** ou **Comprar**, listar os fornecedores ativos vinculados, ordenados do **mais barato para o mais caro**, mostrando origem (pago ou cotado) e data de cada preço. O mais barato vem **pré-selecionado**.
 - **RN-14. Fornecedor sem preço:** aparece no fim da lista, marcado como "sem preço". Não é pré-selecionado.
 - **RN-15. Troca manual:** o comprador pode trocar o fornecedor escolhido e ajustar a quantidade de qualquer item.
 - **RN-16. Um pedido por fornecedor:** os itens são agrupados pelo fornecedor escolhido e o sistema gera **um pedido (rascunho) por fornecedor**, mostrando o total de cada um.
 - **RN-17. Pedido mínimo do fornecedor:** cada fornecedor tem um campo opcional de **valor mínimo de pedido** (e opcionalmente frete). Se o total do pedido ficar **abaixo do mínimo**, o sistema **avisa e não bloqueia**, e sugere incluir outros produtos baixos que **esse fornecedor também vende** e que ainda não estão no pedido.
 - **RN-18. Evitar duplicidade:** um produto já incluído no pedido de um fornecedor aparece marcado como **"já em pedido"** nas listas dos outros fornecedores.
+- Produtos com situação **Estoque adequado** podem ser incluídos em um pedido para atingir o valor mínimo do fornecedor, desde que estejam vinculados e ativos para esse fornecedor. O sistema apenas sugere esses produtos e nunca altera a seleção automaticamente.
 
 ## 7. Regras do pedido de compra
 
@@ -118,9 +121,11 @@ Campos obrigatórios: **comprador** (usuário logado), **data da compra** (data 
 | Enviado | Recebido, Cancelado |
 | Recebido, Cancelado | (final, não muda mais) |
 
+O status **Rascunho** não representa uma aprovação pendente: não existe etapa de aprovação separada. Usuários com a permissão de envio podem enviar um rascunho. Durante recebimentos parciais, o pedido permanece **Enviado**; passa a **Recebido** apenas quando a quantidade recebida de todos os itens alcançar a quantidade pedida.
+
 - **RN-19. Confirmar pedido** (Rascunho para Enviado) grava no histórico o **preço de cada item** (origem *pago*), registra data de compra e comprador.
 - **RN-20. Edição:** só pedidos em *Rascunho* podem ter itens alterados. Pedidos *Enviado*, *Recebido* ou *Cancelado* ficam travados para edição de itens.
-- **RN-21. Recebimento:** ao marcar como *Recebido*, o usuário informa a quantidade recebida por item (pode ser **parcial**) e o local de entrada. A quantidade soma ao estoque (RN-04).
+- **RN-21. Recebimento:** usuário com permissão informa a quantidade recebida por item (pode ser **parcial**) e o local de entrada (padrão: Galpão). Cada recebimento soma somente a quantidade efetivamente informada ao estoque (RN-04), na mesma transação que atualiza o item, o pedido, as movimentações e o log. O status permanece *Enviado* até todas as quantidades serem recebidas; então muda para *Recebido*. Não se pode receber pedido cancelado ou já recebido.
 
 ## 7.1. Regras de transferência entre locais de estoque
 
@@ -171,7 +176,7 @@ A transferência permite que um usuário solicite produtos de um local de estoqu
 | `permissao` | 1 | codigo (único), modulo, funcionalidade, operacao, descricao, ordem (catálogo) |
 | `permissao_usuario` | 1 | usuario, permissao, concedido_em (concessão; único por usuario+permissao) |
 | `sessao` | 1 | id (token), usuario, criado_em, expira_em |
-| `produto` | 1 | nome, unidade, codigo_barras, codigo_erp (opcional, único), estoque_minimo, ativo |
+| `produto` | 1 | nome, unidade, codigo_barras, codigo_erp (opcional, único), ativo |
 | `local_estoque` | 1 | nome (Loja Nova Iguaçu, Loja Mesquita, Galpão) |
 | `estoque` | 1 | produto, local, quantidade, data_ultima_contagem |
 | `movimento_estoque` | 1 | produto, local, tipo (entrada/saída/contagem/recebimento), quantidade, usuario, data_hora (histórico) |
@@ -179,6 +184,7 @@ A transferência permite que um usuário solicite produtos de um local de estoqu
 | `fornecedor` | 2 | nome, contato, prazo_entrega_dias, valor_minimo_pedido, frete (opcionais), ativo |
 | `produto_fornecedor` | 2 | produto, fornecedor, codigo_no_fornecedor, ativo |
 | `historico_preco` | 2 e 3 | produto, fornecedor, preco_unitario, data, origem (pago ou cotado), pedido (opcional). Módulo 2 grava os preços *cotados*; o Módulo 3 grava os *pagos* |
+| `configuracao_compra` | 3 | produto (único), consumo_informado, periodo_consumo, consumo_diario, estoque_seguranca, estoque_maximo_desejado |
 | `pedido_compra` | 3 | comprador, fornecedor, data_compra, previsao_entrega, status, observacao |
 | `item_pedido` | 3 | pedido, produto, quantidade, preco_unitario, quantidade_recebida |
 | `pedido_transferencia` | 4 | origem, destino, solicitante, criado_em, status, enviado_por, enviado_em, recebido_por, recebido_em |
@@ -192,9 +198,9 @@ Ordem definida pelo usuário: primeiro o estoque, depois os fornecedores, depois
 
 ### Módulo 1: Estoque
 
-1. **Cadastro de produtos:** nome, unidade, código de barras, estoque mínimo e código do ERP (opcional).
+1. **Cadastro de produtos:** nome, unidade, código de barras e código do ERP (opcional).
 2. **Tela de movimentação de estoque por local** (entrada, saída e contagem), pensada para o celular (RN-02 e RN-03).
-3. **Total calculado e painel de produtos baixos**, como lista simples (RN-01, RN-05 e RN-06).
+3. **Total calculado e indicadores de reposição** (RN-01 e RN-38 a RN-39).
 4. **Histórico de movimentações e histórico geral de ações (log)** (RN-02 e RN-26).
 5. **Gestão de usuários** (cadastro, alteração e ativar/desativar — RN-27), **login e sessão** (RN-28) e **Módulos e Permissões** (matriz de permissões por usuário — RN-29 a RN-32), com **deploy na Vercel**, para o estoquista usar de verdade.
 
@@ -229,10 +235,7 @@ Relatório de vendas e correção de preço no recebimento.
 
 ## 11. Decisões pendentes (perguntar ao usuário antes de implementar)
 
-- **Quantidade sugerida no pedido** (decidir no Módulo 3): hoje não existe regra. Proposta: campo opcional `estoque_ideal` por produto, e a sugestão seria `estoque_ideal - (total + a caminho)`. Sem esse campo, o comprador digita a quantidade.
-- **Quantidades decimais:** alguns produtos podem ser vendidos por peso (kg). Proposta: aceitar decimais com 3 casas (`Decimal(12,3)`).
-- **"Baixo" é menor ou igual ao mínimo** (RN-06). Confirmar se o correto é "menor que".
-- **Quem cadastra produtos e fornecedores:** definido pelas permissões concedidas a cada usuário (seção 2). Confirmar quem recebe cada permissão na operação real.
+As regras do primeiro escopo do Módulo 3 foram confirmadas: mês de 30 dias; maior prazo dos fornecedores ativos vinculados; quantidade sugerida mínima zero; Crítico quando estoque disponível ≤ segurança; sem etapa de aprovação; status Enviado até o recebimento integral; quantidades com até 3 casas decimais. As permissões do módulo permanecem negadas até serem concedidas individualmente em `/permissoes`.
 
 ## 12. Fora do escopo da primeira versão
 

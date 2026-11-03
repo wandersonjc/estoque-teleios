@@ -64,6 +64,9 @@ export const ModelName = {
   HistoricoPreco: 'HistoricoPreco',
   Estoque: 'Estoque',
   MovimentoEstoque: 'MovimentoEstoque',
+  ConfiguracaoCompra: 'ConfiguracaoCompra',
+  PedidoCompra: 'PedidoCompra',
+  ItemPedido: 'ItemPedido',
   PedidoTransferencia: 'PedidoTransferencia',
   ItemTransferencia: 'ItemTransferencia',
   Notificacao: 'Notificacao',
@@ -155,7 +158,6 @@ export const ProdutoScalarFieldEnum = {
   codigoBarras: 'codigoBarras',
   codigoErp: 'codigoErp',
   imagemChave: 'imagemChave',
-  estoqueMinimo: 'estoqueMinimo',
   ativo: 'ativo',
   criadoEm: 'criadoEm',
   atualizadoEm: 'atualizadoEm'
@@ -239,10 +241,53 @@ export const MovimentoEstoqueScalarFieldEnum = {
   quantidade: 'quantidade',
   comentario: 'comentario',
   dataHora: 'dataHora',
-  transferenciaId: 'transferenciaId'
+  transferenciaId: 'transferenciaId',
+  pedidoId: 'pedidoId'
 } as const
 
 export type MovimentoEstoqueScalarFieldEnum = (typeof MovimentoEstoqueScalarFieldEnum)[keyof typeof MovimentoEstoqueScalarFieldEnum]
+
+
+export const ConfiguracaoCompraScalarFieldEnum = {
+  id: 'id',
+  produtoId: 'produtoId',
+  consumoInformado: 'consumoInformado',
+  periodoConsumo: 'periodoConsumo',
+  consumoDiario: 'consumoDiario',
+  estoqueSeguranca: 'estoqueSeguranca',
+  estoqueMaximoDesejado: 'estoqueMaximoDesejado',
+  criadoEm: 'criadoEm',
+  atualizadoEm: 'atualizadoEm'
+} as const
+
+export type ConfiguracaoCompraScalarFieldEnum = (typeof ConfiguracaoCompraScalarFieldEnum)[keyof typeof ConfiguracaoCompraScalarFieldEnum]
+
+
+export const PedidoCompraScalarFieldEnum = {
+  id: 'id',
+  compradorId: 'compradorId',
+  fornecedorId: 'fornecedorId',
+  status: 'status',
+  dataCompra: 'dataCompra',
+  previsaoEntrega: 'previsaoEntrega',
+  observacao: 'observacao',
+  criadoEm: 'criadoEm',
+  atualizadoEm: 'atualizadoEm'
+} as const
+
+export type PedidoCompraScalarFieldEnum = (typeof PedidoCompraScalarFieldEnum)[keyof typeof PedidoCompraScalarFieldEnum]
+
+
+export const ItemPedidoScalarFieldEnum = {
+  id: 'id',
+  pedidoId: 'pedidoId',
+  produtoId: 'produtoId',
+  quantidade: 'quantidade',
+  precoUnitario: 'precoUnitario',
+  quantidadeRecebida: 'quantidadeRecebida'
+} as const
+
+export type ItemPedidoScalarFieldEnum = (typeof ItemPedidoScalarFieldEnum)[keyof typeof ItemPedidoScalarFieldEnum]
 
 
 export const PedidoTransferenciaScalarFieldEnum = {

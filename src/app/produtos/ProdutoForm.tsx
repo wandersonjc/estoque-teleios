@@ -73,8 +73,8 @@ function DicaUnidadeBase() {
         unidade que pode ser vendida separadamente. Por exemplo: se o produto é
         vendido avulso e também em caixas com 100 unidades, escolha UN como
         unidade-base e cadastre a caixa como CX, equivalente a 100 UN. Assim,
-        uma entrada de 1 caixa soma 100 UN ao estoque. O saldo, o estoque mínimo
-        e as contagens usam sempre a unidade-base. Ela fica fixa após o cadastro
+        uma entrada de 1 caixa soma 100 UN ao estoque. O saldo e as contagens
+        usam sempre a unidade-base. Ela fica fixa após o cadastro
         para não mudar o significado dos saldos e do histórico já registrados.
       </span>
     </span>
@@ -100,29 +100,6 @@ export default function ProdutoForm({
 
   const valores = estado.valores;
   const erros = estado.erros ?? {};
-  const campoEstoqueMinimo = (
-    <div className="flex flex-col gap-1">
-      <label htmlFor="estoqueMinimo" className={CLASSE_ROTULO}>
-        Estoque mínimo
-      </label>
-      <input
-        id="estoqueMinimo"
-        name="estoqueMinimo"
-        type="text"
-        inputMode="decimal"
-        defaultValue={valores.estoqueMinimo}
-        aria-invalid={erros.estoqueMinimo ? true : undefined}
-        placeholder="0"
-        className={CLASSE_CAMPO}
-      />
-      <p className="text-sm text-zinc-500">
-        Comparado ao total em unidade-base. Use vírgula para decimais (ex.: 1,5).
-      </p>
-      {erros.estoqueMinimo && (
-        <p className="text-sm text-red-700">{erros.estoqueMinimo}</p>
-      )}
-    </div>
-  );
 
   return (
     <form action={enviarFormulario} className="flex flex-col gap-4">
@@ -218,7 +195,6 @@ export default function ProdutoForm({
             {erros.nome && <p className="text-sm text-red-700">{erros.nome}</p>}
           </div>
 
-          {campoEstoqueMinimo}
         </div>
       </div>
 

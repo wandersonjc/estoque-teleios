@@ -87,6 +87,13 @@ function IconeNavegacao({ href }: { href: string }) {
         <path d="M9 9h.01M15 9h.01M9 13h.01M15 13h.01M12 21v-4" />
       </>
     ),
+    "/pedidos": (
+      <>
+        <path d="M3 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.8a2 2 0 0 0 2-1.6L22 7H6" />
+        <circle cx="9" cy="21" r="1" />
+        <circle cx="19" cy="21" r="1" />
+      </>
+    ),
     "/transferencias": (
       <>
         <path d="M7 7h13l-3-3M20 7l-3 3M17 17H4l3 3M4 17l3-3" />

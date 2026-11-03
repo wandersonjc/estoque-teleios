@@ -33,6 +33,7 @@ export type MovimentoEstoqueAvgAggregateOutputType = {
   usuarioId: number | null
   quantidade: runtime.Decimal | null
   transferenciaId: number | null
+  pedidoId: number | null
 }
 
 export type MovimentoEstoqueSumAggregateOutputType = {
@@ -42,6 +43,7 @@ export type MovimentoEstoqueSumAggregateOutputType = {
   usuarioId: number | null
   quantidade: runtime.Decimal | null
   transferenciaId: number | null
+  pedidoId: number | null
 }
 
 export type MovimentoEstoqueMinAggregateOutputType = {
@@ -54,6 +56,7 @@ export type MovimentoEstoqueMinAggregateOutputType = {
   comentario: string | null
   dataHora: Date | null
   transferenciaId: number | null
+  pedidoId: number | null
 }
 
 export type MovimentoEstoqueMaxAggregateOutputType = {
@@ -66,6 +69,7 @@ export type MovimentoEstoqueMaxAggregateOutputType = {
   comentario: string | null
   dataHora: Date | null
   transferenciaId: number | null
+  pedidoId: number | null
 }
 
 export type MovimentoEstoqueCountAggregateOutputType = {
@@ -78,6 +82,7 @@ export type MovimentoEstoqueCountAggregateOutputType = {
   comentario: number
   dataHora: number
   transferenciaId: number
+  pedidoId: number
   _all: number
 }
 
@@ -89,6 +94,7 @@ export type MovimentoEstoqueAvgAggregateInputType = {
   usuarioId?: true
   quantidade?: true
   transferenciaId?: true
+  pedidoId?: true
 }
 
 export type MovimentoEstoqueSumAggregateInputType = {
@@ -98,6 +104,7 @@ export type MovimentoEstoqueSumAggregateInputType = {
   usuarioId?: true
   quantidade?: true
   transferenciaId?: true
+  pedidoId?: true
 }
 
 export type MovimentoEstoqueMinAggregateInputType = {
@@ -110,6 +117,7 @@ export type MovimentoEstoqueMinAggregateInputType = {
   comentario?: true
   dataHora?: true
   transferenciaId?: true
+  pedidoId?: true
 }
 
 export type MovimentoEstoqueMaxAggregateInputType = {
@@ -122,6 +130,7 @@ export type MovimentoEstoqueMaxAggregateInputType = {
   comentario?: true
   dataHora?: true
   transferenciaId?: true
+  pedidoId?: true
 }
 
 export type MovimentoEstoqueCountAggregateInputType = {
@@ -134,6 +143,7 @@ export type MovimentoEstoqueCountAggregateInputType = {
   comentario?: true
   dataHora?: true
   transferenciaId?: true
+  pedidoId?: true
   _all?: true
 }
 
@@ -233,6 +243,7 @@ export type MovimentoEstoqueGroupByOutputType = {
   comentario: string | null
   dataHora: Date
   transferenciaId: number | null
+  pedidoId: number | null
   _count: MovimentoEstoqueCountAggregateOutputType | null
   _avg: MovimentoEstoqueAvgAggregateOutputType | null
   _sum: MovimentoEstoqueSumAggregateOutputType | null
@@ -268,10 +279,12 @@ export type MovimentoEstoqueWhereInput = {
   comentario?: Prisma.StringNullableFilter<"MovimentoEstoque"> | string | null
   dataHora?: Prisma.DateTimeFilter<"MovimentoEstoque"> | Date | string
   transferenciaId?: Prisma.IntNullableFilter<"MovimentoEstoque"> | number | null
+  pedidoId?: Prisma.IntNullableFilter<"MovimentoEstoque"> | number | null
   produto?: Prisma.XOR<Prisma.ProdutoScalarRelationFilter, Prisma.ProdutoWhereInput>
   localEstoque?: Prisma.XOR<Prisma.LocalEstoqueScalarRelationFilter, Prisma.LocalEstoqueWhereInput>
   usuario?: Prisma.XOR<Prisma.UsuarioNullableScalarRelationFilter, Prisma.UsuarioWhereInput> | null
   transferencia?: Prisma.XOR<Prisma.PedidoTransferenciaNullableScalarRelationFilter, Prisma.PedidoTransferenciaWhereInput> | null
+  pedidoCompra?: Prisma.XOR<Prisma.PedidoCompraNullableScalarRelationFilter, Prisma.PedidoCompraWhereInput> | null
 }
 
 export type MovimentoEstoqueOrderByWithRelationInput = {
@@ -284,10 +297,12 @@ export type MovimentoEstoqueOrderByWithRelationInput = {
   comentario?: Prisma.SortOrderInput | Prisma.SortOrder
   dataHora?: Prisma.SortOrder
   transferenciaId?: Prisma.SortOrderInput | Prisma.SortOrder
+  pedidoId?: Prisma.SortOrderInput | Prisma.SortOrder
   produto?: Prisma.ProdutoOrderByWithRelationInput
   localEstoque?: Prisma.LocalEstoqueOrderByWithRelationInput
   usuario?: Prisma.UsuarioOrderByWithRelationInput
   transferencia?: Prisma.PedidoTransferenciaOrderByWithRelationInput
+  pedidoCompra?: Prisma.PedidoCompraOrderByWithRelationInput
 }
 
 export type MovimentoEstoqueWhereUniqueInput = Prisma.AtLeast<{
@@ -303,10 +318,12 @@ export type MovimentoEstoqueWhereUniqueInput = Prisma.AtLeast<{
   comentario?: Prisma.StringNullableFilter<"MovimentoEstoque"> | string | null
   dataHora?: Prisma.DateTimeFilter<"MovimentoEstoque"> | Date | string
   transferenciaId?: Prisma.IntNullableFilter<"MovimentoEstoque"> | number | null
+  pedidoId?: Prisma.IntNullableFilter<"MovimentoEstoque"> | number | null
   produto?: Prisma.XOR<Prisma.ProdutoScalarRelationFilter, Prisma.ProdutoWhereInput>
   localEstoque?: Prisma.XOR<Prisma.LocalEstoqueScalarRelationFilter, Prisma.LocalEstoqueWhereInput>
   usuario?: Prisma.XOR<Prisma.UsuarioNullableScalarRelationFilter, Prisma.UsuarioWhereInput> | null
   transferencia?: Prisma.XOR<Prisma.PedidoTransferenciaNullableScalarRelationFilter, Prisma.PedidoTransferenciaWhereInput> | null
+  pedidoCompra?: Prisma.XOR<Prisma.PedidoCompraNullableScalarRelationFilter, Prisma.PedidoCompraWhereInput> | null
 }, "id">
 
 export type MovimentoEstoqueOrderByWithAggregationInput = {
@@ -319,6 +336,7 @@ export type MovimentoEstoqueOrderByWithAggregationInput = {
   comentario?: Prisma.SortOrderInput | Prisma.SortOrder
   dataHora?: Prisma.SortOrder
   transferenciaId?: Prisma.SortOrderInput | Prisma.SortOrder
+  pedidoId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.MovimentoEstoqueCountOrderByAggregateInput
   _avg?: Prisma.MovimentoEstoqueAvgOrderByAggregateInput
   _max?: Prisma.MovimentoEstoqueMaxOrderByAggregateInput
@@ -339,6 +357,7 @@ export type MovimentoEstoqueScalarWhereWithAggregatesInput = {
   comentario?: Prisma.StringNullableWithAggregatesFilter<"MovimentoEstoque"> | string | null
   dataHora?: Prisma.DateTimeWithAggregatesFilter<"MovimentoEstoque"> | Date | string
   transferenciaId?: Prisma.IntNullableWithAggregatesFilter<"MovimentoEstoque"> | number | null
+  pedidoId?: Prisma.IntNullableWithAggregatesFilter<"MovimentoEstoque"> | number | null
 }
 
 export type MovimentoEstoqueCreateInput = {
@@ -350,6 +369,7 @@ export type MovimentoEstoqueCreateInput = {
   localEstoque: Prisma.LocalEstoqueCreateNestedOneWithoutMovimentosInput
   usuario?: Prisma.UsuarioCreateNestedOneWithoutMovimentosInput
   transferencia?: Prisma.PedidoTransferenciaCreateNestedOneWithoutMovimentosInput
+  pedidoCompra?: Prisma.PedidoCompraCreateNestedOneWithoutMovimentosInput
 }
 
 export type MovimentoEstoqueUncheckedCreateInput = {
@@ -362,6 +382,7 @@ export type MovimentoEstoqueUncheckedCreateInput = {
   comentario?: string | null
   dataHora?: Date | string
   transferenciaId?: number | null
+  pedidoId?: number | null
 }
 
 export type MovimentoEstoqueUpdateInput = {
@@ -373,6 +394,7 @@ export type MovimentoEstoqueUpdateInput = {
   localEstoque?: Prisma.LocalEstoqueUpdateOneRequiredWithoutMovimentosNestedInput
   usuario?: Prisma.UsuarioUpdateOneWithoutMovimentosNestedInput
   transferencia?: Prisma.PedidoTransferenciaUpdateOneWithoutMovimentosNestedInput
+  pedidoCompra?: Prisma.PedidoCompraUpdateOneWithoutMovimentosNestedInput
 }
 
 export type MovimentoEstoqueUncheckedUpdateInput = {
@@ -385,6 +407,7 @@ export type MovimentoEstoqueUncheckedUpdateInput = {
   comentario?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataHora?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transferenciaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  pedidoId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type MovimentoEstoqueCreateManyInput = {
@@ -397,6 +420,7 @@ export type MovimentoEstoqueCreateManyInput = {
   comentario?: string | null
   dataHora?: Date | string
   transferenciaId?: number | null
+  pedidoId?: number | null
 }
 
 export type MovimentoEstoqueUpdateManyMutationInput = {
@@ -416,6 +440,7 @@ export type MovimentoEstoqueUncheckedUpdateManyInput = {
   comentario?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataHora?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transferenciaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  pedidoId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type MovimentoEstoqueListRelationFilter = {
@@ -438,6 +463,7 @@ export type MovimentoEstoqueCountOrderByAggregateInput = {
   comentario?: Prisma.SortOrder
   dataHora?: Prisma.SortOrder
   transferenciaId?: Prisma.SortOrder
+  pedidoId?: Prisma.SortOrder
 }
 
 export type MovimentoEstoqueAvgOrderByAggregateInput = {
@@ -447,6 +473,7 @@ export type MovimentoEstoqueAvgOrderByAggregateInput = {
   usuarioId?: Prisma.SortOrder
   quantidade?: Prisma.SortOrder
   transferenciaId?: Prisma.SortOrder
+  pedidoId?: Prisma.SortOrder
 }
 
 export type MovimentoEstoqueMaxOrderByAggregateInput = {
@@ -459,6 +486,7 @@ export type MovimentoEstoqueMaxOrderByAggregateInput = {
   comentario?: Prisma.SortOrder
   dataHora?: Prisma.SortOrder
   transferenciaId?: Prisma.SortOrder
+  pedidoId?: Prisma.SortOrder
 }
 
 export type MovimentoEstoqueMinOrderByAggregateInput = {
@@ -471,6 +499,7 @@ export type MovimentoEstoqueMinOrderByAggregateInput = {
   comentario?: Prisma.SortOrder
   dataHora?: Prisma.SortOrder
   transferenciaId?: Prisma.SortOrder
+  pedidoId?: Prisma.SortOrder
 }
 
 export type MovimentoEstoqueSumOrderByAggregateInput = {
@@ -480,6 +509,7 @@ export type MovimentoEstoqueSumOrderByAggregateInput = {
   usuarioId?: Prisma.SortOrder
   quantidade?: Prisma.SortOrder
   transferenciaId?: Prisma.SortOrder
+  pedidoId?: Prisma.SortOrder
 }
 
 export type MovimentoEstoqueCreateNestedManyWithoutUsuarioInput = {
@@ -612,6 +642,48 @@ export type EnumTipoMovimentoFieldUpdateOperationsInput = {
   set?: $Enums.TipoMovimento
 }
 
+export type MovimentoEstoqueCreateNestedManyWithoutPedidoCompraInput = {
+  create?: Prisma.XOR<Prisma.MovimentoEstoqueCreateWithoutPedidoCompraInput, Prisma.MovimentoEstoqueUncheckedCreateWithoutPedidoCompraInput> | Prisma.MovimentoEstoqueCreateWithoutPedidoCompraInput[] | Prisma.MovimentoEstoqueUncheckedCreateWithoutPedidoCompraInput[]
+  connectOrCreate?: Prisma.MovimentoEstoqueCreateOrConnectWithoutPedidoCompraInput | Prisma.MovimentoEstoqueCreateOrConnectWithoutPedidoCompraInput[]
+  createMany?: Prisma.MovimentoEstoqueCreateManyPedidoCompraInputEnvelope
+  connect?: Prisma.MovimentoEstoqueWhereUniqueInput | Prisma.MovimentoEstoqueWhereUniqueInput[]
+}
+
+export type MovimentoEstoqueUncheckedCreateNestedManyWithoutPedidoCompraInput = {
+  create?: Prisma.XOR<Prisma.MovimentoEstoqueCreateWithoutPedidoCompraInput, Prisma.MovimentoEstoqueUncheckedCreateWithoutPedidoCompraInput> | Prisma.MovimentoEstoqueCreateWithoutPedidoCompraInput[] | Prisma.MovimentoEstoqueUncheckedCreateWithoutPedidoCompraInput[]
+  connectOrCreate?: Prisma.MovimentoEstoqueCreateOrConnectWithoutPedidoCompraInput | Prisma.MovimentoEstoqueCreateOrConnectWithoutPedidoCompraInput[]
+  createMany?: Prisma.MovimentoEstoqueCreateManyPedidoCompraInputEnvelope
+  connect?: Prisma.MovimentoEstoqueWhereUniqueInput | Prisma.MovimentoEstoqueWhereUniqueInput[]
+}
+
+export type MovimentoEstoqueUpdateManyWithoutPedidoCompraNestedInput = {
+  create?: Prisma.XOR<Prisma.MovimentoEstoqueCreateWithoutPedidoCompraInput, Prisma.MovimentoEstoqueUncheckedCreateWithoutPedidoCompraInput> | Prisma.MovimentoEstoqueCreateWithoutPedidoCompraInput[] | Prisma.MovimentoEstoqueUncheckedCreateWithoutPedidoCompraInput[]
+  connectOrCreate?: Prisma.MovimentoEstoqueCreateOrConnectWithoutPedidoCompraInput | Prisma.MovimentoEstoqueCreateOrConnectWithoutPedidoCompraInput[]
+  upsert?: Prisma.MovimentoEstoqueUpsertWithWhereUniqueWithoutPedidoCompraInput | Prisma.MovimentoEstoqueUpsertWithWhereUniqueWithoutPedidoCompraInput[]
+  createMany?: Prisma.MovimentoEstoqueCreateManyPedidoCompraInputEnvelope
+  set?: Prisma.MovimentoEstoqueWhereUniqueInput | Prisma.MovimentoEstoqueWhereUniqueInput[]
+  disconnect?: Prisma.MovimentoEstoqueWhereUniqueInput | Prisma.MovimentoEstoqueWhereUniqueInput[]
+  delete?: Prisma.MovimentoEstoqueWhereUniqueInput | Prisma.MovimentoEstoqueWhereUniqueInput[]
+  connect?: Prisma.MovimentoEstoqueWhereUniqueInput | Prisma.MovimentoEstoqueWhereUniqueInput[]
+  update?: Prisma.MovimentoEstoqueUpdateWithWhereUniqueWithoutPedidoCompraInput | Prisma.MovimentoEstoqueUpdateWithWhereUniqueWithoutPedidoCompraInput[]
+  updateMany?: Prisma.MovimentoEstoqueUpdateManyWithWhereWithoutPedidoCompraInput | Prisma.MovimentoEstoqueUpdateManyWithWhereWithoutPedidoCompraInput[]
+  deleteMany?: Prisma.MovimentoEstoqueScalarWhereInput | Prisma.MovimentoEstoqueScalarWhereInput[]
+}
+
+export type MovimentoEstoqueUncheckedUpdateManyWithoutPedidoCompraNestedInput = {
+  create?: Prisma.XOR<Prisma.MovimentoEstoqueCreateWithoutPedidoCompraInput, Prisma.MovimentoEstoqueUncheckedCreateWithoutPedidoCompraInput> | Prisma.MovimentoEstoqueCreateWithoutPedidoCompraInput[] | Prisma.MovimentoEstoqueUncheckedCreateWithoutPedidoCompraInput[]
+  connectOrCreate?: Prisma.MovimentoEstoqueCreateOrConnectWithoutPedidoCompraInput | Prisma.MovimentoEstoqueCreateOrConnectWithoutPedidoCompraInput[]
+  upsert?: Prisma.MovimentoEstoqueUpsertWithWhereUniqueWithoutPedidoCompraInput | Prisma.MovimentoEstoqueUpsertWithWhereUniqueWithoutPedidoCompraInput[]
+  createMany?: Prisma.MovimentoEstoqueCreateManyPedidoCompraInputEnvelope
+  set?: Prisma.MovimentoEstoqueWhereUniqueInput | Prisma.MovimentoEstoqueWhereUniqueInput[]
+  disconnect?: Prisma.MovimentoEstoqueWhereUniqueInput | Prisma.MovimentoEstoqueWhereUniqueInput[]
+  delete?: Prisma.MovimentoEstoqueWhereUniqueInput | Prisma.MovimentoEstoqueWhereUniqueInput[]
+  connect?: Prisma.MovimentoEstoqueWhereUniqueInput | Prisma.MovimentoEstoqueWhereUniqueInput[]
+  update?: Prisma.MovimentoEstoqueUpdateWithWhereUniqueWithoutPedidoCompraInput | Prisma.MovimentoEstoqueUpdateWithWhereUniqueWithoutPedidoCompraInput[]
+  updateMany?: Prisma.MovimentoEstoqueUpdateManyWithWhereWithoutPedidoCompraInput | Prisma.MovimentoEstoqueUpdateManyWithWhereWithoutPedidoCompraInput[]
+  deleteMany?: Prisma.MovimentoEstoqueScalarWhereInput | Prisma.MovimentoEstoqueScalarWhereInput[]
+}
+
 export type MovimentoEstoqueCreateNestedManyWithoutTransferenciaInput = {
   create?: Prisma.XOR<Prisma.MovimentoEstoqueCreateWithoutTransferenciaInput, Prisma.MovimentoEstoqueUncheckedCreateWithoutTransferenciaInput> | Prisma.MovimentoEstoqueCreateWithoutTransferenciaInput[] | Prisma.MovimentoEstoqueUncheckedCreateWithoutTransferenciaInput[]
   connectOrCreate?: Prisma.MovimentoEstoqueCreateOrConnectWithoutTransferenciaInput | Prisma.MovimentoEstoqueCreateOrConnectWithoutTransferenciaInput[]
@@ -662,6 +734,7 @@ export type MovimentoEstoqueCreateWithoutUsuarioInput = {
   produto: Prisma.ProdutoCreateNestedOneWithoutMovimentosInput
   localEstoque: Prisma.LocalEstoqueCreateNestedOneWithoutMovimentosInput
   transferencia?: Prisma.PedidoTransferenciaCreateNestedOneWithoutMovimentosInput
+  pedidoCompra?: Prisma.PedidoCompraCreateNestedOneWithoutMovimentosInput
 }
 
 export type MovimentoEstoqueUncheckedCreateWithoutUsuarioInput = {
@@ -673,6 +746,7 @@ export type MovimentoEstoqueUncheckedCreateWithoutUsuarioInput = {
   comentario?: string | null
   dataHora?: Date | string
   transferenciaId?: number | null
+  pedidoId?: number | null
 }
 
 export type MovimentoEstoqueCreateOrConnectWithoutUsuarioInput = {
@@ -714,6 +788,7 @@ export type MovimentoEstoqueScalarWhereInput = {
   comentario?: Prisma.StringNullableFilter<"MovimentoEstoque"> | string | null
   dataHora?: Prisma.DateTimeFilter<"MovimentoEstoque"> | Date | string
   transferenciaId?: Prisma.IntNullableFilter<"MovimentoEstoque"> | number | null
+  pedidoId?: Prisma.IntNullableFilter<"MovimentoEstoque"> | number | null
 }
 
 export type MovimentoEstoqueCreateWithoutLocalEstoqueInput = {
@@ -724,6 +799,7 @@ export type MovimentoEstoqueCreateWithoutLocalEstoqueInput = {
   produto: Prisma.ProdutoCreateNestedOneWithoutMovimentosInput
   usuario?: Prisma.UsuarioCreateNestedOneWithoutMovimentosInput
   transferencia?: Prisma.PedidoTransferenciaCreateNestedOneWithoutMovimentosInput
+  pedidoCompra?: Prisma.PedidoCompraCreateNestedOneWithoutMovimentosInput
 }
 
 export type MovimentoEstoqueUncheckedCreateWithoutLocalEstoqueInput = {
@@ -735,6 +811,7 @@ export type MovimentoEstoqueUncheckedCreateWithoutLocalEstoqueInput = {
   comentario?: string | null
   dataHora?: Date | string
   transferenciaId?: number | null
+  pedidoId?: number | null
 }
 
 export type MovimentoEstoqueCreateOrConnectWithoutLocalEstoqueInput = {
@@ -771,6 +848,7 @@ export type MovimentoEstoqueCreateWithoutProdutoInput = {
   localEstoque: Prisma.LocalEstoqueCreateNestedOneWithoutMovimentosInput
   usuario?: Prisma.UsuarioCreateNestedOneWithoutMovimentosInput
   transferencia?: Prisma.PedidoTransferenciaCreateNestedOneWithoutMovimentosInput
+  pedidoCompra?: Prisma.PedidoCompraCreateNestedOneWithoutMovimentosInput
 }
 
 export type MovimentoEstoqueUncheckedCreateWithoutProdutoInput = {
@@ -782,6 +860,7 @@ export type MovimentoEstoqueUncheckedCreateWithoutProdutoInput = {
   comentario?: string | null
   dataHora?: Date | string
   transferenciaId?: number | null
+  pedidoId?: number | null
 }
 
 export type MovimentoEstoqueCreateOrConnectWithoutProdutoInput = {
@@ -810,6 +889,55 @@ export type MovimentoEstoqueUpdateManyWithWhereWithoutProdutoInput = {
   data: Prisma.XOR<Prisma.MovimentoEstoqueUpdateManyMutationInput, Prisma.MovimentoEstoqueUncheckedUpdateManyWithoutProdutoInput>
 }
 
+export type MovimentoEstoqueCreateWithoutPedidoCompraInput = {
+  tipo: $Enums.TipoMovimento
+  quantidade: runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: string | null
+  dataHora?: Date | string
+  produto: Prisma.ProdutoCreateNestedOneWithoutMovimentosInput
+  localEstoque: Prisma.LocalEstoqueCreateNestedOneWithoutMovimentosInput
+  usuario?: Prisma.UsuarioCreateNestedOneWithoutMovimentosInput
+  transferencia?: Prisma.PedidoTransferenciaCreateNestedOneWithoutMovimentosInput
+}
+
+export type MovimentoEstoqueUncheckedCreateWithoutPedidoCompraInput = {
+  id?: number
+  produtoId: number
+  localEstoqueId: number
+  usuarioId?: number | null
+  tipo: $Enums.TipoMovimento
+  quantidade: runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: string | null
+  dataHora?: Date | string
+  transferenciaId?: number | null
+}
+
+export type MovimentoEstoqueCreateOrConnectWithoutPedidoCompraInput = {
+  where: Prisma.MovimentoEstoqueWhereUniqueInput
+  create: Prisma.XOR<Prisma.MovimentoEstoqueCreateWithoutPedidoCompraInput, Prisma.MovimentoEstoqueUncheckedCreateWithoutPedidoCompraInput>
+}
+
+export type MovimentoEstoqueCreateManyPedidoCompraInputEnvelope = {
+  data: Prisma.MovimentoEstoqueCreateManyPedidoCompraInput | Prisma.MovimentoEstoqueCreateManyPedidoCompraInput[]
+  skipDuplicates?: boolean
+}
+
+export type MovimentoEstoqueUpsertWithWhereUniqueWithoutPedidoCompraInput = {
+  where: Prisma.MovimentoEstoqueWhereUniqueInput
+  update: Prisma.XOR<Prisma.MovimentoEstoqueUpdateWithoutPedidoCompraInput, Prisma.MovimentoEstoqueUncheckedUpdateWithoutPedidoCompraInput>
+  create: Prisma.XOR<Prisma.MovimentoEstoqueCreateWithoutPedidoCompraInput, Prisma.MovimentoEstoqueUncheckedCreateWithoutPedidoCompraInput>
+}
+
+export type MovimentoEstoqueUpdateWithWhereUniqueWithoutPedidoCompraInput = {
+  where: Prisma.MovimentoEstoqueWhereUniqueInput
+  data: Prisma.XOR<Prisma.MovimentoEstoqueUpdateWithoutPedidoCompraInput, Prisma.MovimentoEstoqueUncheckedUpdateWithoutPedidoCompraInput>
+}
+
+export type MovimentoEstoqueUpdateManyWithWhereWithoutPedidoCompraInput = {
+  where: Prisma.MovimentoEstoqueScalarWhereInput
+  data: Prisma.XOR<Prisma.MovimentoEstoqueUpdateManyMutationInput, Prisma.MovimentoEstoqueUncheckedUpdateManyWithoutPedidoCompraInput>
+}
+
 export type MovimentoEstoqueCreateWithoutTransferenciaInput = {
   tipo: $Enums.TipoMovimento
   quantidade: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -818,6 +946,7 @@ export type MovimentoEstoqueCreateWithoutTransferenciaInput = {
   produto: Prisma.ProdutoCreateNestedOneWithoutMovimentosInput
   localEstoque: Prisma.LocalEstoqueCreateNestedOneWithoutMovimentosInput
   usuario?: Prisma.UsuarioCreateNestedOneWithoutMovimentosInput
+  pedidoCompra?: Prisma.PedidoCompraCreateNestedOneWithoutMovimentosInput
 }
 
 export type MovimentoEstoqueUncheckedCreateWithoutTransferenciaInput = {
@@ -829,6 +958,7 @@ export type MovimentoEstoqueUncheckedCreateWithoutTransferenciaInput = {
   quantidade: runtime.Decimal | runtime.DecimalJsLike | number | string
   comentario?: string | null
   dataHora?: Date | string
+  pedidoId?: number | null
 }
 
 export type MovimentoEstoqueCreateOrConnectWithoutTransferenciaInput = {
@@ -866,6 +996,7 @@ export type MovimentoEstoqueCreateManyUsuarioInput = {
   comentario?: string | null
   dataHora?: Date | string
   transferenciaId?: number | null
+  pedidoId?: number | null
 }
 
 export type MovimentoEstoqueUpdateWithoutUsuarioInput = {
@@ -876,6 +1007,7 @@ export type MovimentoEstoqueUpdateWithoutUsuarioInput = {
   produto?: Prisma.ProdutoUpdateOneRequiredWithoutMovimentosNestedInput
   localEstoque?: Prisma.LocalEstoqueUpdateOneRequiredWithoutMovimentosNestedInput
   transferencia?: Prisma.PedidoTransferenciaUpdateOneWithoutMovimentosNestedInput
+  pedidoCompra?: Prisma.PedidoCompraUpdateOneWithoutMovimentosNestedInput
 }
 
 export type MovimentoEstoqueUncheckedUpdateWithoutUsuarioInput = {
@@ -887,6 +1019,7 @@ export type MovimentoEstoqueUncheckedUpdateWithoutUsuarioInput = {
   comentario?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataHora?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transferenciaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  pedidoId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type MovimentoEstoqueUncheckedUpdateManyWithoutUsuarioInput = {
@@ -898,6 +1031,7 @@ export type MovimentoEstoqueUncheckedUpdateManyWithoutUsuarioInput = {
   comentario?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataHora?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transferenciaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  pedidoId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type MovimentoEstoqueCreateManyLocalEstoqueInput = {
@@ -909,6 +1043,7 @@ export type MovimentoEstoqueCreateManyLocalEstoqueInput = {
   comentario?: string | null
   dataHora?: Date | string
   transferenciaId?: number | null
+  pedidoId?: number | null
 }
 
 export type MovimentoEstoqueUpdateWithoutLocalEstoqueInput = {
@@ -919,6 +1054,7 @@ export type MovimentoEstoqueUpdateWithoutLocalEstoqueInput = {
   produto?: Prisma.ProdutoUpdateOneRequiredWithoutMovimentosNestedInput
   usuario?: Prisma.UsuarioUpdateOneWithoutMovimentosNestedInput
   transferencia?: Prisma.PedidoTransferenciaUpdateOneWithoutMovimentosNestedInput
+  pedidoCompra?: Prisma.PedidoCompraUpdateOneWithoutMovimentosNestedInput
 }
 
 export type MovimentoEstoqueUncheckedUpdateWithoutLocalEstoqueInput = {
@@ -930,6 +1066,7 @@ export type MovimentoEstoqueUncheckedUpdateWithoutLocalEstoqueInput = {
   comentario?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataHora?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transferenciaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  pedidoId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type MovimentoEstoqueUncheckedUpdateManyWithoutLocalEstoqueInput = {
@@ -941,6 +1078,7 @@ export type MovimentoEstoqueUncheckedUpdateManyWithoutLocalEstoqueInput = {
   comentario?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataHora?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transferenciaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  pedidoId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type MovimentoEstoqueCreateManyProdutoInput = {
@@ -952,6 +1090,7 @@ export type MovimentoEstoqueCreateManyProdutoInput = {
   comentario?: string | null
   dataHora?: Date | string
   transferenciaId?: number | null
+  pedidoId?: number | null
 }
 
 export type MovimentoEstoqueUpdateWithoutProdutoInput = {
@@ -962,6 +1101,7 @@ export type MovimentoEstoqueUpdateWithoutProdutoInput = {
   localEstoque?: Prisma.LocalEstoqueUpdateOneRequiredWithoutMovimentosNestedInput
   usuario?: Prisma.UsuarioUpdateOneWithoutMovimentosNestedInput
   transferencia?: Prisma.PedidoTransferenciaUpdateOneWithoutMovimentosNestedInput
+  pedidoCompra?: Prisma.PedidoCompraUpdateOneWithoutMovimentosNestedInput
 }
 
 export type MovimentoEstoqueUncheckedUpdateWithoutProdutoInput = {
@@ -973,10 +1113,59 @@ export type MovimentoEstoqueUncheckedUpdateWithoutProdutoInput = {
   comentario?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataHora?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transferenciaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  pedidoId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type MovimentoEstoqueUncheckedUpdateManyWithoutProdutoInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  localEstoqueId?: Prisma.IntFieldUpdateOperationsInput | number
+  usuarioId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  tipo?: Prisma.EnumTipoMovimentoFieldUpdateOperationsInput | $Enums.TipoMovimento
+  quantidade?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dataHora?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  transferenciaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  pedidoId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+}
+
+export type MovimentoEstoqueCreateManyPedidoCompraInput = {
+  id?: number
+  produtoId: number
+  localEstoqueId: number
+  usuarioId?: number | null
+  tipo: $Enums.TipoMovimento
+  quantidade: runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: string | null
+  dataHora?: Date | string
+  transferenciaId?: number | null
+}
+
+export type MovimentoEstoqueUpdateWithoutPedidoCompraInput = {
+  tipo?: Prisma.EnumTipoMovimentoFieldUpdateOperationsInput | $Enums.TipoMovimento
+  quantidade?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dataHora?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  produto?: Prisma.ProdutoUpdateOneRequiredWithoutMovimentosNestedInput
+  localEstoque?: Prisma.LocalEstoqueUpdateOneRequiredWithoutMovimentosNestedInput
+  usuario?: Prisma.UsuarioUpdateOneWithoutMovimentosNestedInput
+  transferencia?: Prisma.PedidoTransferenciaUpdateOneWithoutMovimentosNestedInput
+}
+
+export type MovimentoEstoqueUncheckedUpdateWithoutPedidoCompraInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  produtoId?: Prisma.IntFieldUpdateOperationsInput | number
+  localEstoqueId?: Prisma.IntFieldUpdateOperationsInput | number
+  usuarioId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  tipo?: Prisma.EnumTipoMovimentoFieldUpdateOperationsInput | $Enums.TipoMovimento
+  quantidade?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  comentario?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dataHora?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  transferenciaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+}
+
+export type MovimentoEstoqueUncheckedUpdateManyWithoutPedidoCompraInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  produtoId?: Prisma.IntFieldUpdateOperationsInput | number
   localEstoqueId?: Prisma.IntFieldUpdateOperationsInput | number
   usuarioId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   tipo?: Prisma.EnumTipoMovimentoFieldUpdateOperationsInput | $Enums.TipoMovimento
@@ -995,6 +1184,7 @@ export type MovimentoEstoqueCreateManyTransferenciaInput = {
   quantidade: runtime.Decimal | runtime.DecimalJsLike | number | string
   comentario?: string | null
   dataHora?: Date | string
+  pedidoId?: number | null
 }
 
 export type MovimentoEstoqueUpdateWithoutTransferenciaInput = {
@@ -1005,6 +1195,7 @@ export type MovimentoEstoqueUpdateWithoutTransferenciaInput = {
   produto?: Prisma.ProdutoUpdateOneRequiredWithoutMovimentosNestedInput
   localEstoque?: Prisma.LocalEstoqueUpdateOneRequiredWithoutMovimentosNestedInput
   usuario?: Prisma.UsuarioUpdateOneWithoutMovimentosNestedInput
+  pedidoCompra?: Prisma.PedidoCompraUpdateOneWithoutMovimentosNestedInput
 }
 
 export type MovimentoEstoqueUncheckedUpdateWithoutTransferenciaInput = {
@@ -1016,6 +1207,7 @@ export type MovimentoEstoqueUncheckedUpdateWithoutTransferenciaInput = {
   quantidade?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   comentario?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataHora?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  pedidoId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type MovimentoEstoqueUncheckedUpdateManyWithoutTransferenciaInput = {
@@ -1027,6 +1219,7 @@ export type MovimentoEstoqueUncheckedUpdateManyWithoutTransferenciaInput = {
   quantidade?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   comentario?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataHora?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  pedidoId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 
@@ -1041,10 +1234,12 @@ export type MovimentoEstoqueSelect<ExtArgs extends runtime.Types.Extensions.Inte
   comentario?: boolean
   dataHora?: boolean
   transferenciaId?: boolean
+  pedidoId?: boolean
   produto?: boolean | Prisma.ProdutoDefaultArgs<ExtArgs>
   localEstoque?: boolean | Prisma.LocalEstoqueDefaultArgs<ExtArgs>
   usuario?: boolean | Prisma.MovimentoEstoque$usuarioArgs<ExtArgs>
   transferencia?: boolean | Prisma.MovimentoEstoque$transferenciaArgs<ExtArgs>
+  pedidoCompra?: boolean | Prisma.MovimentoEstoque$pedidoCompraArgs<ExtArgs>
 }, ExtArgs["result"]["movimentoEstoque"]>
 
 export type MovimentoEstoqueSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1057,10 +1252,12 @@ export type MovimentoEstoqueSelectCreateManyAndReturn<ExtArgs extends runtime.Ty
   comentario?: boolean
   dataHora?: boolean
   transferenciaId?: boolean
+  pedidoId?: boolean
   produto?: boolean | Prisma.ProdutoDefaultArgs<ExtArgs>
   localEstoque?: boolean | Prisma.LocalEstoqueDefaultArgs<ExtArgs>
   usuario?: boolean | Prisma.MovimentoEstoque$usuarioArgs<ExtArgs>
   transferencia?: boolean | Prisma.MovimentoEstoque$transferenciaArgs<ExtArgs>
+  pedidoCompra?: boolean | Prisma.MovimentoEstoque$pedidoCompraArgs<ExtArgs>
 }, ExtArgs["result"]["movimentoEstoque"]>
 
 export type MovimentoEstoqueSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1073,10 +1270,12 @@ export type MovimentoEstoqueSelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
   comentario?: boolean
   dataHora?: boolean
   transferenciaId?: boolean
+  pedidoId?: boolean
   produto?: boolean | Prisma.ProdutoDefaultArgs<ExtArgs>
   localEstoque?: boolean | Prisma.LocalEstoqueDefaultArgs<ExtArgs>
   usuario?: boolean | Prisma.MovimentoEstoque$usuarioArgs<ExtArgs>
   transferencia?: boolean | Prisma.MovimentoEstoque$transferenciaArgs<ExtArgs>
+  pedidoCompra?: boolean | Prisma.MovimentoEstoque$pedidoCompraArgs<ExtArgs>
 }, ExtArgs["result"]["movimentoEstoque"]>
 
 export type MovimentoEstoqueSelectScalar = {
@@ -1089,26 +1288,30 @@ export type MovimentoEstoqueSelectScalar = {
   comentario?: boolean
   dataHora?: boolean
   transferenciaId?: boolean
+  pedidoId?: boolean
 }
 
-export type MovimentoEstoqueOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "produtoId" | "localEstoqueId" | "usuarioId" | "tipo" | "quantidade" | "comentario" | "dataHora" | "transferenciaId", ExtArgs["result"]["movimentoEstoque"]>
+export type MovimentoEstoqueOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "produtoId" | "localEstoqueId" | "usuarioId" | "tipo" | "quantidade" | "comentario" | "dataHora" | "transferenciaId" | "pedidoId", ExtArgs["result"]["movimentoEstoque"]>
 export type MovimentoEstoqueInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   produto?: boolean | Prisma.ProdutoDefaultArgs<ExtArgs>
   localEstoque?: boolean | Prisma.LocalEstoqueDefaultArgs<ExtArgs>
   usuario?: boolean | Prisma.MovimentoEstoque$usuarioArgs<ExtArgs>
   transferencia?: boolean | Prisma.MovimentoEstoque$transferenciaArgs<ExtArgs>
+  pedidoCompra?: boolean | Prisma.MovimentoEstoque$pedidoCompraArgs<ExtArgs>
 }
 export type MovimentoEstoqueIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   produto?: boolean | Prisma.ProdutoDefaultArgs<ExtArgs>
   localEstoque?: boolean | Prisma.LocalEstoqueDefaultArgs<ExtArgs>
   usuario?: boolean | Prisma.MovimentoEstoque$usuarioArgs<ExtArgs>
   transferencia?: boolean | Prisma.MovimentoEstoque$transferenciaArgs<ExtArgs>
+  pedidoCompra?: boolean | Prisma.MovimentoEstoque$pedidoCompraArgs<ExtArgs>
 }
 export type MovimentoEstoqueIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   produto?: boolean | Prisma.ProdutoDefaultArgs<ExtArgs>
   localEstoque?: boolean | Prisma.LocalEstoqueDefaultArgs<ExtArgs>
   usuario?: boolean | Prisma.MovimentoEstoque$usuarioArgs<ExtArgs>
   transferencia?: boolean | Prisma.MovimentoEstoque$transferenciaArgs<ExtArgs>
+  pedidoCompra?: boolean | Prisma.MovimentoEstoque$pedidoCompraArgs<ExtArgs>
 }
 
 export type $MovimentoEstoquePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1118,6 +1321,7 @@ export type $MovimentoEstoquePayload<ExtArgs extends runtime.Types.Extensions.In
     localEstoque: Prisma.$LocalEstoquePayload<ExtArgs>
     usuario: Prisma.$UsuarioPayload<ExtArgs> | null
     transferencia: Prisma.$PedidoTransferenciaPayload<ExtArgs> | null
+    pedidoCompra: Prisma.$PedidoCompraPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1129,6 +1333,7 @@ export type $MovimentoEstoquePayload<ExtArgs extends runtime.Types.Extensions.In
     comentario: string | null
     dataHora: Date
     transferenciaId: number | null
+    pedidoId: number | null
   }, ExtArgs["result"]["movimentoEstoque"]>
   composites: {}
 }
@@ -1527,6 +1732,7 @@ export interface Prisma__MovimentoEstoqueClient<T, Null = never, ExtArgs extends
   localEstoque<T extends Prisma.LocalEstoqueDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LocalEstoqueDefaultArgs<ExtArgs>>): Prisma.Prisma__LocalEstoqueClient<runtime.Types.Result.GetResult<Prisma.$LocalEstoquePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   usuario<T extends Prisma.MovimentoEstoque$usuarioArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MovimentoEstoque$usuarioArgs<ExtArgs>>): Prisma.Prisma__UsuarioClient<runtime.Types.Result.GetResult<Prisma.$UsuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   transferencia<T extends Prisma.MovimentoEstoque$transferenciaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MovimentoEstoque$transferenciaArgs<ExtArgs>>): Prisma.Prisma__PedidoTransferenciaClient<runtime.Types.Result.GetResult<Prisma.$PedidoTransferenciaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  pedidoCompra<T extends Prisma.MovimentoEstoque$pedidoCompraArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MovimentoEstoque$pedidoCompraArgs<ExtArgs>>): Prisma.Prisma__PedidoCompraClient<runtime.Types.Result.GetResult<Prisma.$PedidoCompraPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1565,6 +1771,7 @@ export interface MovimentoEstoqueFieldRefs {
   readonly comentario: Prisma.FieldRef<"MovimentoEstoque", 'String'>
   readonly dataHora: Prisma.FieldRef<"MovimentoEstoque", 'DateTime'>
   readonly transferenciaId: Prisma.FieldRef<"MovimentoEstoque", 'Int'>
+  readonly pedidoId: Prisma.FieldRef<"MovimentoEstoque", 'Int'>
 }
     
 
@@ -2001,6 +2208,25 @@ export type MovimentoEstoque$transferenciaArgs<ExtArgs extends runtime.Types.Ext
    */
   include?: Prisma.PedidoTransferenciaInclude<ExtArgs> | null
   where?: Prisma.PedidoTransferenciaWhereInput
+}
+
+/**
+ * MovimentoEstoque.pedidoCompra
+ */
+export type MovimentoEstoque$pedidoCompraArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PedidoCompra
+   */
+  select?: Prisma.PedidoCompraSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PedidoCompra
+   */
+  omit?: Prisma.PedidoCompraOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PedidoCompraInclude<ExtArgs> | null
+  where?: Prisma.PedidoCompraWhereInput
 }
 
 /**

@@ -17,6 +17,25 @@ export const TemaUsuario = {
 export type TemaUsuario = (typeof TemaUsuario)[keyof typeof TemaUsuario]
 
 
+export const PeriodoConsumo = {
+  DIA: 'DIA',
+  SEMANA: 'SEMANA',
+  MES: 'MES'
+} as const
+
+export type PeriodoConsumo = (typeof PeriodoConsumo)[keyof typeof PeriodoConsumo]
+
+
+export const StatusPedidoCompra = {
+  RASCUNHO: 'RASCUNHO',
+  ENVIADO: 'ENVIADO',
+  RECEBIDO: 'RECEBIDO',
+  CANCELADO: 'CANCELADO'
+} as const
+
+export type StatusPedidoCompra = (typeof StatusPedidoCompra)[keyof typeof StatusPedidoCompra]
+
+
 export const OrigemPreco = {
   COTADO: 'COTADO',
   PAGO: 'PAGO'
@@ -83,6 +102,7 @@ export const AcaoSistema = {
   CRIAR: 'CRIAR',
   ALTERAR: 'ALTERAR',
   EXCLUIR: 'EXCLUIR',
+  CANCELAR: 'CANCELAR',
   ENTRADA: 'ENTRADA',
   SAIDA: 'SAIDA',
   CONTAGEM: 'CONTAGEM',

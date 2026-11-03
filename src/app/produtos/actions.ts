@@ -7,7 +7,7 @@
 // Toda a validação é feita aqui (a do navegador é só conveniência).
 // TODA ação confere a permissão no servidor: esconder o botão
 // não basta (ver src/lib/autorizacao.ts).
-// Regras: RN-01, RN-02, RN-03, RN-05, RN-22 e RN-23.
+// Regras: RN-01, RN-02, RN-03, RN-22 e RN-23.
 // ============================================================
 
 import { revalidatePath } from "next/cache";
@@ -49,6 +49,9 @@ import {
 
 class ErroEstoqueReservado extends Error {}
 
+const MENSAGEM_NUMERO_INVALIDO =
+  "Informe um número maior ou igual a zero, com até 9 dígitos e 3 casas decimais.";
+
 // Lê os campos do formulário. Tudo chega como texto.
 function lerValores(formData: FormData): ValoresFormularioProduto {
   const texto = (campo: string): string => {
@@ -59,7 +62,6 @@ function lerValores(formData: FormData): ValoresFormularioProduto {
   return {
     nome: texto("nome"),
     unidade: texto("unidade").toUpperCase(),
-    estoqueMinimo: texto("estoqueMinimo"),
     codigoErp: texto("codigoErp"),
   };
 }
@@ -91,15 +93,11 @@ type ProdutoValidado = {
   nome: string;
   unidade: string;
   codigoErp: string | null;
-  estoqueMinimo: string;
 };
 
 type ResultadoValidacao =
   | { ok: true; dados: ProdutoValidado }
   | { ok: false; estado: EstadoFormularioProduto };
-
-const MENSAGEM_NUMERO_INVALIDO =
-  "Informe um número maior ou igual a zero, com até 9 dígitos e 3 casas decimais.";
 
 function validarProduto(valores: ValoresFormularioProduto): ResultadoValidacao {
   const erros: ErrosFormularioProduto = {};
@@ -114,12 +112,6 @@ function validarProduto(valores: ValoresFormularioProduto): ResultadoValidacao {
   // Unidade obrigatória, dentro da lista permitida
   if (!UNIDADES.includes(valores.unidade as Unidade)) {
     erros.unidade = "Escolha uma unidade de medida válida.";
-  }
-
-  // RN-05: estoque mínimo único por produto, comparado com o total dos locais
-  const estoqueMinimo = normalizarDecimal(valores.estoqueMinimo);
-  if (estoqueMinimo === null) {
-    erros.estoqueMinimo = MENSAGEM_NUMERO_INVALIDO;
   }
 
   // RN-22: o código do ERP é opcional, mas único quando preenchido
@@ -138,7 +130,6 @@ function validarProduto(valores: ValoresFormularioProduto): ResultadoValidacao {
       nome: valores.nome,
       unidade: valores.unidade,
       codigoErp,
-      estoqueMinimo: estoqueMinimo ?? "0",
     },
   };
 }
@@ -202,7 +193,6 @@ export async function criarProduto(
           nome: validacao.dados.nome,
           unidade: validacao.dados.unidade,
           codigoErp: validacao.dados.codigoErp,
-          estoqueMinimo: validacao.dados.estoqueMinimo,
           imagemChave,
         },
       });
@@ -216,7 +206,6 @@ export async function criarProduto(
           dados: {
             nome: produto.nome,
             unidade: produto.unidade,
-            estoqueMinimo: produto.estoqueMinimo.toString(),
           },
           usuarioId: atual.id,
         },
@@ -256,7 +245,6 @@ export async function atualizarProduto(
     select: {
       nome: true,
       unidade: true,
-      estoqueMinimo: true,
       codigoBarras: true,
       codigoErp: true,
       imagemChave: true,
@@ -296,7 +284,6 @@ export async function atualizarProduto(
           nome: validacao.dados.nome,
           unidade: validacao.dados.unidade,
           codigoErp: validacao.dados.codigoErp,
-          estoqueMinimo: validacao.dados.estoqueMinimo,
           imagemChave:
             novaImagemChave ?? (removerImagem ? null : antes.imagemChave),
         },
@@ -312,13 +299,11 @@ export async function atualizarProduto(
             antes: {
               nome: antes.nome,
               unidade: antes.unidade,
-              estoqueMinimo: antes.estoqueMinimo.toString(),
               codigoErp: antes.codigoErp,
             },
             depois: {
               nome: validacao.dados.nome,
               unidade: validacao.dados.unidade,
-              estoqueMinimo: validacao.dados.estoqueMinimo,
               codigoErp: validacao.dados.codigoErp,
             },
           },

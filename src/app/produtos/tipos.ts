@@ -4,8 +4,7 @@
 // componentes de cliente e as ações do servidor.
 // Motivo: um arquivo com "use server" só pode exportar funções
 // assíncronas, então tipos e constantes ficam aqui.
-// Regras: docs/regras-de-negocio.md (RN-01, RN-02, RN-03, RN-05,
-// RN-22 e RN-23)
+// Regras: docs/regras-de-negocio.md (RN-01, RN-02, RN-03, RN-22 e RN-23)
 // ============================================================
 
 // Unidades de medida aceitas no cadastro (RN-23: cadastro manual)
@@ -58,7 +57,6 @@ export type EmbalagemMovimento = {
 export type ValoresFormularioProduto = {
   nome: string;
   unidade: string;
-  estoqueMinimo: string;
   codigoErp: string;
 };
 
@@ -66,7 +64,6 @@ export type ValoresFormularioProduto = {
 export type ErrosFormularioProduto = {
   nome?: string;
   unidade?: string;
-  estoqueMinimo?: string;
   codigoErp?: string;
 };
 
@@ -83,7 +80,6 @@ export type EstadoFormularioProduto = {
 export const VALORES_FORMULARIO_VAZIOS: ValoresFormularioProduto = {
   nome: "",
   unidade: "UN",
-  estoqueMinimo: "0",
   codigoErp: "",
 };
 

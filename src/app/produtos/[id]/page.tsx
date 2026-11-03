@@ -356,9 +356,6 @@ export default async function EditarProdutoPage({
                     valoresIniciais={{
                       nome: produto.nome,
                       unidade: produto.unidade,
-                      estoqueMinimo: formatarDecimalBr(
-                        produto.estoqueMinimo.toString()
-                      ),
                       codigoErp: produto.codigoErp ?? "",
                     }}
                   />
@@ -373,13 +370,6 @@ export default async function EditarProdutoPage({
                     <dt className="text-sm text-zinc-600">Unidade-base</dt>
                     <dd className="text-base text-zinc-900">
                       {produto.unidade}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-sm text-zinc-600">Estoque mínimo</dt>
-                    <dd className="text-base text-zinc-900">
-                      {formatarDecimalBr(produto.estoqueMinimo.toString())}
-                      {" "}{produto.unidade}
                     </dd>
                   </div>
                   <div>

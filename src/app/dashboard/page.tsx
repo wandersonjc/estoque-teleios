@@ -7,26 +7,17 @@ import {
   IconeDocumento,
   IconeUser,
 } from "@/components/icones";
+import { Prisma } from "@/generated/prisma/client";
+import { calcularIndicadoresReposicao } from "@/lib/calculos-reposicao";
 import { exigirSessao } from "@/lib/autorizacao";
 import prisma from "@/lib/prisma";
-import { formatarQuantidade } from "@/app/produtos/tipos";
+import { formatarDecimalBr } from "@/app/produtos/tipos";
 
 export const dynamic = "force-dynamic";
 
-type ResumoEstoque = {
-  produtos_abaixo_minimo: number;
-};
-
-type ProdutoAbaixoMinimo = {
-  id: number;
-  nome: string;
-  unidade: string;
-  estoque_atual: string;
-  estoque_minimo: string;
-};
-
 const PERMISSOES = {
   produtos: "produtos.produto.consultar",
+  pedidos: "pedidos.pedido.consultar",
   fornecedores: "fornecedores.fornecedor.consultar",
   usuarios: "usuarios.usuario.consultar",
   locais: "locais.local.consultar",
@@ -42,48 +33,44 @@ export default async function DashboardPage() {
   const usuario = await exigirSessao();
   const pode = (permissao: string) => usuario.permissoes.has(permissao);
   const podeConsultarProdutos = pode(PERMISSOES.produtos);
+  const podeConsultarPedidos = pode(PERMISSOES.pedidos);
   const podeConsultarHistorico = pode(PERMISSOES.historico);
 
-  const [produtos, fornecedores, usuarios, locais, historico] =
-    await Promise.all([
+  const [
+    totalProdutos,
+    produtosReposicao,
+    fornecedores,
+    usuarios,
+    locais,
+    historico,
+  ] = await Promise.all([
       podeConsultarProdutos
-        ? Promise.all([
-            prisma.produto.count({ where: { ativo: true } }),
-            prisma.$queryRaw<ResumoEstoque[]>`
-              SELECT COUNT(*) FILTER (
-                WHERE p.estoque_minimo > 0
-                  AND COALESCE(e.quantidade_total, 0) <= p.estoque_minimo
-              )::int AS produtos_abaixo_minimo
-              FROM produto p
-              LEFT JOIN (
-                SELECT produto_id, SUM(quantidade) AS quantidade_total
-                FROM estoque
-                GROUP BY produto_id
-              ) e ON e.produto_id = p.id
-              WHERE p.ativo = true
-            `,
-            prisma.$queryRaw<ProdutoAbaixoMinimo[]>`
-              SELECT
-                p.id,
-                p.nome,
-                p.unidade,
-                COALESCE(e.quantidade_total, 0)::text AS estoque_atual,
-                p.estoque_minimo::text AS estoque_minimo
-              FROM produto p
-              LEFT JOIN (
-                SELECT produto_id, SUM(quantidade) AS quantidade_total
-                FROM estoque
-                GROUP BY produto_id
-              ) e ON e.produto_id = p.id
-              WHERE p.ativo = true
-                AND p.estoque_minimo > 0
-                AND COALESCE(e.quantidade_total, 0) <= p.estoque_minimo
-              ORDER BY
-                COALESCE(e.quantidade_total, 0) / p.estoque_minimo ASC,
-                p.nome ASC
-              LIMIT 5
-            `,
-          ])
+        ? prisma.produto.count({ where: { ativo: true } })
+        : Promise.resolve(null),
+      podeConsultarPedidos
+        ? prisma.produto.findMany({
+            where: { ativo: true },
+            select: {
+              id: true,
+              nome: true,
+              unidade: true,
+              estoques: { select: { quantidade: true } },
+              configuracaoCompra: true,
+              fornecedores: {
+                where: {
+                  ativo: true,
+                  fornecedor: { is: { ativo: true } },
+                },
+                select: {
+                  fornecedor: { select: { prazoEntregaDias: true } },
+                },
+              },
+              itensPedido: {
+                where: { pedido: { is: { status: "ENVIADO" } } },
+                select: { quantidade: true, quantidadeRecebida: true },
+              },
+            },
+          })
         : Promise.resolve(null),
       pode(PERMISSOES.fornecedores)
         ? prisma.fornecedor.count({ where: { ativo: true } })
@@ -111,6 +98,71 @@ export default async function DashboardPage() {
         : Promise.resolve(null),
     ]);
 
+  type ProdutoComAlerta = {
+    id: number;
+    nome: string;
+    unidade: string;
+    estoqueDisponivel: string;
+    pontoReposicao: string | null;
+    quantidadeSugerida: string;
+    situacao: "CRITICO" | "COMPRAR";
+  };
+  const produtosComAlerta: ProdutoComAlerta[] = [];
+  const produtosComDadosPendentes: { id: number; nome: string }[] = [];
+
+  if (produtosReposicao) {
+    for (const produto of produtosReposicao) {
+      const configuracao = produto.configuracaoCompra;
+      const prazos = produto.fornecedores
+        .map((vinculo) => vinculo.fornecedor.prazoEntregaDias)
+        .filter((prazo): prazo is number => prazo !== null);
+      const prazoEntregaDias = prazos.length > 0 ? Math.max(...prazos) : null;
+
+      if (!configuracao || prazoEntregaDias === null) {
+        produtosComDadosPendentes.push({
+          id: produto.id,
+          nome: produto.nome,
+        });
+      }
+      if (!configuracao) continue;
+
+      const estoqueDisponivel = produto.estoques.reduce(
+        (total, estoque) => total.add(estoque.quantidade),
+        new Prisma.Decimal(0)
+      );
+      const indicadores = calcularIndicadoresReposicao({
+        estoqueDisponivel,
+        itensEnviados: produto.itensPedido,
+        consumoDiario: configuracao.consumoDiario,
+        estoqueSeguranca: configuracao.estoqueSeguranca,
+        estoqueMaximoDesejado: configuracao.estoqueMaximoDesejado,
+        prazoEntregaDias,
+      });
+
+      if (indicadores.situacao !== "ADEQUADO") {
+        produtosComAlerta.push({
+          id: produto.id,
+          nome: produto.nome,
+          unidade: produto.unidade,
+          estoqueDisponivel: formatarDecimalBr(estoqueDisponivel.toString()),
+          pontoReposicao: indicadores.pontoReposicao
+            ? formatarDecimalBr(indicadores.pontoReposicao.toString())
+            : null,
+          quantidadeSugerida: formatarDecimalBr(
+            indicadores.quantidadeSugerida.toString()
+          ),
+          situacao: indicadores.situacao,
+        });
+      }
+    }
+    produtosComAlerta.sort((a, b) => {
+      if (a.situacao !== b.situacao) {
+        return a.situacao === "CRITICO" ? -1 : 1;
+      }
+      return a.nome.localeCompare(b.nome, "pt-BR");
+    });
+  }
+
   const estatisticas: {
     titulo: string;
     valor: string;
@@ -119,23 +171,40 @@ export default async function DashboardPage() {
     Icone: typeof IconeCaixa;
   }[] = [];
 
-  if (produtos) {
-    const [total, resumoEstoque] = produtos;
+  if (totalProdutos !== null) {
+    estatisticas.push({
+      titulo: "Produtos ativos",
+      valor: totalProdutos.toLocaleString("pt-BR"),
+      detalhe: "Produtos disponíveis no cadastro",
+      href: "/produtos",
+      Icone: IconeCaixa,
+    });
+  }
+  if (produtosReposicao) {
     estatisticas.push(
       {
-        titulo: "Produtos ativos",
-        valor: total.toLocaleString("pt-BR"),
-        detalhe: "Produtos disponíveis no cadastro",
-        href: "/produtos",
+        titulo: "Crítico",
+        valor: produtosComAlerta
+          .filter((produto) => produto.situacao === "CRITICO")
+          .length.toLocaleString("pt-BR"),
+        detalhe: "Estoque disponível no nível de segurança ou abaixo",
+        href: "/pedidos/comparar",
         Icone: IconeCaixa,
       },
       {
-        titulo: "Abaixo do estoque mínimo",
-        valor: (resumoEstoque[0]?.produtos_abaixo_minimo ?? 0).toLocaleString(
-          "pt-BR"
-        ),
-        detalhe: "Produtos que precisam de reposição",
-        href: "/produtos",
+        titulo: "Comprar",
+        valor: produtosComAlerta
+          .filter((produto) => produto.situacao === "COMPRAR")
+          .length.toLocaleString("pt-BR"),
+        detalhe: "Posição de estoque no ponto de reposição ou abaixo",
+        href: "/pedidos/comparar",
+        Icone: IconeCaixa,
+      },
+      {
+        titulo: "Dados pendentes",
+        valor: produtosComDadosPendentes.length.toLocaleString("pt-BR"),
+        detalhe: "Sem configuração ou prazo de entrega informado",
+        href: "/pedidos/comparar",
         Icone: IconeCaixa,
       }
     );
@@ -249,58 +318,107 @@ export default async function DashboardPage() {
       </section>
 
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-        {produtos && (
+        {produtosReposicao && (
           <section
-            aria-labelledby="estoque-baixo-titulo"
+            aria-labelledby="reposicao-titulo"
             className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm"
           >
             <div className="flex items-center justify-between gap-3">
               <div>
                 <h2
-                  id="estoque-baixo-titulo"
+                  id="reposicao-titulo"
                   className="text-lg font-semibold text-zinc-900"
                 >
                   Reposição necessária
                 </h2>
                 <p className="mt-1 text-sm text-zinc-500">
-                  Produtos ativos no mínimo ou abaixo dele.
+                  Produtos em situação crítica ou que precisam de compra.
                 </p>
               </div>
               <IconeCaixa className="h-5 w-5 shrink-0 text-orange-600" />
             </div>
-            {produtos[2].length > 0 ? (
+            {produtosComAlerta.length > 0 ? (
               <ul className="mt-4 divide-y divide-zinc-100">
-                {produtos[2].map((produto) => (
+                {produtosComAlerta.slice(0, 5).map((produto) => (
                   <li
                     key={produto.id}
-                    className="flex items-center justify-between gap-3 py-3"
+                    className="flex flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between"
                   >
                     <span className="min-w-0">
                       <span className="block truncate text-sm font-medium text-zinc-800">
                         {produto.nome}
                       </span>
-                      <span className="text-xs text-zinc-500">
-                        Mínimo: {formatarQuantidade(Number(produto.estoque_minimo))}{" "}
-                        {produto.unidade}
+                      <span className="block text-xs text-zinc-500">
+                        Estoque: {produto.estoqueDisponivel} {produto.unidade}
+                        {" · "}
+                        {produto.pontoReposicao === null
+                          ? "Prazo não informado"
+                          : `Ponto: ${produto.pontoReposicao} ${produto.unidade}`}
+                        {" · "}
+                        Sugerido: {produto.quantidadeSugerida} {produto.unidade}
                       </span>
                     </span>
-                    <span className="shrink-0 rounded-lg bg-orange-50 px-2.5 py-1 text-sm font-semibold text-orange-800">
-                      {formatarQuantidade(Number(produto.estoque_atual))}{" "}
-                      {produto.unidade}
+                    <span className={`shrink-0 self-start rounded-lg px-2.5 py-1 text-sm font-semibold sm:self-auto ${
+                      produto.situacao === "CRITICO"
+                        ? "bg-red-50 text-red-800"
+                        : "bg-amber-50 text-amber-900"
+                    }`}>
+                      {produto.situacao === "CRITICO" ? "Crítico" : "Comprar"}
                     </span>
                   </li>
                 ))}
               </ul>
             ) : (
               <p className="mt-4 rounded-lg bg-green-50 p-3 text-sm text-green-800">
-                Nenhum produto está abaixo do estoque mínimo.
+                Nenhum produto configurado precisa de reposição neste momento.
               </p>
             )}
             <Link
-              href="/produtos"
+              href="/pedidos/comparar"
               className="mt-3 inline-flex min-h-10 items-center text-sm font-medium text-[#002855] hover:underline"
             >
-              Ver produtos
+              Ver comparação de compras
+            </Link>
+          </section>
+        )}
+
+        {produtosReposicao && (
+          <section
+            aria-labelledby="dados-pendentes-titulo"
+            className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h2
+                  id="dados-pendentes-titulo"
+                  className="text-lg font-semibold text-zinc-900"
+                >
+                  Dados de reposição pendentes
+                </h2>
+                <p className="mt-1 text-sm text-zinc-500">
+                  Produtos sem configuração de reposição ou prazo de entrega.
+                </p>
+              </div>
+              <IconeCaixa className="h-5 w-5 shrink-0 text-[#002855]" />
+            </div>
+            {produtosComDadosPendentes.length > 0 ? (
+              <ul className="mt-4 divide-y divide-zinc-100">
+                {produtosComDadosPendentes.slice(0, 5).map((produto) => (
+                  <li key={produto.id} className="py-3 text-sm font-medium text-zinc-800">
+                    {produto.nome}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-4 rounded-lg bg-green-50 p-3 text-sm text-green-800">
+                Todos os produtos ativos têm dados suficientes para calcular a reposição.
+              </p>
+            )}
+            <Link
+              href="/pedidos/comparar"
+              className="mt-3 inline-flex min-h-10 items-center text-sm font-medium text-[#002855] hover:underline"
+            >
+              Ver comparação de compras
             </Link>
           </section>
         )}

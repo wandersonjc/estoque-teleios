@@ -282,11 +282,28 @@ export type EnumTipoMovimentoWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumTipoMovimentoFilter<$PrismaModel>
 }
 
-export type EnumStatusTransferenciaFilter<$PrismaModel = never> = {
-  equals?: $Enums.StatusTransferencia | Prisma.EnumStatusTransferenciaFieldRefInput<$PrismaModel>
-  in?: $Enums.StatusTransferencia[] | Prisma.ListEnumStatusTransferenciaFieldRefInput<$PrismaModel>
-  notIn?: $Enums.StatusTransferencia[] | Prisma.ListEnumStatusTransferenciaFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumStatusTransferenciaFilter<$PrismaModel> | $Enums.StatusTransferencia
+export type EnumPeriodoConsumoFilter<$PrismaModel = never> = {
+  equals?: $Enums.PeriodoConsumo | Prisma.EnumPeriodoConsumoFieldRefInput<$PrismaModel>
+  in?: $Enums.PeriodoConsumo[] | Prisma.ListEnumPeriodoConsumoFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PeriodoConsumo[] | Prisma.ListEnumPeriodoConsumoFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPeriodoConsumoFilter<$PrismaModel> | $Enums.PeriodoConsumo
+}
+
+export type EnumPeriodoConsumoWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.PeriodoConsumo | Prisma.EnumPeriodoConsumoFieldRefInput<$PrismaModel>
+  in?: $Enums.PeriodoConsumo[] | Prisma.ListEnumPeriodoConsumoFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PeriodoConsumo[] | Prisma.ListEnumPeriodoConsumoFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPeriodoConsumoWithAggregatesFilter<$PrismaModel> | $Enums.PeriodoConsumo
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumPeriodoConsumoFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumPeriodoConsumoFilter<$PrismaModel>
+}
+
+export type EnumStatusPedidoCompraFilter<$PrismaModel = never> = {
+  equals?: $Enums.StatusPedidoCompra | Prisma.EnumStatusPedidoCompraFieldRefInput<$PrismaModel>
+  in?: $Enums.StatusPedidoCompra[] | Prisma.ListEnumStatusPedidoCompraFieldRefInput<$PrismaModel>
+  notIn?: $Enums.StatusPedidoCompra[] | Prisma.ListEnumStatusPedidoCompraFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumStatusPedidoCompraFilter<$PrismaModel> | $Enums.StatusPedidoCompra
 }
 
 export type DateTimeNullableFilter<$PrismaModel = never> = {
@@ -300,14 +317,14 @@ export type DateTimeNullableFilter<$PrismaModel = never> = {
   not?: Prisma.NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
 }
 
-export type EnumStatusTransferenciaWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.StatusTransferencia | Prisma.EnumStatusTransferenciaFieldRefInput<$PrismaModel>
-  in?: $Enums.StatusTransferencia[] | Prisma.ListEnumStatusTransferenciaFieldRefInput<$PrismaModel>
-  notIn?: $Enums.StatusTransferencia[] | Prisma.ListEnumStatusTransferenciaFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumStatusTransferenciaWithAggregatesFilter<$PrismaModel> | $Enums.StatusTransferencia
+export type EnumStatusPedidoCompraWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.StatusPedidoCompra | Prisma.EnumStatusPedidoCompraFieldRefInput<$PrismaModel>
+  in?: $Enums.StatusPedidoCompra[] | Prisma.ListEnumStatusPedidoCompraFieldRefInput<$PrismaModel>
+  notIn?: $Enums.StatusPedidoCompra[] | Prisma.ListEnumStatusPedidoCompraFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumStatusPedidoCompraWithAggregatesFilter<$PrismaModel> | $Enums.StatusPedidoCompra
   _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumStatusTransferenciaFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumStatusTransferenciaFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumStatusPedidoCompraFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumStatusPedidoCompraFilter<$PrismaModel>
 }
 
 export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -322,6 +339,23 @@ export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedDateTimeNullableFilter<$PrismaModel>
   _max?: Prisma.NestedDateTimeNullableFilter<$PrismaModel>
+}
+
+export type EnumStatusTransferenciaFilter<$PrismaModel = never> = {
+  equals?: $Enums.StatusTransferencia | Prisma.EnumStatusTransferenciaFieldRefInput<$PrismaModel>
+  in?: $Enums.StatusTransferencia[] | Prisma.ListEnumStatusTransferenciaFieldRefInput<$PrismaModel>
+  notIn?: $Enums.StatusTransferencia[] | Prisma.ListEnumStatusTransferenciaFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumStatusTransferenciaFilter<$PrismaModel> | $Enums.StatusTransferencia
+}
+
+export type EnumStatusTransferenciaWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.StatusTransferencia | Prisma.EnumStatusTransferenciaFieldRefInput<$PrismaModel>
+  in?: $Enums.StatusTransferencia[] | Prisma.ListEnumStatusTransferenciaFieldRefInput<$PrismaModel>
+  notIn?: $Enums.StatusTransferencia[] | Prisma.ListEnumStatusTransferenciaFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumStatusTransferenciaWithAggregatesFilter<$PrismaModel> | $Enums.StatusTransferencia
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumStatusTransferenciaFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumStatusTransferenciaFilter<$PrismaModel>
 }
 
 export type EnumTipoNotificacaoTransferenciaFilter<$PrismaModel = never> = {
@@ -724,11 +758,28 @@ export type NestedEnumTipoMovimentoWithAggregatesFilter<$PrismaModel = never> = 
   _max?: Prisma.NestedEnumTipoMovimentoFilter<$PrismaModel>
 }
 
-export type NestedEnumStatusTransferenciaFilter<$PrismaModel = never> = {
-  equals?: $Enums.StatusTransferencia | Prisma.EnumStatusTransferenciaFieldRefInput<$PrismaModel>
-  in?: $Enums.StatusTransferencia[] | Prisma.ListEnumStatusTransferenciaFieldRefInput<$PrismaModel>
-  notIn?: $Enums.StatusTransferencia[] | Prisma.ListEnumStatusTransferenciaFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumStatusTransferenciaFilter<$PrismaModel> | $Enums.StatusTransferencia
+export type NestedEnumPeriodoConsumoFilter<$PrismaModel = never> = {
+  equals?: $Enums.PeriodoConsumo | Prisma.EnumPeriodoConsumoFieldRefInput<$PrismaModel>
+  in?: $Enums.PeriodoConsumo[] | Prisma.ListEnumPeriodoConsumoFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PeriodoConsumo[] | Prisma.ListEnumPeriodoConsumoFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPeriodoConsumoFilter<$PrismaModel> | $Enums.PeriodoConsumo
+}
+
+export type NestedEnumPeriodoConsumoWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.PeriodoConsumo | Prisma.EnumPeriodoConsumoFieldRefInput<$PrismaModel>
+  in?: $Enums.PeriodoConsumo[] | Prisma.ListEnumPeriodoConsumoFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PeriodoConsumo[] | Prisma.ListEnumPeriodoConsumoFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPeriodoConsumoWithAggregatesFilter<$PrismaModel> | $Enums.PeriodoConsumo
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumPeriodoConsumoFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumPeriodoConsumoFilter<$PrismaModel>
+}
+
+export type NestedEnumStatusPedidoCompraFilter<$PrismaModel = never> = {
+  equals?: $Enums.StatusPedidoCompra | Prisma.EnumStatusPedidoCompraFieldRefInput<$PrismaModel>
+  in?: $Enums.StatusPedidoCompra[] | Prisma.ListEnumStatusPedidoCompraFieldRefInput<$PrismaModel>
+  notIn?: $Enums.StatusPedidoCompra[] | Prisma.ListEnumStatusPedidoCompraFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumStatusPedidoCompraFilter<$PrismaModel> | $Enums.StatusPedidoCompra
 }
 
 export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
@@ -742,14 +793,14 @@ export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
   not?: Prisma.NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
 }
 
-export type NestedEnumStatusTransferenciaWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.StatusTransferencia | Prisma.EnumStatusTransferenciaFieldRefInput<$PrismaModel>
-  in?: $Enums.StatusTransferencia[] | Prisma.ListEnumStatusTransferenciaFieldRefInput<$PrismaModel>
-  notIn?: $Enums.StatusTransferencia[] | Prisma.ListEnumStatusTransferenciaFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumStatusTransferenciaWithAggregatesFilter<$PrismaModel> | $Enums.StatusTransferencia
+export type NestedEnumStatusPedidoCompraWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.StatusPedidoCompra | Prisma.EnumStatusPedidoCompraFieldRefInput<$PrismaModel>
+  in?: $Enums.StatusPedidoCompra[] | Prisma.ListEnumStatusPedidoCompraFieldRefInput<$PrismaModel>
+  notIn?: $Enums.StatusPedidoCompra[] | Prisma.ListEnumStatusPedidoCompraFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumStatusPedidoCompraWithAggregatesFilter<$PrismaModel> | $Enums.StatusPedidoCompra
   _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumStatusTransferenciaFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumStatusTransferenciaFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumStatusPedidoCompraFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumStatusPedidoCompraFilter<$PrismaModel>
 }
 
 export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -764,6 +815,23 @@ export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedDateTimeNullableFilter<$PrismaModel>
   _max?: Prisma.NestedDateTimeNullableFilter<$PrismaModel>
+}
+
+export type NestedEnumStatusTransferenciaFilter<$PrismaModel = never> = {
+  equals?: $Enums.StatusTransferencia | Prisma.EnumStatusTransferenciaFieldRefInput<$PrismaModel>
+  in?: $Enums.StatusTransferencia[] | Prisma.ListEnumStatusTransferenciaFieldRefInput<$PrismaModel>
+  notIn?: $Enums.StatusTransferencia[] | Prisma.ListEnumStatusTransferenciaFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumStatusTransferenciaFilter<$PrismaModel> | $Enums.StatusTransferencia
+}
+
+export type NestedEnumStatusTransferenciaWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.StatusTransferencia | Prisma.EnumStatusTransferenciaFieldRefInput<$PrismaModel>
+  in?: $Enums.StatusTransferencia[] | Prisma.ListEnumStatusTransferenciaFieldRefInput<$PrismaModel>
+  notIn?: $Enums.StatusTransferencia[] | Prisma.ListEnumStatusTransferenciaFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumStatusTransferenciaWithAggregatesFilter<$PrismaModel> | $Enums.StatusTransferencia
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumStatusTransferenciaFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumStatusTransferenciaFilter<$PrismaModel>
 }
 
 export type NestedEnumTipoNotificacaoTransferenciaFilter<$PrismaModel = never> = {

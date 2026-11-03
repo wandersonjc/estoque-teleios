@@ -23,6 +23,10 @@ import {
   IconeLapis,
 } from "@/components/icones";
 import { exigirPermissao } from "@/lib/autorizacao";
+import {
+  calcularIndicadoresReposicao,
+  calcularQuantidadeACaminho,
+} from "@/lib/calculos-reposicao";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 
@@ -47,7 +51,6 @@ const COLUNAS_ORDENACAO = [
   "codigoErp",
   "nome",
   "totalEstoque",
-  "estoqueMinimo",
   "codigoBarras",
 ] as const;
 
@@ -70,6 +73,9 @@ export default async function ProdutosPage({
   const podeEditar = atual.permissoes.has("produtos.produto.editar");
   const podeDesativar = atual.permissoes.has("produtos.produto.desativar");
   const podeMovimentar = atual.permissoes.has("estoque.movimento.registrar");
+  const podeConfigurarCompra = atual.permissoes.has(
+    "pedidos.configuracao.gerenciar"
+  );
 
   const parametros = await searchParams;
 
@@ -184,9 +190,7 @@ export default async function ProdutosPage({
   const orderBy: ProdutoOrderByWithRelationInput[] =
     ordenacao === "codigoErp"
       ? [{ codigoErp: direcao }, { id: "asc" }]
-      : ordenacao === "estoqueMinimo"
-          ? [{ estoqueMinimo: direcao }, { id: "asc" }]
-          : [{ nome: direcao }, { id: "asc" }];
+      : [{ nome: direcao }, { id: "asc" }];
 
   const encontrados = await prisma.produto.findMany({
     where: idsOrdenados === null ? filtro : { id: { in: idsOrdenados } },
@@ -210,6 +214,20 @@ export default async function ProdutosPage({
           principal: true,
         },
       },
+      configuracaoCompra: true,
+      fornecedores: {
+        where: {
+          ativo: true,
+          fornecedor: { is: { ativo: true } },
+        },
+        select: {
+          fornecedor: { select: { prazoEntregaDias: true } },
+        },
+      },
+      itensPedido: {
+        where: { pedido: { is: { status: "ENVIADO" } } },
+        select: { quantidade: true, quantidadeRecebida: true },
+      },
     },
   });
   const encontradosPorId = new Map(
@@ -221,6 +239,47 @@ export default async function ProdutosPage({
       : idsOrdenados
           .map((id) => encontradosPorId.get(id))
           .filter((produto) => produto !== undefined);
+  type ResumoReposicao = {
+    indicadores: ReturnType<typeof calcularIndicadoresReposicao> | null;
+    quantidadeACaminho: Prisma.Decimal;
+  };
+  const indicadoresPorProduto = new Map<number, ResumoReposicao>(
+    produtos.map((produto): [number, ResumoReposicao] => {
+      const quantidadeACaminho = calcularQuantidadeACaminho(
+        produto.itensPedido
+      );
+      const configuracao = produto.configuracaoCompra;
+      if (!configuracao) {
+        return [
+          produto.id,
+          { indicadores: null, quantidadeACaminho },
+        ];
+      }
+
+      const prazos = produto.fornecedores
+        .map((vinculo) => vinculo.fornecedor.prazoEntregaDias)
+        .filter((prazo): prazo is number => prazo !== null);
+      const prazoEntregaDias = prazos.length > 0 ? Math.max(...prazos) : null;
+      const estoqueDisponivel = produto.estoques.reduce(
+        (total, estoque) => total.add(estoque.quantidade),
+        new Prisma.Decimal(0)
+      );
+      return [
+        produto.id,
+        {
+          indicadores: calcularIndicadoresReposicao({
+            estoqueDisponivel,
+            itensEnviados: produto.itensPedido,
+            consumoDiario: configuracao.consumoDiario,
+            estoqueSeguranca: configuracao.estoqueSeguranca,
+            estoqueMaximoDesejado: configuracao.estoqueMaximoDesejado,
+            prazoEntregaDias,
+          }),
+          quantidadeACaminho,
+        },
+      ];
+    })
+  );
 
   // Monta o endereço da lista mantendo os filtros atuais
   function urlDaLista(extras: Record<string, string>): string {
@@ -264,7 +323,6 @@ export default async function ProdutosPage({
     { chave: "codigoErp", rotulo: "Código ERP" },
     { chave: "nome", rotulo: "Nome do Produto" },
     { chave: "totalEstoque", rotulo: "Total em Estoque" },
-    { chave: "estoqueMinimo", rotulo: "Estoque Mínimo" },
     { chave: "codigoBarras", rotulo: "Código de Barras" },
   ];
 
@@ -317,10 +375,10 @@ export default async function ProdutosPage({
       <>
       {produtos.length > 0 && visualizacao === "tabela" && (
         <div className="mt-3 overflow-x-auto rounded-xl border border-zinc-200 bg-white">
-          <table className="w-full min-w-[980px] border-collapse text-left text-sm">
+          <table className="w-full min-w-[1450px] border-collapse text-left text-sm">
             <thead className="bg-zinc-50 text-zinc-600">
               <tr className="border-b border-zinc-200">
-                {colunasTabela.map((coluna) => (
+                {colunasTabela.slice(0, 3).map((coluna) => (
                   <th
                     key={coluna.chave}
                     scope="col"
@@ -349,6 +407,43 @@ export default async function ProdutosPage({
                   </th>
                 ))}
                 <th scope="col" className="whitespace-nowrap px-3 py-3 font-semibold">
+                  Ponto de Reposição
+                </th>
+                <th scope="col" className="whitespace-nowrap px-3 py-3 font-semibold">
+                  Quantidade Sugerida
+                </th>
+                {colunasTabela.slice(3).map((coluna) => (
+                  <th
+                    key={coluna.chave}
+                    scope="col"
+                    aria-sort={
+                      ordenacao === coluna.chave
+                        ? direcao === "asc"
+                          ? "ascending"
+                          : "descending"
+                        : "none"
+                    }
+                    className="whitespace-nowrap px-3 py-3 font-semibold"
+                  >
+                    <Link
+                      href={urlDaOrdenacao(coluna.chave)}
+                      className="inline-flex items-center gap-2 hover:text-zinc-900"
+                    >
+                      {coluna.rotulo}
+                      <span aria-hidden="true" className="text-xs">
+                        {ordenacao === coluna.chave
+                          ? direcao === "asc"
+                            ? "↑"
+                            : "↓"
+                          : "↕"}
+                      </span>
+                    </Link>
+                  </th>
+                ))}
+                <th scope="col" className="whitespace-nowrap px-3 py-3 font-semibold">
+                  Situação de Compra
+                </th>
+                <th scope="col" className="whitespace-nowrap px-3 py-3 font-semibold">
                   Status
                 </th>
                 <th scope="col" className="whitespace-nowrap px-3 py-3 font-semibold">
@@ -359,6 +454,8 @@ export default async function ProdutosPage({
             <tbody>
               {produtos.map((produto) => {
                 const totalEstoque = calcularTotalEstoque(produto.estoques);
+                const resumoReposicao = indicadoresPorProduto.get(produto.id);
+                const indicadores = resumoReposicao?.indicadores;
                 const dataUltima = ultimaContagem(produto.estoques);
                 const embalagensMovimento = produto.embalagens.map((embalagem) => ({
                   id: embalagem.id,
@@ -413,13 +510,51 @@ export default async function ProdutosPage({
                           }
                         />
                       </div>
+                      {resumoReposicao && (
+                        <div className="mt-1 text-xs text-zinc-500">
+                          A caminho:{" "}
+                          {formatarDecimalBr(
+                            resumoReposicao.quantidadeACaminho.toString()
+                          )}{" "}
+                          {produto.unidade}
+                        </div>
+                      )}
                     </td>
                     <td className="whitespace-nowrap px-3 py-3 text-zinc-900">
-                      {formatarDecimalBr(produto.estoqueMinimo.toString())}
-                      {" "}{produto.unidade}
+                      {indicadores?.pontoReposicao
+                        ? `${formatarDecimalBr(indicadores.pontoReposicao.toString())} ${produto.unidade}`
+                        : indicadores
+                          ? "Prazo não informado"
+                          : "—"}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-3 text-zinc-900">
+                      {indicadores
+                        ? `${formatarDecimalBr(indicadores.quantidadeSugerida.toString())} ${produto.unidade}`
+                        : "—"}
                     </td>
                     <td className="whitespace-nowrap px-3 py-3 text-zinc-700">
                       {codigoBarrasPrincipal || "—"}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-3">
+                      {indicadores ? (
+                        <span
+                          className={`rounded-full px-2 py-1 text-xs font-medium ${
+                            indicadores.situacao === "CRITICO"
+                              ? "bg-red-100 text-red-800"
+                              : indicadores.situacao === "COMPRAR"
+                                ? "bg-amber-100 text-amber-900"
+                                : "bg-green-100 text-green-800"
+                          }`}
+                        >
+                          {indicadores.situacao === "CRITICO"
+                            ? "Crítico"
+                            : indicadores.situacao === "COMPRAR"
+                              ? "Comprar"
+                              : "Estoque adequado"}
+                        </span>
+                      ) : (
+                        "Não configurada"
+                      )}
                     </td>
                     <td className="whitespace-nowrap px-3 py-3">
                       {podeDesativar ? (
@@ -461,6 +596,17 @@ export default async function ProdutosPage({
                             <IconeLapis className="h-4 w-4" />
                           </LinkAcaoComCarregamento>
                         )}
+                        {podeConfigurarCompra && (
+                          <LinkAcaoComCarregamento
+                            href={`/pedidos/configuracao/${produto.id}`}
+                            title="Configurar reposição"
+                            className="flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200 text-zinc-800 hover:bg-zinc-50"
+                            ariaLabel={`Configurar reposição de ${produto.nome}`}
+                            tamanhoIconeCarregando="h-4 w-4"
+                          >
+                            <IconeCaixa className="h-4 w-4" />
+                          </LinkAcaoComCarregamento>
+                        )}
                         {podeMovimentar && locais.length > 0 && (
                           <MovimentacaoEstoque
                             produtoId={produto.id}
@@ -488,6 +634,8 @@ export default async function ProdutosPage({
           {produtos.map((produto) => {
             // RN-01: o total é sempre calculado; RN-03: data da contagem
             const totalEstoque = calcularTotalEstoque(produto.estoques);
+            const resumoReposicao = indicadoresPorProduto.get(produto.id);
+            const indicadores = resumoReposicao?.indicadores;
             const dataUltima = ultimaContagem(produto.estoques);
             const codigoBarrasPrincipal =
               produto.embalagens.find((embalagem) => embalagem.principal)
@@ -539,16 +687,29 @@ export default async function ProdutosPage({
                         <h3 className="text-base font-bold text-[#002855] truncate sm:text-lg">
                           {produto.nome}
                         </h3>
-                        {/* Badge Estoque Mínimo */}
-                        <div className="mt-2 flex w-fit items-center gap-1.5 rounded-full bg-[#eef6ff] px-3 py-1 text-sm font-medium text-[#0061d5]">
-                          <IconeCaixa className="h-4 w-4" />
-                          <span>
-                            Estoque mínimo:{" "}
-                            {formatarDecimalBr(
-                              produto.estoqueMinimo.toString()
-                            )} {produto.unidade}
-                          </span>
-                        </div>
+                        <p className="mt-2">
+                          {indicadores ? (
+                            <span
+                              className={`rounded-full px-2 py-1 text-xs font-medium ${
+                                indicadores.situacao === "CRITICO"
+                                  ? "bg-red-100 text-red-800"
+                                  : indicadores.situacao === "COMPRAR"
+                                    ? "bg-amber-100 text-amber-900"
+                                    : "bg-green-100 text-green-800"
+                              }`}
+                            >
+                              {indicadores.situacao === "CRITICO"
+                                ? "Crítico"
+                                : indicadores.situacao === "COMPRAR"
+                                  ? "Comprar"
+                                  : "Estoque adequado"}
+                            </span>
+                          ) : (
+                            <span className="text-xs text-zinc-500">
+                              Reposição não configurada
+                            </span>
+                          )}
+                        </p>
                       </div>
 
                       {/* Status Pill */}
@@ -597,7 +758,7 @@ export default async function ProdutosPage({
                     <div className="mt-4 border-t border-zinc-100" />
 
                     {/* Grid de informações centrais */}
-                    <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-6 px-1">
+                    <div className="mt-4 grid grid-cols-1 gap-x-8 gap-y-4 px-1 sm:grid-cols-2">
                       {/* Unidade */}
                       <div className="flex items-center gap-3">
                         <div className="text-zinc-300">
@@ -631,6 +792,49 @@ export default async function ProdutosPage({
                                 - Última contagem: {formatarDataBr(dataUltima)}
                               </span>
                             )}
+                            {resumoReposicao && (
+                              <span className="text-zinc-500 text-[11px] ml-1 block">
+                                A caminho:{" "}
+                                {formatarDecimalBr(
+                                  resumoReposicao.quantidadeACaminho.toString()
+                                )}{" "}
+                                {produto.unidade}
+                              </span>
+                            )}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        <div className="text-zinc-300">
+                          <IconeCaixa className="h-6 w-6" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
+                            PONTO DE REPOSIÇÃO
+                          </p>
+                          <p className="text-[13px] font-bold text-[#002855] leading-tight">
+                            {indicadores?.pontoReposicao
+                              ? `${formatarDecimalBr(indicadores.pontoReposicao.toString())} ${produto.unidade}`
+                              : indicadores
+                                ? "Prazo não informado"
+                                : "Não configurado"}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        <div className="text-zinc-300">
+                          <IconeCaixa className="h-6 w-6" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
+                            QUANTIDADE SUGERIDA
+                          </p>
+                          <p className="text-[13px] font-bold text-[#002855] leading-tight">
+                            {indicadores
+                              ? `${formatarDecimalBr(indicadores.quantidadeSugerida.toString())} ${produto.unidade}`
+                              : "Não configurada"}
                           </p>
                         </div>
                       </div>
@@ -668,6 +872,16 @@ export default async function ProdutosPage({
 
                     {/* Ações na base, também alinhadas à direita da imagem */}
                     <div className="mt-5 flex items-center gap-3">
+                      {podeConfigurarCompra && (
+                        <LinkAcaoComCarregamento
+                          href={`/pedidos/configuracao/${produto.id}`}
+                          title="Configurar reposição"
+                          ariaLabel={`Configurar reposição de ${produto.nome}`}
+                          className="flex h-11 w-11 items-center justify-center rounded-xl border border-zinc-200 text-zinc-700 hover:bg-zinc-50"
+                        >
+                          <IconeCaixa className="h-5 w-5" />
+                        </LinkAcaoComCarregamento>
+                      )}
                       {podeEditar && (
                         <LinkAcaoComCarregamento
                           href={`/produtos/${produto.id}`}

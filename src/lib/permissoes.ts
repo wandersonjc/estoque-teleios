@@ -322,6 +322,55 @@ export const CATALOGO_DE_PERMISSOES: PermissaoCatalogo[] = [
     descricao: "Associar e remover funções dos usuários",
     ordem: 950,
   },
+  // Módulo Pedidos de compra
+  {
+    codigo: "pedidos.pedido.consultar",
+    modulo: "Pedidos de compra",
+    funcionalidade: "Pedido",
+    operacao: "Consultar",
+    descricao: "Consultar planejamento de reposição e pedidos de compra",
+    ordem: 1010,
+  },
+  {
+    codigo: "pedidos.configuracao.gerenciar",
+    modulo: "Pedidos de compra",
+    funcionalidade: "Reposição",
+    operacao: "Gerenciar",
+    descricao: "Cadastrar e alterar parâmetros de reposição dos produtos",
+    ordem: 1020,
+  },
+  {
+    codigo: "pedidos.rascunho.gerenciar",
+    modulo: "Pedidos de compra",
+    funcionalidade: "Rascunho",
+    operacao: "Gerenciar",
+    descricao: "Criar e alterar pedidos de compra em rascunho",
+    ordem: 1030,
+  },
+  {
+    codigo: "pedidos.pedido.enviar",
+    modulo: "Pedidos de compra",
+    funcionalidade: "Pedido",
+    operacao: "Enviar",
+    descricao: "Enviar pedidos de compra aos fornecedores",
+    ordem: 1040,
+  },
+  {
+    codigo: "pedidos.pedido.cancelar",
+    modulo: "Pedidos de compra",
+    funcionalidade: "Pedido",
+    operacao: "Cancelar",
+    descricao: "Cancelar pedidos de compra em rascunho ou enviados",
+    ordem: 1050,
+  },
+  {
+    codigo: "pedidos.pedido.receber",
+    modulo: "Pedidos de compra",
+    funcionalidade: "Pedido",
+    operacao: "Receber",
+    descricao: "Registrar recebimentos parciais ou totais de pedidos de compra",
+    ordem: 1060,
+  },
   // Módulo Transferências
   {
     codigo: "transferencias.pedido.consultar",
@@ -329,7 +378,7 @@ export const CATALOGO_DE_PERMISSOES: PermissaoCatalogo[] = [
     funcionalidade: "Pedido de transferência",
     operacao: "Consultar",
     descricao: "Ver pedidos de transferência entre locais de estoque",
-    ordem: 1010,
+    ordem: 1110,
   },
   {
     codigo: "transferencias.pedido.solicitar",
@@ -337,7 +386,7 @@ export const CATALOGO_DE_PERMISSOES: PermissaoCatalogo[] = [
     funcionalidade: "Pedido de transferência",
     operacao: "Solicitar",
     descricao: "Criar solicitações de transferência entre locais de estoque",
-    ordem: 1020,
+    ordem: 1120,
   },
   {
     codigo: "transferencias.pedido.enviar",
@@ -345,7 +394,7 @@ export const CATALOGO_DE_PERMISSOES: PermissaoCatalogo[] = [
     funcionalidade: "Pedido de transferência",
     operacao: "Enviar",
     descricao: "Registrar o envio de produtos em pedidos de transferência",
-    ordem: 1030,
+    ordem: 1130,
   },
   {
     codigo: "transferencias.pedido.receber",
@@ -353,7 +402,7 @@ export const CATALOGO_DE_PERMISSOES: PermissaoCatalogo[] = [
     funcionalidade: "Pedido de transferência",
     operacao: "Receber",
     descricao: "Confirmar o recebimento de pedidos de transferência",
-    ordem: 1040,
+    ordem: 1140,
   },
 ];
 
@@ -390,6 +439,11 @@ export const MENU_PRINCIPAL: ItemMenu[][] = [
     },
   ],
   [
+    {
+      href: "/pedidos",
+      rotulo: "Pedidos de Compra",
+      permissao: "pedidos.pedido.consultar",
+    },
     {
       href: "/transferencias",
       rotulo: "Transferências",

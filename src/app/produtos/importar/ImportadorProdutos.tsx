@@ -295,8 +295,8 @@ export default function ImportadorProdutos() {
           </div>
 
           <p className="mt-3 text-sm leading-6 text-zinc-600">
-            Produtos novos serão cadastrados com unidade UN, estoque mínimo zero
-            e estoque inicial zerado. Se o código ERP já existir, somente o nome
+            Produtos novos serão cadastrados com unidade UN e estoque inicial
+            zerado. Se o código ERP já existir, somente o nome
             será atualizado. Unidades, códigos de barras, estoques e demais
             dados existentes serão preservados.
           </p>

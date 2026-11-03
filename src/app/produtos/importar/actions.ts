@@ -710,7 +710,6 @@ export async function importarProdutos(
               codigoErp: produto.codigoErp,
               nome: produto.nome,
               unidade: "UN",
-              estoqueMinimo: "0",
             })),
           });
         }
