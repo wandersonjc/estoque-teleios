@@ -105,7 +105,17 @@ export default async function PedidoCompraPage({
         comprador: { select: { nome: true } },
         itens: {
           orderBy: { id: "asc" },
-          include: { produto: { select: { nome: true, unidade: true } } },
+          include: {
+            produto: {
+              select: {
+                nome: true,
+                unidade: true,
+                embalagens: {
+                  select: { id: true, unidade: true, quantidadeBase: true },
+                },
+              },
+            },
+          },
         },
       },
     }),
@@ -124,10 +134,13 @@ export default async function PedidoCompraPage({
     locais.find((local) => local.nome.toLocaleLowerCase("pt-BR") === "galpão") ??
     locais[0];
   const totalPedido = pedido.itens.reduce(
-    (total, item) =>
-      total.add(
-        item.quantidade.mul(item.precoUnitario).toDecimalPlaces(2)
-      ),
+    (total, item) => {
+      const subtotal =
+        item.quantidadeInformada && item.precoInformado
+          ? item.quantidadeInformada.mul(item.precoInformado)
+          : item.quantidade.mul(item.precoUnitario);
+      return total.add(subtotal.toDecimalPlaces(2));
+    },
     new Prisma.Decimal(0)
   );
   const abaixoDoMinimo =
@@ -274,6 +287,51 @@ export default async function PedidoCompraPage({
           <ul className="mt-2 grid gap-3">
             {pedido.itens.map((item) => {
               const pendente = item.quantidade.sub(item.quantidadeRecebida);
+              const subtotal =
+                item.quantidadeInformada && item.precoInformado
+                  ? item.quantidadeInformada.mul(item.precoInformado)
+                  : item.quantidade.mul(item.precoUnitario);
+              const fatorConversao = item.fatorConversao;
+              const unidadeEmbalagemSelecionada =
+                item.unidadeInformada && fatorConversao
+                  ? item.produto.embalagens.find(
+                      (embalagem) =>
+                        embalagem.unidade === item.unidadeInformada &&
+                        embalagem.quantidadeBase.equals(fatorConversao)
+                    )
+                  : null;
+              const unidadeSelecionada =
+                item.unidadeInformada && fatorConversao
+                  ? fatorConversao.equals(1) &&
+                    item.unidadeInformada === item.produto.unidade
+                    ? "BASE"
+                    : unidadeEmbalagemSelecionada
+                      ? `EMB:${unidadeEmbalagemSelecionada.id}`
+                      : "SALVO"
+                  : "BASE";
+              const unidadesDisponiveis = [
+                {
+                  valor: "BASE",
+                  unidade: item.produto.unidade,
+                  fator: "1",
+                },
+                ...item.produto.embalagens.map((embalagem) => ({
+                  valor: `EMB:${embalagem.id}`,
+                  unidade: embalagem.unidade,
+                  fator: embalagem.quantidadeBase.toString(),
+                })),
+                ...(unidadeSelecionada === "SALVO" &&
+                item.unidadeInformada &&
+                fatorConversao
+                  ? [
+                      {
+                        valor: "SALVO",
+                        unidade: item.unidadeInformada,
+                        fator: fatorConversao.toString(),
+                      },
+                    ]
+                  : []),
+              ];
               return (
                 <li
                   key={item.id}
@@ -289,7 +347,19 @@ export default async function PedidoCompraPage({
                     <div>
                       <dt className="text-xs text-zinc-600">Quantidade pedida</dt>
                       <dd className="font-medium text-zinc-900">
-                        {formatarDecimalBr(item.quantidade.toString())}
+                        {formatarDecimalBr(item.quantidade.toString())}{" "}
+                        {item.produto.unidade}
+                        {item.quantidadeInformada &&
+                          item.unidadeInformada &&
+                          item.fatorConversao && (
+                            <span className="block text-xs font-normal text-zinc-500">
+                              Informada:{" "}
+                              {formatarDecimalBr(
+                                item.quantidadeInformada.toString()
+                              )}{" "}
+                              {item.unidadeInformada}
+                            </span>
+                          )}
                       </dd>
                     </div>
                     <div>
@@ -307,17 +377,19 @@ export default async function PedidoCompraPage({
                     <div>
                       <dt className="text-xs text-zinc-600">Preço unitário</dt>
                       <dd className="font-medium text-zinc-900">
-                        {formatarMoeda(item.precoUnitario.toString())}
+                        {formatarMoeda(
+                          (item.precoInformado ?? item.precoUnitario).toString()
+                        )}
+                        {item.unidadeInformada
+                          ? ` / ${item.unidadeInformada}`
+                          : ` / ${item.produto.unidade}`}
                       </dd>
                     </div>
                     <div>
                       <dt className="text-xs text-zinc-600">Subtotal</dt>
                       <dd className="font-medium text-zinc-900">
                         {formatarMoeda(
-                          item.quantidade
-                            .mul(item.precoUnitario)
-                            .toDecimalPlaces(2)
-                            .toString()
+                          subtotal.toDecimalPlaces(2).toString()
                         )}
                       </dd>
                     </div>
@@ -328,8 +400,15 @@ export default async function PedidoCompraPage({
                         pedidoId={pedido.id}
                         itemId={item.id}
                         produto={item.produto.nome}
-                        quantidade={formatarDecimalBr(item.quantidade.toString())}
-                        precoUnitario={formatarDecimalBr(item.precoUnitario.toString())}
+                        unidadeBase={item.produto.unidade}
+                        unidades={unidadesDisponiveis}
+                        unidadeSelecionada={unidadeSelecionada}
+                        quantidade={formatarDecimalBr(
+                          (item.quantidadeInformada ?? item.quantidade).toString()
+                        )}
+                        precoUnitario={formatarDecimalBr(
+                          (item.precoInformado ?? item.precoUnitario).toString()
+                        )}
                       />
                     </div>
                   )}
@@ -390,6 +469,20 @@ export default async function PedidoCompraPage({
                 id: item.id,
                 produto: item.produto.nome,
                 unidade: item.produto.unidade,
+                unidades: [
+                  { valor: "BASE", unidade: item.produto.unidade, fator: "1" },
+                  ...item.produto.embalagens
+                    .filter(
+                      (embalagem) =>
+                        embalagem.unidade.trim().toLocaleUpperCase("pt-BR") !==
+                        item.produto.unidade.trim().toLocaleUpperCase("pt-BR")
+                    )
+                    .map((embalagem) => ({
+                      valor: `EMB:${embalagem.id}`,
+                      unidade: embalagem.unidade,
+                      fator: embalagem.quantidadeBase.toString(),
+                    })),
+                ],
                 quantidade: formatarDecimalBr(item.quantidade.toString()),
                 quantidadeRecebida: formatarDecimalBr(
                   item.quantidadeRecebida.toString()

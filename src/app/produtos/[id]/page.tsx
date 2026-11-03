@@ -21,7 +21,10 @@ import ProdutoForm from "../ProdutoForm";
 import FormularioPrecoCotado from "@/app/fornecedores/FormularioPrecoCotado";
 import FormularioVinculo from "@/app/fornecedores/FormularioVinculo";
 import ListaVinculos from "@/app/fornecedores/ListaVinculos";
-import { precosAtuais } from "@/app/fornecedores/tipos";
+import {
+  opcoesUnidadePreco,
+  precosAtuais,
+} from "@/app/fornecedores/tipos";
 
 import {
   atualizarProduto,
@@ -221,6 +224,7 @@ export default async function EditarProdutoPage({
   const fornecedoresParaPreco = vinculos.map((item) => ({
     id: item.fornecedorId,
     nome: item.fornecedor.nome,
+    unidades: opcoesUnidadePreco(produto.unidade, produto.embalagens),
   }));
   const mapaPrecos = precosAtuais(historico);
   const retornoProduto = `/produtos/${produto.id}`;
@@ -566,12 +570,16 @@ export default async function EditarProdutoPage({
                   produtoId: item.produtoId,
                   fornecedorId: item.fornecedorId,
                   nome: item.fornecedor.nome,
+                  unidadeBase: produto.unidade,
                 }))}
                 historico={historico.map((item) => ({
                   id: item.id,
                   produtoId: item.produtoId,
                   fornecedorId: item.fornecedorId,
                   precoUnitario: item.precoUnitario.toString(),
+                  precoInformado: item.precoInformado?.toString() ?? null,
+                  unidadeInformada: item.unidadeInformada,
+                  unidadeBase: produto.unidade,
                   data: item.data,
                   origem: item.origem,
                   nomePar: item.fornecedor.nome,

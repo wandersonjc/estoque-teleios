@@ -80,6 +80,7 @@ export type ValoresFormularioPreco = {
   produtoId: string;
   fornecedorId: string;
   precoUnitario: string;
+  unidadeSelecionada: string;
   data: string;
 };
 
@@ -89,6 +90,7 @@ export type EstadoFormularioPreco = {
     produtoId?: string;
     fornecedorId?: string;
     precoUnitario?: string;
+    unidadeSelecionada?: string;
     data?: string;
   };
   valores: ValoresFormularioPreco;
@@ -98,6 +100,7 @@ export const VALORES_PRECO_VAZIOS: ValoresFormularioPreco = {
   produtoId: "",
   fornecedorId: "",
   precoUnitario: "",
+  unidadeSelecionada: "BASE",
   data: "",
 };
 
@@ -112,9 +115,44 @@ export type PrecoAtual = {
   produtoId: number;
   fornecedorId: number;
   precoUnitario: string;
+  precoInformado: string | null;
+  unidadeInformada: string | null;
+  fatorConversao: string | null;
   data: Date;
   origem: OrigemPrecoTela;
 };
+
+export type UnidadePrecoTela = {
+  valor: string;
+  unidade: string;
+  fator: string;
+};
+
+export function opcoesUnidadePreco(
+  unidadeBase: string,
+  embalagens: {
+    id: number;
+    unidade: string;
+    quantidadeBase: { toString(): string };
+  }[]
+): UnidadePrecoTela[] {
+  const opcoes: UnidadePrecoTela[] = [
+    { valor: "BASE", unidade: unidadeBase, fator: "1" },
+  ];
+  const vistas = new Set([`${unidadeBase.trim().toLocaleUpperCase("pt-BR")}:1`]);
+  for (const embalagem of embalagens) {
+    const fator = embalagem.quantidadeBase.toString();
+    const chave = `${embalagem.unidade.trim().toLocaleUpperCase("pt-BR")}:${Number(fator)}`;
+    if (vistas.has(chave)) continue;
+    vistas.add(chave);
+    opcoes.push({
+      valor: `EMB:${embalagem.id}`,
+      unidade: embalagem.unidade,
+      fator,
+    });
+  }
+  return opcoes;
+}
 
 // ------------------------------------------------------------
 // Dinheiro: até 2 casas (Decimal(12,2)). Campo vazio devolve
@@ -189,18 +227,42 @@ export function precosAtuais(
     produtoId: number;
     fornecedorId: number;
     precoUnitario: { toString(): string };
+    precoInformado?: { toString(): string } | null;
+    unidadeInformada?: string | null;
+    fatorConversao?: { toString(): string } | null;
     data: Date;
     origem: OrigemPrecoTela;
   }[]
 ): Map<string, PrecoAtual> {
-  const mapa = new Map<string, PrecoAtual>();
+  const porEmbalagem = new Map<string, (typeof historico)[number]>();
   for (const item of historico) {
+    const fator = Number(item.fatorConversao?.toString() ?? 1);
+    const embalagem =
+      fator === 1
+        ? "BASE:1"
+        : `${item.unidadeInformada?.trim().toLocaleUpperCase("pt-BR") ?? ""}:${fator}`;
+    const chave = `${item.produtoId}-${item.fornecedorId}-${embalagem}`;
+    if (!porEmbalagem.has(chave)) porEmbalagem.set(chave, item);
+  }
+
+  const mapa = new Map<string, PrecoAtual>();
+  for (const item of porEmbalagem.values()) {
+    const fator = Number(item.fatorConversao?.toString() ?? 1);
+    const precoInformado = item.precoInformado?.toString() ?? null;
+    const precoUnitario =
+      precoInformado !== null && fator > 0
+        ? (Number(precoInformado) / fator).toFixed(6)
+        : item.precoUnitario.toString();
     const chave = `${item.produtoId}-${item.fornecedorId}`;
-    if (mapa.has(chave)) continue;
+    const atual = mapa.get(chave);
+    if (atual && Number(atual.precoUnitario) <= Number(precoUnitario)) continue;
     mapa.set(chave, {
       produtoId: item.produtoId,
       fornecedorId: item.fornecedorId,
-      precoUnitario: item.precoUnitario.toString(),
+      precoUnitario,
+      precoInformado,
+      unidadeInformada: item.unidadeInformada ?? null,
+      fatorConversao: item.fatorConversao?.toString() ?? null,
       data: item.data,
       origem: item.origem,
     });

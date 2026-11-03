@@ -122,26 +122,127 @@ function invalidarRotasPedido(id?: number): void {
   if (id) revalidatePath(`/pedidos/${id}`);
 }
 
-function lerItemPedido(formData: FormData) {
+type EntradaItemPedido = {
+  produtoId: number;
+  fornecedorId: number;
+  quantidadeDigitada: string;
+  precoDigitado: string;
+  unidadeSelecionada: string;
+};
+
+type UnidadePedido = {
+  nome: string;
+  fator: Prisma.Decimal;
+};
+
+function resolverUnidadePedido(
+  valorSelecionado: string,
+  unidadeBase: string,
+  embalagens: {
+    id: number;
+    unidade: string;
+    quantidadeBase: Prisma.Decimal;
+  }[],
+  snapshot?: { unidade: string | null; fator: Prisma.Decimal | null }
+): UnidadePedido {
+  if (valorSelecionado === "BASE") {
+    return { nome: unidadeBase, fator: new Prisma.Decimal(1) };
+  }
+
+  const embalagemId = /^EMB:(\d+)$/.exec(valorSelecionado);
+  if (embalagemId) {
+    const embalagem = embalagens.find(
+      (item) => item.id === Number(embalagemId[1])
+    );
+    if (!embalagem) {
+      throw erroDeRegra(
+        "A embalagem selecionada não pertence a este produto ou não está mais cadastrada."
+      );
+    }
+    return { nome: embalagem.unidade, fator: embalagem.quantidadeBase };
+  }
+
+  if (valorSelecionado === "SALVO" && snapshot?.unidade && snapshot.fator) {
+    return { nome: snapshot.unidade, fator: snapshot.fator };
+  }
+
+  throw erroDeRegra("Selecione uma unidade de embalagem válida.");
+}
+
+function resolverDadosItemPedido(
+  entrada: EntradaItemPedido,
+  produto: {
+    unidade: string;
+    embalagens: {
+      id: number;
+      unidade: string;
+      quantidadeBase: Prisma.Decimal;
+    }[];
+  },
+  snapshot?: { unidade: string | null; fator: Prisma.Decimal | null }
+) {
+  const quantidadeInformada =
+    normalizarQuantidadeCompra(entrada.quantidadeDigitada);
+  const precoInformado =
+    entrada.precoDigitado === ""
+      ? null
+      : normalizarMoeda(entrada.precoDigitado);
+  if (!quantidadeInformada || !precoInformado) {
+    throw erroDeRegra("Informe quantidade e preço válidos.");
+  }
+
+  const unidade = resolverUnidadePedido(
+    entrada.unidadeSelecionada,
+    produto.unidade,
+    produto.embalagens,
+    snapshot
+  );
+  if (unidade.fator.lte(0)) {
+    throw erroDeRegra("O fator de conversão da embalagem deve ser maior que zero.");
+  }
+  const quantidadeDecimal = new Prisma.Decimal(quantidadeInformada);
+  if (quantidadeDecimal.lte(0)) {
+    throw erroDeRegra("A quantidade deve ser maior que zero.");
+  }
+  const quantidade = quantidadeDecimal.mul(unidade.fator);
+  if (
+    quantidade.decimalPlaces() > 3 ||
+    quantidade.abs().greaterThan("999999999.999")
+  ) {
+    throw erroDeRegra(
+      "A quantidade convertida para a unidade-base deve ter até 3 casas decimais e no máximo 9 dígitos."
+    );
+  }
+
+  const precoUnitario = new Prisma.Decimal(precoInformado)
+    .div(unidade.fator)
+    .toDecimalPlaces(2);
+  if (precoUnitario.greaterThan("9999999999.99")) {
+    throw erroDeRegra("O preço convertido excede o limite permitido.");
+  }
+
+  return {
+    ...entrada,
+    quantidade: quantidade.toFixed(3),
+    precoUnitario: precoUnitario.toFixed(2),
+    quantidadeInformada,
+    precoInformado,
+    unidadeInformada: unidade.nome,
+    fatorConversao: unidade.fator.toFixed(3),
+  };
+}
+
+function lerItemPedido(formData: FormData): EntradaItemPedido | null {
   const produtoId = idPositivo(texto(formData, "produtoId"));
   const fornecedorId = idPositivo(texto(formData, "fornecedorId"));
-  const quantidadeTexto = texto(formData, "quantidade");
-  const precoTexto = texto(formData, "precoUnitario");
-  const quantidade = normalizarQuantidadeCompra(quantidadeTexto);
-  const precoUnitario =
-    precoTexto === "" ? null : normalizarMoeda(precoTexto);
-
-  if (!produtoId || !fornecedorId || !quantidade || !precoUnitario) {
-    return null;
-  }
-  const quantidadeDecimal = new Prisma.Decimal(quantidade);
-  if (quantidadeDecimal.lte(0)) return null;
+  if (!produtoId || !fornecedorId) return null;
 
   return {
     produtoId,
     fornecedorId,
-    quantidade,
-    precoUnitario,
+    quantidadeDigitada: texto(formData, "quantidade"),
+    precoDigitado: texto(formData, "precoUnitario"),
+    unidadeSelecionada: texto(formData, "unidadeSelecionada") || "BASE",
   };
 }
 
@@ -166,6 +267,10 @@ export async function criarRascunhosCompra(
     formDataItem.set("fornecedorId", texto(formData, `fornecedor_${produtoId}`));
     formDataItem.set("quantidade", texto(formData, `quantidade_${produtoId}`));
     formDataItem.set("precoUnitario", texto(formData, `preco_${produtoId}`));
+    formDataItem.set(
+      "unidadeSelecionada",
+      texto(formData, `unidade_${produtoId}`)
+    );
     return lerItemPedido(formDataItem);
   });
   if (itens.some((item) => item === null)) {
@@ -198,13 +303,27 @@ export async function criarRascunhosCompra(
 
       const produtos = await tx.produto.findMany({
         where: { id: { in: idsProdutos }, ativo: true },
-        select: { id: true },
+        select: {
+          id: true,
+          unidade: true,
+          embalagens: {
+            select: { id: true, unidade: true, quantidadeBase: true },
+          },
+        },
       });
       if (produtos.length !== idsProdutos.length) {
         throw erroDeRegra("Um ou mais produtos não estão disponíveis.");
       }
+      const produtosPorId = new Map(
+        produtos.map((produto) => [produto.id, produto])
+      );
+      const itensConvertidos = itensValidos.map((item) => {
+        const produto = produtosPorId.get(item.produtoId);
+        if (!produto) throw erroDeRegra("Um ou mais produtos não estão disponíveis.");
+        return resolverDadosItemPedido(item, produto);
+      });
 
-      for (const item of itensValidos) {
+      for (const item of itensConvertidos) {
         const vinculo = await tx.produtoFornecedor.findFirst({
           where: {
             produtoId: item.produtoId,
@@ -235,8 +354,8 @@ export async function criarRascunhosCompra(
         );
       }
 
-      const grupos = new Map<number, typeof itensValidos>();
-      for (const item of itensValidos) {
+      const grupos = new Map<number, typeof itensConvertidos>();
+      for (const item of itensConvertidos) {
         const grupo = grupos.get(item.fornecedorId) ?? [];
         grupo.push(item);
         grupos.set(item.fornecedorId, grupo);
@@ -259,6 +378,10 @@ export async function criarRascunhosCompra(
                   produtoId: item.produtoId,
                   quantidade: item.quantidade,
                   precoUnitario: item.precoUnitario,
+                  quantidadeInformada: item.quantidadeInformada,
+                  precoInformado: item.precoInformado,
+                  unidadeInformada: item.unidadeInformada,
+                  fatorConversao: item.fatorConversao,
                 })),
               },
             },
@@ -273,6 +396,10 @@ export async function criarRascunhosCompra(
               produtoId: item.produtoId,
               quantidade: item.quantidade,
               precoUnitario: item.precoUnitario,
+              quantidadeInformada: item.quantidadeInformada,
+              precoInformado: item.precoInformado,
+              unidadeInformada: item.unidadeInformada,
+              fatorConversao: item.fatorConversao,
             })),
           });
         }
@@ -294,6 +421,10 @@ export async function criarRascunhosCompra(
                 produtoId: item.produtoId,
                 quantidade: item.quantidade,
                 precoUnitario: item.precoUnitario,
+                quantidadeInformada: item.quantidadeInformada,
+                precoInformado: item.precoInformado,
+                unidadeInformada: item.unidadeInformada,
+                fatorConversao: item.fatorConversao,
               })),
             },
             usuarioId: usuario.id,
@@ -327,16 +458,7 @@ export async function salvarItemRascunho(
   if (!usuario) return { erroGeral: MENSAGEM_SEM_PERMISSAO };
   const pedidoId = idPositivo(texto(formData, "pedidoId"));
   const itemId = idPositivo(texto(formData, "itemId"));
-  const quantidade = normalizarQuantidadeCompra(texto(formData, "quantidade"));
-  const precoTexto = texto(formData, "precoUnitario");
-  const precoUnitario =
-    precoTexto === "" ? null : normalizarMoeda(precoTexto);
-  if (!pedidoId || !itemId || !quantidade || !precoUnitario) {
-    return { erroGeral: "Informe quantidade e preço válidos." };
-  }
-  if (new Prisma.Decimal(quantidade).lte(0)) {
-    return { erroGeral: "A quantidade deve ser maior que zero." };
-  }
+  if (!pedidoId || !itemId) return { erroGeral: "Item de pedido inválido." };
 
   try {
     await prisma.$transaction(async (tx) => {
@@ -347,12 +469,41 @@ export async function salvarItemRascunho(
           pedidoId,
           pedido: { is: { status: "RASCUNHO" } },
         },
-        include: { produto: { select: { nome: true } } },
+        include: {
+          pedido: { select: { fornecedorId: true } },
+          produto: {
+            select: {
+              nome: true,
+              unidade: true,
+              embalagens: {
+                select: { id: true, unidade: true, quantidadeBase: true },
+              },
+            },
+          },
+        },
       });
       if (!item) throw erroDeRegra("Somente itens de rascunhos podem ser alterados.");
+      const entrada: EntradaItemPedido = {
+        produtoId: item.produtoId,
+        fornecedorId: item.pedido.fornecedorId,
+        quantidadeDigitada: texto(formData, "quantidade"),
+        precoDigitado: texto(formData, "precoUnitario"),
+        unidadeSelecionada: texto(formData, "unidadeSelecionada") || "BASE",
+      };
+      const dadosItem = resolverDadosItemPedido(entrada, item.produto, {
+        unidade: item.unidadeInformada,
+        fator: item.fatorConversao,
+      });
       await tx.itemPedido.update({
         where: { id: item.id },
-        data: { quantidade, precoUnitario },
+        data: {
+          quantidade: dadosItem.quantidade,
+          precoUnitario: dadosItem.precoUnitario,
+          quantidadeInformada: dadosItem.quantidadeInformada,
+          precoInformado: dadosItem.precoInformado,
+          unidadeInformada: dadosItem.unidadeInformada,
+          fatorConversao: dadosItem.fatorConversao,
+        },
       });
       await registrarLog(
         {
@@ -364,8 +515,19 @@ export async function salvarItemRascunho(
             antes: {
               quantidade: item.quantidade.toString(),
               precoUnitario: item.precoUnitario.toString(),
+              quantidadeInformada: item.quantidadeInformada?.toString() ?? null,
+              precoInformado: item.precoInformado?.toString() ?? null,
+              unidadeInformada: item.unidadeInformada,
+              fatorConversao: item.fatorConversao?.toString() ?? null,
             },
-            depois: { quantidade, precoUnitario },
+            depois: {
+              quantidade: dadosItem.quantidade,
+              precoUnitario: dadosItem.precoUnitario,
+              quantidadeInformada: dadosItem.quantidadeInformada,
+              precoInformado: dadosItem.precoInformado,
+              unidadeInformada: dadosItem.unidadeInformada,
+              fatorConversao: dadosItem.fatorConversao,
+            },
           },
           usuarioId: usuario.id,
         },
@@ -454,7 +616,19 @@ export async function enviarPedidoCompra(
         where: { id: pedidoId },
         include: {
           fornecedor: { select: { nome: true } },
-          itens: { include: { produto: { select: { nome: true } } } },
+          itens: {
+            include: {
+              produto: {
+                select: {
+                  nome: true,
+                  unidade: true,
+                  embalagens: {
+                    select: { id: true, unidade: true, quantidadeBase: true },
+                  },
+                },
+              },
+            },
+          },
         },
       });
       if (!pedido || pedido.status !== "RASCUNHO") {
@@ -479,6 +653,9 @@ export async function enviarPedidoCompra(
           produtoId: item.produtoId,
           fornecedorId: pedido.fornecedorId,
           precoUnitario: item.precoUnitario,
+          precoInformado: item.precoInformado,
+          unidadeInformada: item.unidadeInformada,
+          fatorConversao: item.fatorConversao,
           data: agora,
           origem: "PAGO",
           pedidoId,
@@ -583,7 +760,19 @@ export async function receberPedidoCompra(
         where: { id: pedidoId },
         include: {
           fornecedor: { select: { nome: true } },
-          itens: { include: { produto: { select: { nome: true } } } },
+          itens: {
+            include: {
+              produto: {
+                select: {
+                  nome: true,
+                  unidade: true,
+                  embalagens: {
+                    select: { id: true, unidade: true, quantidadeBase: true },
+                  },
+                },
+              },
+            },
+          },
         },
       });
       if (!pedido || pedido.status !== "ENVIADO") {
@@ -600,23 +789,65 @@ export async function receberPedidoCompra(
 
       const recebimentos = pedido.itens.map((item) => {
         const quantidadeTexto = texto(formData, `receber_${item.id}`);
-        const quantidade =
+        const quantidadeInformada =
           quantidadeTexto === ""
             ? "0.000"
             : normalizarQuantidadeCompra(quantidadeTexto);
-        if (quantidade === null) {
+        if (quantidadeInformada === null) {
           throw erroDeRegra(
             `Informe uma quantidade válida para "${item.produto.nome}".`
           );
         }
-        const quantidadeDecimal = new Prisma.Decimal(quantidade);
+        const unidadeSelecionada =
+          texto(formData, `unidade_receber_${item.id}`) || "BASE";
+        let unidadeInformada = item.produto.unidade;
+        let fatorConversao = new Prisma.Decimal(1);
+        if (unidadeSelecionada !== "BASE") {
+          const embalagemId = /^EMB:(\d+)$/.exec(unidadeSelecionada);
+          const embalagem = embalagemId
+            ? item.produto.embalagens.find(
+                (opcao) => opcao.id === Number(embalagemId[1])
+              )
+            : undefined;
+          if (!embalagem || embalagem.quantidadeBase.lte(0)) {
+            throw erroDeRegra(
+              `Selecione uma embalagem válida para "${item.produto.nome}".`
+            );
+          }
+          if (
+            embalagem.unidade.trim().toLocaleUpperCase("pt-BR") ===
+            item.produto.unidade.trim().toLocaleUpperCase("pt-BR")
+          ) {
+            throw erroDeRegra(
+              `A embalagem selecionada para "${item.produto.nome}" é igual à unidade-base.`
+            );
+          }
+          unidadeInformada = embalagem.unidade;
+          fatorConversao = embalagem.quantidadeBase;
+        }
+        const quantidadeDigitada = new Prisma.Decimal(quantidadeInformada);
+        const quantidadeDecimal = quantidadeDigitada.mul(fatorConversao);
+        if (
+          quantidadeDecimal.decimalPlaces() > 3 ||
+          quantidadeDecimal.abs().greaterThan("999999999.999")
+        ) {
+          throw erroDeRegra(
+            `A conversão da quantidade de "${item.produto.nome}" excede 3 casas decimais ou o limite permitido.`
+          );
+        }
         const pendente = item.quantidade.sub(item.quantidadeRecebida);
         if (quantidadeDecimal.lt(0) || quantidadeDecimal.gt(pendente)) {
           throw erroDeRegra(
-            `A quantidade recebida de "${item.produto.nome}" não pode exceder o saldo pendente de ${pendente.toFixed(3)}.`
+            `A quantidade recebida de "${item.produto.nome}" não pode exceder o saldo pendente de ${pendente.toFixed(3)} ${item.produto.unidade}.`
           );
         }
-        return { item, quantidade: quantidadeDecimal };
+        return {
+          item,
+          quantidade: quantidadeDecimal,
+          quantidadeInformada: quantidadeDigitada,
+          unidadeInformada,
+          fatorConversao,
+        };
       });
       if (recebimentos.every((item) => item.quantidade.isZero())) {
         throw erroDeRegra("Informe ao menos uma quantidade recebida maior que zero.");
@@ -656,6 +887,9 @@ export async function receberPedidoCompra(
           itensLog.push({
             produtoId: item.produtoId,
             quantidadeRecebidaNestaOperacao: "0",
+            quantidadeInformada: recebimento.quantidadeInformada.toString(),
+            unidadeInformada: recebimento.unidadeInformada,
+            fatorConversao: recebimento.fatorConversao.toString(),
           });
           continue;
         }
@@ -693,6 +927,9 @@ export async function receberPedidoCompra(
         itensLog.push({
           produtoId: item.produtoId,
           quantidadeRecebidaNestaOperacao: quantidade.toString(),
+          quantidadeInformada: recebimento.quantidadeInformada.toString(),
+          unidadeInformada: recebimento.unidadeInformada,
+          fatorConversao: recebimento.fatorConversao.toString(),
           quantidadeRecebidaTotal: itemNovo.toString(),
         });
       }

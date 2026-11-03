@@ -93,10 +93,11 @@ Começam cadastrados os 3 locais abaixo, criados pelo script `scripts/seed.ts`:
 ## 5. Regras de fornecedores e preços
 
 - **RN-09. Muitos para muitos:** um produto pode ter **um ou vários fornecedores**, e um fornecedor vende vários produtos. A ligação (`produto_fornecedor`) guarda o código do produto no fornecedor e se ele está ativo. O vínculo só pode ser excluído permanentemente enquanto não houver preço registrado nem uso em compras; depois disso, pode ser desativado, mas deve ser mantido para preservar o histórico.
-- **RN-10. Histórico de preços:** todo preço fica em histórico, com: produto, fornecedor, preço unitário, data, **origem** e, se houver, o pedido de origem.
+- **RN-10. Histórico de preços:** todo preço fica em histórico, com: produto, fornecedor, preço equivalente por unidade-base, preço/unidade/fator informados (snapshot opcional), data, **origem** e, se houver, o pedido de origem. Cotações em embalagens diferentes são registros distintos e preservam o valor informado naquela embalagem.
   - Origem **pago:** gravado automaticamente ao **confirmar um pedido** (RN-18).
   - Origem **cotado:** digitado manualmente pelo comprador numa consulta, **sem pedido**.
-- **RN-11. Preço atual:** o preço atual de um produto em um fornecedor é o **registro mais recente** do histórico (por produto e fornecedor).
+  - Em pedidos, guardar também o preço, a unidade e o fator informados na embalagem. O preço unitário e a ordenação de fornecedores permanecem referenciados à unidade-base.
+- **RN-11. Preço atual:** para cada embalagem, o preço atual de um produto em um fornecedor é o **registro mais recente** daquela unidade comercial. Na comparação, considerar o menor equivalente por unidade-base entre os preços atuais das embalagens; exibir também a embalagem e o valor original da cotação. Registros antigos sem snapshot são tratados como preços na unidade-base.
 - **RN-12. Preço sugerido no pedido:** ao montar um pedido, o campo de preço unitário vem **preenchido com o preço atual** daquele fornecedor, e o comprador pode **editar na hora** se o valor mudou.
 
 ## 6. Regras de comparação e montagem do pedido
@@ -104,6 +105,7 @@ Começam cadastrados os 3 locais abaixo, criados pelo script `scripts/seed.ts`:
 - **RN-13. Critério único de escolha: menor preço unitário.** Para cada produto com situação **Crítico** ou **Comprar**, listar os fornecedores ativos vinculados, ordenados do **mais barato para o mais caro**, mostrando origem (pago ou cotado) e data de cada preço. O mais barato vem **pré-selecionado**.
 - **RN-14. Fornecedor sem preço:** aparece no fim da lista, marcado como "sem preço". Não é pré-selecionado.
 - **RN-15. Troca manual:** o comprador pode trocar o fornecedor escolhido e ajustar a quantidade de qualquer item.
+- **RN-15.1. Compra por embalagem:** a quantidade e o preço podem ser digitados na unidade-base ou em uma embalagem cadastrada para o produto. Validar no servidor a embalagem e o fator, converter a quantidade para a unidade-base e registrar preço, quantidade, unidade e fator originais como snapshot do item. O preço unitário convertido alimenta o histórico por unidade-base; o subtotal do pedido usa quantidade informada × preço informado para preservar o valor digitado, inclusive quando a divisão do preço por embalagem gerar dízima. Se a troca de unidade arredondar o preço para centavos, exigir que o comprador confira ou ajuste o preço antes de salvar.
 - **RN-16. Um pedido por fornecedor:** os itens são agrupados pelo fornecedor escolhido e o sistema gera **um pedido (rascunho) por fornecedor**, mostrando o total de cada um.
 - **RN-17. Pedido mínimo do fornecedor:** cada fornecedor tem um campo opcional de **valor mínimo de pedido** (e opcionalmente frete). Se o total do pedido ficar **abaixo do mínimo**, o sistema **avisa e não bloqueia**, e sugere incluir outros produtos baixos que **esse fornecedor também vende** e que ainda não estão no pedido.
 - **RN-18. Evitar duplicidade:** um produto já incluído no pedido de um fornecedor aparece marcado como **"já em pedido"** nas listas dos outros fornecedores.
@@ -125,7 +127,7 @@ O status **Rascunho** não representa uma aprovação pendente: não existe etap
 
 - **RN-19. Confirmar pedido** (Rascunho para Enviado) grava no histórico o **preço de cada item** (origem *pago*), registra data de compra e comprador.
 - **RN-20. Edição:** só pedidos em *Rascunho* podem ter itens alterados. Pedidos *Enviado*, *Recebido* ou *Cancelado* ficam travados para edição de itens.
-- **RN-21. Recebimento:** usuário com permissão informa a quantidade recebida por item (pode ser **parcial**) e o local de entrada (padrão: Galpão). Cada recebimento soma somente a quantidade efetivamente informada ao estoque (RN-04), na mesma transação que atualiza o item, o pedido, as movimentações e o log. O status permanece *Enviado* até todas as quantidades serem recebidas; então muda para *Recebido*. Não se pode receber pedido cancelado ou já recebido.
+- **RN-21. Recebimento:** usuário com permissão informa a quantidade recebida por item (pode ser **parcial**) em unidade-base ou em embalagem cadastrada para o produto, e o local de entrada (padrão: Galpão). Embalagens cujo rótulo seja igual à unidade-base não são oferecidas; o servidor valida a embalagem e converte a quantidade para unidade-base antes das validações. Cada recebimento soma somente a quantidade convertida ao estoque (RN-04), na mesma transação que atualiza o item, o pedido, as movimentações e o log. O log preserva também quantidade, embalagem e fator informados. O status permanece *Enviado* até todas as quantidades serem recebidas; então muda para *Recebido*. Não se pode receber pedido cancelado ou já recebido.
 
 ## 7.1. Regras de transferência entre locais de estoque
 
@@ -183,10 +185,10 @@ A transferência permite que um usuário solicite produtos de um local de estoqu
 | `log_sistema` | 1 | módulo, ação, descrição, registro_id, dados (JSON), usuario, criado_em (histórico geral) |
 | `fornecedor` | 2 | nome, contato, prazo_entrega_dias, valor_minimo_pedido, frete (opcionais), ativo |
 | `produto_fornecedor` | 2 | produto, fornecedor, codigo_no_fornecedor, ativo |
-| `historico_preco` | 2 e 3 | produto, fornecedor, preco_unitario, data, origem (pago ou cotado), pedido (opcional). Módulo 2 grava os preços *cotados*; o Módulo 3 grava os *pagos* |
+| `historico_preco` | 2 e 3 | produto, fornecedor, preco_unitario na unidade-base, preço/unidade/fator informados (snapshot opcional), data, origem (pago ou cotado), pedido (opcional). Módulo 2 grava os preços *cotados*; o Módulo 3 grava os *pagos* |
 | `configuracao_compra` | 3 | produto (único), consumo informado/período/unidade/fator, consumo_diario na unidade-base, estoque de segurança e máximo na unidade-base e os respectivos valores informados/unidades/fatores |
 | `pedido_compra` | 3 | comprador, fornecedor, data_compra, previsao_entrega, status, observacao |
-| `item_pedido` | 3 | pedido, produto, quantidade, preco_unitario, quantidade_recebida |
+| `item_pedido` | 3 | pedido, produto, quantidade e preco_unitario na unidade-base, quantidade/preço/unidade/fator informados (snapshot), quantidade_recebida na unidade-base |
 | `pedido_transferencia` | 4 | origem, destino, solicitante, criado_em, status, enviado_por, enviado_em, recebido_por, recebido_em |
 | `item_transferencia` | 4 | transferencia, produto, quantidade_solicitada/quantidade_enviada/quantidade_recebida na unidade-base; quantidade_*_informada, unidade_* e fator_* preservam os valores escolhidos em cada etapa; justificativa_envio e justificativa_divergencia |
 

@@ -10,6 +10,7 @@ import {
   formatarDataBr,
   formatarQuantidade,
 } from "@/app/produtos/tipos";
+import { precosAtuais } from "@/app/fornecedores/tipos";
 
 import BuscaFiltrosPedidos from "../BuscaFiltrosPedidos";
 import FormularioComparativo, {
@@ -159,8 +160,13 @@ export default async function CompararReposicaoPage({
         historicoPrecos: {
           orderBy: [{ data: "desc" }, { id: "desc" }],
           select: {
+            id: true,
+            produtoId: true,
             fornecedorId: true,
             precoUnitario: true,
+            precoInformado: true,
+            unidadeInformada: true,
+            fatorConversao: true,
             origem: true,
             data: true,
           },
@@ -210,25 +216,29 @@ export default async function CompararReposicaoPage({
       prazoEntregaDias,
     });
 
-    const precoAtualPorFornecedor = new Map<
-      number,
-      (typeof produto.historicoPrecos)[number]
-    >();
-    for (const preco of produto.historicoPrecos) {
-      if (!precoAtualPorFornecedor.has(preco.fornecedorId)) {
-        precoAtualPorFornecedor.set(preco.fornecedorId, preco);
-      }
-    }
+    const precoAtualPorFornecedor = precosAtuais(produto.historicoPrecos);
 
     const fornecedores = produto.fornecedores.map((vinculo) => {
-      const precoAtual = precoAtualPorFornecedor.get(vinculo.fornecedorId);
+      const precoAtual = precoAtualPorFornecedor.get(
+        `${produto.id}-${vinculo.fornecedorId}`
+      );
       return {
         id: vinculo.fornecedorId,
         nome: vinculo.fornecedor.nome,
-        precoDecimal: precoAtual?.precoUnitario ?? null,
-        precoUnitario: precoAtual
-          ? formatarDecimalBr(precoAtual.precoUnitario.toString())
+        precoDecimal: precoAtual
+          ? new Prisma.Decimal(precoAtual.precoUnitario)
           : null,
+        precoUnitario: precoAtual
+          ? Number(precoAtual.precoUnitario).toLocaleString("pt-BR", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 6,
+            })
+          : null,
+        precoInformado: precoAtual?.precoInformado
+          ? formatarDecimalBr(precoAtual.precoInformado)
+          : null,
+        unidadeInformada: precoAtual?.unidadeInformada ?? null,
+        fatorConversao: precoAtual?.fatorConversao ?? null,
         origem: precoAtual?.origem ?? null,
         data: precoAtual ? formatarDataBr(precoAtual.data) : null,
       };
@@ -251,6 +261,14 @@ export default async function CompararReposicaoPage({
         produtoId: produto.id,
         nome: produto.nome,
         unidade: produto.unidade,
+        unidades: [
+          { valor: "BASE", unidade: produto.unidade, fator: "1" },
+          ...produto.embalagens.map((embalagem) => ({
+            valor: `EMB:${embalagem.id}`,
+            unidade: embalagem.unidade,
+            fator: embalagem.quantidadeBase.toString(),
+          })),
+        ],
         situacao: indicadores.situacao,
         estoqueDisponivel: formatarDecimalBr(estoqueDisponivel.toString()),
         estoqueDisponivelValor: estoqueDisponivel,
@@ -284,6 +302,9 @@ export default async function CompararReposicaoPage({
           id: fornecedor.id,
           nome: fornecedor.nome,
           precoUnitario: fornecedor.precoUnitario,
+          precoInformado: fornecedor.precoInformado,
+          unidadeInformada: fornecedor.unidadeInformada,
+          fatorConversao: fornecedor.fatorConversao,
           origem: fornecedor.origem,
           data: fornecedor.data,
         })),
@@ -337,6 +358,7 @@ export default async function CompararReposicaoPage({
     produtoId: linha.produtoId,
     nome: linha.nome,
     unidade: linha.unidade,
+    unidades: linha.unidades,
     situacao: linha.situacao,
     estoqueDisponivel: linha.estoqueDisponivel,
     embalagensEstoque: linha.embalagensEstoque,

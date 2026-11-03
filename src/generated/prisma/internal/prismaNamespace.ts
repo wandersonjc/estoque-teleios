@@ -2448,6 +2448,9 @@ export const HistoricoPrecoScalarFieldEnum = {
   produtoId: 'produtoId',
   fornecedorId: 'fornecedorId',
   precoUnitario: 'precoUnitario',
+  precoInformado: 'precoInformado',
+  unidadeInformada: 'unidadeInformada',
+  fatorConversao: 'fatorConversao',
   data: 'data',
   origem: 'origem',
   pedidoId: 'pedidoId'
@@ -2528,6 +2531,10 @@ export const ItemPedidoScalarFieldEnum = {
   produtoId: 'produtoId',
   quantidade: 'quantidade',
   precoUnitario: 'precoUnitario',
+  quantidadeInformada: 'quantidadeInformada',
+  precoInformado: 'precoInformado',
+  unidadeInformada: 'unidadeInformada',
+  fatorConversao: 'fatorConversao',
   quantidadeRecebida: 'quantidadeRecebida'
 } as const
 

@@ -31,6 +31,8 @@ export type HistoricoPrecoAvgAggregateOutputType = {
   produtoId: number | null
   fornecedorId: number | null
   precoUnitario: runtime.Decimal | null
+  precoInformado: runtime.Decimal | null
+  fatorConversao: runtime.Decimal | null
   pedidoId: number | null
 }
 
@@ -39,6 +41,8 @@ export type HistoricoPrecoSumAggregateOutputType = {
   produtoId: number | null
   fornecedorId: number | null
   precoUnitario: runtime.Decimal | null
+  precoInformado: runtime.Decimal | null
+  fatorConversao: runtime.Decimal | null
   pedidoId: number | null
 }
 
@@ -47,6 +51,9 @@ export type HistoricoPrecoMinAggregateOutputType = {
   produtoId: number | null
   fornecedorId: number | null
   precoUnitario: runtime.Decimal | null
+  precoInformado: runtime.Decimal | null
+  unidadeInformada: string | null
+  fatorConversao: runtime.Decimal | null
   data: Date | null
   origem: $Enums.OrigemPreco | null
   pedidoId: number | null
@@ -57,6 +64,9 @@ export type HistoricoPrecoMaxAggregateOutputType = {
   produtoId: number | null
   fornecedorId: number | null
   precoUnitario: runtime.Decimal | null
+  precoInformado: runtime.Decimal | null
+  unidadeInformada: string | null
+  fatorConversao: runtime.Decimal | null
   data: Date | null
   origem: $Enums.OrigemPreco | null
   pedidoId: number | null
@@ -67,6 +77,9 @@ export type HistoricoPrecoCountAggregateOutputType = {
   produtoId: number
   fornecedorId: number
   precoUnitario: number
+  precoInformado: number
+  unidadeInformada: number
+  fatorConversao: number
   data: number
   origem: number
   pedidoId: number
@@ -79,6 +92,8 @@ export type HistoricoPrecoAvgAggregateInputType = {
   produtoId?: true
   fornecedorId?: true
   precoUnitario?: true
+  precoInformado?: true
+  fatorConversao?: true
   pedidoId?: true
 }
 
@@ -87,6 +102,8 @@ export type HistoricoPrecoSumAggregateInputType = {
   produtoId?: true
   fornecedorId?: true
   precoUnitario?: true
+  precoInformado?: true
+  fatorConversao?: true
   pedidoId?: true
 }
 
@@ -95,6 +112,9 @@ export type HistoricoPrecoMinAggregateInputType = {
   produtoId?: true
   fornecedorId?: true
   precoUnitario?: true
+  precoInformado?: true
+  unidadeInformada?: true
+  fatorConversao?: true
   data?: true
   origem?: true
   pedidoId?: true
@@ -105,6 +125,9 @@ export type HistoricoPrecoMaxAggregateInputType = {
   produtoId?: true
   fornecedorId?: true
   precoUnitario?: true
+  precoInformado?: true
+  unidadeInformada?: true
+  fatorConversao?: true
   data?: true
   origem?: true
   pedidoId?: true
@@ -115,6 +138,9 @@ export type HistoricoPrecoCountAggregateInputType = {
   produtoId?: true
   fornecedorId?: true
   precoUnitario?: true
+  precoInformado?: true
+  unidadeInformada?: true
+  fatorConversao?: true
   data?: true
   origem?: true
   pedidoId?: true
@@ -212,6 +238,9 @@ export type HistoricoPrecoGroupByOutputType = {
   produtoId: number
   fornecedorId: number
   precoUnitario: runtime.Decimal
+  precoInformado: runtime.Decimal | null
+  unidadeInformada: string | null
+  fatorConversao: runtime.Decimal | null
   data: Date
   origem: $Enums.OrigemPreco
   pedidoId: number | null
@@ -245,6 +274,9 @@ export type HistoricoPrecoWhereInput = {
   produtoId?: Prisma.IntFilter<"HistoricoPreco"> | number
   fornecedorId?: Prisma.IntFilter<"HistoricoPreco"> | number
   precoUnitario?: Prisma.DecimalFilter<"HistoricoPreco"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  precoInformado?: Prisma.DecimalNullableFilter<"HistoricoPreco"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  unidadeInformada?: Prisma.StringNullableFilter<"HistoricoPreco"> | string | null
+  fatorConversao?: Prisma.DecimalNullableFilter<"HistoricoPreco"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   data?: Prisma.DateTimeFilter<"HistoricoPreco"> | Date | string
   origem?: Prisma.EnumOrigemPrecoFilter<"HistoricoPreco"> | $Enums.OrigemPreco
   pedidoId?: Prisma.IntNullableFilter<"HistoricoPreco"> | number | null
@@ -258,6 +290,9 @@ export type HistoricoPrecoOrderByWithRelationInput = {
   produtoId?: Prisma.SortOrder
   fornecedorId?: Prisma.SortOrder
   precoUnitario?: Prisma.SortOrder
+  precoInformado?: Prisma.SortOrderInput | Prisma.SortOrder
+  unidadeInformada?: Prisma.SortOrderInput | Prisma.SortOrder
+  fatorConversao?: Prisma.SortOrderInput | Prisma.SortOrder
   data?: Prisma.SortOrder
   origem?: Prisma.SortOrder
   pedidoId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -274,6 +309,9 @@ export type HistoricoPrecoWhereUniqueInput = Prisma.AtLeast<{
   produtoId?: Prisma.IntFilter<"HistoricoPreco"> | number
   fornecedorId?: Prisma.IntFilter<"HistoricoPreco"> | number
   precoUnitario?: Prisma.DecimalFilter<"HistoricoPreco"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  precoInformado?: Prisma.DecimalNullableFilter<"HistoricoPreco"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  unidadeInformada?: Prisma.StringNullableFilter<"HistoricoPreco"> | string | null
+  fatorConversao?: Prisma.DecimalNullableFilter<"HistoricoPreco"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   data?: Prisma.DateTimeFilter<"HistoricoPreco"> | Date | string
   origem?: Prisma.EnumOrigemPrecoFilter<"HistoricoPreco"> | $Enums.OrigemPreco
   pedidoId?: Prisma.IntNullableFilter<"HistoricoPreco"> | number | null
@@ -287,6 +325,9 @@ export type HistoricoPrecoOrderByWithAggregationInput = {
   produtoId?: Prisma.SortOrder
   fornecedorId?: Prisma.SortOrder
   precoUnitario?: Prisma.SortOrder
+  precoInformado?: Prisma.SortOrderInput | Prisma.SortOrder
+  unidadeInformada?: Prisma.SortOrderInput | Prisma.SortOrder
+  fatorConversao?: Prisma.SortOrderInput | Prisma.SortOrder
   data?: Prisma.SortOrder
   origem?: Prisma.SortOrder
   pedidoId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -305,6 +346,9 @@ export type HistoricoPrecoScalarWhereWithAggregatesInput = {
   produtoId?: Prisma.IntWithAggregatesFilter<"HistoricoPreco"> | number
   fornecedorId?: Prisma.IntWithAggregatesFilter<"HistoricoPreco"> | number
   precoUnitario?: Prisma.DecimalWithAggregatesFilter<"HistoricoPreco"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  precoInformado?: Prisma.DecimalNullableWithAggregatesFilter<"HistoricoPreco"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  unidadeInformada?: Prisma.StringNullableWithAggregatesFilter<"HistoricoPreco"> | string | null
+  fatorConversao?: Prisma.DecimalNullableWithAggregatesFilter<"HistoricoPreco"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   data?: Prisma.DateTimeWithAggregatesFilter<"HistoricoPreco"> | Date | string
   origem?: Prisma.EnumOrigemPrecoWithAggregatesFilter<"HistoricoPreco"> | $Enums.OrigemPreco
   pedidoId?: Prisma.IntNullableWithAggregatesFilter<"HistoricoPreco"> | number | null
@@ -312,6 +356,9 @@ export type HistoricoPrecoScalarWhereWithAggregatesInput = {
 
 export type HistoricoPrecoCreateInput = {
   precoUnitario: runtime.Decimal | runtime.DecimalJsLike | number | string
+  precoInformado?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  unidadeInformada?: string | null
+  fatorConversao?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   data: Date | string
   origem: $Enums.OrigemPreco
   produto: Prisma.ProdutoCreateNestedOneWithoutHistoricoPrecosInput
@@ -324,6 +371,9 @@ export type HistoricoPrecoUncheckedCreateInput = {
   produtoId: number
   fornecedorId: number
   precoUnitario: runtime.Decimal | runtime.DecimalJsLike | number | string
+  precoInformado?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  unidadeInformada?: string | null
+  fatorConversao?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   data: Date | string
   origem: $Enums.OrigemPreco
   pedidoId?: number | null
@@ -331,6 +381,9 @@ export type HistoricoPrecoUncheckedCreateInput = {
 
 export type HistoricoPrecoUpdateInput = {
   precoUnitario?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  precoInformado?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  unidadeInformada?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatorConversao?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   origem?: Prisma.EnumOrigemPrecoFieldUpdateOperationsInput | $Enums.OrigemPreco
   produto?: Prisma.ProdutoUpdateOneRequiredWithoutHistoricoPrecosNestedInput
@@ -343,6 +396,9 @@ export type HistoricoPrecoUncheckedUpdateInput = {
   produtoId?: Prisma.IntFieldUpdateOperationsInput | number
   fornecedorId?: Prisma.IntFieldUpdateOperationsInput | number
   precoUnitario?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  precoInformado?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  unidadeInformada?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatorConversao?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   origem?: Prisma.EnumOrigemPrecoFieldUpdateOperationsInput | $Enums.OrigemPreco
   pedidoId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -353,6 +409,9 @@ export type HistoricoPrecoCreateManyInput = {
   produtoId: number
   fornecedorId: number
   precoUnitario: runtime.Decimal | runtime.DecimalJsLike | number | string
+  precoInformado?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  unidadeInformada?: string | null
+  fatorConversao?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   data: Date | string
   origem: $Enums.OrigemPreco
   pedidoId?: number | null
@@ -360,6 +419,9 @@ export type HistoricoPrecoCreateManyInput = {
 
 export type HistoricoPrecoUpdateManyMutationInput = {
   precoUnitario?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  precoInformado?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  unidadeInformada?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatorConversao?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   origem?: Prisma.EnumOrigemPrecoFieldUpdateOperationsInput | $Enums.OrigemPreco
 }
@@ -369,6 +431,9 @@ export type HistoricoPrecoUncheckedUpdateManyInput = {
   produtoId?: Prisma.IntFieldUpdateOperationsInput | number
   fornecedorId?: Prisma.IntFieldUpdateOperationsInput | number
   precoUnitario?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  precoInformado?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  unidadeInformada?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatorConversao?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   origem?: Prisma.EnumOrigemPrecoFieldUpdateOperationsInput | $Enums.OrigemPreco
   pedidoId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -389,6 +454,9 @@ export type HistoricoPrecoCountOrderByAggregateInput = {
   produtoId?: Prisma.SortOrder
   fornecedorId?: Prisma.SortOrder
   precoUnitario?: Prisma.SortOrder
+  precoInformado?: Prisma.SortOrder
+  unidadeInformada?: Prisma.SortOrder
+  fatorConversao?: Prisma.SortOrder
   data?: Prisma.SortOrder
   origem?: Prisma.SortOrder
   pedidoId?: Prisma.SortOrder
@@ -399,6 +467,8 @@ export type HistoricoPrecoAvgOrderByAggregateInput = {
   produtoId?: Prisma.SortOrder
   fornecedorId?: Prisma.SortOrder
   precoUnitario?: Prisma.SortOrder
+  precoInformado?: Prisma.SortOrder
+  fatorConversao?: Prisma.SortOrder
   pedidoId?: Prisma.SortOrder
 }
 
@@ -407,6 +477,9 @@ export type HistoricoPrecoMaxOrderByAggregateInput = {
   produtoId?: Prisma.SortOrder
   fornecedorId?: Prisma.SortOrder
   precoUnitario?: Prisma.SortOrder
+  precoInformado?: Prisma.SortOrder
+  unidadeInformada?: Prisma.SortOrder
+  fatorConversao?: Prisma.SortOrder
   data?: Prisma.SortOrder
   origem?: Prisma.SortOrder
   pedidoId?: Prisma.SortOrder
@@ -417,6 +490,9 @@ export type HistoricoPrecoMinOrderByAggregateInput = {
   produtoId?: Prisma.SortOrder
   fornecedorId?: Prisma.SortOrder
   precoUnitario?: Prisma.SortOrder
+  precoInformado?: Prisma.SortOrder
+  unidadeInformada?: Prisma.SortOrder
+  fatorConversao?: Prisma.SortOrder
   data?: Prisma.SortOrder
   origem?: Prisma.SortOrder
   pedidoId?: Prisma.SortOrder
@@ -427,6 +503,8 @@ export type HistoricoPrecoSumOrderByAggregateInput = {
   produtoId?: Prisma.SortOrder
   fornecedorId?: Prisma.SortOrder
   precoUnitario?: Prisma.SortOrder
+  precoInformado?: Prisma.SortOrder
+  fatorConversao?: Prisma.SortOrder
   pedidoId?: Prisma.SortOrder
 }
 
@@ -562,6 +640,9 @@ export type HistoricoPrecoUncheckedUpdateManyWithoutPedidoCompraNestedInput = {
 
 export type HistoricoPrecoCreateWithoutProdutoInput = {
   precoUnitario: runtime.Decimal | runtime.DecimalJsLike | number | string
+  precoInformado?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  unidadeInformada?: string | null
+  fatorConversao?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   data: Date | string
   origem: $Enums.OrigemPreco
   fornecedor: Prisma.FornecedorCreateNestedOneWithoutHistoricoPrecosInput
@@ -572,6 +653,9 @@ export type HistoricoPrecoUncheckedCreateWithoutProdutoInput = {
   id?: number
   fornecedorId: number
   precoUnitario: runtime.Decimal | runtime.DecimalJsLike | number | string
+  precoInformado?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  unidadeInformada?: string | null
+  fatorConversao?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   data: Date | string
   origem: $Enums.OrigemPreco
   pedidoId?: number | null
@@ -611,6 +695,9 @@ export type HistoricoPrecoScalarWhereInput = {
   produtoId?: Prisma.IntFilter<"HistoricoPreco"> | number
   fornecedorId?: Prisma.IntFilter<"HistoricoPreco"> | number
   precoUnitario?: Prisma.DecimalFilter<"HistoricoPreco"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  precoInformado?: Prisma.DecimalNullableFilter<"HistoricoPreco"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  unidadeInformada?: Prisma.StringNullableFilter<"HistoricoPreco"> | string | null
+  fatorConversao?: Prisma.DecimalNullableFilter<"HistoricoPreco"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   data?: Prisma.DateTimeFilter<"HistoricoPreco"> | Date | string
   origem?: Prisma.EnumOrigemPrecoFilter<"HistoricoPreco"> | $Enums.OrigemPreco
   pedidoId?: Prisma.IntNullableFilter<"HistoricoPreco"> | number | null
@@ -618,6 +705,9 @@ export type HistoricoPrecoScalarWhereInput = {
 
 export type HistoricoPrecoCreateWithoutFornecedorInput = {
   precoUnitario: runtime.Decimal | runtime.DecimalJsLike | number | string
+  precoInformado?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  unidadeInformada?: string | null
+  fatorConversao?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   data: Date | string
   origem: $Enums.OrigemPreco
   produto: Prisma.ProdutoCreateNestedOneWithoutHistoricoPrecosInput
@@ -628,6 +718,9 @@ export type HistoricoPrecoUncheckedCreateWithoutFornecedorInput = {
   id?: number
   produtoId: number
   precoUnitario: runtime.Decimal | runtime.DecimalJsLike | number | string
+  precoInformado?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  unidadeInformada?: string | null
+  fatorConversao?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   data: Date | string
   origem: $Enums.OrigemPreco
   pedidoId?: number | null
@@ -661,6 +754,9 @@ export type HistoricoPrecoUpdateManyWithWhereWithoutFornecedorInput = {
 
 export type HistoricoPrecoCreateWithoutPedidoCompraInput = {
   precoUnitario: runtime.Decimal | runtime.DecimalJsLike | number | string
+  precoInformado?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  unidadeInformada?: string | null
+  fatorConversao?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   data: Date | string
   origem: $Enums.OrigemPreco
   produto: Prisma.ProdutoCreateNestedOneWithoutHistoricoPrecosInput
@@ -672,6 +768,9 @@ export type HistoricoPrecoUncheckedCreateWithoutPedidoCompraInput = {
   produtoId: number
   fornecedorId: number
   precoUnitario: runtime.Decimal | runtime.DecimalJsLike | number | string
+  precoInformado?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  unidadeInformada?: string | null
+  fatorConversao?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   data: Date | string
   origem: $Enums.OrigemPreco
 }
@@ -706,6 +805,9 @@ export type HistoricoPrecoCreateManyProdutoInput = {
   id?: number
   fornecedorId: number
   precoUnitario: runtime.Decimal | runtime.DecimalJsLike | number | string
+  precoInformado?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  unidadeInformada?: string | null
+  fatorConversao?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   data: Date | string
   origem: $Enums.OrigemPreco
   pedidoId?: number | null
@@ -713,6 +815,9 @@ export type HistoricoPrecoCreateManyProdutoInput = {
 
 export type HistoricoPrecoUpdateWithoutProdutoInput = {
   precoUnitario?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  precoInformado?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  unidadeInformada?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatorConversao?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   origem?: Prisma.EnumOrigemPrecoFieldUpdateOperationsInput | $Enums.OrigemPreco
   fornecedor?: Prisma.FornecedorUpdateOneRequiredWithoutHistoricoPrecosNestedInput
@@ -723,6 +828,9 @@ export type HistoricoPrecoUncheckedUpdateWithoutProdutoInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   fornecedorId?: Prisma.IntFieldUpdateOperationsInput | number
   precoUnitario?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  precoInformado?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  unidadeInformada?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatorConversao?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   origem?: Prisma.EnumOrigemPrecoFieldUpdateOperationsInput | $Enums.OrigemPreco
   pedidoId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -732,6 +840,9 @@ export type HistoricoPrecoUncheckedUpdateManyWithoutProdutoInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   fornecedorId?: Prisma.IntFieldUpdateOperationsInput | number
   precoUnitario?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  precoInformado?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  unidadeInformada?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatorConversao?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   origem?: Prisma.EnumOrigemPrecoFieldUpdateOperationsInput | $Enums.OrigemPreco
   pedidoId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -741,6 +852,9 @@ export type HistoricoPrecoCreateManyFornecedorInput = {
   id?: number
   produtoId: number
   precoUnitario: runtime.Decimal | runtime.DecimalJsLike | number | string
+  precoInformado?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  unidadeInformada?: string | null
+  fatorConversao?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   data: Date | string
   origem: $Enums.OrigemPreco
   pedidoId?: number | null
@@ -748,6 +862,9 @@ export type HistoricoPrecoCreateManyFornecedorInput = {
 
 export type HistoricoPrecoUpdateWithoutFornecedorInput = {
   precoUnitario?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  precoInformado?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  unidadeInformada?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatorConversao?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   origem?: Prisma.EnumOrigemPrecoFieldUpdateOperationsInput | $Enums.OrigemPreco
   produto?: Prisma.ProdutoUpdateOneRequiredWithoutHistoricoPrecosNestedInput
@@ -758,6 +875,9 @@ export type HistoricoPrecoUncheckedUpdateWithoutFornecedorInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   produtoId?: Prisma.IntFieldUpdateOperationsInput | number
   precoUnitario?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  precoInformado?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  unidadeInformada?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatorConversao?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   origem?: Prisma.EnumOrigemPrecoFieldUpdateOperationsInput | $Enums.OrigemPreco
   pedidoId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -767,6 +887,9 @@ export type HistoricoPrecoUncheckedUpdateManyWithoutFornecedorInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   produtoId?: Prisma.IntFieldUpdateOperationsInput | number
   precoUnitario?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  precoInformado?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  unidadeInformada?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatorConversao?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   origem?: Prisma.EnumOrigemPrecoFieldUpdateOperationsInput | $Enums.OrigemPreco
   pedidoId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -777,12 +900,18 @@ export type HistoricoPrecoCreateManyPedidoCompraInput = {
   produtoId: number
   fornecedorId: number
   precoUnitario: runtime.Decimal | runtime.DecimalJsLike | number | string
+  precoInformado?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  unidadeInformada?: string | null
+  fatorConversao?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   data: Date | string
   origem: $Enums.OrigemPreco
 }
 
 export type HistoricoPrecoUpdateWithoutPedidoCompraInput = {
   precoUnitario?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  precoInformado?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  unidadeInformada?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatorConversao?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   origem?: Prisma.EnumOrigemPrecoFieldUpdateOperationsInput | $Enums.OrigemPreco
   produto?: Prisma.ProdutoUpdateOneRequiredWithoutHistoricoPrecosNestedInput
@@ -794,6 +923,9 @@ export type HistoricoPrecoUncheckedUpdateWithoutPedidoCompraInput = {
   produtoId?: Prisma.IntFieldUpdateOperationsInput | number
   fornecedorId?: Prisma.IntFieldUpdateOperationsInput | number
   precoUnitario?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  precoInformado?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  unidadeInformada?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatorConversao?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   origem?: Prisma.EnumOrigemPrecoFieldUpdateOperationsInput | $Enums.OrigemPreco
 }
@@ -803,6 +935,9 @@ export type HistoricoPrecoUncheckedUpdateManyWithoutPedidoCompraInput = {
   produtoId?: Prisma.IntFieldUpdateOperationsInput | number
   fornecedorId?: Prisma.IntFieldUpdateOperationsInput | number
   precoUnitario?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  precoInformado?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  unidadeInformada?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatorConversao?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   origem?: Prisma.EnumOrigemPrecoFieldUpdateOperationsInput | $Enums.OrigemPreco
 }
@@ -814,6 +949,9 @@ export type HistoricoPrecoSelect<ExtArgs extends runtime.Types.Extensions.Intern
   produtoId?: boolean
   fornecedorId?: boolean
   precoUnitario?: boolean
+  precoInformado?: boolean
+  unidadeInformada?: boolean
+  fatorConversao?: boolean
   data?: boolean
   origem?: boolean
   pedidoId?: boolean
@@ -827,6 +965,9 @@ export type HistoricoPrecoSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   produtoId?: boolean
   fornecedorId?: boolean
   precoUnitario?: boolean
+  precoInformado?: boolean
+  unidadeInformada?: boolean
+  fatorConversao?: boolean
   data?: boolean
   origem?: boolean
   pedidoId?: boolean
@@ -840,6 +981,9 @@ export type HistoricoPrecoSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   produtoId?: boolean
   fornecedorId?: boolean
   precoUnitario?: boolean
+  precoInformado?: boolean
+  unidadeInformada?: boolean
+  fatorConversao?: boolean
   data?: boolean
   origem?: boolean
   pedidoId?: boolean
@@ -853,12 +997,15 @@ export type HistoricoPrecoSelectScalar = {
   produtoId?: boolean
   fornecedorId?: boolean
   precoUnitario?: boolean
+  precoInformado?: boolean
+  unidadeInformada?: boolean
+  fatorConversao?: boolean
   data?: boolean
   origem?: boolean
   pedidoId?: boolean
 }
 
-export type HistoricoPrecoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "produtoId" | "fornecedorId" | "precoUnitario" | "data" | "origem" | "pedidoId", ExtArgs["result"]["historicoPreco"]>
+export type HistoricoPrecoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "produtoId" | "fornecedorId" | "precoUnitario" | "precoInformado" | "unidadeInformada" | "fatorConversao" | "data" | "origem" | "pedidoId", ExtArgs["result"]["historicoPreco"]>
 export type HistoricoPrecoInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   produto?: boolean | Prisma.ProdutoDefaultArgs<ExtArgs>
   fornecedor?: boolean | Prisma.FornecedorDefaultArgs<ExtArgs>
@@ -887,6 +1034,9 @@ export type $HistoricoPrecoPayload<ExtArgs extends runtime.Types.Extensions.Inte
     produtoId: number
     fornecedorId: number
     precoUnitario: runtime.Decimal
+    precoInformado: runtime.Decimal | null
+    unidadeInformada: string | null
+    fatorConversao: runtime.Decimal | null
     data: Date
     origem: $Enums.OrigemPreco
     pedidoId: number | null
@@ -1320,6 +1470,9 @@ export interface HistoricoPrecoFieldRefs {
   readonly produtoId: Prisma.FieldRef<"HistoricoPreco", 'Int'>
   readonly fornecedorId: Prisma.FieldRef<"HistoricoPreco", 'Int'>
   readonly precoUnitario: Prisma.FieldRef<"HistoricoPreco", 'Decimal'>
+  readonly precoInformado: Prisma.FieldRef<"HistoricoPreco", 'Decimal'>
+  readonly unidadeInformada: Prisma.FieldRef<"HistoricoPreco", 'String'>
+  readonly fatorConversao: Prisma.FieldRef<"HistoricoPreco", 'Decimal'>
   readonly data: Prisma.FieldRef<"HistoricoPreco", 'DateTime'>
   readonly origem: Prisma.FieldRef<"HistoricoPreco", 'OrigemPreco'>
   readonly pedidoId: Prisma.FieldRef<"HistoricoPreco", 'Int'>

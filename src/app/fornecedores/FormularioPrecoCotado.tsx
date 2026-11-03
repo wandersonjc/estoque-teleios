@@ -5,7 +5,7 @@
 // Sem pedido: o comprador informa o preço de uma consulta.
 // ============================================================
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 
 import { registrarPrecoCotado } from "./actions";
 import {
@@ -14,12 +14,23 @@ import {
   type EstadoFormularioPreco,
 } from "./tipos";
 
-type Opcao = { id: number; nome: string };
+type UnidadePreco = {
+  valor: string;
+  unidade: string;
+  fator: string;
+};
+
+type Opcao = {
+  id: number;
+  nome: string;
+  unidades?: UnidadePreco[];
+};
 
 type Props = {
   produtoId?: number;
   fornecedorId?: number;
   opcoes: Opcao[];
+  unidades?: UnidadePreco[];
   retorno: string;
 };
 
@@ -31,6 +42,7 @@ export default function FormularioPrecoCotado({
   produtoId,
   fornecedorId,
   opcoes,
+  unidades,
   retorno,
 }: Props) {
   const [estado, enviar, enviando] = useActionState<
@@ -42,6 +54,16 @@ export default function FormularioPrecoCotado({
 
   const erros = estado.erros ?? {};
   const escolherProduto = produtoId === undefined;
+  const [opcaoSelecionada, setOpcaoSelecionada] = useState(
+    escolherProduto
+      ? String(produtoId ?? "")
+      : String(fornecedorId ?? "")
+  );
+  const [unidadeSelecionada, setUnidadeSelecionada] = useState("BASE");
+  const unidadesDisponiveis =
+    opcoes.find((opcao) => String(opcao.id) === opcaoSelecionada)?.unidades ??
+    unidades ??
+    [];
 
   return (
     <form action={enviar} className="flex flex-col gap-3">
@@ -75,11 +97,11 @@ export default function FormularioPrecoCotado({
             <select
               id={escolherProduto ? "produtoId-preco" : "fornecedorId-preco"}
               name={escolherProduto ? "produtoId" : "fornecedorId"}
-              defaultValue={
-                escolherProduto
-                  ? estado.valores.produtoId
-                  : estado.valores.fornecedorId
-              }
+              value={opcaoSelecionada}
+              onChange={(evento) => {
+                setOpcaoSelecionada(evento.target.value);
+                setUnidadeSelecionada("BASE");
+              }}
               className={CLASSE_CAMPO}
             >
               <option value="">Selecione</option>
@@ -99,8 +121,40 @@ export default function FormularioPrecoCotado({
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="flex flex-col gap-1">
+              <label htmlFor="unidadeSelecionada-preco" className={CLASSE_ROTULO}>
+                Embalagem do preço
+              </label>
+              <select
+                id="unidadeSelecionada-preco"
+                name="unidadeSelecionada"
+                value={unidadeSelecionada}
+                onChange={(evento) => setUnidadeSelecionada(evento.target.value)}
+                className={CLASSE_CAMPO}
+                aria-invalid={erros.unidadeSelecionada ? true : undefined}
+              >
+                {unidadesDisponiveis.length === 0 ? (
+                  <option value="BASE">Selecione primeiro um produto ou fornecedor</option>
+                ) : (
+                  unidadesDisponiveis.map((unidade) => (
+                    <option key={unidade.valor} value={unidade.valor}>
+                      {unidade.unidade}
+                      {Number(unidade.fator) !== 1
+                        ? ` (${new Intl.NumberFormat("pt-BR", {
+                            maximumFractionDigits: 3,
+                          }).format(Number(unidade.fator))} ${unidadesDisponiveis[0]?.unidade})`
+                        : ""}
+                    </option>
+                  ))
+                )}
+              </select>
+              {erros.unidadeSelecionada && (
+                <p className="text-sm text-red-700">{erros.unidadeSelecionada}</p>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-1">
               <label htmlFor="precoUnitario" className={CLASSE_ROTULO}>
-                Preço unitário (R$)
+                Preço por unidade selecionada (R$)
               </label>
               <input
                 id="precoUnitario"

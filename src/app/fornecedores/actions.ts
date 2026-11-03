@@ -136,6 +136,7 @@ function tratarErroBanco(erro: unknown, contexto: string): string {
 function revalidarFornecedores(produtoId?: number, fornecedorId?: number) {
   revalidatePath("/fornecedores");
   if (fornecedorId) revalidatePath(`/fornecedores/${fornecedorId}`);
+  revalidatePath("/pedidos/comparar");
   revalidatePath("/produtos");
   if (produtoId) revalidatePath(`/produtos/${produtoId}`);
 }
@@ -674,6 +675,7 @@ function lerValoresPreco(formData: FormData): ValoresFormularioPreco {
     produtoId: texto(formData, "produtoId"),
     fornecedorId: texto(formData, "fornecedorId"),
     precoUnitario: texto(formData, "precoUnitario"),
+    unidadeSelecionada: texto(formData, "unidadeSelecionada") || "BASE",
     data: texto(formData, "data"),
   };
 }
@@ -711,7 +713,16 @@ export async function registrarPrecoCotado(
       },
     },
     include: {
-      produto: { select: { id: true, nome: true } },
+      produto: {
+        select: {
+          id: true,
+          nome: true,
+          unidade: true,
+          embalagens: {
+            select: { id: true, unidade: true, quantidadeBase: true },
+          },
+        },
+      },
       fornecedor: { select: { id: true, nome: true } },
     },
   });
@@ -724,13 +735,50 @@ export async function registrarPrecoCotado(
     };
   }
 
+  let unidadeInformada = vinculo.produto.unidade;
+  let fatorConversao = new Prisma.Decimal(1);
+  if (valores.unidadeSelecionada !== "BASE") {
+    const embalagemId = /^EMB:(\d+)$/.exec(valores.unidadeSelecionada);
+    const embalagem = embalagemId
+      ? vinculo.produto.embalagens.find(
+          (item) => item.id === Number(embalagemId[1])
+        )
+      : undefined;
+    if (!embalagem || embalagem.quantidadeBase.lte(0)) {
+      return {
+        erros: {
+          unidadeSelecionada:
+            "Selecione uma embalagem válida cadastrada para este produto.",
+        },
+        valores,
+      };
+    }
+    unidadeInformada = embalagem.unidade;
+    fatorConversao = embalagem.quantidadeBase;
+  }
+  const precoBase = new Prisma.Decimal(preco!)
+    .div(fatorConversao)
+    .toDecimalPlaces(6);
+  if (precoBase.greaterThan("9999999999.999999")) {
+    return {
+      erros: {
+        precoUnitario:
+          "O preço convertido para a unidade-base excede o limite permitido.",
+      },
+      valores,
+    };
+  }
+
   try {
     await prisma.$transaction(async (tx) => {
       const registro = await tx.historicoPreco.create({
         data: {
           produtoId: vinculo.produtoId,
           fornecedorId: vinculo.fornecedorId,
-          precoUnitario: preco!,
+          precoUnitario: precoBase,
+          precoInformado: preco!,
+          unidadeInformada,
+          fatorConversao,
           data: data!,
           origem: "COTADO",
         },
@@ -740,13 +788,16 @@ export async function registrarPrecoCotado(
         {
           modulo: "FORNECEDORES",
           acao: "CRIAR",
-          descricao: `Preço cotado de ${formatarMoeda(preco!)} para "${vinculo.produto.nome}" no fornecedor "${vinculo.fornecedor.nome}"`,
+          descricao: `Preço cotado de ${formatarMoeda(preco!)} por ${unidadeInformada} (${formatarMoeda(precoBase.toString())} por ${vinculo.produto.unidade}) para "${vinculo.produto.nome}" no fornecedor "${vinculo.fornecedor.nome}"`,
           registroId: registro.id,
           usuarioId: atual.id,
           dados: {
             produtoId: vinculo.produtoId,
             fornecedorId: vinculo.fornecedorId,
-            precoUnitario: preco,
+            precoUnitario: precoBase.toString(),
+            precoInformado: preco,
+            unidadeInformada,
+            fatorConversao: fatorConversao.toString(),
             data: valores.data,
             origem: "COTADO",
           },
@@ -795,18 +846,32 @@ export async function atualizarPrecoHistorico(
   ) {
     redirect(retornoPrecoComAviso(retorno, fornecedorId, "precoErro"));
   }
+  const fatorConversao =
+    registro.fatorConversao ?? new Prisma.Decimal(1);
+  if (fatorConversao.lte(0)) {
+    redirect(retornoPrecoComAviso(retorno, fornecedorId, "precoErro"));
+  }
+  const precoBase = new Prisma.Decimal(preco)
+    .div(fatorConversao)
+    .toDecimalPlaces(6);
+  if (precoBase.greaterThan("9999999999.999999")) {
+    redirect(retornoPrecoComAviso(retorno, fornecedorId, "precoErro"));
+  }
 
   try {
     await prisma.$transaction(async (tx) => {
       await tx.historicoPreco.update({
         where: { id },
-        data: { precoUnitario: preco },
+        data: {
+          precoUnitario: precoBase,
+          precoInformado: preco,
+        },
       });
       await registrarLog(
         {
           modulo: "FORNECEDORES",
           acao: "ALTERAR",
-          descricao: `Alterou preço cotado de ${formatarMoeda(registro.precoUnitario.toString())} para ${formatarMoeda(preco)} de "${registro.produto.nome}" no fornecedor "${registro.fornecedor.nome}"`,
+          descricao: `Alterou preço cotado de ${formatarMoeda((registro.precoInformado ?? registro.precoUnitario).toString())} para ${formatarMoeda(preco)} por ${registro.unidadeInformada ?? "unidade-base"} de "${registro.produto.nome}" no fornecedor "${registro.fornecedor.nome}"`,
           registroId: id,
           usuarioId: atual.id,
           dados: {
@@ -814,7 +879,10 @@ export async function atualizarPrecoHistorico(
             fornecedorId,
             origem: registro.origem,
             precoAnterior: registro.precoUnitario.toString(),
-            precoNovo: preco,
+            precoInformadoAnterior:
+              registro.precoInformado?.toString() ?? null,
+            precoInformadoNovo: preco,
+            precoNovoNaUnidadeBase: precoBase.toString(),
           },
         },
         tx

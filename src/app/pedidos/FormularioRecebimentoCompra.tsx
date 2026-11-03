@@ -1,19 +1,120 @@
 "use client";
 
 import { useActionState } from "react";
+import { useState } from "react";
 
 import BotaoAcao from "@/components/BotaoAcao";
 
 import { receberPedidoCompra } from "./actions";
+import { converterEntradaUnidade } from "./conversao-unidade";
 
 type ItemRecebimento = {
   id: number;
   produto: string;
   unidade: string;
+  unidades: { valor: string; unidade: string; fator: string }[];
   quantidade: string;
   quantidadeRecebida: string;
   pendente: string;
 };
+
+function CampoRecebimento({
+  item,
+  disabled,
+}: {
+  item: ItemRecebimento;
+  disabled: boolean;
+}) {
+  const [unidadeSelecionada, setUnidadeSelecionada] = useState("BASE");
+  const [quantidade, setQuantidade] = useState(item.pendente);
+  const [erroConversao, setErroConversao] = useState("");
+  const unidadeAtual =
+    item.unidades.find((unidade) => unidade.valor === unidadeSelecionada) ??
+    item.unidades[0];
+  const quantidadeNaUnidadeBase = converterEntradaUnidade(
+    quantidade,
+    "",
+    unidadeAtual?.fator ?? "1",
+    "1"
+  )?.quantidade;
+
+  function alterarUnidade(novaUnidadeValor: string) {
+    const novaUnidade = item.unidades.find(
+      (unidade) => unidade.valor === novaUnidadeValor
+    );
+    if (!unidadeAtual || !novaUnidade) return;
+    const convertido = converterEntradaUnidade(
+      quantidade,
+      "",
+      unidadeAtual.fator,
+      novaUnidade.fator
+    );
+    if (!convertido) {
+      setUnidadeSelecionada(novaUnidadeValor);
+      setQuantidade("");
+      setErroConversao(
+        "A quantidade anterior não é exata nesta embalagem e foi limpa. Informe a quantidade que chegou."
+      );
+      return;
+    }
+    setUnidadeSelecionada(novaUnidadeValor);
+    setQuantidade(convertido.quantidade);
+    setErroConversao("");
+  }
+
+  return (
+    <div className="flex flex-col gap-1">
+      <label htmlFor={`receber-${item.id}`} className="text-sm font-medium text-zinc-800">
+        Receber agora ({unidadeAtual.unidade})
+      </label>
+      <div className="flex gap-2">
+        <select
+          name={`unidade_receber_${item.id}`}
+          value={unidadeSelecionada}
+          disabled={disabled}
+          onChange={(evento) => alterarUnidade(evento.target.value)}
+          aria-label={`Unidade de recebimento de ${item.produto}`}
+          className="h-12 min-w-24 rounded-lg border border-zinc-300 bg-white px-2 text-sm disabled:bg-zinc-100"
+        >
+          {item.unidades.map((unidade) => (
+            <option key={unidade.valor} value={unidade.valor}>
+              {unidade.unidade}
+              {Number(unidade.fator) !== 1
+                ? ` (${new Intl.NumberFormat("pt-BR", {
+                    maximumFractionDigits: 3,
+                  }).format(Number(unidade.fator))} ${item.unidade})`
+                : ""}
+            </option>
+          ))}
+        </select>
+        <input
+          id={`receber-${item.id}`}
+          name={`receber_${item.id}`}
+          type="text"
+          inputMode="decimal"
+          value={quantidade}
+          disabled={disabled}
+          onChange={(evento) => {
+            setQuantidade(evento.target.value);
+            setErroConversao("");
+          }}
+          aria-label={`Quantidade recebida de ${item.produto} em ${unidadeAtual.unidade}`}
+          className="h-12 min-w-0 flex-1 rounded-lg border border-zinc-300 px-3 text-base disabled:bg-zinc-100"
+        />
+      </div>
+      {Number(unidadeAtual.fator) !== 1 && (
+        <span className="text-xs text-zinc-500">
+          Na unidade-base: {quantidadeNaUnidadeBase ?? "—"} {item.unidade}
+        </span>
+      )}
+      {erroConversao && (
+        <span role="status" className="text-xs text-amber-800">
+          {erroConversao}
+        </span>
+      )}
+    </div>
+  );
+}
 
 export default function FormularioRecebimentoCompra({
   pedidoId,
@@ -75,19 +176,7 @@ export default function FormularioRecebimentoCompra({
                 {item.quantidadeRecebida} {item.unidade} · falta: {item.pendente} {item.unidade}
               </p>
             </div>
-            <div className="flex flex-col gap-1">
-              <label htmlFor={`receber-${item.id}`} className="text-sm font-medium text-zinc-800">
-                Receber agora ({item.unidade})
-              </label>
-              <input
-                id={`receber-${item.id}`}
-                name={`receber_${item.id}`}
-                type="text"
-                inputMode="decimal"
-                defaultValue={item.pendente}
-                className="h-12 rounded-lg border border-zinc-300 px-3 text-base"
-              />
-            </div>
+            <CampoRecebimento item={item} disabled={pendente} />
           </div>
         ))}
         <BotaoAcao className="h-12 w-full rounded-lg bg-zinc-900 px-4 text-base font-medium text-white sm:w-auto">

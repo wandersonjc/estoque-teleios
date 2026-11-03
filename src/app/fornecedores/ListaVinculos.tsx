@@ -28,6 +28,7 @@ export type VinculoNaTela = {
   produtoId: number;
   fornecedorId: number;
   nome: string;
+  unidadeBase: string;
 };
 
 export type ItemHistoricoPreco = {
@@ -35,6 +36,9 @@ export type ItemHistoricoPreco = {
   produtoId: number;
   fornecedorId: number;
   precoUnitario: string;
+  precoInformado: string | null;
+  unidadeInformada: string | null;
+  unidadeBase: string;
   data: Date;
   origem: OrigemPrecoTela;
   nomePar: string;
@@ -87,11 +91,18 @@ export default function ListaVinculos({
                 </p>
                 {preco ? (
                   <p className="mt-1 text-sm text-zinc-700">
-                    Preço atual:{" "}
-                    <strong>{formatarMoeda(preco.precoUnitario)}</strong>
-                    {" · "}
+                    Melhor preço equivalente:{" "}
+                    <strong>{formatarMoeda(preco.precoUnitario)} / {vinculo.unidadeBase}</strong>
+                    {preco.precoInformado && preco.unidadeInformada ? (
+                      <span className="block text-xs text-zinc-600">
+                        Cotado por {formatarMoeda(preco.precoInformado)} /{" "}
+                        {preco.unidadeInformada}
+                      </span>
+                    ) : null}
+                    <span className="block text-xs text-zinc-600">
                     {ROTULO_ORIGEM_PRECO[preco.origem]} em{" "}
                     {formatarDataPreco(preco.data)}
+                    </span>
                   </p>
                 ) : (
                   <p className="mt-1 text-sm text-zinc-500">Sem preço</p>
@@ -178,7 +189,17 @@ export default function ListaVinculos({
                 <ul className="mt-2 flex flex-col gap-1 text-sm text-zinc-700">
                   {historicoDoPar.map((item) => (
                     <li key={item.id}>
-                      {formatarMoeda(item.precoUnitario)} ·{" "}
+                      {formatarMoeda(item.precoInformado ?? item.precoUnitario)} /{" "}
+                      {item.unidadeInformada ?? item.unidadeBase}
+                      {item.unidadeInformada &&
+                      item.unidadeInformada !== item.unidadeBase ? (
+                        <span className="text-zinc-500">
+                          {" "}
+                          (equivale a {formatarMoeda(item.precoUnitario)} /{" "}
+                          {item.unidadeBase})
+                        </span>
+                      ) : null}
+                      {" · "}
                       {ROTULO_ORIGEM_PRECO[item.origem]} ·{" "}
                       {formatarDataPreco(item.data)}
                     </li>

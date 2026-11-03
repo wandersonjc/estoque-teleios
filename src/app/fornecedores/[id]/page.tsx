@@ -30,6 +30,7 @@ import {
   formatarDataPreco,
   formatarMoeda,
   formatarMoedaOpcional,
+  opcoesUnidadePreco,
   precosAtuais,
   ROTULO_ORIGEM_PRECO,
 } from "../tipos";
@@ -67,13 +68,23 @@ export default async function PaginaEditarFornecedor({
     prisma.produtoFornecedor.findMany({
       where: { fornecedorId: numero },
       include: {
-        produto: { select: { id: true, nome: true, ativo: true } },
+        produto: {
+          select: {
+            id: true,
+            nome: true,
+            ativo: true,
+            unidade: true,
+            embalagens: {
+              select: { id: true, unidade: true, quantidadeBase: true },
+            },
+          },
+        },
       },
       orderBy: { id: "asc" },
     }),
     prisma.historicoPreco.findMany({
       where: { fornecedorId: numero },
-      include: { produto: { select: { nome: true } } },
+      include: { produto: { select: { nome: true, unidade: true } } },
       orderBy: [{ data: "desc" }, { id: "desc" }],
     }),
     prisma.produto.findMany({
@@ -92,6 +103,10 @@ export default async function PaginaEditarFornecedor({
   const produtosParaPreco = vinculos.map((item) => ({
     id: item.produtoId,
     nome: item.produto.nome,
+    unidades: opcoesUnidadePreco(
+      item.produto.unidade,
+      item.produto.embalagens
+    ),
   }));
 
   const produtoPedido = valorUnico(avisos.produto);
@@ -385,12 +400,16 @@ export default async function PaginaEditarFornecedor({
                   produtoId: item.produtoId,
                   fornecedorId: item.fornecedorId,
                   nome: item.produto.nome,
+                  unidadeBase: item.produto.unidade,
                 }))}
                 historico={historico.map((item) => ({
                   id: item.id,
                   produtoId: item.produtoId,
                   fornecedorId: item.fornecedorId,
                   precoUnitario: item.precoUnitario.toString(),
+                  precoInformado: item.precoInformado?.toString() ?? null,
+                  unidadeInformada: item.unidadeInformada,
+                  unidadeBase: item.produto.unidade,
                   data: item.data,
                   origem: item.origem,
                   nomePar: item.produto.nome,
@@ -563,9 +582,18 @@ export default async function PaginaEditarFornecedor({
                           <CelulaPrecoHistorico
                             id={item.id}
                             fornecedorId={fornecedor.id}
-                            precoUnitario={item.precoUnitario.toString()}
+                            precoUnitario={(item.precoInformado ?? item.precoUnitario).toString()}
                             origem={item.origem}
-                            precoFormatado={formatarMoeda(item.precoUnitario.toString())}
+                            precoFormatado={formatarMoeda(
+                              (item.precoInformado ?? item.precoUnitario).toString()
+                            )}
+                            unidadeInformada={
+                              item.unidadeInformada ?? item.produto.unidade
+                            }
+                            precoBaseFormatado={formatarMoeda(
+                              item.precoUnitario.toString()
+                            )}
+                            unidadeBase={item.produto.unidade}
                             retorno={retornoPreco}
                             podeGerenciar={podeCotar}
                           />
