@@ -80,7 +80,7 @@ export default function MatrizPermissoes({
             Nenhum usuário encontrado.
           </p>
         ) : (
-          <ul className="mt-3 flex max-h-64 flex-col gap-2 overflow-y-auto">
+          <ul className="mt-3 grid max-h-64 grid-cols-2 gap-2 overflow-y-auto md:grid-cols-4 lg:grid-cols-6">
             {filtrados.map((usuario) => {
               const selecionado = usuario.id === usuarioSelecionado?.id;
               return (
