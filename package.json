@@ -9,7 +9,8 @@
     "lint": "eslint",
     "db:seed": "tsx scripts/seed.ts",
     "db:migrar-embalagens": "tsx scripts/migrar-embalagens.ts",
-    "db:sync-permissoes": "tsx scripts/sincronizar-permissoes.ts"
+    "db:sync-permissoes": "tsx scripts/sincronizar-permissoes.ts",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1161.0",
@@ -36,6 +37,7 @@
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.4.3",
+    "patch-package": "^8.0.1",
     "prisma": "^7.10.1",
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
