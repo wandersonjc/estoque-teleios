@@ -239,7 +239,7 @@ export default function BuscaFiltrosLista({
           Carregando...
         </div>
       ) : (
-        <div onClick={capturarNavegacaoDaLista}>{children}</div>
+        <div onClickCapture={capturarNavegacaoDaLista}>{children}</div>
       )}
     </div>
   );

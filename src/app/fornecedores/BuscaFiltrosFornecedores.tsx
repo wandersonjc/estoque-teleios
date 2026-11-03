@@ -313,7 +313,7 @@ export default function BuscaFiltrosFornecedores({
           Carregando...
         </div>
       ) : (
-        <div onClick={capturarNavegacaoDaLista}>{children}</div>
+        <div onClickCapture={capturarNavegacaoDaLista}>{children}</div>
       )}
     </div>
   );
