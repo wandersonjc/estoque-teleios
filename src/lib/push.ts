@@ -51,7 +51,6 @@ function statusDoErro(erro: unknown) {
 function mensagemDoErro(erro: unknown) {
   const status = statusDoErro(erro);
   if (status !== undefined) return `Serviço push respondeu HTTP ${status}.`;
-  if (erro instanceof Error) return erro.message.slice(0, 500);
   return "Falha desconhecida ao enviar push.";
 }
 
@@ -171,6 +170,10 @@ export async function processarFilaPush(
       }
 
       const final = entrega.tentativas >= MAX_TENTATIVAS;
+      console.warn(
+        `Entrega push ${id} falhou (HTTP ${status ?? "sem status"}); ` +
+          `${final ? "limite de tentativas atingido" : "será retentada"}.`
+      );
       const minutosAteNovaTentativa = Math.min(
         360,
         2 ** Math.min(entrega.tentativas - 1, 8)
@@ -190,11 +193,14 @@ export async function processarFilaPush(
       });
       if (final) {
         resumo.falhas += 1;
-        console.error(`Entrega push ${id} falhou após tentativas.`, erro);
       } else {
         resumo.retentativas += 1;
       }
     }
+  }
+
+  if (resumo.processadas > 0) {
+    console.info("Resumo do processamento push:", resumo);
   }
 
   return resumo;
