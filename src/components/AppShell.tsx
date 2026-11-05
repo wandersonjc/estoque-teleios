@@ -150,6 +150,29 @@ function IconeNavegacao({ href }: { href: string }) {
   );
 }
 
+function rotuloGrupoMenu(grupo: ItemMenu[]): string | null {
+  if (grupo.some((item) => item.href === "/dashboard")) return null;
+  if (
+    grupo.some((item) =>
+      ["/produtos", "/locais", "/fornecedores"].includes(item.href)
+    )
+  ) {
+    return "Cadastros";
+  }
+  if (grupo.some((item) => ["/pedidos", "/transferencias"].includes(item.href))) {
+    return "Operações";
+  }
+  if (
+    grupo.some((item) =>
+      ["/cargos", "/funcoes", "/usuarios", "/permissoes"].includes(item.href)
+    )
+  ) {
+    return "Equipe e acessos";
+  }
+  if (grupo.some((item) => item.href === "/historico")) return "Auditoria";
+  return null;
+}
+
 export default function AppShell({
   children,
   gruposDoMenu,
@@ -182,42 +205,55 @@ export default function AppShell({
   function renderizarNavegacao(movel = false) {
     return (
       <nav aria-label="Navegação principal" className="flex flex-col">
-        {gruposDoMenu.map((grupo, indice) => (
-          <div key={grupo[0].href}>
-            {indice > 0 && (
-              <hr
-                role="separator"
-                className="my-3 border-zinc-200"
-              />
-            )}
-            <div className="flex flex-col gap-1">
-              {grupo.map((item) => {
-                const ativo =
-                  pathname === item.href || pathname.startsWith(`${item.href}/`);
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    title={menuRecolhido && !movel ? item.rotulo : undefined}
-                    aria-current={ativo ? "page" : undefined}
-                    onClick={() => setMenuMovelAberto(false)}
-                    className={`group flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors ${
-                      ativo
-                        ? "bg-[#002855] text-white shadow-sm"
-                        : "text-zinc-700 hover:bg-blue-50 hover:text-[#002855]"
-                    } ${menuRecolhido && !movel ? "justify-center px-2" : ""}`}
-                  >
-                    <IconeNavegacao href={item.href} />
-                    {(!menuRecolhido || movel) && <span>{item.rotulo}</span>}
-                    {ativo && (!menuRecolhido || movel) && (
-                      <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[#ff5a1f]" />
-                    )}
-                  </Link>
-                );
-              })}
+        {gruposDoMenu.map((grupo, indice) => {
+          const tituloGrupo = rotuloGrupoMenu(grupo);
+          const mostrarTitulo = (!menuRecolhido || movel) && tituloGrupo;
+          return (
+            <div key={grupo[0].href}>
+              {indice > 0 && (
+                <hr
+                  role="separator"
+                  className="my-3 border-zinc-200"
+                />
+              )}
+              {mostrarTitulo && (
+                <p className="mb-1 px-3 text-xs font-normal text-zinc-500">
+                  {tituloGrupo}
+                </p>
+              )}
+              <div
+                className={`flex flex-col gap-1 ${
+                  mostrarTitulo ? "ml-2" : ""
+                }`}
+              >
+                {grupo.map((item) => {
+                  const ativo =
+                    pathname === item.href || pathname.startsWith(`${item.href}/`);
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      title={menuRecolhido && !movel ? item.rotulo : undefined}
+                      aria-current={ativo ? "page" : undefined}
+                      onClick={() => setMenuMovelAberto(false)}
+                      className={`group flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors ${
+                        ativo
+                          ? "bg-[#002855] text-white shadow-sm"
+                          : "text-zinc-700 hover:bg-blue-50 hover:text-[#002855]"
+                      } ${menuRecolhido && !movel ? "justify-center px-2" : ""}`}
+                    >
+                      <IconeNavegacao href={item.href} />
+                      {(!menuRecolhido || movel) && <span>{item.rotulo}</span>}
+                      {ativo && (!menuRecolhido || movel) && (
+                        <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[#ff5a1f]" />
+                      )}
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </nav>
     );
   }
