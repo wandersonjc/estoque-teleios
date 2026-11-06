@@ -6,14 +6,18 @@
 // ============================================================
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import BotaoAcao from "@/components/BotaoAcao";
 import CampoImagem from "@/components/CampoImagem";
 
 import {
   LIMITE_CONTATO_FORNECEDOR,
+  LIMITE_EMAIL_FORNECEDOR,
   LIMITE_NOME_FORNECEDOR,
+  LIMITE_NOME_REPRESENTANTE,
+  LIMITE_SITE_FORNECEDOR,
   VALORES_FORNECEDOR_VAZIOS,
+  formatarWhatsApp,
   type EstadoFormularioFornecedor,
   type ValoresFormularioFornecedor,
 } from "./tipos";
@@ -34,6 +38,40 @@ type Props = {
 const CLASSE_CAMPO =
   "h-12 w-full rounded-lg border border-zinc-300 bg-white px-3 text-base text-zinc-900 outline-none focus:border-zinc-900";
 const CLASSE_ROTULO = "text-base font-medium text-zinc-800";
+
+function CampoWhatsApp({
+  valorInicial,
+  erro,
+}: {
+  valorInicial: string;
+  erro?: string;
+}) {
+  const [whatsapp, setWhatsapp] = useState(formatarWhatsApp(valorInicial));
+
+  return (
+    <div className="flex flex-col gap-1">
+      <label htmlFor="whatsapp" className={CLASSE_ROTULO}>
+        WhatsApp
+      </label>
+      <input
+        id="whatsapp"
+        name="whatsapp"
+        type="tel"
+        inputMode="numeric"
+        autoComplete="tel"
+        maxLength={16}
+        value={whatsapp}
+        onChange={(evento) =>
+          setWhatsapp(formatarWhatsApp(evento.currentTarget.value))
+        }
+        aria-invalid={erro ? true : undefined}
+        placeholder="(99) 99999-9999"
+        className={CLASSE_CAMPO}
+      />
+      {erro && <p className="text-sm text-red-700">{erro}</p>}
+    </div>
+  );
+}
 
 export default function FormularioFornecedor({
   acao,
@@ -87,9 +125,73 @@ export default function FormularioFornecedor({
             {erros.nome && <p className="text-sm text-red-700">{erros.nome}</p>}
           </div>
 
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="flex flex-col gap-1">
+              <label htmlFor="nomeRepresentante" className={CLASSE_ROTULO}>
+                Nome do Representante
+              </label>
+              <input
+                id="nomeRepresentante"
+                name="nomeRepresentante"
+                type="text"
+                maxLength={LIMITE_NOME_REPRESENTANTE}
+                defaultValue={estado.valores.nomeRepresentante}
+                aria-invalid={erros.nomeRepresentante ? true : undefined}
+                className={CLASSE_CAMPO}
+              />
+              {erros.nomeRepresentante && (
+                <p className="text-sm text-red-700">{erros.nomeRepresentante}</p>
+              )}
+            </div>
+
+            <CampoWhatsApp
+              key={estado.valores.whatsapp}
+              valorInicial={estado.valores.whatsapp}
+              erro={erros.whatsapp}
+            />
+
+            <div className="flex flex-col gap-1">
+              <label htmlFor="email" className={CLASSE_ROTULO}>
+                E-mail
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                maxLength={LIMITE_EMAIL_FORNECEDOR}
+                defaultValue={estado.valores.email}
+                aria-invalid={erros.email ? true : undefined}
+                className={CLASSE_CAMPO}
+              />
+              {erros.email && (
+                <p className="text-sm text-red-700">{erros.email}</p>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label htmlFor="site" className={CLASSE_ROTULO}>
+                Site
+              </label>
+              <input
+                id="site"
+                name="site"
+                type="url"
+                maxLength={LIMITE_SITE_FORNECEDOR}
+                defaultValue={estado.valores.site}
+                aria-invalid={erros.site ? true : undefined}
+                placeholder="https://..."
+                className={CLASSE_CAMPO}
+              />
+              {erros.site && (
+                <p className="text-sm text-red-700">{erros.site}</p>
+              )}
+            </div>
+          </div>
+
           <div className="flex flex-col gap-1">
             <label htmlFor="contato" className={CLASSE_ROTULO}>
-              Contato
+              Mais informações
             </label>
             <textarea
               id="contato"
@@ -98,7 +200,7 @@ export default function FormularioFornecedor({
               maxLength={LIMITE_CONTATO_FORNECEDOR}
               defaultValue={estado.valores.contato}
               aria-invalid={erros.contato ? true : undefined}
-              placeholder="Telefone, e-mail, nome do vendedor..."
+              placeholder="Informações adicionais sobre o fornecedor..."
               className="w-full rounded-lg border border-zinc-300 bg-white p-3 text-base text-zinc-900 outline-none focus:border-zinc-900"
             />
             {erros.contato && (

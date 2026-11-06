@@ -183,6 +183,10 @@ export type EmbalagemProdutoScalarFieldEnum = (typeof EmbalagemProdutoScalarFiel
 export const FornecedorScalarFieldEnum = {
   id: 'id',
   nome: 'nome',
+  nomeRepresentante: 'nomeRepresentante',
+  whatsapp: 'whatsapp',
+  email: 'email',
+  site: 'site',
   contato: 'contato',
   imagemChave: 'imagemChave',
   prazoEntregaDias: 'prazoEntregaDias',

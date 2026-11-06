@@ -78,6 +78,27 @@ verificado igual ao e-mail de um usuário já cadastrado e ativo. Usuários não
 cadastrados ou inativos não conseguem entrar; as permissões permanecem sendo
 as já atribuídas na matriz de permissões do Átria.
 
+### Relatórios automáticos de erros (Brevo)
+
+Quando uma tela de erro inesperado for exibida, o Átria envia à equipe de
+suporte um e-mail para `wandersonjc@gmail.com` com um anexo `.txt` contendo os
+detalhes técnicos disponíveis no navegador. Segredos comuns são removidos do
+relatório antes do envio. A tela confirma o envio somente quando a API da Brevo
+aceita a mensagem.
+
+No painel da Brevo, crie uma chave de API e cadastre/verifique o endereço de
+remetente autorizado. Configure estas variáveis no `.env` local:
+
+```env
+BREVO_API_KEY=chave-da-api
+BREVO_SENDER_EMAIL=remetente-verificado@seudominio.com
+BREVO_SENDER_NAME=Atria
+```
+
+`BREVO_SENDER_NAME` é opcional. Configure as mesmas variáveis no gerenciador de
+segredos da hospedagem e reinicie a aplicação após alterar as configurações.
+Não compartilhe nem publique a chave da API.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

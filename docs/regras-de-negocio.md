@@ -93,6 +93,7 @@ Começam cadastrados os 3 locais abaixo, criados pelo script `scripts/seed.ts`:
 ## 5. Regras de fornecedores e preços
 
 - **RN-09. Muitos para muitos:** um produto pode ter **um ou vários fornecedores**, e um fornecedor vende vários produtos. A ligação (`produto_fornecedor`) guarda o código do produto no fornecedor e se ele está ativo. O vínculo só pode ser excluído permanentemente enquanto não houver preço registrado nem uso em compras; depois disso, pode ser desativado, mas deve ser mantido para preservar o histórico.
+- **RN-09.1. Contato do fornecedor:** o cadastro pode armazenar nome do representante, WhatsApp brasileiro com DDD no formato `(99) 99999-9999`, e-mail, site HTTP/HTTPS e informações adicionais. WhatsApp, e-mail e site são opcionais; quando preenchidos, são validados no servidor. O campo anteriormente apresentado como “Contato” passa a ser “Mais informações”, preservando os dados existentes.
 - **RN-10. Histórico de preços:** todo preço fica em histórico, com: produto, fornecedor, preço equivalente por unidade-base, preço/unidade/fator informados (snapshot opcional), data, **origem** e, se houver, o pedido de origem. Cotações em embalagens diferentes são registros distintos e preservam o valor informado naquela embalagem.
   - Origem **pago:** gravado automaticamente ao **confirmar um pedido** (RN-18).
   - Origem **cotado:** digitado manualmente pelo comprador numa consulta, **sem pedido**.
@@ -183,7 +184,7 @@ A transferência permite que um usuário solicite produtos de um local de estoqu
 | `estoque` | 1 | produto, local, quantidade, data_ultima_contagem |
 | `movimento_estoque` | 1 | produto, local, tipo (entrada/saída/contagem/recebimento), quantidade, usuario, data_hora (histórico) |
 | `log_sistema` | 1 | módulo, ação, descrição, registro_id, dados (JSON), usuario, criado_em (histórico geral) |
-| `fornecedor` | 2 | nome, contato, prazo_entrega_dias, valor_minimo_pedido, frete (opcionais), ativo |
+| `fornecedor` | 2 | nome, nome_representante, whatsapp, email, site, contato (mais informações), prazo_entrega_dias, valor_minimo_pedido, frete (opcionais), ativo |
 | `produto_fornecedor` | 2 | produto, fornecedor, codigo_no_fornecedor, ativo |
 | `historico_preco` | 2 e 3 | produto, fornecedor, preco_unitario na unidade-base, preço/unidade/fator informados (snapshot opcional), data, origem (pago ou cotado), pedido (opcional). Módulo 2 grava os preços *cotados*; o Módulo 3 grava os *pagos* |
 | `configuracao_compra` | 3 | produto (único), consumo informado/período/unidade/fator, consumo_diario na unidade-base, estoque de segurança e máximo na unidade-base e os respectivos valores informados/unidades/fatores |

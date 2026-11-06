@@ -232,9 +232,36 @@ export default async function PaginaFornecedores({
                       >
                         {fornecedor.nome}
                       </Link>
-                      <p className="mt-1 text-xs text-zinc-500">
-                        {fornecedor.contato || "Sem contato registrado"}
-                      </p>
+                      <div className="mt-1 flex flex-col gap-0.5 text-xs text-zinc-500">
+                        {fornecedor.nomeRepresentante && (
+                          <p>Representante: {fornecedor.nomeRepresentante}</p>
+                        )}
+                        {fornecedor.whatsapp && <p>WhatsApp: {fornecedor.whatsapp}</p>}
+                        {fornecedor.email && (
+                          <a
+                            href={`mailto:${fornecedor.email}`}
+                            className="break-all hover:underline"
+                          >
+                            {fornecedor.email}
+                          </a>
+                        )}
+                        {fornecedor.site && (
+                          <a
+                            href={fornecedor.site}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="break-all hover:underline"
+                          >
+                            {fornecedor.site}
+                          </a>
+                        )}
+                        {fornecedor.contato && <p>{fornecedor.contato}</p>}
+                        {!fornecedor.nomeRepresentante &&
+                          !fornecedor.whatsapp &&
+                          !fornecedor.email &&
+                          !fornecedor.site &&
+                          !fornecedor.contato && <p>Sem contato registrado</p>}
+                      </div>
                     </div>
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
@@ -334,9 +361,36 @@ export default async function PaginaFornecedores({
                       </h2>
                       <DicaProdutosFornecedor quantidade={fornecedor._count.produtos} />
                     </div>
-                    <p className="mt-1 text-sm text-zinc-500">
-                      {fornecedor.contato || "Sem contato registrado"}
-                    </p>
+                    <div className="mt-1 flex flex-col gap-0.5 text-xs text-zinc-500">
+                      {fornecedor.nomeRepresentante && (
+                        <p>Representante: {fornecedor.nomeRepresentante}</p>
+                      )}
+                      {fornecedor.whatsapp && <p>WhatsApp: {fornecedor.whatsapp}</p>}
+                      {fornecedor.email && (
+                        <a
+                          href={`mailto:${fornecedor.email}`}
+                          className="break-all hover:underline"
+                        >
+                          {fornecedor.email}
+                        </a>
+                      )}
+                      {fornecedor.site && (
+                        <a
+                          href={fornecedor.site}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="break-all hover:underline"
+                        >
+                          {fornecedor.site}
+                        </a>
+                      )}
+                      {fornecedor.contato && <p>{fornecedor.contato}</p>}
+                      {!fornecedor.nomeRepresentante &&
+                        !fornecedor.whatsapp &&
+                        !fornecedor.email &&
+                        !fornecedor.site &&
+                        !fornecedor.contato && <p>Sem contato registrado</p>}
+                    </div>
                     <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-xs sm:grid-cols-3">
                       <div>
                         <span className="font-medium uppercase tracking-wider text-zinc-400">

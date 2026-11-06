@@ -1,4 +1,9 @@
 import prisma from "@/lib/prisma";
+import {
+  BancoIndisponivelError,
+  ehBancoIndisponivel,
+  MENSAGEM_BANCO_INDISPONIVEL,
+} from "@/lib/erro-banco";
 import { obterSessao } from "@/lib/sessao";
 
 export const runtime = "nodejs";
@@ -14,6 +19,20 @@ function respostaJson(dados: unknown, status = 200) {
   return Response.json(dados, { status, headers: CABECALHOS_PRIVADOS });
 }
 
+function respostaErroBanco(erro: unknown) {
+  if (!ehBancoIndisponivel(erro)) throw erro;
+  if (!(erro instanceof BancoIndisponivelError)) {
+    console.error("Banco de dados indisponível nas notificações:", erro);
+  }
+  return respostaJson(
+    {
+      codigo: "BANCO_INDISPONIVEL",
+      erro: MENSAGEM_BANCO_INDISPONIVEL,
+    },
+    503
+  );
+}
+
 async function usuarioAutorizado() {
   const sessao = await obterSessao();
   if (!sessao) return { resposta: respostaJson({ erro: "Não autenticado." }, 401) };
@@ -26,75 +45,83 @@ async function usuarioAutorizado() {
 }
 
 export async function GET() {
-  const acesso = await usuarioAutorizado();
-  if ("resposta" in acesso) return acesso.resposta;
+  try {
+    const acesso = await usuarioAutorizado();
+    if ("resposta" in acesso) return acesso.resposta;
 
-  const whereNaoLidas = { usuarioId: acesso.usuarioId, lidaEm: null };
-  const [notificacoes, naoLidas] = await Promise.all([
-    prisma.notificacao.findMany({
-      where: { usuarioId: acesso.usuarioId },
-      orderBy: { criadoEm: "desc" },
-      take: 10,
-      select: {
-        id: true,
-        transferenciaId: true,
-        tipo: true,
-        mensagem: true,
-        criadoEm: true,
-        lidaEm: true,
-      },
-    }),
-    prisma.notificacao.count({ where: whereNaoLidas }),
-  ]);
+    const whereNaoLidas = { usuarioId: acesso.usuarioId, lidaEm: null };
+    const [notificacoes, naoLidas] = await Promise.all([
+      prisma.notificacao.findMany({
+        where: { usuarioId: acesso.usuarioId },
+        orderBy: { criadoEm: "desc" },
+        take: 10,
+        select: {
+          id: true,
+          transferenciaId: true,
+          tipo: true,
+          mensagem: true,
+          criadoEm: true,
+          lidaEm: true,
+        },
+      }),
+      prisma.notificacao.count({ where: whereNaoLidas }),
+    ]);
 
-  return respostaJson({ notificacoes, naoLidas });
+    return respostaJson({ notificacoes, naoLidas });
+  } catch (erro) {
+    return respostaErroBanco(erro);
+  }
 }
 
 export async function PATCH(request: Request) {
-  const acesso = await usuarioAutorizado();
-  if ("resposta" in acesso) return acesso.resposta;
-
-  let corpo: unknown;
   try {
-    corpo = await request.json();
-  } catch {
-    return respostaJson({ erro: "Corpo da solicitação inválido." }, 400);
-  }
+    const acesso = await usuarioAutorizado();
+    if ("resposta" in acesso) return acesso.resposta;
 
-  if (
-    typeof corpo !== "object" ||
-    corpo === null ||
-    Array.isArray(corpo)
-  ) {
-    return respostaJson({ erro: "Corpo da solicitação inválido." }, 400);
-  }
+    let corpo: unknown;
+    try {
+      corpo = await request.json();
+    } catch {
+      return respostaJson({ erro: "Corpo da solicitação inválido." }, 400);
+    }
 
-  const dados = corpo as { id?: unknown; todas?: unknown };
-  const lidaEm = new Date();
-  if (dados.todas === true && dados.id === undefined) {
+    if (
+      typeof corpo !== "object" ||
+      corpo === null ||
+      Array.isArray(corpo)
+    ) {
+      return respostaJson({ erro: "Corpo da solicitação inválido." }, 400);
+    }
+
+    const dados = corpo as { id?: unknown; todas?: unknown };
+    const lidaEm = new Date();
+    if (dados.todas === true && dados.id === undefined) {
+      await prisma.notificacao.updateMany({
+        where: { usuarioId: acesso.usuarioId, lidaEm: null },
+        data: { lidaEm },
+      });
+      return new Response(null, { status: 204, headers: CABECALHOS_PRIVADOS });
+    }
+
+    if (
+      typeof dados.id !== "number" ||
+      !Number.isSafeInteger(dados.id) ||
+      dados.id <= 0 ||
+      dados.todas !== undefined
+    ) {
+      return respostaJson({ erro: "Identificador de notificação inválido." }, 400);
+    }
+
     await prisma.notificacao.updateMany({
-      where: { usuarioId: acesso.usuarioId, lidaEm: null },
+      where: {
+        id: dados.id,
+        usuarioId: acesso.usuarioId,
+        lidaEm: null,
+      },
       data: { lidaEm },
     });
     return new Response(null, { status: 204, headers: CABECALHOS_PRIVADOS });
+  } catch (erro) {
+    return respostaErroBanco(erro);
   }
-
-  if (
-    typeof dados.id !== "number" ||
-    !Number.isSafeInteger(dados.id) ||
-    dados.id <= 0 ||
-    dados.todas !== undefined
-  ) {
-    return respostaJson({ erro: "Identificador de notificação inválido." }, 400);
-  }
-
-  await prisma.notificacao.updateMany({
-    where: {
-      id: dados.id,
-      usuarioId: acesso.usuarioId,
-      lidaEm: null,
-    },
-    data: { lidaEm },
-  });
-  return new Response(null, { status: 204, headers: CABECALHOS_PRIVADOS });
 }

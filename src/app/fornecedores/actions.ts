@@ -23,8 +23,12 @@ import prisma from "@/lib/prisma";
 import {
   LIMITE_CODIGO_NO_FORNECEDOR,
   LIMITE_CONTATO_FORNECEDOR,
+  LIMITE_EMAIL_FORNECEDOR,
   LIMITE_NOME_FORNECEDOR,
+  LIMITE_NOME_REPRESENTANTE,
+  LIMITE_SITE_FORNECEDOR,
   dataIsoParaDate,
+  formatarWhatsApp,
   formatarMoeda,
   normalizarMoeda,
   type ErrosFormularioFornecedor,
@@ -50,6 +54,10 @@ function lerValoresFornecedor(
 ): ValoresFormularioFornecedor {
   return {
     nome: texto(formData, "nome"),
+    nomeRepresentante: texto(formData, "nomeRepresentante"),
+    whatsapp: texto(formData, "whatsapp"),
+    email: texto(formData, "email"),
+    site: texto(formData, "site"),
     contato: texto(formData, "contato"),
     prazoEntregaDias: texto(formData, "prazoEntregaDias"),
     valorMinimoPedido: texto(formData, "valorMinimoPedido"),
@@ -59,6 +67,10 @@ function lerValoresFornecedor(
 
 type FornecedorValidado = {
   nome: string;
+  nomeRepresentante: string | null;
+  whatsapp: string | null;
+  email: string | null;
+  site: string | null;
   contato: string | null;
   prazoEntregaDias: number | null;
   valorMinimoPedido: string | null;
@@ -78,8 +90,39 @@ function validarFornecedor(
     erros.nome = `O nome pode ter no máximo ${LIMITE_NOME_FORNECEDOR} caracteres.`;
   }
 
+  if (valores.nomeRepresentante.length > LIMITE_NOME_REPRESENTANTE) {
+    erros.nomeRepresentante = `O nome pode ter no máximo ${LIMITE_NOME_REPRESENTANTE} caracteres.`;
+  }
+
+  const digitosWhatsApp = valores.whatsapp.replace(/\D/g, "");
+  if (valores.whatsapp !== "" && !/^[1-9]{2}9\d{8}$/.test(digitosWhatsApp)) {
+    erros.whatsapp = "Informe um WhatsApp com DDD e 9 dígitos, no formato (99) 99999-9999.";
+  }
+
+  if (valores.email.length > LIMITE_EMAIL_FORNECEDOR) {
+    erros.email = `O e-mail pode ter no máximo ${LIMITE_EMAIL_FORNECEDOR} caracteres.`;
+  } else if (
+    valores.email !== "" &&
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valores.email)
+  ) {
+    erros.email = "Informe um endereço de e-mail válido.";
+  }
+
+  if (valores.site.length > LIMITE_SITE_FORNECEDOR) {
+    erros.site = `O site pode ter no máximo ${LIMITE_SITE_FORNECEDOR} caracteres.`;
+  } else if (valores.site !== "") {
+    try {
+      const url = new URL(valores.site);
+      if (url.protocol !== "http:" && url.protocol !== "https:") {
+        erros.site = "Informe um site iniciado por http:// ou https://.";
+      }
+    } catch {
+      erros.site = "Informe uma URL válida, incluindo https://.";
+    }
+  }
+
   if (valores.contato.length > LIMITE_CONTATO_FORNECEDOR) {
-    erros.contato = `O contato pode ter no máximo ${LIMITE_CONTATO_FORNECEDOR} caracteres.`;
+    erros.contato = `As informações podem ter no máximo ${LIMITE_CONTATO_FORNECEDOR} caracteres.`;
   }
 
   let prazo: number | null = null;
@@ -108,6 +151,12 @@ function validarFornecedor(
     ok: true,
     dados: {
       nome: valores.nome,
+      nomeRepresentante:
+        valores.nomeRepresentante === "" ? null : valores.nomeRepresentante,
+      whatsapp:
+        digitosWhatsApp === "" ? null : formatarWhatsApp(digitosWhatsApp),
+      email: valores.email === "" ? null : valores.email.toLowerCase(),
+      site: valores.site === "" ? null : valores.site,
       contato: valores.contato === "" ? null : valores.contato,
       prazoEntregaDias: prazo,
       valorMinimoPedido: valorMinimo === "" ? null : valorMinimo,
@@ -219,6 +268,10 @@ export async function criarFornecedor(
       const novo = await tx.fornecedor.create({
         data: {
           nome: validacao.dados.nome,
+          nomeRepresentante: validacao.dados.nomeRepresentante,
+          whatsapp: validacao.dados.whatsapp,
+          email: validacao.dados.email,
+          site: validacao.dados.site,
           contato: validacao.dados.contato,
           prazoEntregaDias: validacao.dados.prazoEntregaDias,
           valorMinimoPedido: validacao.dados.valorMinimoPedido,
@@ -236,6 +289,10 @@ export async function criarFornecedor(
           usuarioId: atual.id,
           dados: {
             nome: novo.nome,
+            nomeRepresentante: novo.nomeRepresentante,
+            whatsapp: novo.whatsapp,
+            email: novo.email,
+            site: novo.site,
             contato: novo.contato,
             prazoEntregaDias: novo.prazoEntregaDias,
             valorMinimoPedido: novo.valorMinimoPedido?.toString() ?? null,
@@ -277,6 +334,10 @@ export async function atualizarFornecedor(
     where: { id },
     select: {
       nome: true,
+      nomeRepresentante: true,
+      whatsapp: true,
+      email: true,
+      site: true,
       contato: true,
       prazoEntregaDias: true,
       valorMinimoPedido: true,
@@ -306,6 +367,10 @@ export async function atualizarFornecedor(
         where: { id },
         data: {
           nome: validacao.dados.nome,
+          nomeRepresentante: validacao.dados.nomeRepresentante,
+          whatsapp: validacao.dados.whatsapp,
+          email: validacao.dados.email,
+          site: validacao.dados.site,
           contato: validacao.dados.contato,
           prazoEntregaDias: validacao.dados.prazoEntregaDias,
           valorMinimoPedido: validacao.dados.valorMinimoPedido,
@@ -325,6 +390,10 @@ export async function atualizarFornecedor(
           dados: {
             antes: {
               nome: antigo.nome,
+              nomeRepresentante: antigo.nomeRepresentante,
+              whatsapp: antigo.whatsapp,
+              email: antigo.email,
+              site: antigo.site,
               contato: antigo.contato,
               prazoEntregaDias: antigo.prazoEntregaDias,
               valorMinimoPedido: antigo.valorMinimoPedido?.toString() ?? null,

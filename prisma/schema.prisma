@@ -185,7 +185,11 @@ model EmbalagemProduto {
 model Fornecedor {
   id                Int      @id @default(autoincrement())
   nome              String
-  contato           String? // Telefone, e-mail, nome do vendedor etc.
+  nomeRepresentante String?  @map("nome_representante")
+  whatsapp          String?
+  email             String?
+  site              String?
+  contato           String? // Mais informações
   imagemChave       String?  @map("imagem_chave")
   prazoEntregaDias  Int?     @map("prazo_entrega_dias") // Prazo médio de entrega
   // Valor mínimo de pedido e frete (RN-17). Opcionais.

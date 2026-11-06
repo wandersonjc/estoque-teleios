@@ -43,6 +43,10 @@ export type FornecedorSumAggregateOutputType = {
 export type FornecedorMinAggregateOutputType = {
   id: number | null
   nome: string | null
+  nomeRepresentante: string | null
+  whatsapp: string | null
+  email: string | null
+  site: string | null
   contato: string | null
   imagemChave: string | null
   prazoEntregaDias: number | null
@@ -56,6 +60,10 @@ export type FornecedorMinAggregateOutputType = {
 export type FornecedorMaxAggregateOutputType = {
   id: number | null
   nome: string | null
+  nomeRepresentante: string | null
+  whatsapp: string | null
+  email: string | null
+  site: string | null
   contato: string | null
   imagemChave: string | null
   prazoEntregaDias: number | null
@@ -69,6 +77,10 @@ export type FornecedorMaxAggregateOutputType = {
 export type FornecedorCountAggregateOutputType = {
   id: number
   nome: number
+  nomeRepresentante: number
+  whatsapp: number
+  email: number
+  site: number
   contato: number
   imagemChave: number
   prazoEntregaDias: number
@@ -98,6 +110,10 @@ export type FornecedorSumAggregateInputType = {
 export type FornecedorMinAggregateInputType = {
   id?: true
   nome?: true
+  nomeRepresentante?: true
+  whatsapp?: true
+  email?: true
+  site?: true
   contato?: true
   imagemChave?: true
   prazoEntregaDias?: true
@@ -111,6 +127,10 @@ export type FornecedorMinAggregateInputType = {
 export type FornecedorMaxAggregateInputType = {
   id?: true
   nome?: true
+  nomeRepresentante?: true
+  whatsapp?: true
+  email?: true
+  site?: true
   contato?: true
   imagemChave?: true
   prazoEntregaDias?: true
@@ -124,6 +144,10 @@ export type FornecedorMaxAggregateInputType = {
 export type FornecedorCountAggregateInputType = {
   id?: true
   nome?: true
+  nomeRepresentante?: true
+  whatsapp?: true
+  email?: true
+  site?: true
   contato?: true
   imagemChave?: true
   prazoEntregaDias?: true
@@ -224,6 +248,10 @@ export type FornecedorGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inter
 export type FornecedorGroupByOutputType = {
   id: number
   nome: string
+  nomeRepresentante: string | null
+  whatsapp: string | null
+  email: string | null
+  site: string | null
   contato: string | null
   imagemChave: string | null
   prazoEntregaDias: number | null
@@ -260,6 +288,10 @@ export type FornecedorWhereInput = {
   NOT?: Prisma.FornecedorWhereInput | Prisma.FornecedorWhereInput[]
   id?: Prisma.IntFilter<"Fornecedor"> | number
   nome?: Prisma.StringFilter<"Fornecedor"> | string
+  nomeRepresentante?: Prisma.StringNullableFilter<"Fornecedor"> | string | null
+  whatsapp?: Prisma.StringNullableFilter<"Fornecedor"> | string | null
+  email?: Prisma.StringNullableFilter<"Fornecedor"> | string | null
+  site?: Prisma.StringNullableFilter<"Fornecedor"> | string | null
   contato?: Prisma.StringNullableFilter<"Fornecedor"> | string | null
   imagemChave?: Prisma.StringNullableFilter<"Fornecedor"> | string | null
   prazoEntregaDias?: Prisma.IntNullableFilter<"Fornecedor"> | number | null
@@ -276,6 +308,10 @@ export type FornecedorWhereInput = {
 export type FornecedorOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   nome?: Prisma.SortOrder
+  nomeRepresentante?: Prisma.SortOrderInput | Prisma.SortOrder
+  whatsapp?: Prisma.SortOrderInput | Prisma.SortOrder
+  email?: Prisma.SortOrderInput | Prisma.SortOrder
+  site?: Prisma.SortOrderInput | Prisma.SortOrder
   contato?: Prisma.SortOrderInput | Prisma.SortOrder
   imagemChave?: Prisma.SortOrderInput | Prisma.SortOrder
   prazoEntregaDias?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -295,6 +331,10 @@ export type FornecedorWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.FornecedorWhereInput[]
   NOT?: Prisma.FornecedorWhereInput | Prisma.FornecedorWhereInput[]
   nome?: Prisma.StringFilter<"Fornecedor"> | string
+  nomeRepresentante?: Prisma.StringNullableFilter<"Fornecedor"> | string | null
+  whatsapp?: Prisma.StringNullableFilter<"Fornecedor"> | string | null
+  email?: Prisma.StringNullableFilter<"Fornecedor"> | string | null
+  site?: Prisma.StringNullableFilter<"Fornecedor"> | string | null
   contato?: Prisma.StringNullableFilter<"Fornecedor"> | string | null
   imagemChave?: Prisma.StringNullableFilter<"Fornecedor"> | string | null
   prazoEntregaDias?: Prisma.IntNullableFilter<"Fornecedor"> | number | null
@@ -311,6 +351,10 @@ export type FornecedorWhereUniqueInput = Prisma.AtLeast<{
 export type FornecedorOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   nome?: Prisma.SortOrder
+  nomeRepresentante?: Prisma.SortOrderInput | Prisma.SortOrder
+  whatsapp?: Prisma.SortOrderInput | Prisma.SortOrder
+  email?: Prisma.SortOrderInput | Prisma.SortOrder
+  site?: Prisma.SortOrderInput | Prisma.SortOrder
   contato?: Prisma.SortOrderInput | Prisma.SortOrder
   imagemChave?: Prisma.SortOrderInput | Prisma.SortOrder
   prazoEntregaDias?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -332,6 +376,10 @@ export type FornecedorScalarWhereWithAggregatesInput = {
   NOT?: Prisma.FornecedorScalarWhereWithAggregatesInput | Prisma.FornecedorScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"Fornecedor"> | number
   nome?: Prisma.StringWithAggregatesFilter<"Fornecedor"> | string
+  nomeRepresentante?: Prisma.StringNullableWithAggregatesFilter<"Fornecedor"> | string | null
+  whatsapp?: Prisma.StringNullableWithAggregatesFilter<"Fornecedor"> | string | null
+  email?: Prisma.StringNullableWithAggregatesFilter<"Fornecedor"> | string | null
+  site?: Prisma.StringNullableWithAggregatesFilter<"Fornecedor"> | string | null
   contato?: Prisma.StringNullableWithAggregatesFilter<"Fornecedor"> | string | null
   imagemChave?: Prisma.StringNullableWithAggregatesFilter<"Fornecedor"> | string | null
   prazoEntregaDias?: Prisma.IntNullableWithAggregatesFilter<"Fornecedor"> | number | null
@@ -344,6 +392,10 @@ export type FornecedorScalarWhereWithAggregatesInput = {
 
 export type FornecedorCreateInput = {
   nome: string
+  nomeRepresentante?: string | null
+  whatsapp?: string | null
+  email?: string | null
+  site?: string | null
   contato?: string | null
   imagemChave?: string | null
   prazoEntregaDias?: number | null
@@ -360,6 +412,10 @@ export type FornecedorCreateInput = {
 export type FornecedorUncheckedCreateInput = {
   id?: number
   nome: string
+  nomeRepresentante?: string | null
+  whatsapp?: string | null
+  email?: string | null
+  site?: string | null
   contato?: string | null
   imagemChave?: string | null
   prazoEntregaDias?: number | null
@@ -375,6 +431,10 @@ export type FornecedorUncheckedCreateInput = {
 
 export type FornecedorUpdateInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
+  nomeRepresentante?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  site?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contato?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -391,6 +451,10 @@ export type FornecedorUpdateInput = {
 export type FornecedorUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   nome?: Prisma.StringFieldUpdateOperationsInput | string
+  nomeRepresentante?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  site?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contato?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -407,6 +471,10 @@ export type FornecedorUncheckedUpdateInput = {
 export type FornecedorCreateManyInput = {
   id?: number
   nome: string
+  nomeRepresentante?: string | null
+  whatsapp?: string | null
+  email?: string | null
+  site?: string | null
   contato?: string | null
   imagemChave?: string | null
   prazoEntregaDias?: number | null
@@ -419,6 +487,10 @@ export type FornecedorCreateManyInput = {
 
 export type FornecedorUpdateManyMutationInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
+  nomeRepresentante?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  site?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contato?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -432,6 +504,10 @@ export type FornecedorUpdateManyMutationInput = {
 export type FornecedorUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   nome?: Prisma.StringFieldUpdateOperationsInput | string
+  nomeRepresentante?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  site?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contato?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -445,6 +521,10 @@ export type FornecedorUncheckedUpdateManyInput = {
 export type FornecedorCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   nome?: Prisma.SortOrder
+  nomeRepresentante?: Prisma.SortOrder
+  whatsapp?: Prisma.SortOrder
+  email?: Prisma.SortOrder
+  site?: Prisma.SortOrder
   contato?: Prisma.SortOrder
   imagemChave?: Prisma.SortOrder
   prazoEntregaDias?: Prisma.SortOrder
@@ -465,6 +545,10 @@ export type FornecedorAvgOrderByAggregateInput = {
 export type FornecedorMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   nome?: Prisma.SortOrder
+  nomeRepresentante?: Prisma.SortOrder
+  whatsapp?: Prisma.SortOrder
+  email?: Prisma.SortOrder
+  site?: Prisma.SortOrder
   contato?: Prisma.SortOrder
   imagemChave?: Prisma.SortOrder
   prazoEntregaDias?: Prisma.SortOrder
@@ -478,6 +562,10 @@ export type FornecedorMaxOrderByAggregateInput = {
 export type FornecedorMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   nome?: Prisma.SortOrder
+  nomeRepresentante?: Prisma.SortOrder
+  whatsapp?: Prisma.SortOrder
+  email?: Prisma.SortOrder
+  site?: Prisma.SortOrder
   contato?: Prisma.SortOrder
   imagemChave?: Prisma.SortOrder
   prazoEntregaDias?: Prisma.SortOrder
@@ -560,6 +648,10 @@ export type FornecedorUpdateOneRequiredWithoutPedidosCompraNestedInput = {
 
 export type FornecedorCreateWithoutProdutosInput = {
   nome: string
+  nomeRepresentante?: string | null
+  whatsapp?: string | null
+  email?: string | null
+  site?: string | null
   contato?: string | null
   imagemChave?: string | null
   prazoEntregaDias?: number | null
@@ -575,6 +667,10 @@ export type FornecedorCreateWithoutProdutosInput = {
 export type FornecedorUncheckedCreateWithoutProdutosInput = {
   id?: number
   nome: string
+  nomeRepresentante?: string | null
+  whatsapp?: string | null
+  email?: string | null
+  site?: string | null
   contato?: string | null
   imagemChave?: string | null
   prazoEntregaDias?: number | null
@@ -605,6 +701,10 @@ export type FornecedorUpdateToOneWithWhereWithoutProdutosInput = {
 
 export type FornecedorUpdateWithoutProdutosInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
+  nomeRepresentante?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  site?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contato?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -620,6 +720,10 @@ export type FornecedorUpdateWithoutProdutosInput = {
 export type FornecedorUncheckedUpdateWithoutProdutosInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   nome?: Prisma.StringFieldUpdateOperationsInput | string
+  nomeRepresentante?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  site?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contato?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -634,6 +738,10 @@ export type FornecedorUncheckedUpdateWithoutProdutosInput = {
 
 export type FornecedorCreateWithoutHistoricoPrecosInput = {
   nome: string
+  nomeRepresentante?: string | null
+  whatsapp?: string | null
+  email?: string | null
+  site?: string | null
   contato?: string | null
   imagemChave?: string | null
   prazoEntregaDias?: number | null
@@ -649,6 +757,10 @@ export type FornecedorCreateWithoutHistoricoPrecosInput = {
 export type FornecedorUncheckedCreateWithoutHistoricoPrecosInput = {
   id?: number
   nome: string
+  nomeRepresentante?: string | null
+  whatsapp?: string | null
+  email?: string | null
+  site?: string | null
   contato?: string | null
   imagemChave?: string | null
   prazoEntregaDias?: number | null
@@ -679,6 +791,10 @@ export type FornecedorUpdateToOneWithWhereWithoutHistoricoPrecosInput = {
 
 export type FornecedorUpdateWithoutHistoricoPrecosInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
+  nomeRepresentante?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  site?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contato?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -694,6 +810,10 @@ export type FornecedorUpdateWithoutHistoricoPrecosInput = {
 export type FornecedorUncheckedUpdateWithoutHistoricoPrecosInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   nome?: Prisma.StringFieldUpdateOperationsInput | string
+  nomeRepresentante?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  site?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contato?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -708,6 +828,10 @@ export type FornecedorUncheckedUpdateWithoutHistoricoPrecosInput = {
 
 export type FornecedorCreateWithoutPedidosCompraInput = {
   nome: string
+  nomeRepresentante?: string | null
+  whatsapp?: string | null
+  email?: string | null
+  site?: string | null
   contato?: string | null
   imagemChave?: string | null
   prazoEntregaDias?: number | null
@@ -723,6 +847,10 @@ export type FornecedorCreateWithoutPedidosCompraInput = {
 export type FornecedorUncheckedCreateWithoutPedidosCompraInput = {
   id?: number
   nome: string
+  nomeRepresentante?: string | null
+  whatsapp?: string | null
+  email?: string | null
+  site?: string | null
   contato?: string | null
   imagemChave?: string | null
   prazoEntregaDias?: number | null
@@ -753,6 +881,10 @@ export type FornecedorUpdateToOneWithWhereWithoutPedidosCompraInput = {
 
 export type FornecedorUpdateWithoutPedidosCompraInput = {
   nome?: Prisma.StringFieldUpdateOperationsInput | string
+  nomeRepresentante?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  site?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contato?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -768,6 +900,10 @@ export type FornecedorUpdateWithoutPedidosCompraInput = {
 export type FornecedorUncheckedUpdateWithoutPedidosCompraInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   nome?: Prisma.StringFieldUpdateOperationsInput | string
+  nomeRepresentante?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  site?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contato?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -832,6 +968,10 @@ export type FornecedorCountOutputTypeCountPedidosCompraArgs<ExtArgs extends runt
 export type FornecedorSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   nome?: boolean
+  nomeRepresentante?: boolean
+  whatsapp?: boolean
+  email?: boolean
+  site?: boolean
   contato?: boolean
   imagemChave?: boolean
   prazoEntregaDias?: boolean
@@ -849,6 +989,10 @@ export type FornecedorSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
 export type FornecedorSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   nome?: boolean
+  nomeRepresentante?: boolean
+  whatsapp?: boolean
+  email?: boolean
+  site?: boolean
   contato?: boolean
   imagemChave?: boolean
   prazoEntregaDias?: boolean
@@ -862,6 +1006,10 @@ export type FornecedorSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
 export type FornecedorSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   nome?: boolean
+  nomeRepresentante?: boolean
+  whatsapp?: boolean
+  email?: boolean
+  site?: boolean
   contato?: boolean
   imagemChave?: boolean
   prazoEntregaDias?: boolean
@@ -875,6 +1023,10 @@ export type FornecedorSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
 export type FornecedorSelectScalar = {
   id?: boolean
   nome?: boolean
+  nomeRepresentante?: boolean
+  whatsapp?: boolean
+  email?: boolean
+  site?: boolean
   contato?: boolean
   imagemChave?: boolean
   prazoEntregaDias?: boolean
@@ -885,7 +1037,7 @@ export type FornecedorSelectScalar = {
   atualizadoEm?: boolean
 }
 
-export type FornecedorOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nome" | "contato" | "imagemChave" | "prazoEntregaDias" | "valorMinimoPedido" | "frete" | "ativo" | "criadoEm" | "atualizadoEm", ExtArgs["result"]["fornecedor"]>
+export type FornecedorOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nome" | "nomeRepresentante" | "whatsapp" | "email" | "site" | "contato" | "imagemChave" | "prazoEntregaDias" | "valorMinimoPedido" | "frete" | "ativo" | "criadoEm" | "atualizadoEm", ExtArgs["result"]["fornecedor"]>
 export type FornecedorInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   produtos?: boolean | Prisma.Fornecedor$produtosArgs<ExtArgs>
   historicoPrecos?: boolean | Prisma.Fornecedor$historicoPrecosArgs<ExtArgs>
@@ -905,6 +1057,10 @@ export type $FornecedorPayload<ExtArgs extends runtime.Types.Extensions.Internal
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     nome: string
+    nomeRepresentante: string | null
+    whatsapp: string | null
+    email: string | null
+    site: string | null
     contato: string | null
     imagemChave: string | null
     prazoEntregaDias: number | null
@@ -1341,6 +1497,10 @@ export interface Prisma__FornecedorClient<T, Null = never, ExtArgs extends runti
 export interface FornecedorFieldRefs {
   readonly id: Prisma.FieldRef<"Fornecedor", 'Int'>
   readonly nome: Prisma.FieldRef<"Fornecedor", 'String'>
+  readonly nomeRepresentante: Prisma.FieldRef<"Fornecedor", 'String'>
+  readonly whatsapp: Prisma.FieldRef<"Fornecedor", 'String'>
+  readonly email: Prisma.FieldRef<"Fornecedor", 'String'>
+  readonly site: Prisma.FieldRef<"Fornecedor", 'String'>
   readonly contato: Prisma.FieldRef<"Fornecedor", 'String'>
   readonly imagemChave: Prisma.FieldRef<"Fornecedor", 'String'>
   readonly prazoEntregaDias: Prisma.FieldRef<"Fornecedor", 'Int'>

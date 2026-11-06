@@ -10,6 +10,10 @@ import { randomBytes } from "node:crypto";
 import { cookies } from "next/headers";
 import { cache } from "react";
 
+import {
+  BancoIndisponivelError,
+  ehBancoIndisponivel,
+} from "@/lib/erro-banco";
 import prisma from "@/lib/prisma";
 
 // Nome do cookie que guarda o token da sessão
@@ -68,52 +72,58 @@ export const obterSessao = cache(async (): Promise<SessaoAtual | null> => {
   const token = cookieStore.get(COOKIE_SESSAO)?.value;
   if (!token) return null;
 
-  const sessao = await prisma.sessao.findUnique({
-    where: { id: token },
-    include: {
-      usuario: {
-        select: {
-          id: true,
-          nome: true,
-          email: true,
-          ativo: true,
-          imagemChave: true,
-          atualizadoEm: true,
-          tema: true,
-          permissoes: {
-            select: { permissao: { select: { codigo: true } } },
+  try {
+    const sessao = await prisma.sessao.findUnique({
+      where: { id: token },
+      include: {
+        usuario: {
+          select: {
+            id: true,
+            nome: true,
+            email: true,
+            ativo: true,
+            imagemChave: true,
+            atualizadoEm: true,
+            tema: true,
+            permissoes: {
+              select: { permissao: { select: { codigo: true } } },
+            },
           },
         },
       },
-    },
-  });
+    });
 
-  if (!sessao) return null;
+    if (!sessao) return null;
 
-  // Sessão expirada: apaga e trata como "não logado"
-  if (sessao.expiraEm.getTime() <= Date.now()) {
-    await prisma.sessao.deleteMany({ where: { id: sessao.id } });
-    return null;
+    // Sessão expirada: apaga e trata como "não logado"
+    if (sessao.expiraEm.getTime() <= Date.now()) {
+      await prisma.sessao.deleteMany({ where: { id: sessao.id } });
+      return null;
+    }
+
+    // Usuário desativado perde o acesso na hora
+    if (!sessao.usuario.ativo) return null;
+
+    return {
+      id: sessao.id,
+      usuario: {
+        id: sessao.usuario.id,
+        nome: sessao.usuario.nome,
+        email: sessao.usuario.email,
+        ativo: sessao.usuario.ativo,
+        imagemChave: sessao.usuario.imagemChave,
+        atualizadoEm: sessao.usuario.atualizadoEm,
+        tema: sessao.usuario.tema,
+      },
+      codigosPermissao: sessao.usuario.permissoes.map(
+        (concessao) => concessao.permissao.codigo
+      ),
+    };
+  } catch (erro) {
+    if (!ehBancoIndisponivel(erro)) throw erro;
+    console.error("Banco de dados indisponível ao consultar a sessão:", erro);
+    throw new BancoIndisponivelError(erro);
   }
-
-  // Usuário desativado perde o acesso na hora
-  if (!sessao.usuario.ativo) return null;
-
-  return {
-    id: sessao.id,
-    usuario: {
-      id: sessao.usuario.id,
-      nome: sessao.usuario.nome,
-      email: sessao.usuario.email,
-      ativo: sessao.usuario.ativo,
-      imagemChave: sessao.usuario.imagemChave,
-      atualizadoEm: sessao.usuario.atualizadoEm,
-      tema: sessao.usuario.tema,
-    },
-    codigosPermissao: sessao.usuario.permissoes.map(
-      (concessao) => concessao.permissao.codigo
-    ),
-  };
 });
 
 // ------------------------------------------------------------

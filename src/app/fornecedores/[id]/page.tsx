@@ -312,6 +312,10 @@ export default async function PaginaEditarFornecedor({
                 imagemUrl={fornecedor.imagemChave ? `/api/imagens/fornecedores/${fornecedor.id}?v=${fornecedor.atualizadoEm.getTime()}` : undefined}
                 valoresIniciais={{
                   nome: fornecedor.nome,
+                  nomeRepresentante: fornecedor.nomeRepresentante ?? "",
+                  whatsapp: fornecedor.whatsapp ?? "",
+                  email: fornecedor.email ?? "",
+                  site: fornecedor.site ?? "",
                   contato: fornecedor.contato ?? "",
                   prazoEntregaDias: fornecedor.prazoEntregaDias?.toString() ?? "",
                   valorMinimoPedido: fornecedor.valorMinimoPedido
@@ -330,7 +334,44 @@ export default async function PaginaEditarFornecedor({
                 <dd className="font-medium text-zinc-900">{fornecedor.nome}</dd>
               </div>
               <div>
-                <dt className="text-sm text-zinc-500">Contato</dt>
+                <dt className="text-sm text-zinc-500">Nome do Representante</dt>
+                <dd className="font-medium text-zinc-900">
+                  {fornecedor.nomeRepresentante || "—"}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-sm text-zinc-500">WhatsApp</dt>
+                <dd className="font-medium text-zinc-900">
+                  {fornecedor.whatsapp || "—"}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-sm text-zinc-500">E-mail</dt>
+                <dd className="font-medium text-zinc-900">
+                  {fornecedor.email ? (
+                    <a href={`mailto:${fornecedor.email}`} className="break-all hover:underline">
+                      {fornecedor.email}
+                    </a>
+                  ) : "—"}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-sm text-zinc-500">Site</dt>
+                <dd className="font-medium text-zinc-900">
+                  {fornecedor.site ? (
+                    <a
+                      href={fornecedor.site}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="break-all hover:underline"
+                    >
+                      {fornecedor.site}
+                    </a>
+                  ) : "—"}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-sm text-zinc-500">Mais informações</dt>
                 <dd className="font-medium text-zinc-900">
                   {fornecedor.contato || "—"}
                 </dd>

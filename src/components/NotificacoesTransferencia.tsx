@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { MENSAGEM_BANCO_INDISPONIVEL } from "@/lib/erro-banco";
+
 type NotificacaoTransferencia = {
   id: number;
   transferenciaId: number;
@@ -100,13 +102,21 @@ export default function NotificacoesTransferencia() {
         credentials: "same-origin",
       });
       if (!resposta.ok) {
-        throw new Error("Não foi possível carregar as notificações.");
+        throw new Error(
+          resposta.status === 503
+            ? MENSAGEM_BANCO_INDISPONIVEL
+            : "Não foi possível carregar as notificações."
+        );
       }
       const respostaDados = (await resposta.json()) as RespostaNotificacoes;
       setDados(respostaDados);
       setErro(null);
-    } catch {
-      setErro("Não foi possível carregar as notificações.");
+    } catch (falha) {
+      setErro(
+        falha instanceof Error
+          ? falha.message
+          : "Não foi possível carregar as notificações."
+      );
     } finally {
       requisicaoAtiva.current = false;
       setCarregando(false);
@@ -132,7 +142,11 @@ export default function NotificacoesTransferencia() {
         body: JSON.stringify(id === undefined ? { todas: true } : { id }),
       });
       if (!resposta.ok) {
-        throw new Error("Não foi possível atualizar as notificações.");
+        throw new Error(
+          resposta.status === 503
+            ? MENSAGEM_BANCO_INDISPONIVEL
+            : "Não foi possível atualizar as notificações."
+        );
       }
 
       const agora = new Date().toISOString();
@@ -159,8 +173,12 @@ export default function NotificacoesTransferencia() {
       }));
       setErro(null);
       return true;
-    } catch {
-      setErro("Não foi possível atualizar as notificações.");
+    } catch (falha) {
+      setErro(
+        falha instanceof Error
+          ? falha.message
+          : "Não foi possível atualizar as notificações."
+      );
       return false;
     } finally {
       setAtualizandoLeitura(false);

@@ -8,7 +8,10 @@
 import { formatarDataBr, normalizarDecimal } from "@/app/produtos/tipos";
 
 export const LIMITE_NOME_FORNECEDOR = 100;
+export const LIMITE_NOME_REPRESENTANTE = 150;
 export const LIMITE_CONTATO_FORNECEDOR = 200;
+export const LIMITE_EMAIL_FORNECEDOR = 254;
+export const LIMITE_SITE_FORNECEDOR = 2048;
 export const LIMITE_CODIGO_NO_FORNECEDOR = 50;
 export const TAMANHOS_PAGINA_FORNECEDORES = [10, 25, 50, 75, 100] as const;
 
@@ -18,6 +21,10 @@ export const TAMANHOS_PAGINA_FORNECEDORES = [10, 25, 50, 75, 100] as const;
 
 export type ValoresFormularioFornecedor = {
   nome: string;
+  nomeRepresentante: string;
+  whatsapp: string;
+  email: string;
+  site: string;
   contato: string;
   prazoEntregaDias: string;
   valorMinimoPedido: string;
@@ -26,6 +33,10 @@ export type ValoresFormularioFornecedor = {
 
 export type ErrosFormularioFornecedor = {
   nome?: string;
+  nomeRepresentante?: string;
+  whatsapp?: string;
+  email?: string;
+  site?: string;
   contato?: string;
   prazoEntregaDias?: string;
   valorMinimoPedido?: string;
@@ -40,11 +51,29 @@ export type EstadoFormularioFornecedor = {
 
 export const VALORES_FORNECEDOR_VAZIOS: ValoresFormularioFornecedor = {
   nome: "",
+  nomeRepresentante: "",
+  whatsapp: "",
+  email: "",
+  site: "",
   contato: "",
   prazoEntregaDias: "",
   valorMinimoPedido: "",
   frete: "",
 };
+
+export function formatarWhatsApp(valor: string): string {
+  let digitos = valor.replace(/\D/g, "");
+  if (digitos.length === 13 && digitos.startsWith("55")) {
+    digitos = digitos.slice(2);
+  }
+  digitos = digitos.slice(0, 11);
+  if (!digitos) return "";
+  if (digitos.length <= 2) return `(${digitos}`;
+  if (digitos.length <= 7) {
+    return `(${digitos.slice(0, 2)}) ${digitos.slice(2)}`;
+  }
+  return `(${digitos.slice(0, 2)}) ${digitos.slice(2, 7)}-${digitos.slice(7)}`;
+}
 
 // ------------------------------------------------------------
 // Vínculo produto x fornecedor (RN-09)
