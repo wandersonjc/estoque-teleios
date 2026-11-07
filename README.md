@@ -142,9 +142,11 @@ automaticamente.
 
 A planilha enviada ao fornecedor mostra o preço por unidade solicitada (isto é,
 por unidade ou embalagem escolhida na solicitação, não por unidade-base) e
-campos para disponibilidade total, parcial com quantidade ou indisponibilidade,
-prazo em dias, validade da cotação e observações. Os IDs da solicitação, do item
-e do produto permanecem em colunas ocultas para identificação e conferência.
+campos de disponibilidade total, parcial com quantidade ou indisponibilidade
+por produto. Validade da cotação, prazo de entrega em dias e observações são
+informados uma única vez para toda a solicitação, nas linhas 1, 2 e 3 da coluna
+D, com os valores a preencher na coluna E. Os IDs da solicitação, do item e do
+produto permanecem em colunas ocultas para identificação e conferência.
 O sistema ainda não recebe nem importa a planilha respondida; o fluxo planejado
 de validação, prévia, revisão e gravação do preço cotado, assim como as decisões
 pendentes sobre disponibilidade e reimportação, está descrito em

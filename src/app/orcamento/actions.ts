@@ -217,6 +217,27 @@ async function criarPlanilha(
     "Preencha preço, disponibilidade (total, parcial com quantidade ou indisponível), prazo, validade e observações.",
   ]);
   planilha.addRow([]);
+  planilha.getCell("D1").value = "Validade da cotação (preencher)";
+  planilha.getCell("D2").value = "Prazo de entrega em dias (preencher)";
+  planilha.getCell("D3").value = "Observações (preencher)";
+  planilha.mergeCells("E3:I3");
+  for (const linha of [1, 2, 3]) {
+    planilha.getCell(`D${linha}`).font = { bold: true };
+    planilha.getCell(`D${linha}`).alignment = {
+      vertical: "middle",
+      wrapText: true,
+    };
+    planilha.getCell(`E${linha}`).alignment = {
+      vertical: "middle",
+      wrapText: true,
+    };
+    planilha.getCell(`E${linha}`).fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "FFFFF7D6" },
+    };
+    planilha.getRow(linha).height = linha === 3 ? 36 : 24;
+  }
   planilha.addRow([
     "ID solicitação",
     "ID item",
@@ -227,9 +248,6 @@ async function criarPlanilha(
     "Unidade solicitada",
     "Preço por unidade solicitada (preencher)",
     "Disponibilidade (total, parcial com quantidade ou indisponível)",
-    "Prazo de entrega em dias (preencher)",
-    "Validade da cotação (preencher)",
-    "Observações (preencher)",
   ]);
 
   for (const item of solicitacao.itens) {
@@ -241,9 +259,6 @@ async function criarPlanilha(
       item.produtoNome,
       Number(item.quantidade),
       item.unidade,
-      "",
-      "",
-      "",
       "",
       "",
     ]);
@@ -258,7 +273,7 @@ async function criarPlanilha(
   };
   cabecalho.alignment = { vertical: "middle", wrapText: true };
   planilha.views = [{ state: "frozen", ySplit: 5 }];
-  const larguras = [38, 38, 12, 20, 38, 20, 20, 34, 42, 34, 34, 38];
+  const larguras = [38, 38, 12, 38, 38, 20, 20, 34, 54];
   larguras.forEach((largura, indice) => {
     planilha.getColumn(indice + 1).width = largura;
   });
