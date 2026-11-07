@@ -3,7 +3,6 @@ import Link from "next/link";
 import {
   IconeArmazem,
   IconeCaixa,
-  IconeCalendario,
   IconeDocumento,
   IconeUser,
 } from "@/components/icones";
@@ -21,20 +20,13 @@ const PERMISSOES = {
   fornecedores: "fornecedores.fornecedor.consultar",
   usuarios: "usuarios.usuario.consultar",
   locais: "locais.local.consultar",
-  historico: "auditoria.log.consultar",
 } as const;
-
-const DATA_BR = new Intl.DateTimeFormat("pt-BR", {
-  dateStyle: "short",
-  timeStyle: "short",
-});
 
 export default async function DashboardPage() {
   const usuario = await exigirSessao();
   const pode = (permissao: string) => usuario.permissoes.has(permissao);
   const podeConsultarProdutos = pode(PERMISSOES.produtos);
   const podeConsultarPedidos = pode(PERMISSOES.pedidos);
-  const podeConsultarHistorico = pode(PERMISSOES.historico);
 
   const [
     totalProdutos,
@@ -42,7 +34,6 @@ export default async function DashboardPage() {
     fornecedores,
     usuarios,
     locais,
-    historico,
   ] = await Promise.all([
       podeConsultarProdutos
         ? prisma.produto.count({ where: { ativo: true } })
@@ -80,21 +71,6 @@ export default async function DashboardPage() {
         : Promise.resolve(null),
       pode(PERMISSOES.locais)
         ? prisma.localEstoque.count()
-        : Promise.resolve(null),
-      podeConsultarHistorico
-        ? Promise.all([
-            prisma.logSistema.count(),
-            prisma.logSistema.findMany({
-              orderBy: [{ criadoEm: "desc" }, { id: "desc" }],
-              take: 5,
-              select: {
-                id: true,
-                descricao: true,
-                criadoEm: true,
-                usuario: { select: { nome: true } },
-              },
-            }),
-          ])
         : Promise.resolve(null),
     ]);
 
@@ -236,16 +212,6 @@ export default async function DashboardPage() {
       Icone: IconeArmazem,
     });
   }
-  if (historico) {
-    estatisticas.push({
-      titulo: "Ações registradas",
-      valor: historico[0].toLocaleString("pt-BR"),
-      detalhe: "Ações registradas no histórico",
-      href: "/historico",
-      Icone: IconeCalendario,
-    });
-  }
-
   const atalhos = [
     { href: "/produtos", rotulo: "Produtos", permissao: PERMISSOES.produtos },
     {
@@ -255,11 +221,6 @@ export default async function DashboardPage() {
     },
     { href: "/locais", rotulo: "Locais", permissao: PERMISSOES.locais },
     { href: "/usuarios", rotulo: "Usuários", permissao: PERMISSOES.usuarios },
-    {
-      href: "/historico",
-      rotulo: "Histórico de ações",
-      permissao: PERMISSOES.historico,
-    },
   ].filter((atalho) => pode(atalho.permissao));
 
   return (
@@ -423,52 +384,6 @@ export default async function DashboardPage() {
           </section>
         )}
 
-        {historico && (
-          <section
-            aria-labelledby="atividade-titulo"
-            className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm"
-          >
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <h2
-                  id="atividade-titulo"
-                  className="text-lg font-semibold text-zinc-900"
-                >
-                  Atividade recente
-                </h2>
-                <p className="mt-1 text-sm text-zinc-500">
-                  Últimas ações registradas no sistema.
-                </p>
-              </div>
-              <IconeDocumento className="h-5 w-5 shrink-0 text-[#002855]" />
-            </div>
-            {historico[1].length > 0 ? (
-              <ul className="mt-4 divide-y divide-zinc-100">
-                {historico[1].map((log) => (
-                  <li key={log.id} className="py-3">
-                    <p className="line-clamp-2 text-sm font-medium text-zinc-800">
-                      {log.descricao}
-                    </p>
-                    <p className="mt-1 text-xs text-zinc-500">
-                      {log.usuario?.nome ?? "Sistema"} ·{" "}
-                      {DATA_BR.format(log.criadoEm)}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="mt-4 rounded-lg bg-zinc-50 p-3 text-sm text-zinc-600">
-                Nenhuma atividade foi registrada no sistema.
-              </p>
-            )}
-            <Link
-              href="/historico"
-              className="mt-3 inline-flex min-h-10 items-center text-sm font-medium text-[#002855] hover:underline"
-            >
-              Ver histórico completo
-            </Link>
-          </section>
-        )}
       </div>
 
       {atalhos.length > 0 && (
