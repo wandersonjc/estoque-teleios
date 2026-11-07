@@ -83,8 +83,10 @@ function IconeNavegacao({ href }: { href: string }) {
     ),
     "/fornecedores": (
       <>
-        <path d="M3 21h18M5 21V7l7-4 7 4v14" />
-        <path d="M9 9h.01M15 9h.01M9 13h.01M15 13h.01M12 21v-4" />
+        <path d="M3 21v-2a7 7 0 0 1 7-7h1" />
+        <path d="M8 5a4 4 0 1 1 8 0v2a4 4 0 0 1-8 0V5Z" />
+        <path d="M8 6h8M10 12l2 3 2-3" />
+        <path d="M13 14h8v7h-8zM13 16.5h8M17 14v2.5" />
       </>
     ),
     "/pedidos": (
