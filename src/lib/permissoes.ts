@@ -456,19 +456,19 @@ export const MENU_PRINCIPAL: ItemMenu[][] = [
   ],
   [
     {
+      href: "/orcamento",
+      rotulo: "Orçamentos",
+      permissao: "orcamentos.orcamento.consultar",
+    },
+    {
       href: "/pedidos",
-      rotulo: "Pedidos de Compra",
+      rotulo: "Pedidos de Compras",
       permissao: "pedidos.pedido.consultar",
     },
     {
       href: "/transferencias",
       rotulo: "Transferências",
       permissao: "transferencias.pedido.consultar",
-    },
-    {
-      href: "/orcamento",
-      rotulo: "Orçamento",
-      permissao: "orcamentos.orcamento.consultar",
     },
   ],
   [
