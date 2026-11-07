@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 
 import { Prisma } from "@/generated/prisma/client";
 import { exigirPermissao } from "@/lib/autorizacao";
+import { calcularIndicadoresReposicao } from "@/lib/calculos-reposicao";
 import { formatarQuantidade } from "@/app/produtos/tipos";
 import prisma from "@/lib/prisma";
 
@@ -68,21 +69,31 @@ export default async function EditarOrcamentoPage({
 
   const produtosFornecedor = await prisma.produto.findMany({
     where: {
-      ativo: true,
-      configuracaoCompra: { isNot: null },
-      fornecedores: {
-        some: {
-          fornecedorId: solicitacao.fornecedorId,
-          ativo: true,
-          fornecedor: { is: { ativo: true } },
+      OR: [
+        {
+          id: { in: solicitacao.itens.map((item) => item.produtoId) },
         },
-      },
+        {
+          ativo: true,
+          configuracaoCompra: { isNot: null },
+          fornecedores: {
+            some: {
+              fornecedorId: solicitacao.fornecedorId,
+              ativo: true,
+              fornecedor: { is: { ativo: true } },
+            },
+          },
+        },
+      ],
     },
     select: {
       id: true,
       nome: true,
       codigoErp: true,
       unidade: true,
+      ativo: true,
+      configuracaoCompra: true,
+      estoques: { select: { quantidade: true } },
       embalagens: {
         select: {
           id: true,
@@ -90,6 +101,22 @@ export default async function EditarOrcamentoPage({
           quantidadeBase: true,
           principal: true,
         },
+      },
+      fornecedores: {
+        where: {
+          ativo: true,
+          fornecedor: { is: { ativo: true } },
+        },
+        select: {
+          fornecedorId: true,
+          fornecedor: {
+            select: { nome: true, prazoEntregaDias: true },
+          },
+        },
+      },
+      itensPedido: {
+        where: { pedido: { is: { status: "ENVIADO" } } },
+        select: { quantidade: true, quantidadeRecebida: true },
       },
     },
     orderBy: { nome: "asc" },
@@ -105,7 +132,12 @@ export default async function EditarOrcamentoPage({
         return a.unidade.localeCompare(b.unidade, "pt-BR") || a.id - b.id;
       });
       const unidades: ProdutoEditavel["unidades"] = [
-        { valor: "BASE", rotulo: `${produto.unidade} (unidade-base)` },
+        {
+          valor: "BASE",
+          rotulo: `${produto.unidade} (unidade-base)`,
+          unidade: produto.unidade,
+          fatorConversao: "1",
+        },
         ...embalagemOrdenadas
           .filter(
             (embalagem) =>
@@ -116,6 +148,8 @@ export default async function EditarOrcamentoPage({
           .map((embalagem) => ({
             valor: `EMB:${embalagem.id}`,
             rotulo: `${embalagem.unidade} (${formatarQuantidade(embalagem.quantidadeBase.toNumber())} ${produto.unidade})`,
+            unidade: embalagem.unidade,
+            fatorConversao: embalagem.quantidadeBase.toString(),
           })),
       ];
       const existente = itensExistentes.get(produto.id);
@@ -134,14 +168,50 @@ export default async function EditarOrcamentoPage({
           unidades.push({
             valor: "SNAPSHOT",
             rotulo: `Manter unidade registrada (${existente.unidadeInformada})`,
+            unidade: existente.unidadeInformada,
+            fatorConversao: existente.fatorConversao.toString(),
           });
         }
       }
+      const estoque = produto.estoques.reduce(
+        (total, local) => total.add(local.quantidade),
+        new Prisma.Decimal(0)
+      );
+      const prazosEntrega = produto.fornecedores
+        .map((vinculo) => vinculo.fornecedor.prazoEntregaDias)
+        .filter((prazo): prazo is number => prazo !== null);
+      const indicadores = produto.configuracaoCompra
+        ? calcularIndicadoresReposicao({
+            estoqueDisponivel: estoque,
+            itensEnviados: produto.itensPedido,
+            consumoDiario: produto.configuracaoCompra.consumoDiario,
+            estoqueSeguranca: produto.configuracaoCompra.estoqueSeguranca,
+            estoqueMaximoDesejado:
+              produto.configuracaoCompra.estoqueMaximoDesejado,
+            prazoEntregaDias: prazosEntrega.length
+              ? Math.max(...prazosEntrega)
+              : null,
+          })
+        : null;
       return {
         produtoId: produto.id,
         nome: produto.nome,
         codigoERP: produto.codigoErp,
-        ativo: true,
+        ativo: produto.ativo,
+        situacao: indicadores?.situacao ?? null,
+        estoque: estoque.toString(),
+        quantidadeSugerida:
+          indicadores?.quantidadeSugerida.toString() ?? "0",
+        unidadeBase: produto.unidade,
+        embalagens: produto.embalagens
+          .filter((embalagem) => embalagem.quantidadeBase.gt(0))
+          .map((embalagem) => ({
+            unidade: embalagem.unidade,
+            fatorConversao: embalagem.quantidadeBase.toString(),
+          })),
+        fornecedores: produto.fornecedores.map(
+          (vinculo) => vinculo.fornecedor.nome
+        ),
         selecionado: Boolean(existente),
         quantidade: existente?.quantidadeInformada.toString() ?? "",
         unidade,
@@ -159,6 +229,12 @@ export default async function EditarOrcamentoPage({
       nome: existente.produto.nome,
       codigoERP: existente.codigoErp,
       ativo: existente.produto.ativo,
+      situacao: null,
+      estoque: "0",
+      quantidadeSugerida: "0",
+      unidadeBase: existente.unidadeBase,
+      embalagens: [],
+      fornecedores: [],
       selecionado: true,
       quantidade: existente.quantidadeInformada.toString(),
       unidade: "SNAPSHOT",
@@ -166,6 +242,8 @@ export default async function EditarOrcamentoPage({
         {
           valor: "SNAPSHOT",
           rotulo: `Manter unidade registrada (${existente.unidadeInformada})`,
+          unidade: existente.unidadeInformada,
+          fatorConversao: existente.fatorConversao.toString(),
         },
       ],
     });

@@ -3,10 +3,10 @@
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 
 import {
-  formatarQuantidade,
   normalizarDecimal,
 } from "@/app/produtos/tipos";
 
+import QuantidadesEquivalentes from "./QuantidadesEquivalentes";
 import { enviarOrcamentos } from "./actions";
 import {
   ROTULO_SITUACAO_ORCAMENTO,
@@ -259,7 +259,7 @@ export default function FormularioOrcamento({ linhas, podeEnviar }: Props) {
           </p>
         ) : (
           <div className="max-w-full overflow-x-auto">
-            <table className="w-full min-w-[1050px] border-collapse text-left text-sm">
+            <table className="w-full min-w-[1250px] border-collapse text-left text-sm">
               <thead className="bg-zinc-50 text-zinc-700">
                 <tr className="border-b border-zinc-200">
                   <th scope="col" className="w-12 px-3 py-3">Selecionar</th>
@@ -328,11 +328,25 @@ export default function FormularioOrcamento({ linhas, podeEnviar }: Props) {
                       <td className={`whitespace-nowrap px-3 py-3 font-medium ${statusClass}`}>
                         {ROTULO_SITUACAO_ORCAMENTO[linha.situacao]}
                       </td>
-                      <td className="whitespace-nowrap px-3 py-3 text-zinc-700">
-                        {formatarQuantidade(Number(linha.estoque))} {linha.unidadeBase}
+                      <td className="px-3 py-3 text-zinc-700">
+                        <QuantidadesEquivalentes
+                          quantidadeBase={linha.estoque}
+                          unidadeBase={linha.unidadeBase}
+                          embalagens={linha.unidades.map((unidade) => ({
+                            unidade: unidade.unidade,
+                            fatorConversao: unidade.fatorConversao,
+                          }))}
+                        />
                       </td>
-                      <td className="whitespace-nowrap px-3 py-3 text-zinc-700">
-                        {formatarQuantidade(Number(linha.quantidadeSugerida))} {linha.unidadeBase}
+                      <td className="px-3 py-3 text-zinc-700">
+                        <QuantidadesEquivalentes
+                          quantidadeBase={linha.quantidadeSugerida}
+                          unidadeBase={linha.unidadeBase}
+                          embalagens={linha.unidades.map((unidade) => ({
+                            unidade: unidade.unidade,
+                            fatorConversao: unidade.fatorConversao,
+                          }))}
+                        />
                       </td>
                       <td className="max-w-64 px-3 py-3 text-zinc-700">
                         {linha.fornecedores.length > 0

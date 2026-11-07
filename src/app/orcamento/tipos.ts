@@ -3,6 +3,8 @@ export type SituacaoOrcamento = "CRITICO" | "COMPRAR" | "ADEQUADO";
 export type UnidadeOrcamento = {
   valor: string;
   rotulo: string;
+  unidade: string;
+  fatorConversao: string;
 };
 
 export type LinhaOrcamento = {

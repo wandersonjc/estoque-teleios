@@ -72,7 +72,12 @@ export default async function NovoOrcamentoPage() {
     });
 
     const unidades = [
-      { valor: "BASE", rotulo: `${produto.unidade} (unidade-base)` },
+      {
+        valor: "BASE",
+        rotulo: `${produto.unidade} (unidade-base)`,
+        unidade: produto.unidade,
+        fatorConversao: "1",
+      },
       ...produto.embalagens
         .filter(
           (embalagem) =>
@@ -88,6 +93,8 @@ export default async function NovoOrcamentoPage() {
         .map((embalagem) => ({
           valor: `EMB:${embalagem.id}`,
           rotulo: `${embalagem.unidade} (${formatarQuantidade(embalagem.quantidadeBase.toNumber())} ${produto.unidade})`,
+          unidade: embalagem.unidade,
+          fatorConversao: embalagem.quantidadeBase.toString(),
         })),
     ];
 

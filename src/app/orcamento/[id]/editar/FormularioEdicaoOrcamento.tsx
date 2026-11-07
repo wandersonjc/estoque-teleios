@@ -4,15 +4,28 @@ import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 import { IconeCarregando } from "@/components/icones";
+import QuantidadesEquivalentes from "../../QuantidadesEquivalentes";
+import { ROTULO_SITUACAO_ORCAMENTO, type SituacaoOrcamento } from "../../tipos";
 import { editarSolicitacaoOrcamento } from "../../actions";
 
-type Unidade = { valor: string; rotulo: string };
+type Unidade = {
+  valor: string;
+  rotulo: string;
+  unidade: string;
+  fatorConversao: string;
+};
 
 export type ProdutoEditavel = {
   produtoId: number;
   nome: string;
   codigoERP: string | null;
   ativo: boolean;
+  situacao: SituacaoOrcamento | null;
+  estoque: string;
+  quantidadeSugerida: string;
+  unidadeBase: string;
+  embalagens: { unidade: string; fatorConversao: string }[];
+  fornecedores: string[];
   selecionado: boolean;
   quantidade: string;
   unidade: string;
@@ -119,11 +132,15 @@ export default function FormularioEdicaoOrcamento({
       </div>
 
       <div className="mt-4 overflow-x-auto rounded-lg border border-zinc-200">
-        <table className="w-full min-w-[760px] border-collapse text-left text-sm">
+        <table className="w-full min-w-[1250px] border-collapse text-left text-sm">
           <thead className="bg-zinc-50 text-zinc-600">
             <tr className="border-b border-zinc-200">
               <th scope="col" className="px-3 py-3 font-semibold">Incluir</th>
               <th scope="col" className="px-3 py-3 font-semibold">Produto</th>
+              <th scope="col" className="px-3 py-3 font-semibold">Situação</th>
+              <th scope="col" className="px-3 py-3 font-semibold">Estoque</th>
+              <th scope="col" className="px-3 py-3 font-semibold">Sugestão</th>
+                  <th scope="col" className="px-3 py-3 font-semibold">Fornecedores</th>
               <th scope="col" className="px-3 py-3 font-semibold">Quantidade</th>
               <th scope="col" className="px-3 py-3 font-semibold">Unidade solicitada</th>
             </tr>
@@ -132,7 +149,7 @@ export default function FormularioEdicaoOrcamento({
             {produtosFiltrados.map((produto) => (
               <tr
                 key={produto.produtoId}
-                className="border-b border-zinc-100 last:border-0"
+                className="border-b border-zinc-100 align-top last:border-0"
               >
                 <td className="px-3 py-3">
                   <input
@@ -160,6 +177,42 @@ export default function FormularioEdicaoOrcamento({
                       Produto inativo; só é possível manter a unidade registrada.
                     </p>
                   )}
+                </td>
+                <td
+                  className={`whitespace-nowrap px-3 py-3 font-medium ${
+                    !produto.ativo
+                      ? "text-zinc-500"
+                      : produto.situacao === "CRITICO"
+                        ? "text-red-700"
+                        : produto.situacao === "COMPRAR"
+                          ? "text-amber-700"
+                          : "text-green-700"
+                  }`}
+                >
+                  {!produto.ativo
+                    ? "Inativo"
+                    : produto.situacao
+                      ? ROTULO_SITUACAO_ORCAMENTO[produto.situacao]
+                      : "Sem configuração"}
+                </td>
+                <td className="px-3 py-3 text-zinc-700">
+                  <QuantidadesEquivalentes
+                    quantidadeBase={produto.estoque}
+                    unidadeBase={produto.unidadeBase}
+                    embalagens={produto.embalagens}
+                  />
+                </td>
+                <td className="px-3 py-3 text-zinc-700">
+                  <QuantidadesEquivalentes
+                    quantidadeBase={produto.quantidadeSugerida}
+                    unidadeBase={produto.unidadeBase}
+                    embalagens={produto.embalagens}
+                  />
+                </td>
+                <td className="max-w-64 px-3 py-3 text-zinc-700">
+                  {produto.fornecedores.length > 0
+                    ? produto.fornecedores.join(", ")
+                    : "Sem fornecedor ativo vinculado"}
                 </td>
                 <td className="px-3 py-3">
                   <input
@@ -199,7 +252,7 @@ export default function FormularioEdicaoOrcamento({
             ))}
             {produtosFiltrados.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-3 py-6 text-center text-zinc-600">
+                <td colSpan={8} className="px-3 py-6 text-center text-zinc-600">
                   Nenhum produto encontrado.
                 </td>
               </tr>
