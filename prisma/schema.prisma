@@ -66,6 +66,7 @@ model Usuario {
   transferenciasEnviadas    PedidoTransferencia[] @relation("TransferenciaRemetente")
   transferenciasRecebidas   PedidoTransferencia[] @relation("TransferenciaRecebedor")
   pedidosCompra             PedidoCompra[]        @relation("CompradorPedido")
+  solicitacoesOrcamento     SolicitacaoOrcamento[]
   notificacoes              Notificacao[]
   assinaturasPush           AssinaturaPush[]
 
@@ -159,6 +160,7 @@ model Produto {
   itensTransferencia ItemTransferencia[]
   configuracaoCompra ConfiguracaoCompra?
   itensPedido        ItemPedido[]
+  itensSolicitacaoOrcamento ItemSolicitacaoOrcamento[]
 
   @@map("produto")
 }
@@ -202,6 +204,7 @@ model Fornecedor {
   produtos        ProdutoFornecedor[]
   historicoPrecos HistoricoPreco[]
   pedidosCompra   PedidoCompra[]
+  solicitacoesOrcamento SolicitacaoOrcamento[]
 
   @@map("fornecedor")
 }
@@ -347,6 +350,56 @@ model ConfiguracaoCompra {
   produto Produto @relation(fields: [produtoId], references: [id], onDelete: Cascade)
 
   @@map("configuracao_compra")
+}
+
+enum EstadoEnvioOrcamento {
+  NAO_SOLICITADO
+  PENDENTE
+  ENVIADO
+  FALHOU
+}
+
+model SolicitacaoOrcamento {
+  id              String              @id @default(uuid()) @db.Uuid
+  fornecedorId    Int                 @map("fornecedor_id")
+  solicitanteId   Int                 @map("solicitante_id")
+  situacaoFiltro  String              @map("situacao_filtro") @db.VarChar(30)
+  emailStatus     EstadoEnvioOrcamento @default(NAO_SOLICITADO) @map("email_status")
+  whatsappStatus  EstadoEnvioOrcamento @default(NAO_SOLICITADO) @map("whatsapp_status")
+  emailErro       String?             @map("email_erro") @db.VarChar(500)
+  whatsappErro    String?             @map("whatsapp_erro") @db.VarChar(500)
+  criadoEm        DateTime            @default(now()) @map("criado_em")
+  emailEnviadoEm  DateTime?           @map("email_enviado_em")
+  whatsappEnviadoEm DateTime?         @map("whatsapp_enviado_em")
+
+  fornecedor  Fornecedor                 @relation(fields: [fornecedorId], references: [id], onDelete: Restrict)
+  solicitante Usuario                    @relation(fields: [solicitanteId], references: [id], onDelete: Restrict)
+  itens       ItemSolicitacaoOrcamento[]
+
+  @@index([fornecedorId, criadoEm])
+  @@index([solicitanteId, criadoEm])
+  @@map("solicitacao_orcamento")
+}
+
+model ItemSolicitacaoOrcamento {
+  id                  String  @id @default(uuid()) @db.Uuid
+  solicitacaoId       String  @map("solicitacao_id") @db.Uuid
+  produtoId           Int     @map("produto_id")
+  produtoNome         String  @map("produto_nome")
+  codigoErp           String? @map("codigo_erp")
+  codigoFornecedor    String? @map("codigo_fornecedor")
+  quantidadeInformada Decimal @map("quantidade_informada") @db.Decimal(12, 3)
+  unidadeInformada    String  @map("unidade_informada") @db.VarChar(50)
+  fatorConversao      Decimal @map("fator_conversao") @db.Decimal(12, 3)
+  quantidadeBase      Decimal @map("quantidade_base") @db.Decimal(12, 3)
+  unidadeBase         String  @map("unidade_base") @db.VarChar(50)
+
+  solicitacao SolicitacaoOrcamento @relation(fields: [solicitacaoId], references: [id], onDelete: Cascade)
+  produto     Produto              @relation(fields: [produtoId], references: [id], onDelete: Restrict)
+
+  @@unique([solicitacaoId, produtoId])
+  @@index([produtoId])
+  @@map("item_solicitacao_orcamento")
 }
 
 model PedidoCompra {
@@ -539,6 +592,7 @@ enum ModuloSistema {
   USUARIOS
   PERMISSOES
   TRANSFERENCIAS
+  ORCAMENTOS
 }
 
 enum AcaoSistema {

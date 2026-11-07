@@ -103,6 +103,8 @@ Começam cadastrados os 3 locais abaixo, criados pelo script `scripts/seed.ts`:
 
 ## 6. Regras de comparação e montagem do pedido
 
+- **RN-12. Solicitação de orçamento:** a lista considera produtos ativos com parâmetros de reposição e exibe por padrão as situações **Crítico** e **Comprar**; o usuário pode filtrar críticos ou todas as situações, inclusive estoque adequado. O usuário informa quantidade e embalagem por produto; o servidor valida a embalagem cadastrada e converte para a unidade-base. Cada fornecedor ativo vinculado recebe somente os produtos associados a ele, em uma planilha XLSX com identificadores estáveis para futura importação. O envio por e-mail/WhatsApp é registrado por fornecedor e canal, e falhas parciais são informadas sem ocultar os canais enviados. Solicitar orçamento não cria pedido de compra nem altera estoque ou histórico de preços.
+
 - **RN-13. Critério único de escolha: menor preço unitário.** Para cada produto com situação **Crítico** ou **Comprar**, listar os fornecedores ativos vinculados, ordenados do **mais barato para o mais caro**, mostrando origem (pago ou cotado) e data de cada preço. O mais barato vem **pré-selecionado**.
 - **RN-14. Fornecedor sem preço:** aparece no fim da lista, marcado como "sem preço". Não é pré-selecionado.
 - **RN-15. Troca manual:** o comprador pode trocar o fornecedor escolhido e ajustar a quantidade de qualquer item.
@@ -185,6 +187,8 @@ A transferência permite que um usuário solicite produtos de um local de estoqu
 | `movimento_estoque` | 1 | produto, local, tipo (entrada/saída/contagem/recebimento), quantidade, usuario, data_hora (histórico) |
 | `log_sistema` | 1 | módulo, ação, descrição, registro_id, dados (JSON), usuario, criado_em (histórico geral) |
 | `fornecedor` | 2 | nome, nome_representante, whatsapp, email, site, contato (mais informações), prazo_entrega_dias, valor_minimo_pedido, frete (opcionais), ativo |
+| `solicitacao_orcamento` | 5 | fornecedor, solicitante, situação-filtro, estados/erros por canal, data (histórico da solicitação) |
+| `item_solicitacao_orcamento` | 5 | solicitação, produto e descrição/códigos em snapshot, quantidade/unidade/fator informados e quantidade/unidade-base convertidas |
 | `produto_fornecedor` | 2 | produto, fornecedor, codigo_no_fornecedor, ativo |
 | `historico_preco` | 2 e 3 | produto, fornecedor, preco_unitario na unidade-base, preço/unidade/fator informados (snapshot opcional), data, origem (pago ou cotado), pedido (opcional). Módulo 2 grava os preços *cotados*; o Módulo 3 grava os *pagos* |
 | `configuracao_compra` | 3 | produto (único), consumo informado/período/unidade/fator, consumo_diario na unidade-base, estoque de segurança e máximo na unidade-base e os respectivos valores informados/unidades/fatores |
@@ -231,6 +235,30 @@ Também no Módulo 1: **importação da planilha de produtos do ERP** (RN-24), a
 5. **Conclusão:** em uma transação, o sistema baixa da origem o que foi enviado, credita no destino o que foi recebido, libera as reservas e registra recebedor, data/hora, movimentações e log. O pedido concluído fica somente para consulta.
 6. **Permissões:** consultar, solicitar, enviar e receber são permissões individuais, sem restrição por local. O cargo Administrador é exceção somente para editar ou excluir solicitações ainda Pendentes; não substitui as permissões de envio e recebimento.
 7. **Disponibilização:** o módulo está implementado nas telas `/transferencias`, `/transferencias/novo` e `/transferencias/[id]`, com validações no servidor, controle de saldo reservado, histórico de movimentações, auditoria e notificações internas e push (RN-36). Para ativar push, gere um par VAPID (`npx web-push generate-vapid-keys`) e configure `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` e `VAPID_SUBJECT` no ambiente. Configure também `CRON_SECRET` (segredo aleatório forte) localmente e na hospedagem. O cron de `vercel.json` chama `/api/cron/push` a cada minuto; a hospedagem precisa aceitar essa frequência. O envio imediato após as ações de transferência depende do runtime suportar a API `after` do Next.js; o cron é necessário para recuperação e retentativas. Aplique o schema Prisma ao banco correto para criar as tabelas `assinatura_push` e `entrega_push`, e sincronize/conceda as permissões conforme a seção 2.1. Push requer HTTPS em produção; suporte e condições de instalação variam entre navegadores e dispositivos.
+
+### Módulo 5: Orçamento
+
+#### Implementado
+
+1. A lista inclui produtos ativos com configuração de reposição; por padrão mostra **Crítico** e **Comprar**, com filtros para somente críticos ou todas as situações.
+2. O solicitante informa quantidades e embalagens. A quantidade na unidade-base é calculada e validada pelo servidor; o fator usado fica registrado como snapshot.
+3. Uma solicitação e uma planilha `.xlsx` são criadas por fornecedor ativo vinculado. Cada fornecedor recebe somente os produtos que vende, por e-mail Brevo e/ou WhatsApp Z-API.
+4. Os canais são enviados sequencialmente; status e falhas são registrados por fornecedor/canal. Solicitar orçamento não atualiza preços nem cria pedido de compra.
+5. A planilha exibe produto, quantidade e unidade solicitadas, preço por unidade solicitada, disponibilidade, prazo de entrega em dias, validade da cotação e observações. O preço deve corresponder a uma unidade da embalagem/unidade solicitada (por exemplo, preço de uma caixa quando a unidade solicitada é caixa), não ao preço da unidade-base. Em disponibilidade, o fornecedor informa atendimento total, parcial (incluindo a quantidade que consegue fornecer) ou indisponibilidade.
+6. A planilha mantém as colunas de **ID solicitação**, **ID item** e **ID produto** ocultas. O ID solicitação identifica a cotação; o ID item associa a resposta à linha solicitada; o ID produto permite conferir o produto. Esses identificadores viabilizam uma futura importação, mas atualmente não existe fluxo para receber ou importar o arquivo respondido.
+
+#### Planejado, ainda não implementado
+
+1. Disponibilizar uma ação para receber a planilha `.xlsx` preenchida pelo fornecedor.
+2. Validar o arquivo e seus identificadores, verificando se a solicitação e cada item existem e se pertencem ao fornecedor e à cotação esperados. Rejeitar arquivos incompatíveis e sinalizar linhas ausentes, repetidas ou inválidas sem aplicar dados silenciosamente.
+3. Mostrar uma prévia para o usuário conferir os dados antes de confirmar a importação, indicando erros e itens sem resposta.
+4. Após confirmação, registrar o preço cotado com base na unidade solicitada e no fator de conversão guardado na solicitação, preservando valor, unidade e fator informados; converter o preço para a unidade-base para alimentar o histórico de preços com origem **cotado**.
+5. Definir e implementar o tratamento de disponibilidade, prazo, validade e observações recebidos, pois ainda não há decisão documentada sobre como esses dados serão armazenados, consultados e atualizados. Também devem ser definidos o comportamento para reimportar uma cotação e a forma de lidar com respostas parciais ou correções do fornecedor.
+6. A importação não deve criar pedido de compra nem alterar estoque. A seleção de fornecedores e a confirmação de eventual pedido permanecem etapas próprias do fluxo de compras.
+
+#### Configuração e permissões
+
+Configure `BREVO_API_KEY`, `BREVO_SENDER_EMAIL` (e opcionalmente `BREVO_SENDER_NAME`), além de `ZAPI_API_URL` e `ZAPI_EXTERNAL_TOKEN` para a API externa Z-API. A rota `SendMessageAPIFile` recebe `multipart/form-data` com arquivo, mensagem, telefone, chave externa e estado da conversa. Aplique o schema Prisma e sincronize/conceda `orcamentos.orcamento.consultar` e `orcamentos.orcamento.enviar` em `/permissoes`.
 
 ### Futuro
 

@@ -411,6 +411,8 @@ export const ModelName = {
   Estoque: 'Estoque',
   MovimentoEstoque: 'MovimentoEstoque',
   ConfiguracaoCompra: 'ConfiguracaoCompra',
+  SolicitacaoOrcamento: 'SolicitacaoOrcamento',
+  ItemSolicitacaoOrcamento: 'ItemSolicitacaoOrcamento',
   PedidoCompra: 'PedidoCompra',
   ItemPedido: 'ItemPedido',
   PedidoTransferencia: 'PedidoTransferencia',
@@ -437,7 +439,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "usuario" | "cargo" | "usuarioCargo" | "funcao" | "usuarioFuncao" | "localEstoque" | "produto" | "embalagemProduto" | "fornecedor" | "produtoFornecedor" | "historicoPreco" | "estoque" | "movimentoEstoque" | "configuracaoCompra" | "pedidoCompra" | "itemPedido" | "pedidoTransferencia" | "itemTransferencia" | "notificacao" | "assinaturaPush" | "entregaPush" | "logSistema" | "permissao" | "permissaoUsuario" | "sessao"
+    modelProps: "usuario" | "cargo" | "usuarioCargo" | "funcao" | "usuarioFuncao" | "localEstoque" | "produto" | "embalagemProduto" | "fornecedor" | "produtoFornecedor" | "historicoPreco" | "estoque" | "movimentoEstoque" | "configuracaoCompra" | "solicitacaoOrcamento" | "itemSolicitacaoOrcamento" | "pedidoCompra" | "itemPedido" | "pedidoTransferencia" | "itemTransferencia" | "notificacao" | "assinaturaPush" | "entregaPush" | "logSistema" | "permissao" | "permissaoUsuario" | "sessao"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1474,6 +1476,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.ConfiguracaoCompraCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.ConfiguracaoCompraCountAggregateOutputType> | number
+        }
+      }
+    }
+    SolicitacaoOrcamento: {
+      payload: Prisma.$SolicitacaoOrcamentoPayload<ExtArgs>
+      fields: Prisma.SolicitacaoOrcamentoFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SolicitacaoOrcamentoFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SolicitacaoOrcamentoPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SolicitacaoOrcamentoFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SolicitacaoOrcamentoPayload>
+        }
+        findFirst: {
+          args: Prisma.SolicitacaoOrcamentoFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SolicitacaoOrcamentoPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SolicitacaoOrcamentoFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SolicitacaoOrcamentoPayload>
+        }
+        findMany: {
+          args: Prisma.SolicitacaoOrcamentoFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SolicitacaoOrcamentoPayload>[]
+        }
+        create: {
+          args: Prisma.SolicitacaoOrcamentoCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SolicitacaoOrcamentoPayload>
+        }
+        createMany: {
+          args: Prisma.SolicitacaoOrcamentoCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SolicitacaoOrcamentoCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SolicitacaoOrcamentoPayload>[]
+        }
+        delete: {
+          args: Prisma.SolicitacaoOrcamentoDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SolicitacaoOrcamentoPayload>
+        }
+        update: {
+          args: Prisma.SolicitacaoOrcamentoUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SolicitacaoOrcamentoPayload>
+        }
+        deleteMany: {
+          args: Prisma.SolicitacaoOrcamentoDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SolicitacaoOrcamentoUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SolicitacaoOrcamentoUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SolicitacaoOrcamentoPayload>[]
+        }
+        upsert: {
+          args: Prisma.SolicitacaoOrcamentoUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SolicitacaoOrcamentoPayload>
+        }
+        aggregate: {
+          args: Prisma.SolicitacaoOrcamentoAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSolicitacaoOrcamento>
+        }
+        groupBy: {
+          args: Prisma.SolicitacaoOrcamentoGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SolicitacaoOrcamentoGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SolicitacaoOrcamentoCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SolicitacaoOrcamentoCountAggregateOutputType> | number
+        }
+      }
+    }
+    ItemSolicitacaoOrcamento: {
+      payload: Prisma.$ItemSolicitacaoOrcamentoPayload<ExtArgs>
+      fields: Prisma.ItemSolicitacaoOrcamentoFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ItemSolicitacaoOrcamentoFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ItemSolicitacaoOrcamentoPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ItemSolicitacaoOrcamentoFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ItemSolicitacaoOrcamentoPayload>
+        }
+        findFirst: {
+          args: Prisma.ItemSolicitacaoOrcamentoFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ItemSolicitacaoOrcamentoPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ItemSolicitacaoOrcamentoFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ItemSolicitacaoOrcamentoPayload>
+        }
+        findMany: {
+          args: Prisma.ItemSolicitacaoOrcamentoFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ItemSolicitacaoOrcamentoPayload>[]
+        }
+        create: {
+          args: Prisma.ItemSolicitacaoOrcamentoCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ItemSolicitacaoOrcamentoPayload>
+        }
+        createMany: {
+          args: Prisma.ItemSolicitacaoOrcamentoCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ItemSolicitacaoOrcamentoCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ItemSolicitacaoOrcamentoPayload>[]
+        }
+        delete: {
+          args: Prisma.ItemSolicitacaoOrcamentoDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ItemSolicitacaoOrcamentoPayload>
+        }
+        update: {
+          args: Prisma.ItemSolicitacaoOrcamentoUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ItemSolicitacaoOrcamentoPayload>
+        }
+        deleteMany: {
+          args: Prisma.ItemSolicitacaoOrcamentoDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ItemSolicitacaoOrcamentoUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ItemSolicitacaoOrcamentoUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ItemSolicitacaoOrcamentoPayload>[]
+        }
+        upsert: {
+          args: Prisma.ItemSolicitacaoOrcamentoUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ItemSolicitacaoOrcamentoPayload>
+        }
+        aggregate: {
+          args: Prisma.ItemSolicitacaoOrcamentoAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateItemSolicitacaoOrcamento>
+        }
+        groupBy: {
+          args: Prisma.ItemSolicitacaoOrcamentoGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ItemSolicitacaoOrcamentoGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ItemSolicitacaoOrcamentoCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ItemSolicitacaoOrcamentoCountAggregateOutputType> | number
         }
       }
     }
@@ -2514,6 +2664,40 @@ export const ConfiguracaoCompraScalarFieldEnum = {
 export type ConfiguracaoCompraScalarFieldEnum = (typeof ConfiguracaoCompraScalarFieldEnum)[keyof typeof ConfiguracaoCompraScalarFieldEnum]
 
 
+export const SolicitacaoOrcamentoScalarFieldEnum = {
+  id: 'id',
+  fornecedorId: 'fornecedorId',
+  solicitanteId: 'solicitanteId',
+  situacaoFiltro: 'situacaoFiltro',
+  emailStatus: 'emailStatus',
+  whatsappStatus: 'whatsappStatus',
+  emailErro: 'emailErro',
+  whatsappErro: 'whatsappErro',
+  criadoEm: 'criadoEm',
+  emailEnviadoEm: 'emailEnviadoEm',
+  whatsappEnviadoEm: 'whatsappEnviadoEm'
+} as const
+
+export type SolicitacaoOrcamentoScalarFieldEnum = (typeof SolicitacaoOrcamentoScalarFieldEnum)[keyof typeof SolicitacaoOrcamentoScalarFieldEnum]
+
+
+export const ItemSolicitacaoOrcamentoScalarFieldEnum = {
+  id: 'id',
+  solicitacaoId: 'solicitacaoId',
+  produtoId: 'produtoId',
+  produtoNome: 'produtoNome',
+  codigoErp: 'codigoErp',
+  codigoFornecedor: 'codigoFornecedor',
+  quantidadeInformada: 'quantidadeInformada',
+  unidadeInformada: 'unidadeInformada',
+  fatorConversao: 'fatorConversao',
+  quantidadeBase: 'quantidadeBase',
+  unidadeBase: 'unidadeBase'
+} as const
+
+export type ItemSolicitacaoOrcamentoScalarFieldEnum = (typeof ItemSolicitacaoOrcamentoScalarFieldEnum)[keyof typeof ItemSolicitacaoOrcamentoScalarFieldEnum]
+
+
 export const PedidoCompraScalarFieldEnum = {
   id: 'id',
   compradorId: 'compradorId',
@@ -2844,6 +3028,19 @@ export type ListEnumPeriodoConsumoFieldRefInput<$PrismaModel> = FieldRefInputTyp
 
 
 /**
+ * Reference to a field of type 'EstadoEnvioOrcamento'
+ */
+export type EnumEstadoEnvioOrcamentoFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EstadoEnvioOrcamento'>
+
+
+/**
+ * Reference to a field of type 'EstadoEnvioOrcamento[]'
+ */
+export type ListEnumEstadoEnvioOrcamentoFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EstadoEnvioOrcamento[]'>
+
+
+
+/**
  * Reference to a field of type 'StatusPedidoCompra'
  */
 export type EnumStatusPedidoCompraFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StatusPedidoCompra'>
@@ -3119,6 +3316,8 @@ export type GlobalOmitConfig = {
   estoque?: Prisma.EstoqueOmit
   movimentoEstoque?: Prisma.MovimentoEstoqueOmit
   configuracaoCompra?: Prisma.ConfiguracaoCompraOmit
+  solicitacaoOrcamento?: Prisma.SolicitacaoOrcamentoOmit
+  itemSolicitacaoOrcamento?: Prisma.ItemSolicitacaoOrcamentoOmit
   pedidoCompra?: Prisma.PedidoCompraOmit
   itemPedido?: Prisma.ItemPedidoOmit
   pedidoTransferencia?: Prisma.PedidoTransferenciaOmit
@@ -3192,4 +3391,3 @@ export type PrismaAction =
  * `PrismaClient` proxy available in interactive transactions.
  */
 export type TransactionClient = Omit<DefaultPrismaClient, runtime.ITXClientDenyList>
-

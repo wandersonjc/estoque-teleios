@@ -364,6 +364,22 @@ export const CATALOGO_DE_PERMISSOES: PermissaoCatalogo[] = [
     ordem: 1050,
   },
   {
+    codigo: "orcamentos.orcamento.consultar",
+    modulo: "Orçamento",
+    funcionalidade: "Solicitação de orçamento",
+    operacao: "Consultar",
+    descricao: "Consultar produtos e iniciar solicitações de orçamento para fornecedores",
+    ordem: 1060,
+  },
+  {
+    codigo: "orcamentos.orcamento.enviar",
+    modulo: "Orçamento",
+    funcionalidade: "Solicitação de orçamento",
+    operacao: "Enviar",
+    descricao: "Enviar planilhas de cotação por e-mail e WhatsApp aos fornecedores vinculados",
+    ordem: 1070,
+  },
+  {
     codigo: "pedidos.pedido.receber",
     modulo: "Pedidos de compra",
     funcionalidade: "Pedido",
@@ -448,6 +464,11 @@ export const MENU_PRINCIPAL: ItemMenu[][] = [
       href: "/transferencias",
       rotulo: "Transferências",
       permissao: "transferencias.pedido.consultar",
+    },
+    {
+      href: "/orcamento",
+      rotulo: "Orçamento",
+      permissao: "orcamentos.orcamento.consultar",
     },
   ],
   [

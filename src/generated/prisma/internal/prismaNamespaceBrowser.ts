@@ -65,6 +65,8 @@ export const ModelName = {
   Estoque: 'Estoque',
   MovimentoEstoque: 'MovimentoEstoque',
   ConfiguracaoCompra: 'ConfiguracaoCompra',
+  SolicitacaoOrcamento: 'SolicitacaoOrcamento',
+  ItemSolicitacaoOrcamento: 'ItemSolicitacaoOrcamento',
   PedidoCompra: 'PedidoCompra',
   ItemPedido: 'ItemPedido',
   PedidoTransferencia: 'PedidoTransferencia',
@@ -276,6 +278,40 @@ export const ConfiguracaoCompraScalarFieldEnum = {
 } as const
 
 export type ConfiguracaoCompraScalarFieldEnum = (typeof ConfiguracaoCompraScalarFieldEnum)[keyof typeof ConfiguracaoCompraScalarFieldEnum]
+
+
+export const SolicitacaoOrcamentoScalarFieldEnum = {
+  id: 'id',
+  fornecedorId: 'fornecedorId',
+  solicitanteId: 'solicitanteId',
+  situacaoFiltro: 'situacaoFiltro',
+  emailStatus: 'emailStatus',
+  whatsappStatus: 'whatsappStatus',
+  emailErro: 'emailErro',
+  whatsappErro: 'whatsappErro',
+  criadoEm: 'criadoEm',
+  emailEnviadoEm: 'emailEnviadoEm',
+  whatsappEnviadoEm: 'whatsappEnviadoEm'
+} as const
+
+export type SolicitacaoOrcamentoScalarFieldEnum = (typeof SolicitacaoOrcamentoScalarFieldEnum)[keyof typeof SolicitacaoOrcamentoScalarFieldEnum]
+
+
+export const ItemSolicitacaoOrcamentoScalarFieldEnum = {
+  id: 'id',
+  solicitacaoId: 'solicitacaoId',
+  produtoId: 'produtoId',
+  produtoNome: 'produtoNome',
+  codigoErp: 'codigoErp',
+  codigoFornecedor: 'codigoFornecedor',
+  quantidadeInformada: 'quantidadeInformada',
+  unidadeInformada: 'unidadeInformada',
+  fatorConversao: 'fatorConversao',
+  quantidadeBase: 'quantidadeBase',
+  unidadeBase: 'unidadeBase'
+} as const
+
+export type ItemSolicitacaoOrcamentoScalarFieldEnum = (typeof ItemSolicitacaoOrcamentoScalarFieldEnum)[keyof typeof ItemSolicitacaoOrcamentoScalarFieldEnum]
 
 
 export const PedidoCompraScalarFieldEnum = {

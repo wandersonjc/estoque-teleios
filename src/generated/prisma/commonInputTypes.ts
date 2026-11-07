@@ -299,11 +299,23 @@ export type EnumPeriodoConsumoWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumPeriodoConsumoFilter<$PrismaModel>
 }
 
-export type EnumStatusPedidoCompraFilter<$PrismaModel = never> = {
-  equals?: $Enums.StatusPedidoCompra | Prisma.EnumStatusPedidoCompraFieldRefInput<$PrismaModel>
-  in?: $Enums.StatusPedidoCompra[] | Prisma.ListEnumStatusPedidoCompraFieldRefInput<$PrismaModel>
-  notIn?: $Enums.StatusPedidoCompra[] | Prisma.ListEnumStatusPedidoCompraFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumStatusPedidoCompraFilter<$PrismaModel> | $Enums.StatusPedidoCompra
+export type UuidFilter<$PrismaModel = never> = {
+  equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  notIn?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  lt?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  lte?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  gt?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  gte?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  mode?: Prisma.QueryMode
+  not?: Prisma.NestedUuidFilter<$PrismaModel> | string
+}
+
+export type EnumEstadoEnvioOrcamentoFilter<$PrismaModel = never> = {
+  equals?: $Enums.EstadoEnvioOrcamento | Prisma.EnumEstadoEnvioOrcamentoFieldRefInput<$PrismaModel>
+  in?: $Enums.EstadoEnvioOrcamento[] | Prisma.ListEnumEstadoEnvioOrcamentoFieldRefInput<$PrismaModel>
+  notIn?: $Enums.EstadoEnvioOrcamento[] | Prisma.ListEnumEstadoEnvioOrcamentoFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumEstadoEnvioOrcamentoFilter<$PrismaModel> | $Enums.EstadoEnvioOrcamento
 }
 
 export type DateTimeNullableFilter<$PrismaModel = never> = {
@@ -317,14 +329,29 @@ export type DateTimeNullableFilter<$PrismaModel = never> = {
   not?: Prisma.NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
 }
 
-export type EnumStatusPedidoCompraWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.StatusPedidoCompra | Prisma.EnumStatusPedidoCompraFieldRefInput<$PrismaModel>
-  in?: $Enums.StatusPedidoCompra[] | Prisma.ListEnumStatusPedidoCompraFieldRefInput<$PrismaModel>
-  notIn?: $Enums.StatusPedidoCompra[] | Prisma.ListEnumStatusPedidoCompraFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumStatusPedidoCompraWithAggregatesFilter<$PrismaModel> | $Enums.StatusPedidoCompra
+export type UuidWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  notIn?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  lt?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  lte?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  gt?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  gte?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  mode?: Prisma.QueryMode
+  not?: Prisma.NestedUuidWithAggregatesFilter<$PrismaModel> | string
   _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumStatusPedidoCompraFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumStatusPedidoCompraFilter<$PrismaModel>
+  _min?: Prisma.NestedStringFilter<$PrismaModel>
+  _max?: Prisma.NestedStringFilter<$PrismaModel>
+}
+
+export type EnumEstadoEnvioOrcamentoWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.EstadoEnvioOrcamento | Prisma.EnumEstadoEnvioOrcamentoFieldRefInput<$PrismaModel>
+  in?: $Enums.EstadoEnvioOrcamento[] | Prisma.ListEnumEstadoEnvioOrcamentoFieldRefInput<$PrismaModel>
+  notIn?: $Enums.EstadoEnvioOrcamento[] | Prisma.ListEnumEstadoEnvioOrcamentoFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumEstadoEnvioOrcamentoWithAggregatesFilter<$PrismaModel> | $Enums.EstadoEnvioOrcamento
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumEstadoEnvioOrcamentoFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumEstadoEnvioOrcamentoFilter<$PrismaModel>
 }
 
 export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -339,6 +366,23 @@ export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedDateTimeNullableFilter<$PrismaModel>
   _max?: Prisma.NestedDateTimeNullableFilter<$PrismaModel>
+}
+
+export type EnumStatusPedidoCompraFilter<$PrismaModel = never> = {
+  equals?: $Enums.StatusPedidoCompra | Prisma.EnumStatusPedidoCompraFieldRefInput<$PrismaModel>
+  in?: $Enums.StatusPedidoCompra[] | Prisma.ListEnumStatusPedidoCompraFieldRefInput<$PrismaModel>
+  notIn?: $Enums.StatusPedidoCompra[] | Prisma.ListEnumStatusPedidoCompraFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumStatusPedidoCompraFilter<$PrismaModel> | $Enums.StatusPedidoCompra
+}
+
+export type EnumStatusPedidoCompraWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.StatusPedidoCompra | Prisma.EnumStatusPedidoCompraFieldRefInput<$PrismaModel>
+  in?: $Enums.StatusPedidoCompra[] | Prisma.ListEnumStatusPedidoCompraFieldRefInput<$PrismaModel>
+  notIn?: $Enums.StatusPedidoCompra[] | Prisma.ListEnumStatusPedidoCompraFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumStatusPedidoCompraWithAggregatesFilter<$PrismaModel> | $Enums.StatusPedidoCompra
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumStatusPedidoCompraFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumStatusPedidoCompraFilter<$PrismaModel>
 }
 
 export type EnumStatusTransferenciaFilter<$PrismaModel = never> = {
@@ -775,11 +819,22 @@ export type NestedEnumPeriodoConsumoWithAggregatesFilter<$PrismaModel = never> =
   _max?: Prisma.NestedEnumPeriodoConsumoFilter<$PrismaModel>
 }
 
-export type NestedEnumStatusPedidoCompraFilter<$PrismaModel = never> = {
-  equals?: $Enums.StatusPedidoCompra | Prisma.EnumStatusPedidoCompraFieldRefInput<$PrismaModel>
-  in?: $Enums.StatusPedidoCompra[] | Prisma.ListEnumStatusPedidoCompraFieldRefInput<$PrismaModel>
-  notIn?: $Enums.StatusPedidoCompra[] | Prisma.ListEnumStatusPedidoCompraFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumStatusPedidoCompraFilter<$PrismaModel> | $Enums.StatusPedidoCompra
+export type NestedUuidFilter<$PrismaModel = never> = {
+  equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  notIn?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  lt?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  lte?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  gt?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  gte?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedUuidFilter<$PrismaModel> | string
+}
+
+export type NestedEnumEstadoEnvioOrcamentoFilter<$PrismaModel = never> = {
+  equals?: $Enums.EstadoEnvioOrcamento | Prisma.EnumEstadoEnvioOrcamentoFieldRefInput<$PrismaModel>
+  in?: $Enums.EstadoEnvioOrcamento[] | Prisma.ListEnumEstadoEnvioOrcamentoFieldRefInput<$PrismaModel>
+  notIn?: $Enums.EstadoEnvioOrcamento[] | Prisma.ListEnumEstadoEnvioOrcamentoFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumEstadoEnvioOrcamentoFilter<$PrismaModel> | $Enums.EstadoEnvioOrcamento
 }
 
 export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
@@ -793,14 +848,28 @@ export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
   not?: Prisma.NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
 }
 
-export type NestedEnumStatusPedidoCompraWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.StatusPedidoCompra | Prisma.EnumStatusPedidoCompraFieldRefInput<$PrismaModel>
-  in?: $Enums.StatusPedidoCompra[] | Prisma.ListEnumStatusPedidoCompraFieldRefInput<$PrismaModel>
-  notIn?: $Enums.StatusPedidoCompra[] | Prisma.ListEnumStatusPedidoCompraFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumStatusPedidoCompraWithAggregatesFilter<$PrismaModel> | $Enums.StatusPedidoCompra
+export type NestedUuidWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  notIn?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  lt?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  lte?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  gt?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  gte?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedUuidWithAggregatesFilter<$PrismaModel> | string
   _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumStatusPedidoCompraFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumStatusPedidoCompraFilter<$PrismaModel>
+  _min?: Prisma.NestedStringFilter<$PrismaModel>
+  _max?: Prisma.NestedStringFilter<$PrismaModel>
+}
+
+export type NestedEnumEstadoEnvioOrcamentoWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.EstadoEnvioOrcamento | Prisma.EnumEstadoEnvioOrcamentoFieldRefInput<$PrismaModel>
+  in?: $Enums.EstadoEnvioOrcamento[] | Prisma.ListEnumEstadoEnvioOrcamentoFieldRefInput<$PrismaModel>
+  notIn?: $Enums.EstadoEnvioOrcamento[] | Prisma.ListEnumEstadoEnvioOrcamentoFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumEstadoEnvioOrcamentoWithAggregatesFilter<$PrismaModel> | $Enums.EstadoEnvioOrcamento
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumEstadoEnvioOrcamentoFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumEstadoEnvioOrcamentoFilter<$PrismaModel>
 }
 
 export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -815,6 +884,23 @@ export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedDateTimeNullableFilter<$PrismaModel>
   _max?: Prisma.NestedDateTimeNullableFilter<$PrismaModel>
+}
+
+export type NestedEnumStatusPedidoCompraFilter<$PrismaModel = never> = {
+  equals?: $Enums.StatusPedidoCompra | Prisma.EnumStatusPedidoCompraFieldRefInput<$PrismaModel>
+  in?: $Enums.StatusPedidoCompra[] | Prisma.ListEnumStatusPedidoCompraFieldRefInput<$PrismaModel>
+  notIn?: $Enums.StatusPedidoCompra[] | Prisma.ListEnumStatusPedidoCompraFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumStatusPedidoCompraFilter<$PrismaModel> | $Enums.StatusPedidoCompra
+}
+
+export type NestedEnumStatusPedidoCompraWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.StatusPedidoCompra | Prisma.EnumStatusPedidoCompraFieldRefInput<$PrismaModel>
+  in?: $Enums.StatusPedidoCompra[] | Prisma.ListEnumStatusPedidoCompraFieldRefInput<$PrismaModel>
+  notIn?: $Enums.StatusPedidoCompra[] | Prisma.ListEnumStatusPedidoCompraFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumStatusPedidoCompraWithAggregatesFilter<$PrismaModel> | $Enums.StatusPedidoCompra
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumStatusPedidoCompraFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumStatusPedidoCompraFilter<$PrismaModel>
 }
 
 export type NestedEnumStatusTransferenciaFilter<$PrismaModel = never> = {

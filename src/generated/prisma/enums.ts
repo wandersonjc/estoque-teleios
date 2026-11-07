@@ -54,6 +54,16 @@ export const TipoMovimento = {
 export type TipoMovimento = (typeof TipoMovimento)[keyof typeof TipoMovimento]
 
 
+export const EstadoEnvioOrcamento = {
+  NAO_SOLICITADO: 'NAO_SOLICITADO',
+  PENDENTE: 'PENDENTE',
+  ENVIADO: 'ENVIADO',
+  FALHOU: 'FALHOU'
+} as const
+
+export type EstadoEnvioOrcamento = (typeof EstadoEnvioOrcamento)[keyof typeof EstadoEnvioOrcamento]
+
+
 export const StatusTransferencia = {
   PENDENTE: 'PENDENTE',
   EM_TRANSITO: 'EM_TRANSITO',
@@ -92,7 +102,8 @@ export const ModuloSistema = {
   PEDIDOS: 'PEDIDOS',
   USUARIOS: 'USUARIOS',
   PERMISSOES: 'PERMISSOES',
-  TRANSFERENCIAS: 'TRANSFERENCIAS'
+  TRANSFERENCIAS: 'TRANSFERENCIAS',
+  ORCAMENTOS: 'ORCAMENTOS'
 } as const
 
 export type ModuloSistema = (typeof ModuloSistema)[keyof typeof ModuloSistema]

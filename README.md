@@ -99,6 +99,41 @@ BREVO_SENDER_NAME=Atria
 segredos da hospedagem e reinicie a aplicação após alterar as configurações.
 Não compartilhe nem publique a chave da API.
 
+### Solicitações de orçamento
+
+O módulo Orçamento envia uma planilha `.xlsx` individual a cada fornecedor ativo
+vinculado aos produtos selecionados. Para e-mail, reutiliza as configurações
+Brevo acima. Para WhatsApp pela API externa da Z-API, configure a URL de
+integração exibida no painel e o token completo:
+
+```env
+ZAPI_API_URL=https://api.zapi.app.br/v2/api/external/ID_DA_API
+ZAPI_EXTERNAL_TOKEN=token-completo-da-api-externa
+```
+
+O endpoint `SendMessageAPIFile` recebe `multipart/form-data` na própria URL de
+integração, com os campos `media` (arquivo XLSX), `body` (mensagem), `number`
+(telefone com DDI), `externalKey` (ID estável da solicitação) e `isClosed`
+(`false`). A autenticação usa `Authorization: Bearer`. Mantenha o token como
+segredo no `.env` e no gerenciador de variáveis da hospedagem; nunca o exponha
+no frontend.
+
+O cadastro do fornecedor precisa conter e-mail e/ou WhatsApp válidos para cada
+canal escolhido. A solicitação e as quantidades convertidas para a unidade-base
+ficam registradas mesmo quando um canal falha; os resultados são exibidos por
+fornecedor. Conceda as permissões `orcamentos.orcamento.consultar` e
+`orcamentos.orcamento.enviar` em **Permissões** aos usuários que usarão o módulo.
+
+A planilha enviada ao fornecedor mostra o preço por unidade solicitada (isto é,
+por unidade ou embalagem escolhida na solicitação, não por unidade-base) e
+campos para disponibilidade total, parcial com quantidade ou indisponibilidade,
+prazo em dias, validade da cotação e observações. Os IDs da solicitação, do item
+e do produto permanecem em colunas ocultas para identificação e conferência.
+O sistema ainda não recebe nem importa a planilha respondida; o fluxo planejado
+de validação, prévia, revisão e gravação do preço cotado, assim como as decisões
+pendentes sobre disponibilidade e reimportação, está descrito em
+[`docs/regras-de-negocio.md`](./docs/regras-de-negocio.md), na seção do Módulo 5.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

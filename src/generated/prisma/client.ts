@@ -112,6 +112,16 @@ export type MovimentoEstoque = Prisma.MovimentoEstoqueModel
  */
 export type ConfiguracaoCompra = Prisma.ConfiguracaoCompraModel
 /**
+ * Model SolicitacaoOrcamento
+ *
+ */
+export type SolicitacaoOrcamento = Prisma.SolicitacaoOrcamentoModel
+/**
+ * Model ItemSolicitacaoOrcamento
+ *
+ */
+export type ItemSolicitacaoOrcamento = Prisma.ItemSolicitacaoOrcamentoModel
+/**
  * Model PedidoCompra
  * 
  */

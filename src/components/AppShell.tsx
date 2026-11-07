@@ -99,6 +99,12 @@ function IconeNavegacao({ href }: { href: string }) {
         <path d="M7 7h13l-3-3M20 7l-3 3M17 17H4l3 3M4 17l3-3" />
       </>
     ),
+    "/orcamento": (
+      <>
+        <path d="M7 3h10l4 4v14H3V3h4Z" />
+        <path d="M7 3v5h10V3M7 13h10M7 17h6" />
+      </>
+    ),
     "/cargos": (
       <>
         <circle cx="9" cy="8" r="3" />
@@ -159,7 +165,11 @@ function rotuloGrupoMenu(grupo: ItemMenu[]): string | null {
   ) {
     return "Cadastros";
   }
-  if (grupo.some((item) => ["/pedidos", "/transferencias"].includes(item.href))) {
+  if (
+    grupo.some((item) =>
+      ["/pedidos", "/transferencias", "/orcamento"].includes(item.href)
+    )
+  ) {
     return "Operações";
   }
   if (
