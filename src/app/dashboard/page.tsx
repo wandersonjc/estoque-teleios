@@ -11,6 +11,8 @@ import { exigirSessao } from "@/lib/autorizacao";
 import prisma from "@/lib/prisma";
 import { formatarDecimalBr } from "@/app/produtos/tipos";
 
+import GraficoHistoricoPrecos from "./GraficoHistoricoPrecos";
+
 export const dynamic = "force-dynamic";
 
 const PERMISSOES = {
@@ -21,17 +23,35 @@ const PERMISSOES = {
   locais: "locais.local.consultar",
 } as const;
 
-export default async function DashboardPage() {
+const PERIODOS_PRECO = [7, 15, 30, 45, 60, 90, 120] as const;
+
+function parametro(valor: string | string[] | undefined): string {
+  return Array.isArray(valor) ? valor[0] ?? "" : valor ?? "";
+}
+
+export default async function DashboardPage({
+  searchParams,
+}: PageProps<"/dashboard">) {
   const usuario = await exigirSessao();
   const pode = (permissao: string) => usuario.permissoes.has(permissao);
   const podeConsultarProdutos = pode(PERMISSOES.produtos);
   const podeConsultarPedidos = pode(PERMISSOES.pedidos);
+  const podeConsultarPrecos = pode(PERMISSOES.fornecedores);
+  const parametrosUrl = await searchParams;
+  const periodoInformado = Number(parametro(parametrosUrl.periodoPreco));
+  const periodo = (PERIODOS_PRECO as readonly number[]).includes(
+    periodoInformado
+  )
+    ? periodoInformado
+    : 30;
 
   const [
     totalProdutos,
     produtosReposicao,
     fornecedores,
     locais,
+    produtosComHistorico,
+    precoMaisRecente,
   ] = await Promise.all([
       podeConsultarProdutos
         ? prisma.produto.count({ where: { ativo: true } })
@@ -67,7 +87,66 @@ export default async function DashboardPage() {
       pode(PERMISSOES.locais)
         ? prisma.localEstoque.count()
         : Promise.resolve(null),
+      podeConsultarPrecos
+        ? prisma.produto.findMany({
+            where: { historicoPrecos: { some: {} } },
+          select: {
+            id: true,
+            nome: true,
+            unidade: true,
+            embalagens: {
+              select: {
+                id: true,
+                unidade: true,
+                quantidadeBase: true,
+              },
+              orderBy: [{ principal: "desc" }, { unidade: "asc" }],
+            },
+          },
+          orderBy: { nome: "asc" },
+        })
+        : Promise.resolve([]),
+      podeConsultarPrecos
+        ? prisma.historicoPreco.findFirst({
+            orderBy: [{ data: "desc" }, { id: "desc" }],
+            select: { produtoId: true },
+          })
+        : Promise.resolve(null),
     ]);
+
+  const produtoSolicitado = Number(parametro(parametrosUrl.produtoPreco));
+  const produtoSelecionado =
+    produtosComHistorico.find((produto) => produto.id === produtoSolicitado) ??
+    produtosComHistorico.find(
+      (produto) => produto.id === precoMaisRecente?.produtoId
+    ) ??
+    produtosComHistorico[0] ??
+    null;
+  const embalagemInformada = parametro(parametrosUrl.embalagemPreco);
+  const embalagemSelecionada =
+    produtoSelecionado?.embalagens.some(
+      (embalagem) => String(embalagem.id) === embalagemInformada
+    )
+      ? embalagemInformada
+      : "BASE";
+  const fimPeriodo = new Date();
+  const inicioPeriodo = new Date(fimPeriodo);
+  inicioPeriodo.setDate(inicioPeriodo.getDate() - periodo);
+  const historicoPrecos = produtoSelecionado
+    ? await prisma.historicoPreco.findMany({
+        where: {
+          produtoId: produtoSelecionado.id,
+          data: { gte: inicioPeriodo, lte: fimPeriodo },
+        },
+        select: {
+          precoUnitario: true,
+          data: true,
+          origem: true,
+          fornecedor: { select: { nome: true } },
+        },
+        orderBy: [{ data: "asc" }, { id: "asc" }],
+      })
+    : [];
 
   type ProdutoComAlerta = {
     id: number;
@@ -263,6 +342,46 @@ export default async function DashboardPage() {
           </p>
         )}
       </section>
+
+      {podeConsultarPrecos &&
+        (produtoSelecionado ? (
+          <GraficoHistoricoPrecos
+            produtos={produtosComHistorico.map(({ id, nome }) => ({ id, nome }))}
+            produtoId={produtoSelecionado.id}
+            produtoNome={produtoSelecionado.nome}
+            unidadeBase={produtoSelecionado.unidade}
+            embalagens={produtoSelecionado.embalagens.map((embalagem) => ({
+              id: embalagem.id,
+              unidade: embalagem.unidade,
+              quantidadeBase: Number(embalagem.quantidadeBase),
+            }))}
+            embalagemSelecionada={embalagemSelecionada}
+            periodo={periodo}
+            inicioPeriodo={inicioPeriodo.toISOString()}
+            fimPeriodo={fimPeriodo.toISOString()}
+            registros={historicoPrecos.map((registro) => ({
+              fornecedor: registro.fornecedor.nome,
+              preco: Number(registro.precoUnitario),
+              data: registro.data.toISOString(),
+              origem: registro.origem,
+            }))}
+          />
+        ) : (
+          <section
+            aria-labelledby="historico-precos-titulo"
+            className="mt-6 w-full rounded-2xl border border-zinc-200 bg-white p-4 sm:p-6"
+          >
+            <h2
+              id="historico-precos-titulo"
+              className="text-lg font-semibold text-zinc-900"
+            >
+              Evolução de preços por fornecedor
+            </h2>
+            <p className="mt-2 text-sm text-zinc-600">
+              Ainda não há produtos com histórico de preços registrado.
+            </p>
+          </section>
+        ))}
 
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
         {produtosReposicao && (
