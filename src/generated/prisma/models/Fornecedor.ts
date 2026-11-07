@@ -302,6 +302,7 @@ export type FornecedorWhereInput = {
   atualizadoEm?: Prisma.DateTimeFilter<"Fornecedor"> | Date | string
   produtos?: Prisma.ProdutoFornecedorListRelationFilter
   historicoPrecos?: Prisma.HistoricoPrecoListRelationFilter
+  itensSolicitacaoOrcamento?: Prisma.ItemSolicitacaoOrcamentoListRelationFilter
   pedidosCompra?: Prisma.PedidoCompraListRelationFilter
   solicitacoesOrcamento?: Prisma.SolicitacaoOrcamentoListRelationFilter
 }
@@ -323,6 +324,7 @@ export type FornecedorOrderByWithRelationInput = {
   atualizadoEm?: Prisma.SortOrder
   produtos?: Prisma.ProdutoFornecedorOrderByRelationAggregateInput
   historicoPrecos?: Prisma.HistoricoPrecoOrderByRelationAggregateInput
+  itensSolicitacaoOrcamento?: Prisma.ItemSolicitacaoOrcamentoOrderByRelationAggregateInput
   pedidosCompra?: Prisma.PedidoCompraOrderByRelationAggregateInput
   solicitacoesOrcamento?: Prisma.SolicitacaoOrcamentoOrderByRelationAggregateInput
 }
@@ -347,6 +349,7 @@ export type FornecedorWhereUniqueInput = Prisma.AtLeast<{
   atualizadoEm?: Prisma.DateTimeFilter<"Fornecedor"> | Date | string
   produtos?: Prisma.ProdutoFornecedorListRelationFilter
   historicoPrecos?: Prisma.HistoricoPrecoListRelationFilter
+  itensSolicitacaoOrcamento?: Prisma.ItemSolicitacaoOrcamentoListRelationFilter
   pedidosCompra?: Prisma.PedidoCompraListRelationFilter
   solicitacoesOrcamento?: Prisma.SolicitacaoOrcamentoListRelationFilter
 }, "id">
@@ -409,6 +412,7 @@ export type FornecedorCreateInput = {
   atualizadoEm?: Date | string
   produtos?: Prisma.ProdutoFornecedorCreateNestedManyWithoutFornecedorInput
   historicoPrecos?: Prisma.HistoricoPrecoCreateNestedManyWithoutFornecedorInput
+  itensSolicitacaoOrcamento?: Prisma.ItemSolicitacaoOrcamentoCreateNestedManyWithoutFornecedorInput
   pedidosCompra?: Prisma.PedidoCompraCreateNestedManyWithoutFornecedorInput
   solicitacoesOrcamento?: Prisma.SolicitacaoOrcamentoCreateNestedManyWithoutFornecedorInput
 }
@@ -430,6 +434,7 @@ export type FornecedorUncheckedCreateInput = {
   atualizadoEm?: Date | string
   produtos?: Prisma.ProdutoFornecedorUncheckedCreateNestedManyWithoutFornecedorInput
   historicoPrecos?: Prisma.HistoricoPrecoUncheckedCreateNestedManyWithoutFornecedorInput
+  itensSolicitacaoOrcamento?: Prisma.ItemSolicitacaoOrcamentoUncheckedCreateNestedManyWithoutFornecedorInput
   pedidosCompra?: Prisma.PedidoCompraUncheckedCreateNestedManyWithoutFornecedorInput
   solicitacoesOrcamento?: Prisma.SolicitacaoOrcamentoUncheckedCreateNestedManyWithoutFornecedorInput
 }
@@ -450,6 +455,7 @@ export type FornecedorUpdateInput = {
   atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   produtos?: Prisma.ProdutoFornecedorUpdateManyWithoutFornecedorNestedInput
   historicoPrecos?: Prisma.HistoricoPrecoUpdateManyWithoutFornecedorNestedInput
+  itensSolicitacaoOrcamento?: Prisma.ItemSolicitacaoOrcamentoUpdateManyWithoutFornecedorNestedInput
   pedidosCompra?: Prisma.PedidoCompraUpdateManyWithoutFornecedorNestedInput
   solicitacoesOrcamento?: Prisma.SolicitacaoOrcamentoUpdateManyWithoutFornecedorNestedInput
 }
@@ -471,6 +477,7 @@ export type FornecedorUncheckedUpdateInput = {
   atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   produtos?: Prisma.ProdutoFornecedorUncheckedUpdateManyWithoutFornecedorNestedInput
   historicoPrecos?: Prisma.HistoricoPrecoUncheckedUpdateManyWithoutFornecedorNestedInput
+  itensSolicitacaoOrcamento?: Prisma.ItemSolicitacaoOrcamentoUncheckedUpdateManyWithoutFornecedorNestedInput
   pedidosCompra?: Prisma.PedidoCompraUncheckedUpdateManyWithoutFornecedorNestedInput
   solicitacoesOrcamento?: Prisma.SolicitacaoOrcamentoUncheckedUpdateManyWithoutFornecedorNestedInput
 }
@@ -595,6 +602,11 @@ export type FornecedorScalarRelationFilter = {
   isNot?: Prisma.FornecedorWhereInput
 }
 
+export type FornecedorNullableScalarRelationFilter = {
+  is?: Prisma.FornecedorWhereInput | null
+  isNot?: Prisma.FornecedorWhereInput | null
+}
+
 export type NullableIntFieldUpdateOperationsInput = {
   set?: number | null
   increment?: number
@@ -653,6 +665,22 @@ export type FornecedorUpdateOneRequiredWithoutSolicitacoesOrcamentoNestedInput =
   update?: Prisma.XOR<Prisma.XOR<Prisma.FornecedorUpdateToOneWithWhereWithoutSolicitacoesOrcamentoInput, Prisma.FornecedorUpdateWithoutSolicitacoesOrcamentoInput>, Prisma.FornecedorUncheckedUpdateWithoutSolicitacoesOrcamentoInput>
 }
 
+export type FornecedorCreateNestedOneWithoutItensSolicitacaoOrcamentoInput = {
+  create?: Prisma.XOR<Prisma.FornecedorCreateWithoutItensSolicitacaoOrcamentoInput, Prisma.FornecedorUncheckedCreateWithoutItensSolicitacaoOrcamentoInput>
+  connectOrCreate?: Prisma.FornecedorCreateOrConnectWithoutItensSolicitacaoOrcamentoInput
+  connect?: Prisma.FornecedorWhereUniqueInput
+}
+
+export type FornecedorUpdateOneWithoutItensSolicitacaoOrcamentoNestedInput = {
+  create?: Prisma.XOR<Prisma.FornecedorCreateWithoutItensSolicitacaoOrcamentoInput, Prisma.FornecedorUncheckedCreateWithoutItensSolicitacaoOrcamentoInput>
+  connectOrCreate?: Prisma.FornecedorCreateOrConnectWithoutItensSolicitacaoOrcamentoInput
+  upsert?: Prisma.FornecedorUpsertWithoutItensSolicitacaoOrcamentoInput
+  disconnect?: Prisma.FornecedorWhereInput | boolean
+  delete?: Prisma.FornecedorWhereInput | boolean
+  connect?: Prisma.FornecedorWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.FornecedorUpdateToOneWithWhereWithoutItensSolicitacaoOrcamentoInput, Prisma.FornecedorUpdateWithoutItensSolicitacaoOrcamentoInput>, Prisma.FornecedorUncheckedUpdateWithoutItensSolicitacaoOrcamentoInput>
+}
+
 export type FornecedorCreateNestedOneWithoutPedidosCompraInput = {
   create?: Prisma.XOR<Prisma.FornecedorCreateWithoutPedidosCompraInput, Prisma.FornecedorUncheckedCreateWithoutPedidosCompraInput>
   connectOrCreate?: Prisma.FornecedorCreateOrConnectWithoutPedidosCompraInput
@@ -682,6 +710,7 @@ export type FornecedorCreateWithoutProdutosInput = {
   criadoEm?: Date | string
   atualizadoEm?: Date | string
   historicoPrecos?: Prisma.HistoricoPrecoCreateNestedManyWithoutFornecedorInput
+  itensSolicitacaoOrcamento?: Prisma.ItemSolicitacaoOrcamentoCreateNestedManyWithoutFornecedorInput
   pedidosCompra?: Prisma.PedidoCompraCreateNestedManyWithoutFornecedorInput
   solicitacoesOrcamento?: Prisma.SolicitacaoOrcamentoCreateNestedManyWithoutFornecedorInput
 }
@@ -702,6 +731,7 @@ export type FornecedorUncheckedCreateWithoutProdutosInput = {
   criadoEm?: Date | string
   atualizadoEm?: Date | string
   historicoPrecos?: Prisma.HistoricoPrecoUncheckedCreateNestedManyWithoutFornecedorInput
+  itensSolicitacaoOrcamento?: Prisma.ItemSolicitacaoOrcamentoUncheckedCreateNestedManyWithoutFornecedorInput
   pedidosCompra?: Prisma.PedidoCompraUncheckedCreateNestedManyWithoutFornecedorInput
   solicitacoesOrcamento?: Prisma.SolicitacaoOrcamentoUncheckedCreateNestedManyWithoutFornecedorInput
 }
@@ -737,6 +767,7 @@ export type FornecedorUpdateWithoutProdutosInput = {
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   historicoPrecos?: Prisma.HistoricoPrecoUpdateManyWithoutFornecedorNestedInput
+  itensSolicitacaoOrcamento?: Prisma.ItemSolicitacaoOrcamentoUpdateManyWithoutFornecedorNestedInput
   pedidosCompra?: Prisma.PedidoCompraUpdateManyWithoutFornecedorNestedInput
   solicitacoesOrcamento?: Prisma.SolicitacaoOrcamentoUpdateManyWithoutFornecedorNestedInput
 }
@@ -757,6 +788,7 @@ export type FornecedorUncheckedUpdateWithoutProdutosInput = {
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   historicoPrecos?: Prisma.HistoricoPrecoUncheckedUpdateManyWithoutFornecedorNestedInput
+  itensSolicitacaoOrcamento?: Prisma.ItemSolicitacaoOrcamentoUncheckedUpdateManyWithoutFornecedorNestedInput
   pedidosCompra?: Prisma.PedidoCompraUncheckedUpdateManyWithoutFornecedorNestedInput
   solicitacoesOrcamento?: Prisma.SolicitacaoOrcamentoUncheckedUpdateManyWithoutFornecedorNestedInput
 }
@@ -776,6 +808,7 @@ export type FornecedorCreateWithoutHistoricoPrecosInput = {
   criadoEm?: Date | string
   atualizadoEm?: Date | string
   produtos?: Prisma.ProdutoFornecedorCreateNestedManyWithoutFornecedorInput
+  itensSolicitacaoOrcamento?: Prisma.ItemSolicitacaoOrcamentoCreateNestedManyWithoutFornecedorInput
   pedidosCompra?: Prisma.PedidoCompraCreateNestedManyWithoutFornecedorInput
   solicitacoesOrcamento?: Prisma.SolicitacaoOrcamentoCreateNestedManyWithoutFornecedorInput
 }
@@ -796,6 +829,7 @@ export type FornecedorUncheckedCreateWithoutHistoricoPrecosInput = {
   criadoEm?: Date | string
   atualizadoEm?: Date | string
   produtos?: Prisma.ProdutoFornecedorUncheckedCreateNestedManyWithoutFornecedorInput
+  itensSolicitacaoOrcamento?: Prisma.ItemSolicitacaoOrcamentoUncheckedCreateNestedManyWithoutFornecedorInput
   pedidosCompra?: Prisma.PedidoCompraUncheckedCreateNestedManyWithoutFornecedorInput
   solicitacoesOrcamento?: Prisma.SolicitacaoOrcamentoUncheckedCreateNestedManyWithoutFornecedorInput
 }
@@ -831,6 +865,7 @@ export type FornecedorUpdateWithoutHistoricoPrecosInput = {
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   produtos?: Prisma.ProdutoFornecedorUpdateManyWithoutFornecedorNestedInput
+  itensSolicitacaoOrcamento?: Prisma.ItemSolicitacaoOrcamentoUpdateManyWithoutFornecedorNestedInput
   pedidosCompra?: Prisma.PedidoCompraUpdateManyWithoutFornecedorNestedInput
   solicitacoesOrcamento?: Prisma.SolicitacaoOrcamentoUpdateManyWithoutFornecedorNestedInput
 }
@@ -851,6 +886,7 @@ export type FornecedorUncheckedUpdateWithoutHistoricoPrecosInput = {
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   produtos?: Prisma.ProdutoFornecedorUncheckedUpdateManyWithoutFornecedorNestedInput
+  itensSolicitacaoOrcamento?: Prisma.ItemSolicitacaoOrcamentoUncheckedUpdateManyWithoutFornecedorNestedInput
   pedidosCompra?: Prisma.PedidoCompraUncheckedUpdateManyWithoutFornecedorNestedInput
   solicitacoesOrcamento?: Prisma.SolicitacaoOrcamentoUncheckedUpdateManyWithoutFornecedorNestedInput
 }
@@ -871,6 +907,7 @@ export type FornecedorCreateWithoutSolicitacoesOrcamentoInput = {
   atualizadoEm?: Date | string
   produtos?: Prisma.ProdutoFornecedorCreateNestedManyWithoutFornecedorInput
   historicoPrecos?: Prisma.HistoricoPrecoCreateNestedManyWithoutFornecedorInput
+  itensSolicitacaoOrcamento?: Prisma.ItemSolicitacaoOrcamentoCreateNestedManyWithoutFornecedorInput
   pedidosCompra?: Prisma.PedidoCompraCreateNestedManyWithoutFornecedorInput
 }
 
@@ -891,6 +928,7 @@ export type FornecedorUncheckedCreateWithoutSolicitacoesOrcamentoInput = {
   atualizadoEm?: Date | string
   produtos?: Prisma.ProdutoFornecedorUncheckedCreateNestedManyWithoutFornecedorInput
   historicoPrecos?: Prisma.HistoricoPrecoUncheckedCreateNestedManyWithoutFornecedorInput
+  itensSolicitacaoOrcamento?: Prisma.ItemSolicitacaoOrcamentoUncheckedCreateNestedManyWithoutFornecedorInput
   pedidosCompra?: Prisma.PedidoCompraUncheckedCreateNestedManyWithoutFornecedorInput
 }
 
@@ -926,6 +964,7 @@ export type FornecedorUpdateWithoutSolicitacoesOrcamentoInput = {
   atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   produtos?: Prisma.ProdutoFornecedorUpdateManyWithoutFornecedorNestedInput
   historicoPrecos?: Prisma.HistoricoPrecoUpdateManyWithoutFornecedorNestedInput
+  itensSolicitacaoOrcamento?: Prisma.ItemSolicitacaoOrcamentoUpdateManyWithoutFornecedorNestedInput
   pedidosCompra?: Prisma.PedidoCompraUpdateManyWithoutFornecedorNestedInput
 }
 
@@ -946,7 +985,106 @@ export type FornecedorUncheckedUpdateWithoutSolicitacoesOrcamentoInput = {
   atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   produtos?: Prisma.ProdutoFornecedorUncheckedUpdateManyWithoutFornecedorNestedInput
   historicoPrecos?: Prisma.HistoricoPrecoUncheckedUpdateManyWithoutFornecedorNestedInput
+  itensSolicitacaoOrcamento?: Prisma.ItemSolicitacaoOrcamentoUncheckedUpdateManyWithoutFornecedorNestedInput
   pedidosCompra?: Prisma.PedidoCompraUncheckedUpdateManyWithoutFornecedorNestedInput
+}
+
+export type FornecedorCreateWithoutItensSolicitacaoOrcamentoInput = {
+  nome: string
+  nomeRepresentante?: string | null
+  whatsapp?: string | null
+  email?: string | null
+  site?: string | null
+  contato?: string | null
+  imagemChave?: string | null
+  prazoEntregaDias?: number | null
+  valorMinimoPedido?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  frete?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  ativo?: boolean
+  criadoEm?: Date | string
+  atualizadoEm?: Date | string
+  produtos?: Prisma.ProdutoFornecedorCreateNestedManyWithoutFornecedorInput
+  historicoPrecos?: Prisma.HistoricoPrecoCreateNestedManyWithoutFornecedorInput
+  pedidosCompra?: Prisma.PedidoCompraCreateNestedManyWithoutFornecedorInput
+  solicitacoesOrcamento?: Prisma.SolicitacaoOrcamentoCreateNestedManyWithoutFornecedorInput
+}
+
+export type FornecedorUncheckedCreateWithoutItensSolicitacaoOrcamentoInput = {
+  id?: number
+  nome: string
+  nomeRepresentante?: string | null
+  whatsapp?: string | null
+  email?: string | null
+  site?: string | null
+  contato?: string | null
+  imagemChave?: string | null
+  prazoEntregaDias?: number | null
+  valorMinimoPedido?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  frete?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  ativo?: boolean
+  criadoEm?: Date | string
+  atualizadoEm?: Date | string
+  produtos?: Prisma.ProdutoFornecedorUncheckedCreateNestedManyWithoutFornecedorInput
+  historicoPrecos?: Prisma.HistoricoPrecoUncheckedCreateNestedManyWithoutFornecedorInput
+  pedidosCompra?: Prisma.PedidoCompraUncheckedCreateNestedManyWithoutFornecedorInput
+  solicitacoesOrcamento?: Prisma.SolicitacaoOrcamentoUncheckedCreateNestedManyWithoutFornecedorInput
+}
+
+export type FornecedorCreateOrConnectWithoutItensSolicitacaoOrcamentoInput = {
+  where: Prisma.FornecedorWhereUniqueInput
+  create: Prisma.XOR<Prisma.FornecedorCreateWithoutItensSolicitacaoOrcamentoInput, Prisma.FornecedorUncheckedCreateWithoutItensSolicitacaoOrcamentoInput>
+}
+
+export type FornecedorUpsertWithoutItensSolicitacaoOrcamentoInput = {
+  update: Prisma.XOR<Prisma.FornecedorUpdateWithoutItensSolicitacaoOrcamentoInput, Prisma.FornecedorUncheckedUpdateWithoutItensSolicitacaoOrcamentoInput>
+  create: Prisma.XOR<Prisma.FornecedorCreateWithoutItensSolicitacaoOrcamentoInput, Prisma.FornecedorUncheckedCreateWithoutItensSolicitacaoOrcamentoInput>
+  where?: Prisma.FornecedorWhereInput
+}
+
+export type FornecedorUpdateToOneWithWhereWithoutItensSolicitacaoOrcamentoInput = {
+  where?: Prisma.FornecedorWhereInput
+  data: Prisma.XOR<Prisma.FornecedorUpdateWithoutItensSolicitacaoOrcamentoInput, Prisma.FornecedorUncheckedUpdateWithoutItensSolicitacaoOrcamentoInput>
+}
+
+export type FornecedorUpdateWithoutItensSolicitacaoOrcamentoInput = {
+  nome?: Prisma.StringFieldUpdateOperationsInput | string
+  nomeRepresentante?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  site?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contato?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  valorMinimoPedido?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  frete?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  produtos?: Prisma.ProdutoFornecedorUpdateManyWithoutFornecedorNestedInput
+  historicoPrecos?: Prisma.HistoricoPrecoUpdateManyWithoutFornecedorNestedInput
+  pedidosCompra?: Prisma.PedidoCompraUpdateManyWithoutFornecedorNestedInput
+  solicitacoesOrcamento?: Prisma.SolicitacaoOrcamentoUpdateManyWithoutFornecedorNestedInput
+}
+
+export type FornecedorUncheckedUpdateWithoutItensSolicitacaoOrcamentoInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  nome?: Prisma.StringFieldUpdateOperationsInput | string
+  nomeRepresentante?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  site?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contato?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagemChave?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  valorMinimoPedido?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  frete?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  ativo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  produtos?: Prisma.ProdutoFornecedorUncheckedUpdateManyWithoutFornecedorNestedInput
+  historicoPrecos?: Prisma.HistoricoPrecoUncheckedUpdateManyWithoutFornecedorNestedInput
+  pedidosCompra?: Prisma.PedidoCompraUncheckedUpdateManyWithoutFornecedorNestedInput
+  solicitacoesOrcamento?: Prisma.SolicitacaoOrcamentoUncheckedUpdateManyWithoutFornecedorNestedInput
 }
 
 export type FornecedorCreateWithoutPedidosCompraInput = {
@@ -965,6 +1103,7 @@ export type FornecedorCreateWithoutPedidosCompraInput = {
   atualizadoEm?: Date | string
   produtos?: Prisma.ProdutoFornecedorCreateNestedManyWithoutFornecedorInput
   historicoPrecos?: Prisma.HistoricoPrecoCreateNestedManyWithoutFornecedorInput
+  itensSolicitacaoOrcamento?: Prisma.ItemSolicitacaoOrcamentoCreateNestedManyWithoutFornecedorInput
   solicitacoesOrcamento?: Prisma.SolicitacaoOrcamentoCreateNestedManyWithoutFornecedorInput
 }
 
@@ -985,6 +1124,7 @@ export type FornecedorUncheckedCreateWithoutPedidosCompraInput = {
   atualizadoEm?: Date | string
   produtos?: Prisma.ProdutoFornecedorUncheckedCreateNestedManyWithoutFornecedorInput
   historicoPrecos?: Prisma.HistoricoPrecoUncheckedCreateNestedManyWithoutFornecedorInput
+  itensSolicitacaoOrcamento?: Prisma.ItemSolicitacaoOrcamentoUncheckedCreateNestedManyWithoutFornecedorInput
   solicitacoesOrcamento?: Prisma.SolicitacaoOrcamentoUncheckedCreateNestedManyWithoutFornecedorInput
 }
 
@@ -1020,6 +1160,7 @@ export type FornecedorUpdateWithoutPedidosCompraInput = {
   atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   produtos?: Prisma.ProdutoFornecedorUpdateManyWithoutFornecedorNestedInput
   historicoPrecos?: Prisma.HistoricoPrecoUpdateManyWithoutFornecedorNestedInput
+  itensSolicitacaoOrcamento?: Prisma.ItemSolicitacaoOrcamentoUpdateManyWithoutFornecedorNestedInput
   solicitacoesOrcamento?: Prisma.SolicitacaoOrcamentoUpdateManyWithoutFornecedorNestedInput
 }
 
@@ -1040,6 +1181,7 @@ export type FornecedorUncheckedUpdateWithoutPedidosCompraInput = {
   atualizadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   produtos?: Prisma.ProdutoFornecedorUncheckedUpdateManyWithoutFornecedorNestedInput
   historicoPrecos?: Prisma.HistoricoPrecoUncheckedUpdateManyWithoutFornecedorNestedInput
+  itensSolicitacaoOrcamento?: Prisma.ItemSolicitacaoOrcamentoUncheckedUpdateManyWithoutFornecedorNestedInput
   solicitacoesOrcamento?: Prisma.SolicitacaoOrcamentoUncheckedUpdateManyWithoutFornecedorNestedInput
 }
 
@@ -1051,6 +1193,7 @@ export type FornecedorUncheckedUpdateWithoutPedidosCompraInput = {
 export type FornecedorCountOutputType = {
   produtos: number
   historicoPrecos: number
+  itensSolicitacaoOrcamento: number
   pedidosCompra: number
   solicitacoesOrcamento: number
 }
@@ -1058,6 +1201,7 @@ export type FornecedorCountOutputType = {
 export type FornecedorCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   produtos?: boolean | FornecedorCountOutputTypeCountProdutosArgs
   historicoPrecos?: boolean | FornecedorCountOutputTypeCountHistoricoPrecosArgs
+  itensSolicitacaoOrcamento?: boolean | FornecedorCountOutputTypeCountItensSolicitacaoOrcamentoArgs
   pedidosCompra?: boolean | FornecedorCountOutputTypeCountPedidosCompraArgs
   solicitacoesOrcamento?: boolean | FornecedorCountOutputTypeCountSolicitacoesOrcamentoArgs
 }
@@ -1084,6 +1228,13 @@ export type FornecedorCountOutputTypeCountProdutosArgs<ExtArgs extends runtime.T
  */
 export type FornecedorCountOutputTypeCountHistoricoPrecosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.HistoricoPrecoWhereInput
+}
+
+/**
+ * FornecedorCountOutputType without action
+ */
+export type FornecedorCountOutputTypeCountItensSolicitacaoOrcamentoArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ItemSolicitacaoOrcamentoWhereInput
 }
 
 /**
@@ -1118,6 +1269,7 @@ export type FornecedorSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   atualizadoEm?: boolean
   produtos?: boolean | Prisma.Fornecedor$produtosArgs<ExtArgs>
   historicoPrecos?: boolean | Prisma.Fornecedor$historicoPrecosArgs<ExtArgs>
+  itensSolicitacaoOrcamento?: boolean | Prisma.Fornecedor$itensSolicitacaoOrcamentoArgs<ExtArgs>
   pedidosCompra?: boolean | Prisma.Fornecedor$pedidosCompraArgs<ExtArgs>
   solicitacoesOrcamento?: boolean | Prisma.Fornecedor$solicitacoesOrcamentoArgs<ExtArgs>
   _count?: boolean | Prisma.FornecedorCountOutputTypeDefaultArgs<ExtArgs>
@@ -1178,6 +1330,7 @@ export type FornecedorOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs
 export type FornecedorInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   produtos?: boolean | Prisma.Fornecedor$produtosArgs<ExtArgs>
   historicoPrecos?: boolean | Prisma.Fornecedor$historicoPrecosArgs<ExtArgs>
+  itensSolicitacaoOrcamento?: boolean | Prisma.Fornecedor$itensSolicitacaoOrcamentoArgs<ExtArgs>
   pedidosCompra?: boolean | Prisma.Fornecedor$pedidosCompraArgs<ExtArgs>
   solicitacoesOrcamento?: boolean | Prisma.Fornecedor$solicitacoesOrcamentoArgs<ExtArgs>
   _count?: boolean | Prisma.FornecedorCountOutputTypeDefaultArgs<ExtArgs>
@@ -1190,6 +1343,7 @@ export type $FornecedorPayload<ExtArgs extends runtime.Types.Extensions.Internal
   objects: {
     produtos: Prisma.$ProdutoFornecedorPayload<ExtArgs>[]
     historicoPrecos: Prisma.$HistoricoPrecoPayload<ExtArgs>[]
+    itensSolicitacaoOrcamento: Prisma.$ItemSolicitacaoOrcamentoPayload<ExtArgs>[]
     pedidosCompra: Prisma.$PedidoCompraPayload<ExtArgs>[]
     solicitacoesOrcamento: Prisma.$SolicitacaoOrcamentoPayload<ExtArgs>[]
   }
@@ -1604,6 +1758,7 @@ export interface Prisma__FornecedorClient<T, Null = never, ExtArgs extends runti
   readonly [Symbol.toStringTag]: "PrismaPromise"
   produtos<T extends Prisma.Fornecedor$produtosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Fornecedor$produtosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProdutoFornecedorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   historicoPrecos<T extends Prisma.Fornecedor$historicoPrecosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Fornecedor$historicoPrecosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$HistoricoPrecoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  itensSolicitacaoOrcamento<T extends Prisma.Fornecedor$itensSolicitacaoOrcamentoArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Fornecedor$itensSolicitacaoOrcamentoArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ItemSolicitacaoOrcamentoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   pedidosCompra<T extends Prisma.Fornecedor$pedidosCompraArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Fornecedor$pedidosCompraArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PedidoCompraPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   solicitacoesOrcamento<T extends Prisma.Fornecedor$solicitacoesOrcamentoArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Fornecedor$solicitacoesOrcamentoArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SolicitacaoOrcamentoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -2087,6 +2242,30 @@ export type Fornecedor$historicoPrecosArgs<ExtArgs extends runtime.Types.Extensi
   take?: number
   skip?: number
   distinct?: Prisma.HistoricoPrecoScalarFieldEnum | Prisma.HistoricoPrecoScalarFieldEnum[]
+}
+
+/**
+ * Fornecedor.itensSolicitacaoOrcamento
+ */
+export type Fornecedor$itensSolicitacaoOrcamentoArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ItemSolicitacaoOrcamento
+   */
+  select?: Prisma.ItemSolicitacaoOrcamentoSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ItemSolicitacaoOrcamento
+   */
+  omit?: Prisma.ItemSolicitacaoOrcamentoOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ItemSolicitacaoOrcamentoInclude<ExtArgs> | null
+  where?: Prisma.ItemSolicitacaoOrcamentoWhereInput
+  orderBy?: Prisma.ItemSolicitacaoOrcamentoOrderByWithRelationInput | Prisma.ItemSolicitacaoOrcamentoOrderByWithRelationInput[]
+  cursor?: Prisma.ItemSolicitacaoOrcamentoWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ItemSolicitacaoOrcamentoScalarFieldEnum | Prisma.ItemSolicitacaoOrcamentoScalarFieldEnum[]
 }
 
 /**

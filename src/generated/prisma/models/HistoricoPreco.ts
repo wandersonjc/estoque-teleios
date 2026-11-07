@@ -57,6 +57,7 @@ export type HistoricoPrecoMinAggregateOutputType = {
   data: Date | null
   origem: $Enums.OrigemPreco | null
   pedidoId: number | null
+  itemSolicitacaoId: string | null
 }
 
 export type HistoricoPrecoMaxAggregateOutputType = {
@@ -70,6 +71,7 @@ export type HistoricoPrecoMaxAggregateOutputType = {
   data: Date | null
   origem: $Enums.OrigemPreco | null
   pedidoId: number | null
+  itemSolicitacaoId: string | null
 }
 
 export type HistoricoPrecoCountAggregateOutputType = {
@@ -83,6 +85,7 @@ export type HistoricoPrecoCountAggregateOutputType = {
   data: number
   origem: number
   pedidoId: number
+  itemSolicitacaoId: number
   _all: number
 }
 
@@ -118,6 +121,7 @@ export type HistoricoPrecoMinAggregateInputType = {
   data?: true
   origem?: true
   pedidoId?: true
+  itemSolicitacaoId?: true
 }
 
 export type HistoricoPrecoMaxAggregateInputType = {
@@ -131,6 +135,7 @@ export type HistoricoPrecoMaxAggregateInputType = {
   data?: true
   origem?: true
   pedidoId?: true
+  itemSolicitacaoId?: true
 }
 
 export type HistoricoPrecoCountAggregateInputType = {
@@ -144,6 +149,7 @@ export type HistoricoPrecoCountAggregateInputType = {
   data?: true
   origem?: true
   pedidoId?: true
+  itemSolicitacaoId?: true
   _all?: true
 }
 
@@ -244,6 +250,7 @@ export type HistoricoPrecoGroupByOutputType = {
   data: Date
   origem: $Enums.OrigemPreco
   pedidoId: number | null
+  itemSolicitacaoId: string | null
   _count: HistoricoPrecoCountAggregateOutputType | null
   _avg: HistoricoPrecoAvgAggregateOutputType | null
   _sum: HistoricoPrecoSumAggregateOutputType | null
@@ -280,9 +287,11 @@ export type HistoricoPrecoWhereInput = {
   data?: Prisma.DateTimeFilter<"HistoricoPreco"> | Date | string
   origem?: Prisma.EnumOrigemPrecoFilter<"HistoricoPreco"> | $Enums.OrigemPreco
   pedidoId?: Prisma.IntNullableFilter<"HistoricoPreco"> | number | null
+  itemSolicitacaoId?: Prisma.UuidNullableFilter<"HistoricoPreco"> | string | null
   produto?: Prisma.XOR<Prisma.ProdutoScalarRelationFilter, Prisma.ProdutoWhereInput>
   fornecedor?: Prisma.XOR<Prisma.FornecedorScalarRelationFilter, Prisma.FornecedorWhereInput>
   pedidoCompra?: Prisma.XOR<Prisma.PedidoCompraNullableScalarRelationFilter, Prisma.PedidoCompraWhereInput> | null
+  itemSolicitacao?: Prisma.XOR<Prisma.ItemSolicitacaoOrcamentoNullableScalarRelationFilter, Prisma.ItemSolicitacaoOrcamentoWhereInput> | null
 }
 
 export type HistoricoPrecoOrderByWithRelationInput = {
@@ -296,13 +305,16 @@ export type HistoricoPrecoOrderByWithRelationInput = {
   data?: Prisma.SortOrder
   origem?: Prisma.SortOrder
   pedidoId?: Prisma.SortOrderInput | Prisma.SortOrder
+  itemSolicitacaoId?: Prisma.SortOrderInput | Prisma.SortOrder
   produto?: Prisma.ProdutoOrderByWithRelationInput
   fornecedor?: Prisma.FornecedorOrderByWithRelationInput
   pedidoCompra?: Prisma.PedidoCompraOrderByWithRelationInput
+  itemSolicitacao?: Prisma.ItemSolicitacaoOrcamentoOrderByWithRelationInput
 }
 
 export type HistoricoPrecoWhereUniqueInput = Prisma.AtLeast<{
   id?: number
+  itemSolicitacaoId?: string
   AND?: Prisma.HistoricoPrecoWhereInput | Prisma.HistoricoPrecoWhereInput[]
   OR?: Prisma.HistoricoPrecoWhereInput[]
   NOT?: Prisma.HistoricoPrecoWhereInput | Prisma.HistoricoPrecoWhereInput[]
@@ -318,7 +330,8 @@ export type HistoricoPrecoWhereUniqueInput = Prisma.AtLeast<{
   produto?: Prisma.XOR<Prisma.ProdutoScalarRelationFilter, Prisma.ProdutoWhereInput>
   fornecedor?: Prisma.XOR<Prisma.FornecedorScalarRelationFilter, Prisma.FornecedorWhereInput>
   pedidoCompra?: Prisma.XOR<Prisma.PedidoCompraNullableScalarRelationFilter, Prisma.PedidoCompraWhereInput> | null
-}, "id">
+  itemSolicitacao?: Prisma.XOR<Prisma.ItemSolicitacaoOrcamentoNullableScalarRelationFilter, Prisma.ItemSolicitacaoOrcamentoWhereInput> | null
+}, "id" | "itemSolicitacaoId">
 
 export type HistoricoPrecoOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -331,6 +344,7 @@ export type HistoricoPrecoOrderByWithAggregationInput = {
   data?: Prisma.SortOrder
   origem?: Prisma.SortOrder
   pedidoId?: Prisma.SortOrderInput | Prisma.SortOrder
+  itemSolicitacaoId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.HistoricoPrecoCountOrderByAggregateInput
   _avg?: Prisma.HistoricoPrecoAvgOrderByAggregateInput
   _max?: Prisma.HistoricoPrecoMaxOrderByAggregateInput
@@ -352,6 +366,7 @@ export type HistoricoPrecoScalarWhereWithAggregatesInput = {
   data?: Prisma.DateTimeWithAggregatesFilter<"HistoricoPreco"> | Date | string
   origem?: Prisma.EnumOrigemPrecoWithAggregatesFilter<"HistoricoPreco"> | $Enums.OrigemPreco
   pedidoId?: Prisma.IntNullableWithAggregatesFilter<"HistoricoPreco"> | number | null
+  itemSolicitacaoId?: Prisma.UuidNullableWithAggregatesFilter<"HistoricoPreco"> | string | null
 }
 
 export type HistoricoPrecoCreateInput = {
@@ -364,6 +379,7 @@ export type HistoricoPrecoCreateInput = {
   produto: Prisma.ProdutoCreateNestedOneWithoutHistoricoPrecosInput
   fornecedor: Prisma.FornecedorCreateNestedOneWithoutHistoricoPrecosInput
   pedidoCompra?: Prisma.PedidoCompraCreateNestedOneWithoutHistoricoPrecosInput
+  itemSolicitacao?: Prisma.ItemSolicitacaoOrcamentoCreateNestedOneWithoutHistoricoPrecoInput
 }
 
 export type HistoricoPrecoUncheckedCreateInput = {
@@ -377,6 +393,7 @@ export type HistoricoPrecoUncheckedCreateInput = {
   data: Date | string
   origem: $Enums.OrigemPreco
   pedidoId?: number | null
+  itemSolicitacaoId?: string | null
 }
 
 export type HistoricoPrecoUpdateInput = {
@@ -389,6 +406,7 @@ export type HistoricoPrecoUpdateInput = {
   produto?: Prisma.ProdutoUpdateOneRequiredWithoutHistoricoPrecosNestedInput
   fornecedor?: Prisma.FornecedorUpdateOneRequiredWithoutHistoricoPrecosNestedInput
   pedidoCompra?: Prisma.PedidoCompraUpdateOneWithoutHistoricoPrecosNestedInput
+  itemSolicitacao?: Prisma.ItemSolicitacaoOrcamentoUpdateOneWithoutHistoricoPrecoNestedInput
 }
 
 export type HistoricoPrecoUncheckedUpdateInput = {
@@ -402,6 +420,7 @@ export type HistoricoPrecoUncheckedUpdateInput = {
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   origem?: Prisma.EnumOrigemPrecoFieldUpdateOperationsInput | $Enums.OrigemPreco
   pedidoId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  itemSolicitacaoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type HistoricoPrecoCreateManyInput = {
@@ -415,6 +434,7 @@ export type HistoricoPrecoCreateManyInput = {
   data: Date | string
   origem: $Enums.OrigemPreco
   pedidoId?: number | null
+  itemSolicitacaoId?: string | null
 }
 
 export type HistoricoPrecoUpdateManyMutationInput = {
@@ -437,6 +457,7 @@ export type HistoricoPrecoUncheckedUpdateManyInput = {
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   origem?: Prisma.EnumOrigemPrecoFieldUpdateOperationsInput | $Enums.OrigemPreco
   pedidoId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  itemSolicitacaoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type HistoricoPrecoListRelationFilter = {
@@ -460,6 +481,7 @@ export type HistoricoPrecoCountOrderByAggregateInput = {
   data?: Prisma.SortOrder
   origem?: Prisma.SortOrder
   pedidoId?: Prisma.SortOrder
+  itemSolicitacaoId?: Prisma.SortOrder
 }
 
 export type HistoricoPrecoAvgOrderByAggregateInput = {
@@ -483,6 +505,7 @@ export type HistoricoPrecoMaxOrderByAggregateInput = {
   data?: Prisma.SortOrder
   origem?: Prisma.SortOrder
   pedidoId?: Prisma.SortOrder
+  itemSolicitacaoId?: Prisma.SortOrder
 }
 
 export type HistoricoPrecoMinOrderByAggregateInput = {
@@ -496,6 +519,7 @@ export type HistoricoPrecoMinOrderByAggregateInput = {
   data?: Prisma.SortOrder
   origem?: Prisma.SortOrder
   pedidoId?: Prisma.SortOrder
+  itemSolicitacaoId?: Prisma.SortOrder
 }
 
 export type HistoricoPrecoSumOrderByAggregateInput = {
@@ -506,6 +530,11 @@ export type HistoricoPrecoSumOrderByAggregateInput = {
   precoInformado?: Prisma.SortOrder
   fatorConversao?: Prisma.SortOrder
   pedidoId?: Prisma.SortOrder
+}
+
+export type HistoricoPrecoNullableScalarRelationFilter = {
+  is?: Prisma.HistoricoPrecoWhereInput | null
+  isNot?: Prisma.HistoricoPrecoWhereInput | null
 }
 
 export type HistoricoPrecoCreateNestedManyWithoutProdutoInput = {
@@ -596,6 +625,38 @@ export type EnumOrigemPrecoFieldUpdateOperationsInput = {
   set?: $Enums.OrigemPreco
 }
 
+export type HistoricoPrecoCreateNestedOneWithoutItemSolicitacaoInput = {
+  create?: Prisma.XOR<Prisma.HistoricoPrecoCreateWithoutItemSolicitacaoInput, Prisma.HistoricoPrecoUncheckedCreateWithoutItemSolicitacaoInput>
+  connectOrCreate?: Prisma.HistoricoPrecoCreateOrConnectWithoutItemSolicitacaoInput
+  connect?: Prisma.HistoricoPrecoWhereUniqueInput
+}
+
+export type HistoricoPrecoUncheckedCreateNestedOneWithoutItemSolicitacaoInput = {
+  create?: Prisma.XOR<Prisma.HistoricoPrecoCreateWithoutItemSolicitacaoInput, Prisma.HistoricoPrecoUncheckedCreateWithoutItemSolicitacaoInput>
+  connectOrCreate?: Prisma.HistoricoPrecoCreateOrConnectWithoutItemSolicitacaoInput
+  connect?: Prisma.HistoricoPrecoWhereUniqueInput
+}
+
+export type HistoricoPrecoUpdateOneWithoutItemSolicitacaoNestedInput = {
+  create?: Prisma.XOR<Prisma.HistoricoPrecoCreateWithoutItemSolicitacaoInput, Prisma.HistoricoPrecoUncheckedCreateWithoutItemSolicitacaoInput>
+  connectOrCreate?: Prisma.HistoricoPrecoCreateOrConnectWithoutItemSolicitacaoInput
+  upsert?: Prisma.HistoricoPrecoUpsertWithoutItemSolicitacaoInput
+  disconnect?: Prisma.HistoricoPrecoWhereInput | boolean
+  delete?: Prisma.HistoricoPrecoWhereInput | boolean
+  connect?: Prisma.HistoricoPrecoWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.HistoricoPrecoUpdateToOneWithWhereWithoutItemSolicitacaoInput, Prisma.HistoricoPrecoUpdateWithoutItemSolicitacaoInput>, Prisma.HistoricoPrecoUncheckedUpdateWithoutItemSolicitacaoInput>
+}
+
+export type HistoricoPrecoUncheckedUpdateOneWithoutItemSolicitacaoNestedInput = {
+  create?: Prisma.XOR<Prisma.HistoricoPrecoCreateWithoutItemSolicitacaoInput, Prisma.HistoricoPrecoUncheckedCreateWithoutItemSolicitacaoInput>
+  connectOrCreate?: Prisma.HistoricoPrecoCreateOrConnectWithoutItemSolicitacaoInput
+  upsert?: Prisma.HistoricoPrecoUpsertWithoutItemSolicitacaoInput
+  disconnect?: Prisma.HistoricoPrecoWhereInput | boolean
+  delete?: Prisma.HistoricoPrecoWhereInput | boolean
+  connect?: Prisma.HistoricoPrecoWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.HistoricoPrecoUpdateToOneWithWhereWithoutItemSolicitacaoInput, Prisma.HistoricoPrecoUpdateWithoutItemSolicitacaoInput>, Prisma.HistoricoPrecoUncheckedUpdateWithoutItemSolicitacaoInput>
+}
+
 export type HistoricoPrecoCreateNestedManyWithoutPedidoCompraInput = {
   create?: Prisma.XOR<Prisma.HistoricoPrecoCreateWithoutPedidoCompraInput, Prisma.HistoricoPrecoUncheckedCreateWithoutPedidoCompraInput> | Prisma.HistoricoPrecoCreateWithoutPedidoCompraInput[] | Prisma.HistoricoPrecoUncheckedCreateWithoutPedidoCompraInput[]
   connectOrCreate?: Prisma.HistoricoPrecoCreateOrConnectWithoutPedidoCompraInput | Prisma.HistoricoPrecoCreateOrConnectWithoutPedidoCompraInput[]
@@ -647,6 +708,7 @@ export type HistoricoPrecoCreateWithoutProdutoInput = {
   origem: $Enums.OrigemPreco
   fornecedor: Prisma.FornecedorCreateNestedOneWithoutHistoricoPrecosInput
   pedidoCompra?: Prisma.PedidoCompraCreateNestedOneWithoutHistoricoPrecosInput
+  itemSolicitacao?: Prisma.ItemSolicitacaoOrcamentoCreateNestedOneWithoutHistoricoPrecoInput
 }
 
 export type HistoricoPrecoUncheckedCreateWithoutProdutoInput = {
@@ -659,6 +721,7 @@ export type HistoricoPrecoUncheckedCreateWithoutProdutoInput = {
   data: Date | string
   origem: $Enums.OrigemPreco
   pedidoId?: number | null
+  itemSolicitacaoId?: string | null
 }
 
 export type HistoricoPrecoCreateOrConnectWithoutProdutoInput = {
@@ -701,6 +764,7 @@ export type HistoricoPrecoScalarWhereInput = {
   data?: Prisma.DateTimeFilter<"HistoricoPreco"> | Date | string
   origem?: Prisma.EnumOrigemPrecoFilter<"HistoricoPreco"> | $Enums.OrigemPreco
   pedidoId?: Prisma.IntNullableFilter<"HistoricoPreco"> | number | null
+  itemSolicitacaoId?: Prisma.UuidNullableFilter<"HistoricoPreco"> | string | null
 }
 
 export type HistoricoPrecoCreateWithoutFornecedorInput = {
@@ -712,6 +776,7 @@ export type HistoricoPrecoCreateWithoutFornecedorInput = {
   origem: $Enums.OrigemPreco
   produto: Prisma.ProdutoCreateNestedOneWithoutHistoricoPrecosInput
   pedidoCompra?: Prisma.PedidoCompraCreateNestedOneWithoutHistoricoPrecosInput
+  itemSolicitacao?: Prisma.ItemSolicitacaoOrcamentoCreateNestedOneWithoutHistoricoPrecoInput
 }
 
 export type HistoricoPrecoUncheckedCreateWithoutFornecedorInput = {
@@ -724,6 +789,7 @@ export type HistoricoPrecoUncheckedCreateWithoutFornecedorInput = {
   data: Date | string
   origem: $Enums.OrigemPreco
   pedidoId?: number | null
+  itemSolicitacaoId?: string | null
 }
 
 export type HistoricoPrecoCreateOrConnectWithoutFornecedorInput = {
@@ -752,6 +818,72 @@ export type HistoricoPrecoUpdateManyWithWhereWithoutFornecedorInput = {
   data: Prisma.XOR<Prisma.HistoricoPrecoUpdateManyMutationInput, Prisma.HistoricoPrecoUncheckedUpdateManyWithoutFornecedorInput>
 }
 
+export type HistoricoPrecoCreateWithoutItemSolicitacaoInput = {
+  precoUnitario: runtime.Decimal | runtime.DecimalJsLike | number | string
+  precoInformado?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  unidadeInformada?: string | null
+  fatorConversao?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  data: Date | string
+  origem: $Enums.OrigemPreco
+  produto: Prisma.ProdutoCreateNestedOneWithoutHistoricoPrecosInput
+  fornecedor: Prisma.FornecedorCreateNestedOneWithoutHistoricoPrecosInput
+  pedidoCompra?: Prisma.PedidoCompraCreateNestedOneWithoutHistoricoPrecosInput
+}
+
+export type HistoricoPrecoUncheckedCreateWithoutItemSolicitacaoInput = {
+  id?: number
+  produtoId: number
+  fornecedorId: number
+  precoUnitario: runtime.Decimal | runtime.DecimalJsLike | number | string
+  precoInformado?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  unidadeInformada?: string | null
+  fatorConversao?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  data: Date | string
+  origem: $Enums.OrigemPreco
+  pedidoId?: number | null
+}
+
+export type HistoricoPrecoCreateOrConnectWithoutItemSolicitacaoInput = {
+  where: Prisma.HistoricoPrecoWhereUniqueInput
+  create: Prisma.XOR<Prisma.HistoricoPrecoCreateWithoutItemSolicitacaoInput, Prisma.HistoricoPrecoUncheckedCreateWithoutItemSolicitacaoInput>
+}
+
+export type HistoricoPrecoUpsertWithoutItemSolicitacaoInput = {
+  update: Prisma.XOR<Prisma.HistoricoPrecoUpdateWithoutItemSolicitacaoInput, Prisma.HistoricoPrecoUncheckedUpdateWithoutItemSolicitacaoInput>
+  create: Prisma.XOR<Prisma.HistoricoPrecoCreateWithoutItemSolicitacaoInput, Prisma.HistoricoPrecoUncheckedCreateWithoutItemSolicitacaoInput>
+  where?: Prisma.HistoricoPrecoWhereInput
+}
+
+export type HistoricoPrecoUpdateToOneWithWhereWithoutItemSolicitacaoInput = {
+  where?: Prisma.HistoricoPrecoWhereInput
+  data: Prisma.XOR<Prisma.HistoricoPrecoUpdateWithoutItemSolicitacaoInput, Prisma.HistoricoPrecoUncheckedUpdateWithoutItemSolicitacaoInput>
+}
+
+export type HistoricoPrecoUpdateWithoutItemSolicitacaoInput = {
+  precoUnitario?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  precoInformado?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  unidadeInformada?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatorConversao?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  origem?: Prisma.EnumOrigemPrecoFieldUpdateOperationsInput | $Enums.OrigemPreco
+  produto?: Prisma.ProdutoUpdateOneRequiredWithoutHistoricoPrecosNestedInput
+  fornecedor?: Prisma.FornecedorUpdateOneRequiredWithoutHistoricoPrecosNestedInput
+  pedidoCompra?: Prisma.PedidoCompraUpdateOneWithoutHistoricoPrecosNestedInput
+}
+
+export type HistoricoPrecoUncheckedUpdateWithoutItemSolicitacaoInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  produtoId?: Prisma.IntFieldUpdateOperationsInput | number
+  fornecedorId?: Prisma.IntFieldUpdateOperationsInput | number
+  precoUnitario?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  precoInformado?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  unidadeInformada?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fatorConversao?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  origem?: Prisma.EnumOrigemPrecoFieldUpdateOperationsInput | $Enums.OrigemPreco
+  pedidoId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+}
+
 export type HistoricoPrecoCreateWithoutPedidoCompraInput = {
   precoUnitario: runtime.Decimal | runtime.DecimalJsLike | number | string
   precoInformado?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -761,6 +893,7 @@ export type HistoricoPrecoCreateWithoutPedidoCompraInput = {
   origem: $Enums.OrigemPreco
   produto: Prisma.ProdutoCreateNestedOneWithoutHistoricoPrecosInput
   fornecedor: Prisma.FornecedorCreateNestedOneWithoutHistoricoPrecosInput
+  itemSolicitacao?: Prisma.ItemSolicitacaoOrcamentoCreateNestedOneWithoutHistoricoPrecoInput
 }
 
 export type HistoricoPrecoUncheckedCreateWithoutPedidoCompraInput = {
@@ -773,6 +906,7 @@ export type HistoricoPrecoUncheckedCreateWithoutPedidoCompraInput = {
   fatorConversao?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   data: Date | string
   origem: $Enums.OrigemPreco
+  itemSolicitacaoId?: string | null
 }
 
 export type HistoricoPrecoCreateOrConnectWithoutPedidoCompraInput = {
@@ -811,6 +945,7 @@ export type HistoricoPrecoCreateManyProdutoInput = {
   data: Date | string
   origem: $Enums.OrigemPreco
   pedidoId?: number | null
+  itemSolicitacaoId?: string | null
 }
 
 export type HistoricoPrecoUpdateWithoutProdutoInput = {
@@ -822,6 +957,7 @@ export type HistoricoPrecoUpdateWithoutProdutoInput = {
   origem?: Prisma.EnumOrigemPrecoFieldUpdateOperationsInput | $Enums.OrigemPreco
   fornecedor?: Prisma.FornecedorUpdateOneRequiredWithoutHistoricoPrecosNestedInput
   pedidoCompra?: Prisma.PedidoCompraUpdateOneWithoutHistoricoPrecosNestedInput
+  itemSolicitacao?: Prisma.ItemSolicitacaoOrcamentoUpdateOneWithoutHistoricoPrecoNestedInput
 }
 
 export type HistoricoPrecoUncheckedUpdateWithoutProdutoInput = {
@@ -834,6 +970,7 @@ export type HistoricoPrecoUncheckedUpdateWithoutProdutoInput = {
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   origem?: Prisma.EnumOrigemPrecoFieldUpdateOperationsInput | $Enums.OrigemPreco
   pedidoId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  itemSolicitacaoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type HistoricoPrecoUncheckedUpdateManyWithoutProdutoInput = {
@@ -846,6 +983,7 @@ export type HistoricoPrecoUncheckedUpdateManyWithoutProdutoInput = {
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   origem?: Prisma.EnumOrigemPrecoFieldUpdateOperationsInput | $Enums.OrigemPreco
   pedidoId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  itemSolicitacaoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type HistoricoPrecoCreateManyFornecedorInput = {
@@ -858,6 +996,7 @@ export type HistoricoPrecoCreateManyFornecedorInput = {
   data: Date | string
   origem: $Enums.OrigemPreco
   pedidoId?: number | null
+  itemSolicitacaoId?: string | null
 }
 
 export type HistoricoPrecoUpdateWithoutFornecedorInput = {
@@ -869,6 +1008,7 @@ export type HistoricoPrecoUpdateWithoutFornecedorInput = {
   origem?: Prisma.EnumOrigemPrecoFieldUpdateOperationsInput | $Enums.OrigemPreco
   produto?: Prisma.ProdutoUpdateOneRequiredWithoutHistoricoPrecosNestedInput
   pedidoCompra?: Prisma.PedidoCompraUpdateOneWithoutHistoricoPrecosNestedInput
+  itemSolicitacao?: Prisma.ItemSolicitacaoOrcamentoUpdateOneWithoutHistoricoPrecoNestedInput
 }
 
 export type HistoricoPrecoUncheckedUpdateWithoutFornecedorInput = {
@@ -881,6 +1021,7 @@ export type HistoricoPrecoUncheckedUpdateWithoutFornecedorInput = {
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   origem?: Prisma.EnumOrigemPrecoFieldUpdateOperationsInput | $Enums.OrigemPreco
   pedidoId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  itemSolicitacaoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type HistoricoPrecoUncheckedUpdateManyWithoutFornecedorInput = {
@@ -893,6 +1034,7 @@ export type HistoricoPrecoUncheckedUpdateManyWithoutFornecedorInput = {
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   origem?: Prisma.EnumOrigemPrecoFieldUpdateOperationsInput | $Enums.OrigemPreco
   pedidoId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  itemSolicitacaoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type HistoricoPrecoCreateManyPedidoCompraInput = {
@@ -905,6 +1047,7 @@ export type HistoricoPrecoCreateManyPedidoCompraInput = {
   fatorConversao?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   data: Date | string
   origem: $Enums.OrigemPreco
+  itemSolicitacaoId?: string | null
 }
 
 export type HistoricoPrecoUpdateWithoutPedidoCompraInput = {
@@ -916,6 +1059,7 @@ export type HistoricoPrecoUpdateWithoutPedidoCompraInput = {
   origem?: Prisma.EnumOrigemPrecoFieldUpdateOperationsInput | $Enums.OrigemPreco
   produto?: Prisma.ProdutoUpdateOneRequiredWithoutHistoricoPrecosNestedInput
   fornecedor?: Prisma.FornecedorUpdateOneRequiredWithoutHistoricoPrecosNestedInput
+  itemSolicitacao?: Prisma.ItemSolicitacaoOrcamentoUpdateOneWithoutHistoricoPrecoNestedInput
 }
 
 export type HistoricoPrecoUncheckedUpdateWithoutPedidoCompraInput = {
@@ -928,6 +1072,7 @@ export type HistoricoPrecoUncheckedUpdateWithoutPedidoCompraInput = {
   fatorConversao?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   origem?: Prisma.EnumOrigemPrecoFieldUpdateOperationsInput | $Enums.OrigemPreco
+  itemSolicitacaoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type HistoricoPrecoUncheckedUpdateManyWithoutPedidoCompraInput = {
@@ -940,6 +1085,7 @@ export type HistoricoPrecoUncheckedUpdateManyWithoutPedidoCompraInput = {
   fatorConversao?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   data?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   origem?: Prisma.EnumOrigemPrecoFieldUpdateOperationsInput | $Enums.OrigemPreco
+  itemSolicitacaoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -955,9 +1101,11 @@ export type HistoricoPrecoSelect<ExtArgs extends runtime.Types.Extensions.Intern
   data?: boolean
   origem?: boolean
   pedidoId?: boolean
+  itemSolicitacaoId?: boolean
   produto?: boolean | Prisma.ProdutoDefaultArgs<ExtArgs>
   fornecedor?: boolean | Prisma.FornecedorDefaultArgs<ExtArgs>
   pedidoCompra?: boolean | Prisma.HistoricoPreco$pedidoCompraArgs<ExtArgs>
+  itemSolicitacao?: boolean | Prisma.HistoricoPreco$itemSolicitacaoArgs<ExtArgs>
 }, ExtArgs["result"]["historicoPreco"]>
 
 export type HistoricoPrecoSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -971,9 +1119,11 @@ export type HistoricoPrecoSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   data?: boolean
   origem?: boolean
   pedidoId?: boolean
+  itemSolicitacaoId?: boolean
   produto?: boolean | Prisma.ProdutoDefaultArgs<ExtArgs>
   fornecedor?: boolean | Prisma.FornecedorDefaultArgs<ExtArgs>
   pedidoCompra?: boolean | Prisma.HistoricoPreco$pedidoCompraArgs<ExtArgs>
+  itemSolicitacao?: boolean | Prisma.HistoricoPreco$itemSolicitacaoArgs<ExtArgs>
 }, ExtArgs["result"]["historicoPreco"]>
 
 export type HistoricoPrecoSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -987,9 +1137,11 @@ export type HistoricoPrecoSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   data?: boolean
   origem?: boolean
   pedidoId?: boolean
+  itemSolicitacaoId?: boolean
   produto?: boolean | Prisma.ProdutoDefaultArgs<ExtArgs>
   fornecedor?: boolean | Prisma.FornecedorDefaultArgs<ExtArgs>
   pedidoCompra?: boolean | Prisma.HistoricoPreco$pedidoCompraArgs<ExtArgs>
+  itemSolicitacao?: boolean | Prisma.HistoricoPreco$itemSolicitacaoArgs<ExtArgs>
 }, ExtArgs["result"]["historicoPreco"]>
 
 export type HistoricoPrecoSelectScalar = {
@@ -1003,23 +1155,27 @@ export type HistoricoPrecoSelectScalar = {
   data?: boolean
   origem?: boolean
   pedidoId?: boolean
+  itemSolicitacaoId?: boolean
 }
 
-export type HistoricoPrecoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "produtoId" | "fornecedorId" | "precoUnitario" | "precoInformado" | "unidadeInformada" | "fatorConversao" | "data" | "origem" | "pedidoId", ExtArgs["result"]["historicoPreco"]>
+export type HistoricoPrecoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "produtoId" | "fornecedorId" | "precoUnitario" | "precoInformado" | "unidadeInformada" | "fatorConversao" | "data" | "origem" | "pedidoId" | "itemSolicitacaoId", ExtArgs["result"]["historicoPreco"]>
 export type HistoricoPrecoInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   produto?: boolean | Prisma.ProdutoDefaultArgs<ExtArgs>
   fornecedor?: boolean | Prisma.FornecedorDefaultArgs<ExtArgs>
   pedidoCompra?: boolean | Prisma.HistoricoPreco$pedidoCompraArgs<ExtArgs>
+  itemSolicitacao?: boolean | Prisma.HistoricoPreco$itemSolicitacaoArgs<ExtArgs>
 }
 export type HistoricoPrecoIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   produto?: boolean | Prisma.ProdutoDefaultArgs<ExtArgs>
   fornecedor?: boolean | Prisma.FornecedorDefaultArgs<ExtArgs>
   pedidoCompra?: boolean | Prisma.HistoricoPreco$pedidoCompraArgs<ExtArgs>
+  itemSolicitacao?: boolean | Prisma.HistoricoPreco$itemSolicitacaoArgs<ExtArgs>
 }
 export type HistoricoPrecoIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   produto?: boolean | Prisma.ProdutoDefaultArgs<ExtArgs>
   fornecedor?: boolean | Prisma.FornecedorDefaultArgs<ExtArgs>
   pedidoCompra?: boolean | Prisma.HistoricoPreco$pedidoCompraArgs<ExtArgs>
+  itemSolicitacao?: boolean | Prisma.HistoricoPreco$itemSolicitacaoArgs<ExtArgs>
 }
 
 export type $HistoricoPrecoPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1028,6 +1184,7 @@ export type $HistoricoPrecoPayload<ExtArgs extends runtime.Types.Extensions.Inte
     produto: Prisma.$ProdutoPayload<ExtArgs>
     fornecedor: Prisma.$FornecedorPayload<ExtArgs>
     pedidoCompra: Prisma.$PedidoCompraPayload<ExtArgs> | null
+    itemSolicitacao: Prisma.$ItemSolicitacaoOrcamentoPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1040,6 +1197,7 @@ export type $HistoricoPrecoPayload<ExtArgs extends runtime.Types.Extensions.Inte
     data: Date
     origem: $Enums.OrigemPreco
     pedidoId: number | null
+    itemSolicitacaoId: string | null
   }, ExtArgs["result"]["historicoPreco"]>
   composites: {}
 }
@@ -1437,6 +1595,7 @@ export interface Prisma__HistoricoPrecoClient<T, Null = never, ExtArgs extends r
   produto<T extends Prisma.ProdutoDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProdutoDefaultArgs<ExtArgs>>): Prisma.Prisma__ProdutoClient<runtime.Types.Result.GetResult<Prisma.$ProdutoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   fornecedor<T extends Prisma.FornecedorDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FornecedorDefaultArgs<ExtArgs>>): Prisma.Prisma__FornecedorClient<runtime.Types.Result.GetResult<Prisma.$FornecedorPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   pedidoCompra<T extends Prisma.HistoricoPreco$pedidoCompraArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.HistoricoPreco$pedidoCompraArgs<ExtArgs>>): Prisma.Prisma__PedidoCompraClient<runtime.Types.Result.GetResult<Prisma.$PedidoCompraPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  itemSolicitacao<T extends Prisma.HistoricoPreco$itemSolicitacaoArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.HistoricoPreco$itemSolicitacaoArgs<ExtArgs>>): Prisma.Prisma__ItemSolicitacaoOrcamentoClient<runtime.Types.Result.GetResult<Prisma.$ItemSolicitacaoOrcamentoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1476,6 +1635,7 @@ export interface HistoricoPrecoFieldRefs {
   readonly data: Prisma.FieldRef<"HistoricoPreco", 'DateTime'>
   readonly origem: Prisma.FieldRef<"HistoricoPreco", 'OrigemPreco'>
   readonly pedidoId: Prisma.FieldRef<"HistoricoPreco", 'Int'>
+  readonly itemSolicitacaoId: Prisma.FieldRef<"HistoricoPreco", 'String'>
 }
     
 
@@ -1893,6 +2053,25 @@ export type HistoricoPreco$pedidoCompraArgs<ExtArgs extends runtime.Types.Extens
    */
   include?: Prisma.PedidoCompraInclude<ExtArgs> | null
   where?: Prisma.PedidoCompraWhereInput
+}
+
+/**
+ * HistoricoPreco.itemSolicitacao
+ */
+export type HistoricoPreco$itemSolicitacaoArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ItemSolicitacaoOrcamento
+   */
+  select?: Prisma.ItemSolicitacaoOrcamentoSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ItemSolicitacaoOrcamento
+   */
+  omit?: Prisma.ItemSolicitacaoOrcamentoOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ItemSolicitacaoOrcamentoInclude<ExtArgs> | null
+  where?: Prisma.ItemSolicitacaoOrcamentoWhereInput
 }
 
 /**

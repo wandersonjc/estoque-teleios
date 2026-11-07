@@ -31,6 +31,8 @@ export type ItemSolicitacaoOrcamentoAvgAggregateOutputType = {
   quantidadeInformada: runtime.Decimal | null
   fatorConversao: runtime.Decimal | null
   quantidadeBase: runtime.Decimal | null
+  quantidadeDisponivel: runtime.Decimal | null
+  fornecedorId: number | null
 }
 
 export type ItemSolicitacaoOrcamentoSumAggregateOutputType = {
@@ -38,6 +40,8 @@ export type ItemSolicitacaoOrcamentoSumAggregateOutputType = {
   quantidadeInformada: runtime.Decimal | null
   fatorConversao: runtime.Decimal | null
   quantidadeBase: runtime.Decimal | null
+  quantidadeDisponivel: runtime.Decimal | null
+  fornecedorId: number | null
 }
 
 export type ItemSolicitacaoOrcamentoMinAggregateOutputType = {
@@ -52,6 +56,9 @@ export type ItemSolicitacaoOrcamentoMinAggregateOutputType = {
   fatorConversao: runtime.Decimal | null
   quantidadeBase: runtime.Decimal | null
   unidadeBase: string | null
+  disponibilidade: $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel: runtime.Decimal | null
+  fornecedorId: number | null
 }
 
 export type ItemSolicitacaoOrcamentoMaxAggregateOutputType = {
@@ -66,6 +73,9 @@ export type ItemSolicitacaoOrcamentoMaxAggregateOutputType = {
   fatorConversao: runtime.Decimal | null
   quantidadeBase: runtime.Decimal | null
   unidadeBase: string | null
+  disponibilidade: $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel: runtime.Decimal | null
+  fornecedorId: number | null
 }
 
 export type ItemSolicitacaoOrcamentoCountAggregateOutputType = {
@@ -80,6 +90,9 @@ export type ItemSolicitacaoOrcamentoCountAggregateOutputType = {
   fatorConversao: number
   quantidadeBase: number
   unidadeBase: number
+  disponibilidade: number
+  quantidadeDisponivel: number
+  fornecedorId: number
   _all: number
 }
 
@@ -89,6 +102,8 @@ export type ItemSolicitacaoOrcamentoAvgAggregateInputType = {
   quantidadeInformada?: true
   fatorConversao?: true
   quantidadeBase?: true
+  quantidadeDisponivel?: true
+  fornecedorId?: true
 }
 
 export type ItemSolicitacaoOrcamentoSumAggregateInputType = {
@@ -96,6 +111,8 @@ export type ItemSolicitacaoOrcamentoSumAggregateInputType = {
   quantidadeInformada?: true
   fatorConversao?: true
   quantidadeBase?: true
+  quantidadeDisponivel?: true
+  fornecedorId?: true
 }
 
 export type ItemSolicitacaoOrcamentoMinAggregateInputType = {
@@ -110,6 +127,9 @@ export type ItemSolicitacaoOrcamentoMinAggregateInputType = {
   fatorConversao?: true
   quantidadeBase?: true
   unidadeBase?: true
+  disponibilidade?: true
+  quantidadeDisponivel?: true
+  fornecedorId?: true
 }
 
 export type ItemSolicitacaoOrcamentoMaxAggregateInputType = {
@@ -124,6 +144,9 @@ export type ItemSolicitacaoOrcamentoMaxAggregateInputType = {
   fatorConversao?: true
   quantidadeBase?: true
   unidadeBase?: true
+  disponibilidade?: true
+  quantidadeDisponivel?: true
+  fornecedorId?: true
 }
 
 export type ItemSolicitacaoOrcamentoCountAggregateInputType = {
@@ -138,6 +161,9 @@ export type ItemSolicitacaoOrcamentoCountAggregateInputType = {
   fatorConversao?: true
   quantidadeBase?: true
   unidadeBase?: true
+  disponibilidade?: true
+  quantidadeDisponivel?: true
+  fornecedorId?: true
   _all?: true
 }
 
@@ -239,6 +265,9 @@ export type ItemSolicitacaoOrcamentoGroupByOutputType = {
   fatorConversao: runtime.Decimal
   quantidadeBase: runtime.Decimal
   unidadeBase: string
+  disponibilidade: $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel: runtime.Decimal | null
+  fornecedorId: number | null
   _count: ItemSolicitacaoOrcamentoCountAggregateOutputType | null
   _avg: ItemSolicitacaoOrcamentoAvgAggregateOutputType | null
   _sum: ItemSolicitacaoOrcamentoSumAggregateOutputType | null
@@ -276,8 +305,13 @@ export type ItemSolicitacaoOrcamentoWhereInput = {
   fatorConversao?: Prisma.DecimalFilter<"ItemSolicitacaoOrcamento"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantidadeBase?: Prisma.DecimalFilter<"ItemSolicitacaoOrcamento"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   unidadeBase?: Prisma.StringFilter<"ItemSolicitacaoOrcamento"> | string
+  disponibilidade?: Prisma.EnumDisponibilidadeOrcamentoNullableFilter<"ItemSolicitacaoOrcamento"> | $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel?: Prisma.DecimalNullableFilter<"ItemSolicitacaoOrcamento"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  fornecedorId?: Prisma.IntNullableFilter<"ItemSolicitacaoOrcamento"> | number | null
   solicitacao?: Prisma.XOR<Prisma.SolicitacaoOrcamentoScalarRelationFilter, Prisma.SolicitacaoOrcamentoWhereInput>
   produto?: Prisma.XOR<Prisma.ProdutoScalarRelationFilter, Prisma.ProdutoWhereInput>
+  historicoPreco?: Prisma.XOR<Prisma.HistoricoPrecoNullableScalarRelationFilter, Prisma.HistoricoPrecoWhereInput> | null
+  fornecedor?: Prisma.XOR<Prisma.FornecedorNullableScalarRelationFilter, Prisma.FornecedorWhereInput> | null
 }
 
 export type ItemSolicitacaoOrcamentoOrderByWithRelationInput = {
@@ -292,8 +326,13 @@ export type ItemSolicitacaoOrcamentoOrderByWithRelationInput = {
   fatorConversao?: Prisma.SortOrder
   quantidadeBase?: Prisma.SortOrder
   unidadeBase?: Prisma.SortOrder
+  disponibilidade?: Prisma.SortOrderInput | Prisma.SortOrder
+  quantidadeDisponivel?: Prisma.SortOrderInput | Prisma.SortOrder
+  fornecedorId?: Prisma.SortOrderInput | Prisma.SortOrder
   solicitacao?: Prisma.SolicitacaoOrcamentoOrderByWithRelationInput
   produto?: Prisma.ProdutoOrderByWithRelationInput
+  historicoPreco?: Prisma.HistoricoPrecoOrderByWithRelationInput
+  fornecedor?: Prisma.FornecedorOrderByWithRelationInput
 }
 
 export type ItemSolicitacaoOrcamentoWhereUniqueInput = Prisma.AtLeast<{
@@ -312,8 +351,13 @@ export type ItemSolicitacaoOrcamentoWhereUniqueInput = Prisma.AtLeast<{
   fatorConversao?: Prisma.DecimalFilter<"ItemSolicitacaoOrcamento"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantidadeBase?: Prisma.DecimalFilter<"ItemSolicitacaoOrcamento"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   unidadeBase?: Prisma.StringFilter<"ItemSolicitacaoOrcamento"> | string
+  disponibilidade?: Prisma.EnumDisponibilidadeOrcamentoNullableFilter<"ItemSolicitacaoOrcamento"> | $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel?: Prisma.DecimalNullableFilter<"ItemSolicitacaoOrcamento"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  fornecedorId?: Prisma.IntNullableFilter<"ItemSolicitacaoOrcamento"> | number | null
   solicitacao?: Prisma.XOR<Prisma.SolicitacaoOrcamentoScalarRelationFilter, Prisma.SolicitacaoOrcamentoWhereInput>
   produto?: Prisma.XOR<Prisma.ProdutoScalarRelationFilter, Prisma.ProdutoWhereInput>
+  historicoPreco?: Prisma.XOR<Prisma.HistoricoPrecoNullableScalarRelationFilter, Prisma.HistoricoPrecoWhereInput> | null
+  fornecedor?: Prisma.XOR<Prisma.FornecedorNullableScalarRelationFilter, Prisma.FornecedorWhereInput> | null
 }, "id" | "solicitacaoId_produtoId">
 
 export type ItemSolicitacaoOrcamentoOrderByWithAggregationInput = {
@@ -328,6 +372,9 @@ export type ItemSolicitacaoOrcamentoOrderByWithAggregationInput = {
   fatorConversao?: Prisma.SortOrder
   quantidadeBase?: Prisma.SortOrder
   unidadeBase?: Prisma.SortOrder
+  disponibilidade?: Prisma.SortOrderInput | Prisma.SortOrder
+  quantidadeDisponivel?: Prisma.SortOrderInput | Prisma.SortOrder
+  fornecedorId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ItemSolicitacaoOrcamentoCountOrderByAggregateInput
   _avg?: Prisma.ItemSolicitacaoOrcamentoAvgOrderByAggregateInput
   _max?: Prisma.ItemSolicitacaoOrcamentoMaxOrderByAggregateInput
@@ -350,6 +397,9 @@ export type ItemSolicitacaoOrcamentoScalarWhereWithAggregatesInput = {
   fatorConversao?: Prisma.DecimalWithAggregatesFilter<"ItemSolicitacaoOrcamento"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantidadeBase?: Prisma.DecimalWithAggregatesFilter<"ItemSolicitacaoOrcamento"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   unidadeBase?: Prisma.StringWithAggregatesFilter<"ItemSolicitacaoOrcamento"> | string
+  disponibilidade?: Prisma.EnumDisponibilidadeOrcamentoNullableWithAggregatesFilter<"ItemSolicitacaoOrcamento"> | $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel?: Prisma.DecimalNullableWithAggregatesFilter<"ItemSolicitacaoOrcamento"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  fornecedorId?: Prisma.IntNullableWithAggregatesFilter<"ItemSolicitacaoOrcamento"> | number | null
 }
 
 export type ItemSolicitacaoOrcamentoCreateInput = {
@@ -362,8 +412,12 @@ export type ItemSolicitacaoOrcamentoCreateInput = {
   fatorConversao: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantidadeBase: runtime.Decimal | runtime.DecimalJsLike | number | string
   unidadeBase: string
+  disponibilidade?: $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   solicitacao: Prisma.SolicitacaoOrcamentoCreateNestedOneWithoutItensInput
   produto: Prisma.ProdutoCreateNestedOneWithoutItensSolicitacaoOrcamentoInput
+  historicoPreco?: Prisma.HistoricoPrecoCreateNestedOneWithoutItemSolicitacaoInput
+  fornecedor?: Prisma.FornecedorCreateNestedOneWithoutItensSolicitacaoOrcamentoInput
 }
 
 export type ItemSolicitacaoOrcamentoUncheckedCreateInput = {
@@ -378,6 +432,10 @@ export type ItemSolicitacaoOrcamentoUncheckedCreateInput = {
   fatorConversao: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantidadeBase: runtime.Decimal | runtime.DecimalJsLike | number | string
   unidadeBase: string
+  disponibilidade?: $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  fornecedorId?: number | null
+  historicoPreco?: Prisma.HistoricoPrecoUncheckedCreateNestedOneWithoutItemSolicitacaoInput
 }
 
 export type ItemSolicitacaoOrcamentoUpdateInput = {
@@ -390,8 +448,12 @@ export type ItemSolicitacaoOrcamentoUpdateInput = {
   fatorConversao?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantidadeBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   unidadeBase?: Prisma.StringFieldUpdateOperationsInput | string
+  disponibilidade?: Prisma.NullableEnumDisponibilidadeOrcamentoFieldUpdateOperationsInput | $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   solicitacao?: Prisma.SolicitacaoOrcamentoUpdateOneRequiredWithoutItensNestedInput
   produto?: Prisma.ProdutoUpdateOneRequiredWithoutItensSolicitacaoOrcamentoNestedInput
+  historicoPreco?: Prisma.HistoricoPrecoUpdateOneWithoutItemSolicitacaoNestedInput
+  fornecedor?: Prisma.FornecedorUpdateOneWithoutItensSolicitacaoOrcamentoNestedInput
 }
 
 export type ItemSolicitacaoOrcamentoUncheckedUpdateInput = {
@@ -406,6 +468,10 @@ export type ItemSolicitacaoOrcamentoUncheckedUpdateInput = {
   fatorConversao?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantidadeBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   unidadeBase?: Prisma.StringFieldUpdateOperationsInput | string
+  disponibilidade?: Prisma.NullableEnumDisponibilidadeOrcamentoFieldUpdateOperationsInput | $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  fornecedorId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  historicoPreco?: Prisma.HistoricoPrecoUncheckedUpdateOneWithoutItemSolicitacaoNestedInput
 }
 
 export type ItemSolicitacaoOrcamentoCreateManyInput = {
@@ -420,6 +486,9 @@ export type ItemSolicitacaoOrcamentoCreateManyInput = {
   fatorConversao: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantidadeBase: runtime.Decimal | runtime.DecimalJsLike | number | string
   unidadeBase: string
+  disponibilidade?: $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  fornecedorId?: number | null
 }
 
 export type ItemSolicitacaoOrcamentoUpdateManyMutationInput = {
@@ -432,6 +501,8 @@ export type ItemSolicitacaoOrcamentoUpdateManyMutationInput = {
   fatorConversao?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantidadeBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   unidadeBase?: Prisma.StringFieldUpdateOperationsInput | string
+  disponibilidade?: Prisma.NullableEnumDisponibilidadeOrcamentoFieldUpdateOperationsInput | $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
 }
 
 export type ItemSolicitacaoOrcamentoUncheckedUpdateManyInput = {
@@ -446,6 +517,9 @@ export type ItemSolicitacaoOrcamentoUncheckedUpdateManyInput = {
   fatorConversao?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantidadeBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   unidadeBase?: Prisma.StringFieldUpdateOperationsInput | string
+  disponibilidade?: Prisma.NullableEnumDisponibilidadeOrcamentoFieldUpdateOperationsInput | $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  fornecedorId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type ItemSolicitacaoOrcamentoListRelationFilter = {
@@ -456,6 +530,11 @@ export type ItemSolicitacaoOrcamentoListRelationFilter = {
 
 export type ItemSolicitacaoOrcamentoOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type ItemSolicitacaoOrcamentoNullableScalarRelationFilter = {
+  is?: Prisma.ItemSolicitacaoOrcamentoWhereInput | null
+  isNot?: Prisma.ItemSolicitacaoOrcamentoWhereInput | null
 }
 
 export type ItemSolicitacaoOrcamentoSolicitacaoIdProdutoIdCompoundUniqueInput = {
@@ -475,6 +554,9 @@ export type ItemSolicitacaoOrcamentoCountOrderByAggregateInput = {
   fatorConversao?: Prisma.SortOrder
   quantidadeBase?: Prisma.SortOrder
   unidadeBase?: Prisma.SortOrder
+  disponibilidade?: Prisma.SortOrder
+  quantidadeDisponivel?: Prisma.SortOrder
+  fornecedorId?: Prisma.SortOrder
 }
 
 export type ItemSolicitacaoOrcamentoAvgOrderByAggregateInput = {
@@ -482,6 +564,8 @@ export type ItemSolicitacaoOrcamentoAvgOrderByAggregateInput = {
   quantidadeInformada?: Prisma.SortOrder
   fatorConversao?: Prisma.SortOrder
   quantidadeBase?: Prisma.SortOrder
+  quantidadeDisponivel?: Prisma.SortOrder
+  fornecedorId?: Prisma.SortOrder
 }
 
 export type ItemSolicitacaoOrcamentoMaxOrderByAggregateInput = {
@@ -496,6 +580,9 @@ export type ItemSolicitacaoOrcamentoMaxOrderByAggregateInput = {
   fatorConversao?: Prisma.SortOrder
   quantidadeBase?: Prisma.SortOrder
   unidadeBase?: Prisma.SortOrder
+  disponibilidade?: Prisma.SortOrder
+  quantidadeDisponivel?: Prisma.SortOrder
+  fornecedorId?: Prisma.SortOrder
 }
 
 export type ItemSolicitacaoOrcamentoMinOrderByAggregateInput = {
@@ -510,6 +597,9 @@ export type ItemSolicitacaoOrcamentoMinOrderByAggregateInput = {
   fatorConversao?: Prisma.SortOrder
   quantidadeBase?: Prisma.SortOrder
   unidadeBase?: Prisma.SortOrder
+  disponibilidade?: Prisma.SortOrder
+  quantidadeDisponivel?: Prisma.SortOrder
+  fornecedorId?: Prisma.SortOrder
 }
 
 export type ItemSolicitacaoOrcamentoSumOrderByAggregateInput = {
@@ -517,6 +607,8 @@ export type ItemSolicitacaoOrcamentoSumOrderByAggregateInput = {
   quantidadeInformada?: Prisma.SortOrder
   fatorConversao?: Prisma.SortOrder
   quantidadeBase?: Prisma.SortOrder
+  quantidadeDisponivel?: Prisma.SortOrder
+  fornecedorId?: Prisma.SortOrder
 }
 
 export type ItemSolicitacaoOrcamentoCreateNestedManyWithoutProdutoInput = {
@@ -561,6 +653,64 @@ export type ItemSolicitacaoOrcamentoUncheckedUpdateManyWithoutProdutoNestedInput
   deleteMany?: Prisma.ItemSolicitacaoOrcamentoScalarWhereInput | Prisma.ItemSolicitacaoOrcamentoScalarWhereInput[]
 }
 
+export type ItemSolicitacaoOrcamentoCreateNestedManyWithoutFornecedorInput = {
+  create?: Prisma.XOR<Prisma.ItemSolicitacaoOrcamentoCreateWithoutFornecedorInput, Prisma.ItemSolicitacaoOrcamentoUncheckedCreateWithoutFornecedorInput> | Prisma.ItemSolicitacaoOrcamentoCreateWithoutFornecedorInput[] | Prisma.ItemSolicitacaoOrcamentoUncheckedCreateWithoutFornecedorInput[]
+  connectOrCreate?: Prisma.ItemSolicitacaoOrcamentoCreateOrConnectWithoutFornecedorInput | Prisma.ItemSolicitacaoOrcamentoCreateOrConnectWithoutFornecedorInput[]
+  createMany?: Prisma.ItemSolicitacaoOrcamentoCreateManyFornecedorInputEnvelope
+  connect?: Prisma.ItemSolicitacaoOrcamentoWhereUniqueInput | Prisma.ItemSolicitacaoOrcamentoWhereUniqueInput[]
+}
+
+export type ItemSolicitacaoOrcamentoUncheckedCreateNestedManyWithoutFornecedorInput = {
+  create?: Prisma.XOR<Prisma.ItemSolicitacaoOrcamentoCreateWithoutFornecedorInput, Prisma.ItemSolicitacaoOrcamentoUncheckedCreateWithoutFornecedorInput> | Prisma.ItemSolicitacaoOrcamentoCreateWithoutFornecedorInput[] | Prisma.ItemSolicitacaoOrcamentoUncheckedCreateWithoutFornecedorInput[]
+  connectOrCreate?: Prisma.ItemSolicitacaoOrcamentoCreateOrConnectWithoutFornecedorInput | Prisma.ItemSolicitacaoOrcamentoCreateOrConnectWithoutFornecedorInput[]
+  createMany?: Prisma.ItemSolicitacaoOrcamentoCreateManyFornecedorInputEnvelope
+  connect?: Prisma.ItemSolicitacaoOrcamentoWhereUniqueInput | Prisma.ItemSolicitacaoOrcamentoWhereUniqueInput[]
+}
+
+export type ItemSolicitacaoOrcamentoUpdateManyWithoutFornecedorNestedInput = {
+  create?: Prisma.XOR<Prisma.ItemSolicitacaoOrcamentoCreateWithoutFornecedorInput, Prisma.ItemSolicitacaoOrcamentoUncheckedCreateWithoutFornecedorInput> | Prisma.ItemSolicitacaoOrcamentoCreateWithoutFornecedorInput[] | Prisma.ItemSolicitacaoOrcamentoUncheckedCreateWithoutFornecedorInput[]
+  connectOrCreate?: Prisma.ItemSolicitacaoOrcamentoCreateOrConnectWithoutFornecedorInput | Prisma.ItemSolicitacaoOrcamentoCreateOrConnectWithoutFornecedorInput[]
+  upsert?: Prisma.ItemSolicitacaoOrcamentoUpsertWithWhereUniqueWithoutFornecedorInput | Prisma.ItemSolicitacaoOrcamentoUpsertWithWhereUniqueWithoutFornecedorInput[]
+  createMany?: Prisma.ItemSolicitacaoOrcamentoCreateManyFornecedorInputEnvelope
+  set?: Prisma.ItemSolicitacaoOrcamentoWhereUniqueInput | Prisma.ItemSolicitacaoOrcamentoWhereUniqueInput[]
+  disconnect?: Prisma.ItemSolicitacaoOrcamentoWhereUniqueInput | Prisma.ItemSolicitacaoOrcamentoWhereUniqueInput[]
+  delete?: Prisma.ItemSolicitacaoOrcamentoWhereUniqueInput | Prisma.ItemSolicitacaoOrcamentoWhereUniqueInput[]
+  connect?: Prisma.ItemSolicitacaoOrcamentoWhereUniqueInput | Prisma.ItemSolicitacaoOrcamentoWhereUniqueInput[]
+  update?: Prisma.ItemSolicitacaoOrcamentoUpdateWithWhereUniqueWithoutFornecedorInput | Prisma.ItemSolicitacaoOrcamentoUpdateWithWhereUniqueWithoutFornecedorInput[]
+  updateMany?: Prisma.ItemSolicitacaoOrcamentoUpdateManyWithWhereWithoutFornecedorInput | Prisma.ItemSolicitacaoOrcamentoUpdateManyWithWhereWithoutFornecedorInput[]
+  deleteMany?: Prisma.ItemSolicitacaoOrcamentoScalarWhereInput | Prisma.ItemSolicitacaoOrcamentoScalarWhereInput[]
+}
+
+export type ItemSolicitacaoOrcamentoUncheckedUpdateManyWithoutFornecedorNestedInput = {
+  create?: Prisma.XOR<Prisma.ItemSolicitacaoOrcamentoCreateWithoutFornecedorInput, Prisma.ItemSolicitacaoOrcamentoUncheckedCreateWithoutFornecedorInput> | Prisma.ItemSolicitacaoOrcamentoCreateWithoutFornecedorInput[] | Prisma.ItemSolicitacaoOrcamentoUncheckedCreateWithoutFornecedorInput[]
+  connectOrCreate?: Prisma.ItemSolicitacaoOrcamentoCreateOrConnectWithoutFornecedorInput | Prisma.ItemSolicitacaoOrcamentoCreateOrConnectWithoutFornecedorInput[]
+  upsert?: Prisma.ItemSolicitacaoOrcamentoUpsertWithWhereUniqueWithoutFornecedorInput | Prisma.ItemSolicitacaoOrcamentoUpsertWithWhereUniqueWithoutFornecedorInput[]
+  createMany?: Prisma.ItemSolicitacaoOrcamentoCreateManyFornecedorInputEnvelope
+  set?: Prisma.ItemSolicitacaoOrcamentoWhereUniqueInput | Prisma.ItemSolicitacaoOrcamentoWhereUniqueInput[]
+  disconnect?: Prisma.ItemSolicitacaoOrcamentoWhereUniqueInput | Prisma.ItemSolicitacaoOrcamentoWhereUniqueInput[]
+  delete?: Prisma.ItemSolicitacaoOrcamentoWhereUniqueInput | Prisma.ItemSolicitacaoOrcamentoWhereUniqueInput[]
+  connect?: Prisma.ItemSolicitacaoOrcamentoWhereUniqueInput | Prisma.ItemSolicitacaoOrcamentoWhereUniqueInput[]
+  update?: Prisma.ItemSolicitacaoOrcamentoUpdateWithWhereUniqueWithoutFornecedorInput | Prisma.ItemSolicitacaoOrcamentoUpdateWithWhereUniqueWithoutFornecedorInput[]
+  updateMany?: Prisma.ItemSolicitacaoOrcamentoUpdateManyWithWhereWithoutFornecedorInput | Prisma.ItemSolicitacaoOrcamentoUpdateManyWithWhereWithoutFornecedorInput[]
+  deleteMany?: Prisma.ItemSolicitacaoOrcamentoScalarWhereInput | Prisma.ItemSolicitacaoOrcamentoScalarWhereInput[]
+}
+
+export type ItemSolicitacaoOrcamentoCreateNestedOneWithoutHistoricoPrecoInput = {
+  create?: Prisma.XOR<Prisma.ItemSolicitacaoOrcamentoCreateWithoutHistoricoPrecoInput, Prisma.ItemSolicitacaoOrcamentoUncheckedCreateWithoutHistoricoPrecoInput>
+  connectOrCreate?: Prisma.ItemSolicitacaoOrcamentoCreateOrConnectWithoutHistoricoPrecoInput
+  connect?: Prisma.ItemSolicitacaoOrcamentoWhereUniqueInput
+}
+
+export type ItemSolicitacaoOrcamentoUpdateOneWithoutHistoricoPrecoNestedInput = {
+  create?: Prisma.XOR<Prisma.ItemSolicitacaoOrcamentoCreateWithoutHistoricoPrecoInput, Prisma.ItemSolicitacaoOrcamentoUncheckedCreateWithoutHistoricoPrecoInput>
+  connectOrCreate?: Prisma.ItemSolicitacaoOrcamentoCreateOrConnectWithoutHistoricoPrecoInput
+  upsert?: Prisma.ItemSolicitacaoOrcamentoUpsertWithoutHistoricoPrecoInput
+  disconnect?: Prisma.ItemSolicitacaoOrcamentoWhereInput | boolean
+  delete?: Prisma.ItemSolicitacaoOrcamentoWhereInput | boolean
+  connect?: Prisma.ItemSolicitacaoOrcamentoWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ItemSolicitacaoOrcamentoUpdateToOneWithWhereWithoutHistoricoPrecoInput, Prisma.ItemSolicitacaoOrcamentoUpdateWithoutHistoricoPrecoInput>, Prisma.ItemSolicitacaoOrcamentoUncheckedUpdateWithoutHistoricoPrecoInput>
+}
+
 export type ItemSolicitacaoOrcamentoCreateNestedManyWithoutSolicitacaoInput = {
   create?: Prisma.XOR<Prisma.ItemSolicitacaoOrcamentoCreateWithoutSolicitacaoInput, Prisma.ItemSolicitacaoOrcamentoUncheckedCreateWithoutSolicitacaoInput> | Prisma.ItemSolicitacaoOrcamentoCreateWithoutSolicitacaoInput[] | Prisma.ItemSolicitacaoOrcamentoUncheckedCreateWithoutSolicitacaoInput[]
   connectOrCreate?: Prisma.ItemSolicitacaoOrcamentoCreateOrConnectWithoutSolicitacaoInput | Prisma.ItemSolicitacaoOrcamentoCreateOrConnectWithoutSolicitacaoInput[]
@@ -603,6 +753,10 @@ export type ItemSolicitacaoOrcamentoUncheckedUpdateManyWithoutSolicitacaoNestedI
   deleteMany?: Prisma.ItemSolicitacaoOrcamentoScalarWhereInput | Prisma.ItemSolicitacaoOrcamentoScalarWhereInput[]
 }
 
+export type NullableEnumDisponibilidadeOrcamentoFieldUpdateOperationsInput = {
+  set?: $Enums.DisponibilidadeOrcamento | null
+}
+
 export type ItemSolicitacaoOrcamentoCreateWithoutProdutoInput = {
   id?: string
   produtoNome: string
@@ -613,7 +767,11 @@ export type ItemSolicitacaoOrcamentoCreateWithoutProdutoInput = {
   fatorConversao: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantidadeBase: runtime.Decimal | runtime.DecimalJsLike | number | string
   unidadeBase: string
+  disponibilidade?: $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   solicitacao: Prisma.SolicitacaoOrcamentoCreateNestedOneWithoutItensInput
+  historicoPreco?: Prisma.HistoricoPrecoCreateNestedOneWithoutItemSolicitacaoInput
+  fornecedor?: Prisma.FornecedorCreateNestedOneWithoutItensSolicitacaoOrcamentoInput
 }
 
 export type ItemSolicitacaoOrcamentoUncheckedCreateWithoutProdutoInput = {
@@ -627,6 +785,10 @@ export type ItemSolicitacaoOrcamentoUncheckedCreateWithoutProdutoInput = {
   fatorConversao: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantidadeBase: runtime.Decimal | runtime.DecimalJsLike | number | string
   unidadeBase: string
+  disponibilidade?: $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  fornecedorId?: number | null
+  historicoPreco?: Prisma.HistoricoPrecoUncheckedCreateNestedOneWithoutItemSolicitacaoInput
 }
 
 export type ItemSolicitacaoOrcamentoCreateOrConnectWithoutProdutoInput = {
@@ -670,6 +832,153 @@ export type ItemSolicitacaoOrcamentoScalarWhereInput = {
   fatorConversao?: Prisma.DecimalFilter<"ItemSolicitacaoOrcamento"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantidadeBase?: Prisma.DecimalFilter<"ItemSolicitacaoOrcamento"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   unidadeBase?: Prisma.StringFilter<"ItemSolicitacaoOrcamento"> | string
+  disponibilidade?: Prisma.EnumDisponibilidadeOrcamentoNullableFilter<"ItemSolicitacaoOrcamento"> | $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel?: Prisma.DecimalNullableFilter<"ItemSolicitacaoOrcamento"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  fornecedorId?: Prisma.IntNullableFilter<"ItemSolicitacaoOrcamento"> | number | null
+}
+
+export type ItemSolicitacaoOrcamentoCreateWithoutFornecedorInput = {
+  id?: string
+  produtoNome: string
+  codigoErp?: string | null
+  codigoFornecedor?: string | null
+  quantidadeInformada: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unidadeInformada: string
+  fatorConversao: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantidadeBase: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unidadeBase: string
+  disponibilidade?: $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  solicitacao: Prisma.SolicitacaoOrcamentoCreateNestedOneWithoutItensInput
+  produto: Prisma.ProdutoCreateNestedOneWithoutItensSolicitacaoOrcamentoInput
+  historicoPreco?: Prisma.HistoricoPrecoCreateNestedOneWithoutItemSolicitacaoInput
+}
+
+export type ItemSolicitacaoOrcamentoUncheckedCreateWithoutFornecedorInput = {
+  id?: string
+  solicitacaoId: string
+  produtoId: number
+  produtoNome: string
+  codigoErp?: string | null
+  codigoFornecedor?: string | null
+  quantidadeInformada: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unidadeInformada: string
+  fatorConversao: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantidadeBase: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unidadeBase: string
+  disponibilidade?: $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  historicoPreco?: Prisma.HistoricoPrecoUncheckedCreateNestedOneWithoutItemSolicitacaoInput
+}
+
+export type ItemSolicitacaoOrcamentoCreateOrConnectWithoutFornecedorInput = {
+  where: Prisma.ItemSolicitacaoOrcamentoWhereUniqueInput
+  create: Prisma.XOR<Prisma.ItemSolicitacaoOrcamentoCreateWithoutFornecedorInput, Prisma.ItemSolicitacaoOrcamentoUncheckedCreateWithoutFornecedorInput>
+}
+
+export type ItemSolicitacaoOrcamentoCreateManyFornecedorInputEnvelope = {
+  data: Prisma.ItemSolicitacaoOrcamentoCreateManyFornecedorInput | Prisma.ItemSolicitacaoOrcamentoCreateManyFornecedorInput[]
+  skipDuplicates?: boolean
+}
+
+export type ItemSolicitacaoOrcamentoUpsertWithWhereUniqueWithoutFornecedorInput = {
+  where: Prisma.ItemSolicitacaoOrcamentoWhereUniqueInput
+  update: Prisma.XOR<Prisma.ItemSolicitacaoOrcamentoUpdateWithoutFornecedorInput, Prisma.ItemSolicitacaoOrcamentoUncheckedUpdateWithoutFornecedorInput>
+  create: Prisma.XOR<Prisma.ItemSolicitacaoOrcamentoCreateWithoutFornecedorInput, Prisma.ItemSolicitacaoOrcamentoUncheckedCreateWithoutFornecedorInput>
+}
+
+export type ItemSolicitacaoOrcamentoUpdateWithWhereUniqueWithoutFornecedorInput = {
+  where: Prisma.ItemSolicitacaoOrcamentoWhereUniqueInput
+  data: Prisma.XOR<Prisma.ItemSolicitacaoOrcamentoUpdateWithoutFornecedorInput, Prisma.ItemSolicitacaoOrcamentoUncheckedUpdateWithoutFornecedorInput>
+}
+
+export type ItemSolicitacaoOrcamentoUpdateManyWithWhereWithoutFornecedorInput = {
+  where: Prisma.ItemSolicitacaoOrcamentoScalarWhereInput
+  data: Prisma.XOR<Prisma.ItemSolicitacaoOrcamentoUpdateManyMutationInput, Prisma.ItemSolicitacaoOrcamentoUncheckedUpdateManyWithoutFornecedorInput>
+}
+
+export type ItemSolicitacaoOrcamentoCreateWithoutHistoricoPrecoInput = {
+  id?: string
+  produtoNome: string
+  codigoErp?: string | null
+  codigoFornecedor?: string | null
+  quantidadeInformada: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unidadeInformada: string
+  fatorConversao: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantidadeBase: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unidadeBase: string
+  disponibilidade?: $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  solicitacao: Prisma.SolicitacaoOrcamentoCreateNestedOneWithoutItensInput
+  produto: Prisma.ProdutoCreateNestedOneWithoutItensSolicitacaoOrcamentoInput
+  fornecedor?: Prisma.FornecedorCreateNestedOneWithoutItensSolicitacaoOrcamentoInput
+}
+
+export type ItemSolicitacaoOrcamentoUncheckedCreateWithoutHistoricoPrecoInput = {
+  id?: string
+  solicitacaoId: string
+  produtoId: number
+  produtoNome: string
+  codigoErp?: string | null
+  codigoFornecedor?: string | null
+  quantidadeInformada: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unidadeInformada: string
+  fatorConversao: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantidadeBase: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unidadeBase: string
+  disponibilidade?: $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  fornecedorId?: number | null
+}
+
+export type ItemSolicitacaoOrcamentoCreateOrConnectWithoutHistoricoPrecoInput = {
+  where: Prisma.ItemSolicitacaoOrcamentoWhereUniqueInput
+  create: Prisma.XOR<Prisma.ItemSolicitacaoOrcamentoCreateWithoutHistoricoPrecoInput, Prisma.ItemSolicitacaoOrcamentoUncheckedCreateWithoutHistoricoPrecoInput>
+}
+
+export type ItemSolicitacaoOrcamentoUpsertWithoutHistoricoPrecoInput = {
+  update: Prisma.XOR<Prisma.ItemSolicitacaoOrcamentoUpdateWithoutHistoricoPrecoInput, Prisma.ItemSolicitacaoOrcamentoUncheckedUpdateWithoutHistoricoPrecoInput>
+  create: Prisma.XOR<Prisma.ItemSolicitacaoOrcamentoCreateWithoutHistoricoPrecoInput, Prisma.ItemSolicitacaoOrcamentoUncheckedCreateWithoutHistoricoPrecoInput>
+  where?: Prisma.ItemSolicitacaoOrcamentoWhereInput
+}
+
+export type ItemSolicitacaoOrcamentoUpdateToOneWithWhereWithoutHistoricoPrecoInput = {
+  where?: Prisma.ItemSolicitacaoOrcamentoWhereInput
+  data: Prisma.XOR<Prisma.ItemSolicitacaoOrcamentoUpdateWithoutHistoricoPrecoInput, Prisma.ItemSolicitacaoOrcamentoUncheckedUpdateWithoutHistoricoPrecoInput>
+}
+
+export type ItemSolicitacaoOrcamentoUpdateWithoutHistoricoPrecoInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  produtoNome?: Prisma.StringFieldUpdateOperationsInput | string
+  codigoErp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  codigoFornecedor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quantidadeInformada?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unidadeInformada?: Prisma.StringFieldUpdateOperationsInput | string
+  fatorConversao?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantidadeBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unidadeBase?: Prisma.StringFieldUpdateOperationsInput | string
+  disponibilidade?: Prisma.NullableEnumDisponibilidadeOrcamentoFieldUpdateOperationsInput | $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  solicitacao?: Prisma.SolicitacaoOrcamentoUpdateOneRequiredWithoutItensNestedInput
+  produto?: Prisma.ProdutoUpdateOneRequiredWithoutItensSolicitacaoOrcamentoNestedInput
+  fornecedor?: Prisma.FornecedorUpdateOneWithoutItensSolicitacaoOrcamentoNestedInput
+}
+
+export type ItemSolicitacaoOrcamentoUncheckedUpdateWithoutHistoricoPrecoInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  solicitacaoId?: Prisma.StringFieldUpdateOperationsInput | string
+  produtoId?: Prisma.IntFieldUpdateOperationsInput | number
+  produtoNome?: Prisma.StringFieldUpdateOperationsInput | string
+  codigoErp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  codigoFornecedor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quantidadeInformada?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unidadeInformada?: Prisma.StringFieldUpdateOperationsInput | string
+  fatorConversao?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantidadeBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unidadeBase?: Prisma.StringFieldUpdateOperationsInput | string
+  disponibilidade?: Prisma.NullableEnumDisponibilidadeOrcamentoFieldUpdateOperationsInput | $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  fornecedorId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type ItemSolicitacaoOrcamentoCreateWithoutSolicitacaoInput = {
@@ -682,7 +991,11 @@ export type ItemSolicitacaoOrcamentoCreateWithoutSolicitacaoInput = {
   fatorConversao: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantidadeBase: runtime.Decimal | runtime.DecimalJsLike | number | string
   unidadeBase: string
+  disponibilidade?: $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   produto: Prisma.ProdutoCreateNestedOneWithoutItensSolicitacaoOrcamentoInput
+  historicoPreco?: Prisma.HistoricoPrecoCreateNestedOneWithoutItemSolicitacaoInput
+  fornecedor?: Prisma.FornecedorCreateNestedOneWithoutItensSolicitacaoOrcamentoInput
 }
 
 export type ItemSolicitacaoOrcamentoUncheckedCreateWithoutSolicitacaoInput = {
@@ -696,6 +1009,10 @@ export type ItemSolicitacaoOrcamentoUncheckedCreateWithoutSolicitacaoInput = {
   fatorConversao: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantidadeBase: runtime.Decimal | runtime.DecimalJsLike | number | string
   unidadeBase: string
+  disponibilidade?: $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  fornecedorId?: number | null
+  historicoPreco?: Prisma.HistoricoPrecoUncheckedCreateNestedOneWithoutItemSolicitacaoInput
 }
 
 export type ItemSolicitacaoOrcamentoCreateOrConnectWithoutSolicitacaoInput = {
@@ -735,6 +1052,9 @@ export type ItemSolicitacaoOrcamentoCreateManyProdutoInput = {
   fatorConversao: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantidadeBase: runtime.Decimal | runtime.DecimalJsLike | number | string
   unidadeBase: string
+  disponibilidade?: $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  fornecedorId?: number | null
 }
 
 export type ItemSolicitacaoOrcamentoUpdateWithoutProdutoInput = {
@@ -747,7 +1067,11 @@ export type ItemSolicitacaoOrcamentoUpdateWithoutProdutoInput = {
   fatorConversao?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantidadeBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   unidadeBase?: Prisma.StringFieldUpdateOperationsInput | string
+  disponibilidade?: Prisma.NullableEnumDisponibilidadeOrcamentoFieldUpdateOperationsInput | $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   solicitacao?: Prisma.SolicitacaoOrcamentoUpdateOneRequiredWithoutItensNestedInput
+  historicoPreco?: Prisma.HistoricoPrecoUpdateOneWithoutItemSolicitacaoNestedInput
+  fornecedor?: Prisma.FornecedorUpdateOneWithoutItensSolicitacaoOrcamentoNestedInput
 }
 
 export type ItemSolicitacaoOrcamentoUncheckedUpdateWithoutProdutoInput = {
@@ -761,6 +1085,10 @@ export type ItemSolicitacaoOrcamentoUncheckedUpdateWithoutProdutoInput = {
   fatorConversao?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantidadeBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   unidadeBase?: Prisma.StringFieldUpdateOperationsInput | string
+  disponibilidade?: Prisma.NullableEnumDisponibilidadeOrcamentoFieldUpdateOperationsInput | $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  fornecedorId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  historicoPreco?: Prisma.HistoricoPrecoUncheckedUpdateOneWithoutItemSolicitacaoNestedInput
 }
 
 export type ItemSolicitacaoOrcamentoUncheckedUpdateManyWithoutProdutoInput = {
@@ -774,6 +1102,75 @@ export type ItemSolicitacaoOrcamentoUncheckedUpdateManyWithoutProdutoInput = {
   fatorConversao?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantidadeBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   unidadeBase?: Prisma.StringFieldUpdateOperationsInput | string
+  disponibilidade?: Prisma.NullableEnumDisponibilidadeOrcamentoFieldUpdateOperationsInput | $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  fornecedorId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+}
+
+export type ItemSolicitacaoOrcamentoCreateManyFornecedorInput = {
+  id?: string
+  solicitacaoId: string
+  produtoId: number
+  produtoNome: string
+  codigoErp?: string | null
+  codigoFornecedor?: string | null
+  quantidadeInformada: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unidadeInformada: string
+  fatorConversao: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantidadeBase: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unidadeBase: string
+  disponibilidade?: $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+}
+
+export type ItemSolicitacaoOrcamentoUpdateWithoutFornecedorInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  produtoNome?: Prisma.StringFieldUpdateOperationsInput | string
+  codigoErp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  codigoFornecedor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quantidadeInformada?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unidadeInformada?: Prisma.StringFieldUpdateOperationsInput | string
+  fatorConversao?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantidadeBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unidadeBase?: Prisma.StringFieldUpdateOperationsInput | string
+  disponibilidade?: Prisma.NullableEnumDisponibilidadeOrcamentoFieldUpdateOperationsInput | $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  solicitacao?: Prisma.SolicitacaoOrcamentoUpdateOneRequiredWithoutItensNestedInput
+  produto?: Prisma.ProdutoUpdateOneRequiredWithoutItensSolicitacaoOrcamentoNestedInput
+  historicoPreco?: Prisma.HistoricoPrecoUpdateOneWithoutItemSolicitacaoNestedInput
+}
+
+export type ItemSolicitacaoOrcamentoUncheckedUpdateWithoutFornecedorInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  solicitacaoId?: Prisma.StringFieldUpdateOperationsInput | string
+  produtoId?: Prisma.IntFieldUpdateOperationsInput | number
+  produtoNome?: Prisma.StringFieldUpdateOperationsInput | string
+  codigoErp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  codigoFornecedor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quantidadeInformada?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unidadeInformada?: Prisma.StringFieldUpdateOperationsInput | string
+  fatorConversao?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantidadeBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unidadeBase?: Prisma.StringFieldUpdateOperationsInput | string
+  disponibilidade?: Prisma.NullableEnumDisponibilidadeOrcamentoFieldUpdateOperationsInput | $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  historicoPreco?: Prisma.HistoricoPrecoUncheckedUpdateOneWithoutItemSolicitacaoNestedInput
+}
+
+export type ItemSolicitacaoOrcamentoUncheckedUpdateManyWithoutFornecedorInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  solicitacaoId?: Prisma.StringFieldUpdateOperationsInput | string
+  produtoId?: Prisma.IntFieldUpdateOperationsInput | number
+  produtoNome?: Prisma.StringFieldUpdateOperationsInput | string
+  codigoErp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  codigoFornecedor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quantidadeInformada?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unidadeInformada?: Prisma.StringFieldUpdateOperationsInput | string
+  fatorConversao?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantidadeBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unidadeBase?: Prisma.StringFieldUpdateOperationsInput | string
+  disponibilidade?: Prisma.NullableEnumDisponibilidadeOrcamentoFieldUpdateOperationsInput | $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
 }
 
 export type ItemSolicitacaoOrcamentoCreateManySolicitacaoInput = {
@@ -787,6 +1184,9 @@ export type ItemSolicitacaoOrcamentoCreateManySolicitacaoInput = {
   fatorConversao: runtime.Decimal | runtime.DecimalJsLike | number | string
   quantidadeBase: runtime.Decimal | runtime.DecimalJsLike | number | string
   unidadeBase: string
+  disponibilidade?: $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  fornecedorId?: number | null
 }
 
 export type ItemSolicitacaoOrcamentoUpdateWithoutSolicitacaoInput = {
@@ -799,7 +1199,11 @@ export type ItemSolicitacaoOrcamentoUpdateWithoutSolicitacaoInput = {
   fatorConversao?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantidadeBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   unidadeBase?: Prisma.StringFieldUpdateOperationsInput | string
+  disponibilidade?: Prisma.NullableEnumDisponibilidadeOrcamentoFieldUpdateOperationsInput | $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   produto?: Prisma.ProdutoUpdateOneRequiredWithoutItensSolicitacaoOrcamentoNestedInput
+  historicoPreco?: Prisma.HistoricoPrecoUpdateOneWithoutItemSolicitacaoNestedInput
+  fornecedor?: Prisma.FornecedorUpdateOneWithoutItensSolicitacaoOrcamentoNestedInput
 }
 
 export type ItemSolicitacaoOrcamentoUncheckedUpdateWithoutSolicitacaoInput = {
@@ -813,6 +1217,10 @@ export type ItemSolicitacaoOrcamentoUncheckedUpdateWithoutSolicitacaoInput = {
   fatorConversao?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantidadeBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   unidadeBase?: Prisma.StringFieldUpdateOperationsInput | string
+  disponibilidade?: Prisma.NullableEnumDisponibilidadeOrcamentoFieldUpdateOperationsInput | $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  fornecedorId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  historicoPreco?: Prisma.HistoricoPrecoUncheckedUpdateOneWithoutItemSolicitacaoNestedInput
 }
 
 export type ItemSolicitacaoOrcamentoUncheckedUpdateManyWithoutSolicitacaoInput = {
@@ -826,6 +1234,9 @@ export type ItemSolicitacaoOrcamentoUncheckedUpdateManyWithoutSolicitacaoInput =
   fatorConversao?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   quantidadeBase?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   unidadeBase?: Prisma.StringFieldUpdateOperationsInput | string
+  disponibilidade?: Prisma.NullableEnumDisponibilidadeOrcamentoFieldUpdateOperationsInput | $Enums.DisponibilidadeOrcamento | null
+  quantidadeDisponivel?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  fornecedorId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 
@@ -842,8 +1253,13 @@ export type ItemSolicitacaoOrcamentoSelect<ExtArgs extends runtime.Types.Extensi
   fatorConversao?: boolean
   quantidadeBase?: boolean
   unidadeBase?: boolean
+  disponibilidade?: boolean
+  quantidadeDisponivel?: boolean
+  fornecedorId?: boolean
   solicitacao?: boolean | Prisma.SolicitacaoOrcamentoDefaultArgs<ExtArgs>
   produto?: boolean | Prisma.ProdutoDefaultArgs<ExtArgs>
+  historicoPreco?: boolean | Prisma.ItemSolicitacaoOrcamento$historicoPrecoArgs<ExtArgs>
+  fornecedor?: boolean | Prisma.ItemSolicitacaoOrcamento$fornecedorArgs<ExtArgs>
 }, ExtArgs["result"]["itemSolicitacaoOrcamento"]>
 
 export type ItemSolicitacaoOrcamentoSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -858,8 +1274,12 @@ export type ItemSolicitacaoOrcamentoSelectCreateManyAndReturn<ExtArgs extends ru
   fatorConversao?: boolean
   quantidadeBase?: boolean
   unidadeBase?: boolean
+  disponibilidade?: boolean
+  quantidadeDisponivel?: boolean
+  fornecedorId?: boolean
   solicitacao?: boolean | Prisma.SolicitacaoOrcamentoDefaultArgs<ExtArgs>
   produto?: boolean | Prisma.ProdutoDefaultArgs<ExtArgs>
+  fornecedor?: boolean | Prisma.ItemSolicitacaoOrcamento$fornecedorArgs<ExtArgs>
 }, ExtArgs["result"]["itemSolicitacaoOrcamento"]>
 
 export type ItemSolicitacaoOrcamentoSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -874,8 +1294,12 @@ export type ItemSolicitacaoOrcamentoSelectUpdateManyAndReturn<ExtArgs extends ru
   fatorConversao?: boolean
   quantidadeBase?: boolean
   unidadeBase?: boolean
+  disponibilidade?: boolean
+  quantidadeDisponivel?: boolean
+  fornecedorId?: boolean
   solicitacao?: boolean | Prisma.SolicitacaoOrcamentoDefaultArgs<ExtArgs>
   produto?: boolean | Prisma.ProdutoDefaultArgs<ExtArgs>
+  fornecedor?: boolean | Prisma.ItemSolicitacaoOrcamento$fornecedorArgs<ExtArgs>
 }, ExtArgs["result"]["itemSolicitacaoOrcamento"]>
 
 export type ItemSolicitacaoOrcamentoSelectScalar = {
@@ -890,20 +1314,27 @@ export type ItemSolicitacaoOrcamentoSelectScalar = {
   fatorConversao?: boolean
   quantidadeBase?: boolean
   unidadeBase?: boolean
+  disponibilidade?: boolean
+  quantidadeDisponivel?: boolean
+  fornecedorId?: boolean
 }
 
-export type ItemSolicitacaoOrcamentoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "solicitacaoId" | "produtoId" | "produtoNome" | "codigoErp" | "codigoFornecedor" | "quantidadeInformada" | "unidadeInformada" | "fatorConversao" | "quantidadeBase" | "unidadeBase", ExtArgs["result"]["itemSolicitacaoOrcamento"]>
+export type ItemSolicitacaoOrcamentoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "solicitacaoId" | "produtoId" | "produtoNome" | "codigoErp" | "codigoFornecedor" | "quantidadeInformada" | "unidadeInformada" | "fatorConversao" | "quantidadeBase" | "unidadeBase" | "disponibilidade" | "quantidadeDisponivel" | "fornecedorId", ExtArgs["result"]["itemSolicitacaoOrcamento"]>
 export type ItemSolicitacaoOrcamentoInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   solicitacao?: boolean | Prisma.SolicitacaoOrcamentoDefaultArgs<ExtArgs>
   produto?: boolean | Prisma.ProdutoDefaultArgs<ExtArgs>
+  historicoPreco?: boolean | Prisma.ItemSolicitacaoOrcamento$historicoPrecoArgs<ExtArgs>
+  fornecedor?: boolean | Prisma.ItemSolicitacaoOrcamento$fornecedorArgs<ExtArgs>
 }
 export type ItemSolicitacaoOrcamentoIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   solicitacao?: boolean | Prisma.SolicitacaoOrcamentoDefaultArgs<ExtArgs>
   produto?: boolean | Prisma.ProdutoDefaultArgs<ExtArgs>
+  fornecedor?: boolean | Prisma.ItemSolicitacaoOrcamento$fornecedorArgs<ExtArgs>
 }
 export type ItemSolicitacaoOrcamentoIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   solicitacao?: boolean | Prisma.SolicitacaoOrcamentoDefaultArgs<ExtArgs>
   produto?: boolean | Prisma.ProdutoDefaultArgs<ExtArgs>
+  fornecedor?: boolean | Prisma.ItemSolicitacaoOrcamento$fornecedorArgs<ExtArgs>
 }
 
 export type $ItemSolicitacaoOrcamentoPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -911,6 +1342,8 @@ export type $ItemSolicitacaoOrcamentoPayload<ExtArgs extends runtime.Types.Exten
   objects: {
     solicitacao: Prisma.$SolicitacaoOrcamentoPayload<ExtArgs>
     produto: Prisma.$ProdutoPayload<ExtArgs>
+    historicoPreco: Prisma.$HistoricoPrecoPayload<ExtArgs> | null
+    fornecedor: Prisma.$FornecedorPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -924,6 +1357,9 @@ export type $ItemSolicitacaoOrcamentoPayload<ExtArgs extends runtime.Types.Exten
     fatorConversao: runtime.Decimal
     quantidadeBase: runtime.Decimal
     unidadeBase: string
+    disponibilidade: $Enums.DisponibilidadeOrcamento | null
+    quantidadeDisponivel: runtime.Decimal | null
+    fornecedorId: number | null
   }, ExtArgs["result"]["itemSolicitacaoOrcamento"]>
   composites: {}
 }
@@ -1320,6 +1756,8 @@ export interface Prisma__ItemSolicitacaoOrcamentoClient<T, Null = never, ExtArgs
   readonly [Symbol.toStringTag]: "PrismaPromise"
   solicitacao<T extends Prisma.SolicitacaoOrcamentoDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SolicitacaoOrcamentoDefaultArgs<ExtArgs>>): Prisma.Prisma__SolicitacaoOrcamentoClient<runtime.Types.Result.GetResult<Prisma.$SolicitacaoOrcamentoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   produto<T extends Prisma.ProdutoDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProdutoDefaultArgs<ExtArgs>>): Prisma.Prisma__ProdutoClient<runtime.Types.Result.GetResult<Prisma.$ProdutoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  historicoPreco<T extends Prisma.ItemSolicitacaoOrcamento$historicoPrecoArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ItemSolicitacaoOrcamento$historicoPrecoArgs<ExtArgs>>): Prisma.Prisma__HistoricoPrecoClient<runtime.Types.Result.GetResult<Prisma.$HistoricoPrecoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  fornecedor<T extends Prisma.ItemSolicitacaoOrcamento$fornecedorArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ItemSolicitacaoOrcamento$fornecedorArgs<ExtArgs>>): Prisma.Prisma__FornecedorClient<runtime.Types.Result.GetResult<Prisma.$FornecedorPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1360,6 +1798,9 @@ export interface ItemSolicitacaoOrcamentoFieldRefs {
   readonly fatorConversao: Prisma.FieldRef<"ItemSolicitacaoOrcamento", 'Decimal'>
   readonly quantidadeBase: Prisma.FieldRef<"ItemSolicitacaoOrcamento", 'Decimal'>
   readonly unidadeBase: Prisma.FieldRef<"ItemSolicitacaoOrcamento", 'String'>
+  readonly disponibilidade: Prisma.FieldRef<"ItemSolicitacaoOrcamento", 'DisponibilidadeOrcamento'>
+  readonly quantidadeDisponivel: Prisma.FieldRef<"ItemSolicitacaoOrcamento", 'Decimal'>
+  readonly fornecedorId: Prisma.FieldRef<"ItemSolicitacaoOrcamento", 'Int'>
 }
     
 
@@ -1758,6 +2199,44 @@ export type ItemSolicitacaoOrcamentoDeleteManyArgs<ExtArgs extends runtime.Types
    * Limit how many ItemSolicitacaoOrcamentos to delete.
    */
   limit?: number
+}
+
+/**
+ * ItemSolicitacaoOrcamento.historicoPreco
+ */
+export type ItemSolicitacaoOrcamento$historicoPrecoArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the HistoricoPreco
+   */
+  select?: Prisma.HistoricoPrecoSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the HistoricoPreco
+   */
+  omit?: Prisma.HistoricoPrecoOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.HistoricoPrecoInclude<ExtArgs> | null
+  where?: Prisma.HistoricoPrecoWhereInput
+}
+
+/**
+ * ItemSolicitacaoOrcamento.fornecedor
+ */
+export type ItemSolicitacaoOrcamento$fornecedorArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Fornecedor
+   */
+  select?: Prisma.FornecedorSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Fornecedor
+   */
+  omit?: Prisma.FornecedorOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FornecedorInclude<ExtArgs> | null
+  where?: Prisma.FornecedorWhereInput
 }
 
 /**

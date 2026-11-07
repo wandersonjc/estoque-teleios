@@ -10,7 +10,7 @@ import {
   formatarDataBr,
   formatarQuantidade,
 } from "@/app/produtos/tipos";
-import { precosAtuais } from "@/app/fornecedores/tipos";
+import { dataHojeIso, precosAtuais } from "@/app/fornecedores/tipos";
 
 import BuscaFiltrosPedidos from "../BuscaFiltrosPedidos";
 import FormularioComparativo, {
@@ -169,6 +169,14 @@ export default async function CompararReposicaoPage({
             fatorConversao: true,
             origem: true,
             data: true,
+            itemSolicitacao: {
+              select: {
+                disponibilidade: true,
+                quantidadeDisponivel: true,
+                fatorConversao: true,
+                solicitacao: { select: { validadeCotacao: true } },
+              },
+            },
           },
         },
         itensPedido: {
@@ -216,7 +224,17 @@ export default async function CompararReposicaoPage({
       prazoEntregaDias,
     });
 
-    const precoAtualPorFornecedor = precosAtuais(produto.historicoPrecos);
+    const hoje = dataHojeIso();
+    const historicoElegivel = produto.historicoPrecos.filter((preco) => {
+      if (preco.origem !== "COTADO" || !preco.itemSolicitacao) return true;
+      const validade = preco.itemSolicitacao.solicitacao.validadeCotacao;
+      return (
+        preco.itemSolicitacao.disponibilidade !== "INDISPONIVEL" &&
+        validade !== null &&
+        validade.toISOString().slice(0, 10) >= hoje
+      );
+    });
+    const precoAtualPorFornecedor = precosAtuais(historicoElegivel);
 
     const fornecedores = produto.fornecedores.map((vinculo) => {
       const precoAtual = precoAtualPorFornecedor.get(
@@ -240,6 +258,7 @@ export default async function CompararReposicaoPage({
         unidadeInformada: precoAtual?.unidadeInformada ?? null,
         fatorConversao: precoAtual?.fatorConversao ?? null,
         origem: precoAtual?.origem ?? null,
+        historicoPrecoId: precoAtual?.id ?? null,
         data: precoAtual ? formatarDataBr(precoAtual.data) : null,
       };
     });
@@ -306,6 +325,7 @@ export default async function CompararReposicaoPage({
           unidadeInformada: fornecedor.unidadeInformada,
           fatorConversao: fornecedor.fatorConversao,
           origem: fornecedor.origem,
+          historicoPrecoId: fornecedor.historicoPrecoId,
           data: fornecedor.data,
         })),
       }

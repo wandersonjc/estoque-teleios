@@ -105,12 +105,12 @@ No menu **Orçamento**, a rota `/orcamento` mostra o histórico de solicitaçõe
 com busca, filtros de status por canal, ordenação e paginação. Use **Novo
 orçamento** para abrir `/orcamento/novo` e enviar uma nova cotação. A lista
 informa o usuário que criou, a data, o status de e-mail e WhatsApp e se houve
-importação. Como essa funcionalidade ainda não foi implementada, as solicitações
-aparecem como **Não importado**. Cada linha corresponde a um fornecedor, mesmo
-quando a cotação contém muitos produtos. Solicitações que não foram enviadas
+importação. Cada linha corresponde a um fornecedor, mesmo quando a cotação
+contém muitos produtos. Solicitações que não foram enviadas
 nem estão com envio pendente podem ser editadas (itens, quantidades e unidades)
 ou excluídas por usuários com permissão de envio; solicitações enviadas ficam
-somente para visualização.
+somente para visualização. Depois que o envio termina, usuários com a permissão
+`orcamentos.orcamento.importar` podem importar uma resposta.
 
 O módulo Orçamento envia uma planilha `.xlsx` individual a cada fornecedor ativo
 vinculado aos produtos selecionados. Para e-mail, reutiliza as configurações
@@ -136,21 +136,41 @@ fornecedor. Conceda as permissões `orcamentos.orcamento.consultar` (visualizar)
 e `orcamentos.orcamento.enviar` aos usuários que usarão essas funções. Para
 permitir edição e exclusão de solicitações ainda não enviadas, conceda também
 `orcamentos.orcamento.editar` e `orcamentos.orcamento.excluir`, respectivamente.
+Para importar respostas, conceda `orcamentos.orcamento.importar`.
 Sincronize as permissões novas com `npm run db:sync-permissoes` e depois
 conceda-as individualmente na tela **Permissões**; elas não são habilitadas
 automaticamente.
 
 A planilha enviada ao fornecedor mostra o preço por unidade solicitada (isto é,
-por unidade ou embalagem escolhida na solicitação, não por unidade-base) e
-campos de disponibilidade total, parcial com quantidade ou indisponibilidade
-por produto. Validade da cotação, prazo de entrega em dias e observações são
+por unidade ou embalagem escolhida na solicitação, não por unidade-base). Na
+quantidade disponível, deixe vazio se conseguir atender toda a quantidade
+solicitada, informe quanto consegue fornecer se o atendimento for parcial ou
+informe 0 se o produto estiver indisponível. Validade da cotação, prazo de
+entrega em dias e observações são
 informados uma única vez para toda a solicitação, nas linhas 1, 2 e 3 da coluna
-D, com os valores a preencher na coluna E. Os IDs da solicitação, do item e do
-produto permanecem em colunas ocultas para identificação e conferência.
-O sistema ainda não recebe nem importa a planilha respondida; o fluxo planejado
-de validação, prévia, revisão e gravação do preço cotado, assim como as decisões
-pendentes sobre disponibilidade e reimportação, está descrito em
-[`docs/regras-de-negocio.md`](./docs/regras-de-negocio.md), na seção do Módulo 5.
+D, com os valores a preencher na coluna E. Validade e prazo podem ficar vazios:
+nesse caso, a importação assume validade de 7 dias a partir da análise do
+arquivo e usa o prazo cadastrado no fornecedor, se houver; caso contrário, o
+prazo fica não informado. Um prazo preenchido na planilha é salvo tanto na
+cotação quanto no cadastro do fornecedor; se ficar vazio, o prazo já cadastrado
+é mantido. Os IDs da solicitação, do item e do produto
+permanecem em colunas ocultas para identificação e conferência.
+Nas linhas de produtos, a partir da coluna D, a ordem é: Código ERP, Produto,
+Unidade solicitada, Quantidade solicitada, Quantidade disponível e Preço por
+unidade solicitada. Deixe a quantidade disponível vazia se conseguir atender
+toda a quantidade solicitada, informe quanto consegue fornecer se o
+atendimento for parcial ou informe 0 se o produto estiver indisponível.
+
+Na lista de solicitações, use **Importar resposta** para enviar o XLSX
+preenchido. O sistema identifica a cotação pelo ID incluído na planilha e exibe
+fornecedor e solicitação para conferência antes de mostrar os itens e confirmar.
+O sistema registra preço e disponibilidade por produto e os dados gerais da
+cotação; não cria pedidos nem altera o estoque. Cada solicitação aceita uma
+importação. Cotações vencidas ou produtos indisponíveis não são oferecidos na
+comparação de reposição; a criação do rascunho também valida no servidor a
+validade e a quantidade disponível.
+Consulte [`docs/regras-de-negocio.md`](./docs/regras-de-negocio.md), na seção
+do Módulo 5, para as regras completas e a sincronização das permissões.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 

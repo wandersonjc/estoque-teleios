@@ -56,19 +56,21 @@ model Usuario {
   criadoEm     DateTime    @default(now()) @map("criado_em")
   atualizadoEm DateTime    @updatedAt @map("atualizado_em")
 
-  movimentos                MovimentoEstoque[]
-  logs                      LogSistema[]
-  sessoes                   Sessao[]
-  permissoes                PermissaoUsuario[]
-  cargos                    UsuarioCargo[]
-  funcoes                   UsuarioFuncao[]
-  transferenciasSolicitadas PedidoTransferencia[] @relation("TransferenciaSolicitante")
-  transferenciasEnviadas    PedidoTransferencia[] @relation("TransferenciaRemetente")
-  transferenciasRecebidas   PedidoTransferencia[] @relation("TransferenciaRecebedor")
-  pedidosCompra             PedidoCompra[]        @relation("CompradorPedido")
-  solicitacoesOrcamento     SolicitacaoOrcamento[]
-  notificacoes              Notificacao[]
-  assinaturasPush           AssinaturaPush[]
+  movimentos                      MovimentoEstoque[]
+  logs                            LogSistema[]
+  sessoes                         Sessao[]
+  permissoes                      PermissaoUsuario[]
+  cargos                          UsuarioCargo[]
+  funcoes                         UsuarioFuncao[]
+  transferenciasSolicitadas       PedidoTransferencia[]  @relation("TransferenciaSolicitante")
+  transferenciasEnviadas          PedidoTransferencia[]  @relation("TransferenciaRemetente")
+  transferenciasRecebidas         PedidoTransferencia[]  @relation("TransferenciaRecebedor")
+  pedidosCompra                   PedidoCompra[]         @relation("CompradorPedido")
+  solicitacoesOrcamento           SolicitacaoOrcamento[]
+  importacoesOrcamento            SolicitacaoOrcamento[] @relation("ImportadorOrcamento")
+  importacoesOrcamentoTemporarias ImportacaoOrcamento[]
+  notificacoes                    Notificacao[]
+  assinaturasPush                 AssinaturaPush[]
 
   @@map("usuario")
 }
@@ -138,28 +140,28 @@ model LocalEstoque {
 // Produto (seção 8)
 // ------------------------------------------------------------
 model Produto {
-  id            Int      @id @default(autoincrement())
-  nome          String
-  unidade       String // Unidade-base do estoque. Ex.: UN ou KG.
+  id           Int      @id @default(autoincrement())
+  nome         String
+  unidade      String // Unidade-base do estoque. Ex.: UN ou KG.
   // Mantido como espelho do código da embalagem principal durante a
   // transição; os códigos de barras oficiais ficam em EmbalagemProduto.
-  codigoBarras  String?  @map("codigo_barras")
+  codigoBarras String?  @map("codigo_barras")
   // Código do produto no ERP (Superus). Opcional, mas único quando
   // preenchido (RN-22). Será a chave da importação futura.
-  codigoErp     String?  @unique @map("codigo_erp")
-  imagemChave   String?  @map("imagem_chave")
-  ativo         Boolean  @default(true)
-  criadoEm      DateTime @default(now()) @map("criado_em")
-  atualizadoEm  DateTime @updatedAt @map("atualizado_em")
+  codigoErp    String?  @unique @map("codigo_erp")
+  imagemChave  String?  @map("imagem_chave")
+  ativo        Boolean  @default(true)
+  criadoEm     DateTime @default(now()) @map("criado_em")
+  atualizadoEm DateTime @updatedAt @map("atualizado_em")
 
-  fornecedores       ProdutoFornecedor[]
-  historicoPrecos    HistoricoPreco[]
-  estoques           Estoque[]
-  movimentos         MovimentoEstoque[]
-  embalagens         EmbalagemProduto[]
-  itensTransferencia ItemTransferencia[]
-  configuracaoCompra ConfiguracaoCompra?
-  itensPedido        ItemPedido[]
+  fornecedores              ProdutoFornecedor[]
+  historicoPrecos           HistoricoPreco[]
+  estoques                  Estoque[]
+  movimentos                MovimentoEstoque[]
+  embalagens                EmbalagemProduto[]
+  itensTransferencia        ItemTransferencia[]
+  configuracaoCompra        ConfiguracaoCompra?
+  itensPedido               ItemPedido[]
   itensSolicitacaoOrcamento ItemSolicitacaoOrcamento[]
 
   @@map("produto")
@@ -201,10 +203,11 @@ model Fornecedor {
   criadoEm          DateTime @default(now()) @map("criado_em")
   atualizadoEm      DateTime @updatedAt @map("atualizado_em")
 
-  produtos        ProdutoFornecedor[]
-  historicoPrecos HistoricoPreco[]
-  pedidosCompra   PedidoCompra[]
-  solicitacoesOrcamento SolicitacaoOrcamento[]
+  produtos                  ProdutoFornecedor[]
+  historicoPrecos           HistoricoPreco[]
+  itensSolicitacaoOrcamento ItemSolicitacaoOrcamento[]
+  pedidosCompra             PedidoCompra[]
+  solicitacoesOrcamento     SolicitacaoOrcamento[]
 
   @@map("fornecedor")
 }
@@ -242,21 +245,23 @@ enum OrigemPreco {
 }
 
 model HistoricoPreco {
-  id            Int         @id @default(autoincrement())
-  produtoId     Int         @map("produto_id")
-  fornecedorId  Int         @map("fornecedor_id")
-  precoUnitario Decimal     @map("preco_unitario") @db.Decimal(16, 6)
-  precoInformado Decimal?   @map("preco_informado") @db.Decimal(12, 2)
-  unidadeInformada String?  @map("unidade_informada")
-  fatorConversao Decimal?   @map("fator_conversao") @db.Decimal(12, 3)
-  data          DateTime
-  origem        OrigemPreco
+  id                Int         @id @default(autoincrement())
+  produtoId         Int         @map("produto_id")
+  fornecedorId      Int         @map("fornecedor_id")
+  precoUnitario     Decimal     @map("preco_unitario") @db.Decimal(16, 6)
+  precoInformado    Decimal?    @map("preco_informado") @db.Decimal(12, 2)
+  unidadeInformada  String?     @map("unidade_informada")
+  fatorConversao    Decimal?    @map("fator_conversao") @db.Decimal(12, 3)
+  data              DateTime
+  origem            OrigemPreco
   // Preenchido no Módulo 3, quando o preço vier de um pedido confirmado
-  pedidoId      Int?        @map("pedido_id")
+  pedidoId          Int?        @map("pedido_id")
+  itemSolicitacaoId String?     @unique @map("item_solicitacao_id") @db.Uuid
 
-  produto    Produto    @relation(fields: [produtoId], references: [id])
-  fornecedor Fornecedor @relation(fields: [fornecedorId], references: [id])
-  pedidoCompra PedidoCompra? @relation(fields: [pedidoId], references: [id], onDelete: Restrict)
+  produto         Produto                   @relation(fields: [produtoId], references: [id])
+  fornecedor      Fornecedor                @relation(fields: [fornecedorId], references: [id])
+  pedidoCompra    PedidoCompra?             @relation(fields: [pedidoId], references: [id], onDelete: Restrict)
+  itemSolicitacao ItemSolicitacaoOrcamento? @relation(fields: [itemSolicitacaoId], references: [id], onDelete: Restrict)
 
   @@index([produtoId, fornecedorId, data])
   @@index([fornecedorId])
@@ -359,43 +364,76 @@ enum EstadoEnvioOrcamento {
   FALHOU
 }
 
-model SolicitacaoOrcamento {
-  id              String              @id @default(uuid()) @db.Uuid
-  fornecedorId    Int                 @map("fornecedor_id")
-  solicitanteId   Int                 @map("solicitante_id")
-  situacaoFiltro  String              @map("situacao_filtro") @db.VarChar(30)
-  emailStatus     EstadoEnvioOrcamento @default(NAO_SOLICITADO) @map("email_status")
-  whatsappStatus  EstadoEnvioOrcamento @default(NAO_SOLICITADO) @map("whatsapp_status")
-  emailErro       String?             @map("email_erro") @db.VarChar(500)
-  whatsappErro    String?             @map("whatsapp_erro") @db.VarChar(500)
-  criadoEm        DateTime            @default(now()) @map("criado_em")
-  emailEnviadoEm  DateTime?           @map("email_enviado_em")
-  whatsappEnviadoEm DateTime?         @map("whatsapp_enviado_em")
+enum DisponibilidadeOrcamento {
+  TOTAL
+  PARCIAL
+  INDISPONIVEL
+}
 
-  fornecedor  Fornecedor                 @relation(fields: [fornecedorId], references: [id], onDelete: Restrict)
-  solicitante Usuario                    @relation(fields: [solicitanteId], references: [id], onDelete: Restrict)
-  itens       ItemSolicitacaoOrcamento[]
+model SolicitacaoOrcamento {
+  id                 String               @id @default(uuid()) @db.Uuid
+  fornecedorId       Int                  @map("fornecedor_id")
+  solicitanteId      Int                  @map("solicitante_id")
+  situacaoFiltro     String               @map("situacao_filtro") @db.VarChar(30)
+  emailStatus        EstadoEnvioOrcamento @default(NAO_SOLICITADO) @map("email_status")
+  whatsappStatus     EstadoEnvioOrcamento @default(NAO_SOLICITADO) @map("whatsapp_status")
+  emailErro          String?              @map("email_erro") @db.VarChar(500)
+  whatsappErro       String?              @map("whatsapp_erro") @db.VarChar(500)
+  criadoEm           DateTime             @default(now()) @map("criado_em")
+  emailEnviadoEm     DateTime?            @map("email_enviado_em")
+  whatsappEnviadoEm  DateTime?            @map("whatsapp_enviado_em")
+  validadeCotacao    DateTime?            @map("validade_cotacao") @db.Date
+  prazoEntregaDias   Int?                 @map("prazo_entrega_dias")
+  observacoesCotacao String?              @map("observacoes_cotacao") @db.VarChar(2000)
+  importadoEm        DateTime?            @map("importado_em")
+  importadoPorId     Int?                 @map("importado_por_id")
+
+  fornecedor             Fornecedor                 @relation(fields: [fornecedorId], references: [id], onDelete: Restrict)
+  solicitante            Usuario                    @relation(fields: [solicitanteId], references: [id], onDelete: Restrict)
+  importadoPor           Usuario?                   @relation("ImportadorOrcamento", fields: [importadoPorId], references: [id], onDelete: Restrict)
+  itens                  ItemSolicitacaoOrcamento[]
+  importacoesTemporarias ImportacaoOrcamento[]
 
   @@index([fornecedorId, criadoEm])
   @@index([solicitanteId, criadoEm])
   @@map("solicitacao_orcamento")
 }
 
-model ItemSolicitacaoOrcamento {
-  id                  String  @id @default(uuid()) @db.Uuid
-  solicitacaoId       String  @map("solicitacao_id") @db.Uuid
-  produtoId           Int     @map("produto_id")
-  produtoNome         String  @map("produto_nome")
-  codigoErp           String? @map("codigo_erp")
-  codigoFornecedor    String? @map("codigo_fornecedor")
-  quantidadeInformada Decimal @map("quantidade_informada") @db.Decimal(12, 3)
-  unidadeInformada    String  @map("unidade_informada") @db.VarChar(50)
-  fatorConversao      Decimal @map("fator_conversao") @db.Decimal(12, 3)
-  quantidadeBase      Decimal @map("quantidade_base") @db.Decimal(12, 3)
-  unidadeBase         String  @map("unidade_base") @db.VarChar(50)
+model ImportacaoOrcamento {
+  id            String   @id @default(uuid()) @db.Uuid
+  solicitacaoId String   @map("solicitacao_id") @db.Uuid
+  usuarioId     Int      @map("usuario_id")
+  dados         Json
+  expiraEm      DateTime @map("expira_em")
+  criadoEm      DateTime @default(now()) @map("criado_em")
 
   solicitacao SolicitacaoOrcamento @relation(fields: [solicitacaoId], references: [id], onDelete: Cascade)
-  produto     Produto              @relation(fields: [produtoId], references: [id], onDelete: Restrict)
+  usuario     Usuario              @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([solicitacaoId, expiraEm])
+  @@map("importacao_orcamento")
+}
+
+model ItemSolicitacaoOrcamento {
+  id                   String                    @id @default(uuid()) @db.Uuid
+  solicitacaoId        String                    @map("solicitacao_id") @db.Uuid
+  produtoId            Int                       @map("produto_id")
+  produtoNome          String                    @map("produto_nome")
+  codigoErp            String?                   @map("codigo_erp")
+  codigoFornecedor     String?                   @map("codigo_fornecedor")
+  quantidadeInformada  Decimal                   @map("quantidade_informada") @db.Decimal(12, 3)
+  unidadeInformada     String                    @map("unidade_informada") @db.VarChar(50)
+  fatorConversao       Decimal                   @map("fator_conversao") @db.Decimal(12, 3)
+  quantidadeBase       Decimal                   @map("quantidade_base") @db.Decimal(12, 3)
+  unidadeBase          String                    @map("unidade_base") @db.VarChar(50)
+  disponibilidade      DisponibilidadeOrcamento?
+  quantidadeDisponivel Decimal?                  @map("quantidade_disponivel") @db.Decimal(12, 3)
+
+  solicitacao    SolicitacaoOrcamento @relation(fields: [solicitacaoId], references: [id], onDelete: Cascade)
+  produto        Produto              @relation(fields: [produtoId], references: [id], onDelete: Restrict)
+  historicoPreco HistoricoPreco?
+  fornecedor     Fornecedor?          @relation(fields: [fornecedorId], references: [id])
+  fornecedorId   Int?
 
   @@unique([solicitacaoId, produtoId])
   @@index([produtoId])
@@ -403,21 +441,21 @@ model ItemSolicitacaoOrcamento {
 }
 
 model PedidoCompra {
-  id               Int               @id @default(autoincrement())
-  compradorId      Int               @map("comprador_id")
-  fornecedorId     Int               @map("fornecedor_id")
-  status           StatusPedidoCompra @default(RASCUNHO)
-  dataCompra       DateTime?          @map("data_compra")
-  previsaoEntrega  DateTime?          @map("previsao_entrega")
-  observacao       String?            @db.VarChar(1000)
-  criadoEm         DateTime           @default(now()) @map("criado_em")
-  atualizadoEm     DateTime           @updatedAt @map("atualizado_em")
+  id              Int                @id @default(autoincrement())
+  compradorId     Int                @map("comprador_id")
+  fornecedorId    Int                @map("fornecedor_id")
+  status          StatusPedidoCompra @default(RASCUNHO)
+  dataCompra      DateTime?          @map("data_compra")
+  previsaoEntrega DateTime?          @map("previsao_entrega")
+  observacao      String?            @db.VarChar(1000)
+  criadoEm        DateTime           @default(now()) @map("criado_em")
+  atualizadoEm    DateTime           @updatedAt @map("atualizado_em")
 
-  comprador     Usuario          @relation("CompradorPedido", fields: [compradorId], references: [id], onDelete: Restrict)
-  fornecedor    Fornecedor       @relation(fields: [fornecedorId], references: [id], onDelete: Restrict)
-  itens         ItemPedido[]
+  comprador       Usuario            @relation("CompradorPedido", fields: [compradorId], references: [id], onDelete: Restrict)
+  fornecedor      Fornecedor         @relation(fields: [fornecedorId], references: [id], onDelete: Restrict)
+  itens           ItemPedido[]
   historicoPrecos HistoricoPreco[]
-  movimentos    MovimentoEstoque[]
+  movimentos      MovimentoEstoque[]
 
   @@index([status, criadoEm])
   @@index([fornecedorId, status])
@@ -426,16 +464,16 @@ model PedidoCompra {
 }
 
 model ItemPedido {
-  id                Int      @id @default(autoincrement())
-  pedidoId          Int      @map("pedido_id")
-  produtoId         Int      @map("produto_id")
-  quantidade        Decimal  @db.Decimal(12, 3)
-  precoUnitario     Decimal  @map("preco_unitario") @db.Decimal(12, 2)
+  id                  Int      @id @default(autoincrement())
+  pedidoId            Int      @map("pedido_id")
+  produtoId           Int      @map("produto_id")
+  quantidade          Decimal  @db.Decimal(12, 3)
+  precoUnitario       Decimal  @map("preco_unitario") @db.Decimal(12, 2)
   quantidadeInformada Decimal? @map("quantidade_informada") @db.Decimal(12, 3)
-  precoInformado    Decimal? @map("preco_informado") @db.Decimal(12, 2)
-  unidadeInformada  String?  @map("unidade_informada")
-  fatorConversao    Decimal? @map("fator_conversao") @db.Decimal(12, 3)
-  quantidadeRecebida Decimal  @default(0) @map("quantidade_recebida") @db.Decimal(12, 3)
+  precoInformado      Decimal? @map("preco_informado") @db.Decimal(12, 2)
+  unidadeInformada    String?  @map("unidade_informada")
+  fatorConversao      Decimal? @map("fator_conversao") @db.Decimal(12, 3)
+  quantidadeRecebida  Decimal  @default(0) @map("quantidade_recebida") @db.Decimal(12, 3)
 
   pedido  PedidoCompra @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
   produto Produto      @relation(fields: [produtoId], references: [id], onDelete: Restrict)

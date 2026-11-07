@@ -7,7 +7,11 @@ import { Prisma } from "@/generated/prisma/client";
 import { MENSAGEM_SEM_PERMISSAO, verificarPermissao } from "@/lib/autorizacao";
 import { registrarLog } from "@/lib/log";
 import prisma from "@/lib/prisma";
-import { dataIsoParaDate, normalizarMoeda } from "@/app/fornecedores/tipos";
+import {
+  dataHojeIso,
+  dataIsoParaDate,
+  normalizarMoeda,
+} from "@/app/fornecedores/tipos";
 
 import {
   calcularConsumoDiario,
@@ -24,8 +28,10 @@ function idPositivo(valor: string): number | null {
 }
 
 function erroDeRegra(mensagem: string): Error {
-  return new Error(mensagem);
+  return new ErroRegraPedido(mensagem);
 }
+
+class ErroRegraPedido extends Error {}
 
 class ErroConfiguracaoCompra extends Error {}
 
@@ -125,6 +131,7 @@ function invalidarRotasPedido(id?: number): void {
 type EntradaItemPedido = {
   produtoId: number;
   fornecedorId: number;
+  historicoPrecoId: number | null;
   quantidadeDigitada: string;
   precoDigitado: string;
   unidadeSelecionada: string;
@@ -187,8 +194,11 @@ function resolverDadosItemPedido(
     entrada.precoDigitado === ""
       ? null
       : normalizarMoeda(entrada.precoDigitado);
-  if (!quantidadeInformada || !precoInformado) {
-    throw erroDeRegra("Informe quantidade e preço válidos.");
+  if (!quantidadeInformada) {
+    throw erroDeRegra("Informe uma quantidade válida maior que zero.");
+  }
+  if (!precoInformado) {
+    throw erroDeRegra("Informe um preço válido com até 2 casas decimais.");
   }
 
   const unidade = resolverUnidadePedido(
@@ -217,6 +227,9 @@ function resolverDadosItemPedido(
   const precoUnitario = new Prisma.Decimal(precoInformado)
     .div(unidade.fator)
     .toDecimalPlaces(2);
+  if (precoUnitario.lte(0)) {
+    throw erroDeRegra("O preço unitário deve ser maior que zero.");
+  }
   if (precoUnitario.greaterThan("9999999999.99")) {
     throw erroDeRegra("O preço convertido excede o limite permitido.");
   }
@@ -240,6 +253,7 @@ function lerItemPedido(formData: FormData): EntradaItemPedido | null {
   return {
     produtoId,
     fornecedorId,
+    historicoPrecoId: idPositivo(texto(formData, "historicoPrecoId")),
     quantidadeDigitada: texto(formData, "quantidade"),
     precoDigitado: texto(formData, "precoUnitario"),
     unidadeSelecionada: texto(formData, "unidadeSelecionada") || "BASE",
@@ -265,6 +279,10 @@ export async function criarRascunhosCompra(
     const formDataItem = new FormData();
     formDataItem.set("produtoId", String(produtoId));
     formDataItem.set("fornecedorId", texto(formData, `fornecedor_${produtoId}`));
+    formDataItem.set(
+      "historicoPrecoId",
+      texto(formData, `historicoPreco_${produtoId}`)
+    );
     formDataItem.set("quantidade", texto(formData, `quantidade_${produtoId}`));
     formDataItem.set("precoUnitario", texto(formData, `preco_${produtoId}`));
     formDataItem.set(
@@ -305,6 +323,7 @@ export async function criarRascunhosCompra(
         where: { id: { in: idsProdutos }, ativo: true },
         select: {
           id: true,
+          nome: true,
           unidade: true,
           embalagens: {
             select: { id: true, unidade: true, quantidadeBase: true },
@@ -320,8 +339,81 @@ export async function criarRascunhosCompra(
       const itensConvertidos = itensValidos.map((item) => {
         const produto = produtosPorId.get(item.produtoId);
         if (!produto) throw erroDeRegra("Um ou mais produtos não estão disponíveis.");
-        return resolverDadosItemPedido(item, produto);
+        try {
+          return resolverDadosItemPedido(item, produto);
+        } catch (erro) {
+          if (erro instanceof ErroRegraPedido) {
+            throw erroDeRegra(`Produto "${produto.nome}": ${erro.message}`);
+          }
+          throw erro;
+        }
       });
+
+      const idsHistoricos = itensConvertidos
+        .map((item) => item.historicoPrecoId)
+        .filter((id): id is number => id !== null);
+      const historicos = idsHistoricos.length
+        ? await tx.historicoPreco.findMany({
+            where: { id: { in: idsHistoricos } },
+            select: {
+              id: true,
+              produtoId: true,
+              fornecedorId: true,
+              itemSolicitacao: {
+                select: {
+                  disponibilidade: true,
+                  quantidadeDisponivel: true,
+                  fatorConversao: true,
+                  solicitacao: { select: { validadeCotacao: true } },
+                },
+              },
+            },
+          })
+        : [];
+      const historicosPorId = new Map(
+        historicos.map((historico) => [historico.id, historico])
+      );
+      for (const item of itensConvertidos) {
+        if (item.historicoPrecoId === null) continue;
+        const historico = historicosPorId.get(item.historicoPrecoId);
+        if (
+          !historico ||
+          historico.produtoId !== item.produtoId ||
+          historico.fornecedorId !== item.fornecedorId
+        ) {
+          throw erroDeRegra(
+            "O preço selecionado não corresponde ao produto e fornecedor informados. Atualize a comparação."
+          );
+        }
+        const itemCotado = historico.itemSolicitacao;
+        if (!itemCotado) continue;
+        const validade = itemCotado.solicitacao.validadeCotacao;
+        if (
+          !validade ||
+          validade.toISOString().slice(0, 10) < dataHojeIso()
+        ) {
+          throw erroDeRegra(
+            "A cotação selecionada está vencida. Atualize a comparação e escolha um preço vigente."
+          );
+        }
+        if (
+          !itemCotado.disponibilidade ||
+          itemCotado.disponibilidade === "INDISPONIVEL" ||
+          itemCotado.quantidadeDisponivel === null
+        ) {
+          throw erroDeRegra(
+            "O fornecedor informou que este produto está indisponível na cotação selecionada."
+          );
+        }
+        const quantidadeMaxima = itemCotado.quantidadeDisponivel.mul(
+          itemCotado.fatorConversao
+        );
+        if (new Prisma.Decimal(item.quantidade).gt(quantidadeMaxima)) {
+          throw erroDeRegra(
+            `A quantidade de "${produtosPorId.get(item.produtoId)?.nome ?? "produto"}" excede a disponibilidade informada na cotação.`
+          );
+        }
+      }
 
       for (const item of itensConvertidos) {
         const vinculo = await tx.produtoFornecedor.findFirst({
@@ -434,6 +526,9 @@ export async function criarRascunhosCompra(
       }
     });
   } catch (erro) {
+    if (erro instanceof ErroRegraPedido) {
+      return { erroGeral: erro.message };
+    }
     console.error("Erro ao montar rascunhos de compra:", erro);
     return {
       erroGeral:
@@ -486,6 +581,7 @@ export async function salvarItemRascunho(
       const entrada: EntradaItemPedido = {
         produtoId: item.produtoId,
         fornecedorId: item.pedido.fornecedorId,
+        historicoPrecoId: null,
         quantidadeDigitada: texto(formData, "quantidade"),
         precoDigitado: texto(formData, "precoUnitario"),
         unidadeSelecionada: texto(formData, "unidadeSelecionada") || "BASE",

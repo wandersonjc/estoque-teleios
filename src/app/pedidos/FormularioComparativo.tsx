@@ -26,6 +26,7 @@ type FornecedorComparacao = {
   unidadeInformada: string | null;
   fatorConversao: string | null;
   origem: "COTADO" | "PAGO" | null;
+  historicoPrecoId: number | null;
   data: string | null;
 };
 
@@ -260,6 +261,9 @@ function valorInicial(linha: LinhaComparacao): ValoresLinha {
         unidade.fator
       )
     : null;
+  const precoBase = numeroDeEntrada(primeiroComPreco?.precoUnitario ?? "");
+  const precoBaseArredondado =
+    precoBase === null ? "" : valorDeEntrada(precoBase, 2);
   return {
     incluir: false,
     fornecedorId: primeiroComPreco ? String(primeiroComPreco.id) : "",
@@ -272,7 +276,7 @@ function valorInicial(linha: LinhaComparacao): ValoresLinha {
       primeiroComPreco && unidadeSelecionada !== "BASE" &&
       primeiroComPreco.precoInformado
         ? primeiroComPreco.precoInformado
-        : convertido?.preco ?? primeiroComPreco?.precoUnitario ?? "",
+        : convertido?.preco ?? precoBaseArredondado,
     unidadeSelecionada:
       convertido || unidadeSelecionada === "BASE" ? unidadeSelecionada : "BASE",
   };
@@ -568,6 +572,16 @@ export default function FormularioComparativo({
                         });
                       }}
                     />
+                    <input
+                      type="hidden"
+                      name={`historicoPreco_${linha.produtoId}`}
+                      value={
+                        linha.fornecedores.find(
+                          (fornecedor) =>
+                            String(fornecedor.id) === atual.fornecedorId
+                        )?.historicoPrecoId ?? ""
+                      }
+                    />
                   </td>
                   <td className="px-3 py-3">
                     <div className="flex flex-col gap-1">
@@ -597,6 +611,7 @@ export default function FormularioComparativo({
                         name={`quantidade_${linha.produtoId}`}
                         type="text"
                         inputMode="decimal"
+                        required={atual.incluir}
                         value={atual.quantidade}
                         disabled={bloqueado}
                         onChange={(evento) =>
@@ -624,6 +639,7 @@ export default function FormularioComparativo({
                       name={`preco_${linha.produtoId}`}
                       type="text"
                       inputMode="decimal"
+                      required={atual.incluir}
                       value={atual.precoUnitario}
                       disabled={bloqueado}
                       onChange={(evento) =>

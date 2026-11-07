@@ -5,6 +5,7 @@ import BotaoAcao from "@/components/BotaoAcao";
 import LinkAcaoComCarregamento from "@/components/LinkAcaoComCarregamento";
 import { IconeDocumento, IconeExcluir, IconeLapis } from "@/components/icones";
 import { EstadoEnvioOrcamento } from "@/generated/prisma/enums";
+import { dataHojeIso } from "@/app/fornecedores/tipos";
 import type {
   SolicitacaoOrcamentoOrderByWithRelationInput,
   SolicitacaoOrcamentoWhereInput,
@@ -262,7 +263,6 @@ export default async function PaginaOrcamento({
   const podeEnviar = usuario.permissoes.has("orcamentos.orcamento.enviar");
   const podeEditar = usuario.permissoes.has("orcamentos.orcamento.editar");
   const podeExcluir = usuario.permissoes.has("orcamentos.orcamento.excluir");
-
   return (
     <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-5">
       <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -274,14 +274,24 @@ export default async function PaginaOrcamento({
             Consulte os orçamentos enviados e o resultado de cada canal.
           </p>
         </div>
-        {podeEnviar && (
-          <Link
-            href="/orcamento/novo"
-            className="flex h-12 items-center justify-center rounded-lg bg-[#002855] px-4 text-base font-medium text-white hover:bg-[#124b7e]"
-          >
-            Novo orçamento
-          </Link>
-        )}
+        <div className="flex flex-col gap-2 sm:flex-row">
+          {usuario.permissoes.has("orcamentos.orcamento.importar") && (
+            <Link
+              href="/orcamento/importar"
+              className="flex h-12 items-center justify-center rounded-lg border border-zinc-300 px-4 text-base font-medium text-zinc-800 hover:bg-zinc-50"
+            >
+              Importar resposta
+            </Link>
+          )}
+          {podeEnviar && (
+            <Link
+              href="/orcamento/novo"
+              className="flex h-12 items-center justify-center rounded-lg bg-[#002855] px-4 text-base font-medium text-white hover:bg-[#124b7e]"
+            >
+              Novo orçamento
+            </Link>
+          )}
+        </div>
       </header>
 
       <BuscaFiltrosOrcamentos
@@ -327,10 +337,6 @@ export default async function PaginaOrcamento({
                 A solicitação não foi encontrada.
               </p>
             )}
-            <p className="mt-2 rounded-lg border border-blue-100 bg-blue-50 p-3 text-sm text-blue-900">
-              A importação de planilhas ainda não está disponível. Por isso, as
-              solicitações aparecem como “Não importado”.
-            </p>
           </>
         }
       >
@@ -397,7 +403,18 @@ export default async function PaginaOrcamento({
                     </span>
                   </td>
                   <td className="whitespace-nowrap px-3 py-3 text-zinc-700">
-                    Não importado
+                    {solicitacao.importadoEm
+                      ? solicitacao.validadeCotacao &&
+                        solicitacao.validadeCotacao.toISOString().slice(0, 10) <
+                          dataHojeIso()
+                        ? "Importado · vencido"
+                        : "Importado"
+                      : (solicitacao.emailStatus === "ENVIADO" ||
+                          solicitacao.whatsappStatus === "ENVIADO") &&
+                          solicitacao.emailStatus !== "PENDENTE" &&
+                          solicitacao.whatsappStatus !== "PENDENTE"
+                        ? "Aguardando resposta"
+                        : "Não importado"}
                   </td>
                   <td className="px-3 py-3">
                     <div className="flex items-center gap-2">

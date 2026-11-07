@@ -66,6 +66,7 @@ export const ModelName = {
   MovimentoEstoque: 'MovimentoEstoque',
   ConfiguracaoCompra: 'ConfiguracaoCompra',
   SolicitacaoOrcamento: 'SolicitacaoOrcamento',
+  ImportacaoOrcamento: 'ImportacaoOrcamento',
   ItemSolicitacaoOrcamento: 'ItemSolicitacaoOrcamento',
   PedidoCompra: 'PedidoCompra',
   ItemPedido: 'ItemPedido',
@@ -223,7 +224,8 @@ export const HistoricoPrecoScalarFieldEnum = {
   fatorConversao: 'fatorConversao',
   data: 'data',
   origem: 'origem',
-  pedidoId: 'pedidoId'
+  pedidoId: 'pedidoId',
+  itemSolicitacaoId: 'itemSolicitacaoId'
 } as const
 
 export type HistoricoPrecoScalarFieldEnum = (typeof HistoricoPrecoScalarFieldEnum)[keyof typeof HistoricoPrecoScalarFieldEnum]
@@ -291,10 +293,27 @@ export const SolicitacaoOrcamentoScalarFieldEnum = {
   whatsappErro: 'whatsappErro',
   criadoEm: 'criadoEm',
   emailEnviadoEm: 'emailEnviadoEm',
-  whatsappEnviadoEm: 'whatsappEnviadoEm'
+  whatsappEnviadoEm: 'whatsappEnviadoEm',
+  validadeCotacao: 'validadeCotacao',
+  prazoEntregaDias: 'prazoEntregaDias',
+  observacoesCotacao: 'observacoesCotacao',
+  importadoEm: 'importadoEm',
+  importadoPorId: 'importadoPorId'
 } as const
 
 export type SolicitacaoOrcamentoScalarFieldEnum = (typeof SolicitacaoOrcamentoScalarFieldEnum)[keyof typeof SolicitacaoOrcamentoScalarFieldEnum]
+
+
+export const ImportacaoOrcamentoScalarFieldEnum = {
+  id: 'id',
+  solicitacaoId: 'solicitacaoId',
+  usuarioId: 'usuarioId',
+  dados: 'dados',
+  expiraEm: 'expiraEm',
+  criadoEm: 'criadoEm'
+} as const
+
+export type ImportacaoOrcamentoScalarFieldEnum = (typeof ImportacaoOrcamentoScalarFieldEnum)[keyof typeof ImportacaoOrcamentoScalarFieldEnum]
 
 
 export const ItemSolicitacaoOrcamentoScalarFieldEnum = {
@@ -308,7 +327,10 @@ export const ItemSolicitacaoOrcamentoScalarFieldEnum = {
   unidadeInformada: 'unidadeInformada',
   fatorConversao: 'fatorConversao',
   quantidadeBase: 'quantidadeBase',
-  unidadeBase: 'unidadeBase'
+  unidadeBase: 'unidadeBase',
+  disponibilidade: 'disponibilidade',
+  quantidadeDisponivel: 'quantidadeDisponivel',
+  fornecedorId: 'fornecedorId'
 } as const
 
 export type ItemSolicitacaoOrcamentoScalarFieldEnum = (typeof ItemSolicitacaoOrcamentoScalarFieldEnum)[keyof typeof ItemSolicitacaoOrcamentoScalarFieldEnum]
@@ -483,6 +505,13 @@ export const SortOrder = {
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const NullableJsonNullValueInput = {

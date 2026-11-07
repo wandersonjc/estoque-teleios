@@ -29,11 +29,15 @@ export type AggregateSolicitacaoOrcamento = {
 export type SolicitacaoOrcamentoAvgAggregateOutputType = {
   fornecedorId: number | null
   solicitanteId: number | null
+  prazoEntregaDias: number | null
+  importadoPorId: number | null
 }
 
 export type SolicitacaoOrcamentoSumAggregateOutputType = {
   fornecedorId: number | null
   solicitanteId: number | null
+  prazoEntregaDias: number | null
+  importadoPorId: number | null
 }
 
 export type SolicitacaoOrcamentoMinAggregateOutputType = {
@@ -48,6 +52,11 @@ export type SolicitacaoOrcamentoMinAggregateOutputType = {
   criadoEm: Date | null
   emailEnviadoEm: Date | null
   whatsappEnviadoEm: Date | null
+  validadeCotacao: Date | null
+  prazoEntregaDias: number | null
+  observacoesCotacao: string | null
+  importadoEm: Date | null
+  importadoPorId: number | null
 }
 
 export type SolicitacaoOrcamentoMaxAggregateOutputType = {
@@ -62,6 +71,11 @@ export type SolicitacaoOrcamentoMaxAggregateOutputType = {
   criadoEm: Date | null
   emailEnviadoEm: Date | null
   whatsappEnviadoEm: Date | null
+  validadeCotacao: Date | null
+  prazoEntregaDias: number | null
+  observacoesCotacao: string | null
+  importadoEm: Date | null
+  importadoPorId: number | null
 }
 
 export type SolicitacaoOrcamentoCountAggregateOutputType = {
@@ -76,6 +90,11 @@ export type SolicitacaoOrcamentoCountAggregateOutputType = {
   criadoEm: number
   emailEnviadoEm: number
   whatsappEnviadoEm: number
+  validadeCotacao: number
+  prazoEntregaDias: number
+  observacoesCotacao: number
+  importadoEm: number
+  importadoPorId: number
   _all: number
 }
 
@@ -83,11 +102,15 @@ export type SolicitacaoOrcamentoCountAggregateOutputType = {
 export type SolicitacaoOrcamentoAvgAggregateInputType = {
   fornecedorId?: true
   solicitanteId?: true
+  prazoEntregaDias?: true
+  importadoPorId?: true
 }
 
 export type SolicitacaoOrcamentoSumAggregateInputType = {
   fornecedorId?: true
   solicitanteId?: true
+  prazoEntregaDias?: true
+  importadoPorId?: true
 }
 
 export type SolicitacaoOrcamentoMinAggregateInputType = {
@@ -102,6 +125,11 @@ export type SolicitacaoOrcamentoMinAggregateInputType = {
   criadoEm?: true
   emailEnviadoEm?: true
   whatsappEnviadoEm?: true
+  validadeCotacao?: true
+  prazoEntregaDias?: true
+  observacoesCotacao?: true
+  importadoEm?: true
+  importadoPorId?: true
 }
 
 export type SolicitacaoOrcamentoMaxAggregateInputType = {
@@ -116,6 +144,11 @@ export type SolicitacaoOrcamentoMaxAggregateInputType = {
   criadoEm?: true
   emailEnviadoEm?: true
   whatsappEnviadoEm?: true
+  validadeCotacao?: true
+  prazoEntregaDias?: true
+  observacoesCotacao?: true
+  importadoEm?: true
+  importadoPorId?: true
 }
 
 export type SolicitacaoOrcamentoCountAggregateInputType = {
@@ -130,6 +163,11 @@ export type SolicitacaoOrcamentoCountAggregateInputType = {
   criadoEm?: true
   emailEnviadoEm?: true
   whatsappEnviadoEm?: true
+  validadeCotacao?: true
+  prazoEntregaDias?: true
+  observacoesCotacao?: true
+  importadoEm?: true
+  importadoPorId?: true
   _all?: true
 }
 
@@ -231,6 +269,11 @@ export type SolicitacaoOrcamentoGroupByOutputType = {
   criadoEm: Date
   emailEnviadoEm: Date | null
   whatsappEnviadoEm: Date | null
+  validadeCotacao: Date | null
+  prazoEntregaDias: number | null
+  observacoesCotacao: string | null
+  importadoEm: Date | null
+  importadoPorId: number | null
   _count: SolicitacaoOrcamentoCountAggregateOutputType | null
   _avg: SolicitacaoOrcamentoAvgAggregateOutputType | null
   _sum: SolicitacaoOrcamentoSumAggregateOutputType | null
@@ -268,9 +311,16 @@ export type SolicitacaoOrcamentoWhereInput = {
   criadoEm?: Prisma.DateTimeFilter<"SolicitacaoOrcamento"> | Date | string
   emailEnviadoEm?: Prisma.DateTimeNullableFilter<"SolicitacaoOrcamento"> | Date | string | null
   whatsappEnviadoEm?: Prisma.DateTimeNullableFilter<"SolicitacaoOrcamento"> | Date | string | null
+  validadeCotacao?: Prisma.DateTimeNullableFilter<"SolicitacaoOrcamento"> | Date | string | null
+  prazoEntregaDias?: Prisma.IntNullableFilter<"SolicitacaoOrcamento"> | number | null
+  observacoesCotacao?: Prisma.StringNullableFilter<"SolicitacaoOrcamento"> | string | null
+  importadoEm?: Prisma.DateTimeNullableFilter<"SolicitacaoOrcamento"> | Date | string | null
+  importadoPorId?: Prisma.IntNullableFilter<"SolicitacaoOrcamento"> | number | null
   fornecedor?: Prisma.XOR<Prisma.FornecedorScalarRelationFilter, Prisma.FornecedorWhereInput>
   solicitante?: Prisma.XOR<Prisma.UsuarioScalarRelationFilter, Prisma.UsuarioWhereInput>
+  importadoPor?: Prisma.XOR<Prisma.UsuarioNullableScalarRelationFilter, Prisma.UsuarioWhereInput> | null
   itens?: Prisma.ItemSolicitacaoOrcamentoListRelationFilter
+  importacoesTemporarias?: Prisma.ImportacaoOrcamentoListRelationFilter
 }
 
 export type SolicitacaoOrcamentoOrderByWithRelationInput = {
@@ -285,9 +335,16 @@ export type SolicitacaoOrcamentoOrderByWithRelationInput = {
   criadoEm?: Prisma.SortOrder
   emailEnviadoEm?: Prisma.SortOrderInput | Prisma.SortOrder
   whatsappEnviadoEm?: Prisma.SortOrderInput | Prisma.SortOrder
+  validadeCotacao?: Prisma.SortOrderInput | Prisma.SortOrder
+  prazoEntregaDias?: Prisma.SortOrderInput | Prisma.SortOrder
+  observacoesCotacao?: Prisma.SortOrderInput | Prisma.SortOrder
+  importadoEm?: Prisma.SortOrderInput | Prisma.SortOrder
+  importadoPorId?: Prisma.SortOrderInput | Prisma.SortOrder
   fornecedor?: Prisma.FornecedorOrderByWithRelationInput
   solicitante?: Prisma.UsuarioOrderByWithRelationInput
+  importadoPor?: Prisma.UsuarioOrderByWithRelationInput
   itens?: Prisma.ItemSolicitacaoOrcamentoOrderByRelationAggregateInput
+  importacoesTemporarias?: Prisma.ImportacaoOrcamentoOrderByRelationAggregateInput
 }
 
 export type SolicitacaoOrcamentoWhereUniqueInput = Prisma.AtLeast<{
@@ -305,9 +362,16 @@ export type SolicitacaoOrcamentoWhereUniqueInput = Prisma.AtLeast<{
   criadoEm?: Prisma.DateTimeFilter<"SolicitacaoOrcamento"> | Date | string
   emailEnviadoEm?: Prisma.DateTimeNullableFilter<"SolicitacaoOrcamento"> | Date | string | null
   whatsappEnviadoEm?: Prisma.DateTimeNullableFilter<"SolicitacaoOrcamento"> | Date | string | null
+  validadeCotacao?: Prisma.DateTimeNullableFilter<"SolicitacaoOrcamento"> | Date | string | null
+  prazoEntregaDias?: Prisma.IntNullableFilter<"SolicitacaoOrcamento"> | number | null
+  observacoesCotacao?: Prisma.StringNullableFilter<"SolicitacaoOrcamento"> | string | null
+  importadoEm?: Prisma.DateTimeNullableFilter<"SolicitacaoOrcamento"> | Date | string | null
+  importadoPorId?: Prisma.IntNullableFilter<"SolicitacaoOrcamento"> | number | null
   fornecedor?: Prisma.XOR<Prisma.FornecedorScalarRelationFilter, Prisma.FornecedorWhereInput>
   solicitante?: Prisma.XOR<Prisma.UsuarioScalarRelationFilter, Prisma.UsuarioWhereInput>
+  importadoPor?: Prisma.XOR<Prisma.UsuarioNullableScalarRelationFilter, Prisma.UsuarioWhereInput> | null
   itens?: Prisma.ItemSolicitacaoOrcamentoListRelationFilter
+  importacoesTemporarias?: Prisma.ImportacaoOrcamentoListRelationFilter
 }, "id">
 
 export type SolicitacaoOrcamentoOrderByWithAggregationInput = {
@@ -322,6 +386,11 @@ export type SolicitacaoOrcamentoOrderByWithAggregationInput = {
   criadoEm?: Prisma.SortOrder
   emailEnviadoEm?: Prisma.SortOrderInput | Prisma.SortOrder
   whatsappEnviadoEm?: Prisma.SortOrderInput | Prisma.SortOrder
+  validadeCotacao?: Prisma.SortOrderInput | Prisma.SortOrder
+  prazoEntregaDias?: Prisma.SortOrderInput | Prisma.SortOrder
+  observacoesCotacao?: Prisma.SortOrderInput | Prisma.SortOrder
+  importadoEm?: Prisma.SortOrderInput | Prisma.SortOrder
+  importadoPorId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.SolicitacaoOrcamentoCountOrderByAggregateInput
   _avg?: Prisma.SolicitacaoOrcamentoAvgOrderByAggregateInput
   _max?: Prisma.SolicitacaoOrcamentoMaxOrderByAggregateInput
@@ -344,6 +413,11 @@ export type SolicitacaoOrcamentoScalarWhereWithAggregatesInput = {
   criadoEm?: Prisma.DateTimeWithAggregatesFilter<"SolicitacaoOrcamento"> | Date | string
   emailEnviadoEm?: Prisma.DateTimeNullableWithAggregatesFilter<"SolicitacaoOrcamento"> | Date | string | null
   whatsappEnviadoEm?: Prisma.DateTimeNullableWithAggregatesFilter<"SolicitacaoOrcamento"> | Date | string | null
+  validadeCotacao?: Prisma.DateTimeNullableWithAggregatesFilter<"SolicitacaoOrcamento"> | Date | string | null
+  prazoEntregaDias?: Prisma.IntNullableWithAggregatesFilter<"SolicitacaoOrcamento"> | number | null
+  observacoesCotacao?: Prisma.StringNullableWithAggregatesFilter<"SolicitacaoOrcamento"> | string | null
+  importadoEm?: Prisma.DateTimeNullableWithAggregatesFilter<"SolicitacaoOrcamento"> | Date | string | null
+  importadoPorId?: Prisma.IntNullableWithAggregatesFilter<"SolicitacaoOrcamento"> | number | null
 }
 
 export type SolicitacaoOrcamentoCreateInput = {
@@ -356,9 +430,15 @@ export type SolicitacaoOrcamentoCreateInput = {
   criadoEm?: Date | string
   emailEnviadoEm?: Date | string | null
   whatsappEnviadoEm?: Date | string | null
+  validadeCotacao?: Date | string | null
+  prazoEntregaDias?: number | null
+  observacoesCotacao?: string | null
+  importadoEm?: Date | string | null
   fornecedor: Prisma.FornecedorCreateNestedOneWithoutSolicitacoesOrcamentoInput
   solicitante: Prisma.UsuarioCreateNestedOneWithoutSolicitacoesOrcamentoInput
+  importadoPor?: Prisma.UsuarioCreateNestedOneWithoutImportacoesOrcamentoInput
   itens?: Prisma.ItemSolicitacaoOrcamentoCreateNestedManyWithoutSolicitacaoInput
+  importacoesTemporarias?: Prisma.ImportacaoOrcamentoCreateNestedManyWithoutSolicitacaoInput
 }
 
 export type SolicitacaoOrcamentoUncheckedCreateInput = {
@@ -373,7 +453,13 @@ export type SolicitacaoOrcamentoUncheckedCreateInput = {
   criadoEm?: Date | string
   emailEnviadoEm?: Date | string | null
   whatsappEnviadoEm?: Date | string | null
+  validadeCotacao?: Date | string | null
+  prazoEntregaDias?: number | null
+  observacoesCotacao?: string | null
+  importadoEm?: Date | string | null
+  importadoPorId?: number | null
   itens?: Prisma.ItemSolicitacaoOrcamentoUncheckedCreateNestedManyWithoutSolicitacaoInput
+  importacoesTemporarias?: Prisma.ImportacaoOrcamentoUncheckedCreateNestedManyWithoutSolicitacaoInput
 }
 
 export type SolicitacaoOrcamentoUpdateInput = {
@@ -386,9 +472,15 @@ export type SolicitacaoOrcamentoUpdateInput = {
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   emailEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   whatsappEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validadeCotacao?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  observacoesCotacao?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  importadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   fornecedor?: Prisma.FornecedorUpdateOneRequiredWithoutSolicitacoesOrcamentoNestedInput
   solicitante?: Prisma.UsuarioUpdateOneRequiredWithoutSolicitacoesOrcamentoNestedInput
+  importadoPor?: Prisma.UsuarioUpdateOneWithoutImportacoesOrcamentoNestedInput
   itens?: Prisma.ItemSolicitacaoOrcamentoUpdateManyWithoutSolicitacaoNestedInput
+  importacoesTemporarias?: Prisma.ImportacaoOrcamentoUpdateManyWithoutSolicitacaoNestedInput
 }
 
 export type SolicitacaoOrcamentoUncheckedUpdateInput = {
@@ -403,7 +495,13 @@ export type SolicitacaoOrcamentoUncheckedUpdateInput = {
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   emailEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   whatsappEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validadeCotacao?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  observacoesCotacao?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  importadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  importadoPorId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   itens?: Prisma.ItemSolicitacaoOrcamentoUncheckedUpdateManyWithoutSolicitacaoNestedInput
+  importacoesTemporarias?: Prisma.ImportacaoOrcamentoUncheckedUpdateManyWithoutSolicitacaoNestedInput
 }
 
 export type SolicitacaoOrcamentoCreateManyInput = {
@@ -418,6 +516,11 @@ export type SolicitacaoOrcamentoCreateManyInput = {
   criadoEm?: Date | string
   emailEnviadoEm?: Date | string | null
   whatsappEnviadoEm?: Date | string | null
+  validadeCotacao?: Date | string | null
+  prazoEntregaDias?: number | null
+  observacoesCotacao?: string | null
+  importadoEm?: Date | string | null
+  importadoPorId?: number | null
 }
 
 export type SolicitacaoOrcamentoUpdateManyMutationInput = {
@@ -430,6 +533,10 @@ export type SolicitacaoOrcamentoUpdateManyMutationInput = {
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   emailEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   whatsappEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validadeCotacao?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  observacoesCotacao?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  importadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type SolicitacaoOrcamentoUncheckedUpdateManyInput = {
@@ -444,6 +551,11 @@ export type SolicitacaoOrcamentoUncheckedUpdateManyInput = {
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   emailEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   whatsappEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validadeCotacao?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  observacoesCotacao?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  importadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  importadoPorId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type SolicitacaoOrcamentoListRelationFilter = {
@@ -468,11 +580,18 @@ export type SolicitacaoOrcamentoCountOrderByAggregateInput = {
   criadoEm?: Prisma.SortOrder
   emailEnviadoEm?: Prisma.SortOrder
   whatsappEnviadoEm?: Prisma.SortOrder
+  validadeCotacao?: Prisma.SortOrder
+  prazoEntregaDias?: Prisma.SortOrder
+  observacoesCotacao?: Prisma.SortOrder
+  importadoEm?: Prisma.SortOrder
+  importadoPorId?: Prisma.SortOrder
 }
 
 export type SolicitacaoOrcamentoAvgOrderByAggregateInput = {
   fornecedorId?: Prisma.SortOrder
   solicitanteId?: Prisma.SortOrder
+  prazoEntregaDias?: Prisma.SortOrder
+  importadoPorId?: Prisma.SortOrder
 }
 
 export type SolicitacaoOrcamentoMaxOrderByAggregateInput = {
@@ -487,6 +606,11 @@ export type SolicitacaoOrcamentoMaxOrderByAggregateInput = {
   criadoEm?: Prisma.SortOrder
   emailEnviadoEm?: Prisma.SortOrder
   whatsappEnviadoEm?: Prisma.SortOrder
+  validadeCotacao?: Prisma.SortOrder
+  prazoEntregaDias?: Prisma.SortOrder
+  observacoesCotacao?: Prisma.SortOrder
+  importadoEm?: Prisma.SortOrder
+  importadoPorId?: Prisma.SortOrder
 }
 
 export type SolicitacaoOrcamentoMinOrderByAggregateInput = {
@@ -501,11 +625,18 @@ export type SolicitacaoOrcamentoMinOrderByAggregateInput = {
   criadoEm?: Prisma.SortOrder
   emailEnviadoEm?: Prisma.SortOrder
   whatsappEnviadoEm?: Prisma.SortOrder
+  validadeCotacao?: Prisma.SortOrder
+  prazoEntregaDias?: Prisma.SortOrder
+  observacoesCotacao?: Prisma.SortOrder
+  importadoEm?: Prisma.SortOrder
+  importadoPorId?: Prisma.SortOrder
 }
 
 export type SolicitacaoOrcamentoSumOrderByAggregateInput = {
   fornecedorId?: Prisma.SortOrder
   solicitanteId?: Prisma.SortOrder
+  prazoEntregaDias?: Prisma.SortOrder
+  importadoPorId?: Prisma.SortOrder
 }
 
 export type SolicitacaoOrcamentoScalarRelationFilter = {
@@ -520,10 +651,24 @@ export type SolicitacaoOrcamentoCreateNestedManyWithoutSolicitanteInput = {
   connect?: Prisma.SolicitacaoOrcamentoWhereUniqueInput | Prisma.SolicitacaoOrcamentoWhereUniqueInput[]
 }
 
+export type SolicitacaoOrcamentoCreateNestedManyWithoutImportadoPorInput = {
+  create?: Prisma.XOR<Prisma.SolicitacaoOrcamentoCreateWithoutImportadoPorInput, Prisma.SolicitacaoOrcamentoUncheckedCreateWithoutImportadoPorInput> | Prisma.SolicitacaoOrcamentoCreateWithoutImportadoPorInput[] | Prisma.SolicitacaoOrcamentoUncheckedCreateWithoutImportadoPorInput[]
+  connectOrCreate?: Prisma.SolicitacaoOrcamentoCreateOrConnectWithoutImportadoPorInput | Prisma.SolicitacaoOrcamentoCreateOrConnectWithoutImportadoPorInput[]
+  createMany?: Prisma.SolicitacaoOrcamentoCreateManyImportadoPorInputEnvelope
+  connect?: Prisma.SolicitacaoOrcamentoWhereUniqueInput | Prisma.SolicitacaoOrcamentoWhereUniqueInput[]
+}
+
 export type SolicitacaoOrcamentoUncheckedCreateNestedManyWithoutSolicitanteInput = {
   create?: Prisma.XOR<Prisma.SolicitacaoOrcamentoCreateWithoutSolicitanteInput, Prisma.SolicitacaoOrcamentoUncheckedCreateWithoutSolicitanteInput> | Prisma.SolicitacaoOrcamentoCreateWithoutSolicitanteInput[] | Prisma.SolicitacaoOrcamentoUncheckedCreateWithoutSolicitanteInput[]
   connectOrCreate?: Prisma.SolicitacaoOrcamentoCreateOrConnectWithoutSolicitanteInput | Prisma.SolicitacaoOrcamentoCreateOrConnectWithoutSolicitanteInput[]
   createMany?: Prisma.SolicitacaoOrcamentoCreateManySolicitanteInputEnvelope
+  connect?: Prisma.SolicitacaoOrcamentoWhereUniqueInput | Prisma.SolicitacaoOrcamentoWhereUniqueInput[]
+}
+
+export type SolicitacaoOrcamentoUncheckedCreateNestedManyWithoutImportadoPorInput = {
+  create?: Prisma.XOR<Prisma.SolicitacaoOrcamentoCreateWithoutImportadoPorInput, Prisma.SolicitacaoOrcamentoUncheckedCreateWithoutImportadoPorInput> | Prisma.SolicitacaoOrcamentoCreateWithoutImportadoPorInput[] | Prisma.SolicitacaoOrcamentoUncheckedCreateWithoutImportadoPorInput[]
+  connectOrCreate?: Prisma.SolicitacaoOrcamentoCreateOrConnectWithoutImportadoPorInput | Prisma.SolicitacaoOrcamentoCreateOrConnectWithoutImportadoPorInput[]
+  createMany?: Prisma.SolicitacaoOrcamentoCreateManyImportadoPorInputEnvelope
   connect?: Prisma.SolicitacaoOrcamentoWhereUniqueInput | Prisma.SolicitacaoOrcamentoWhereUniqueInput[]
 }
 
@@ -541,6 +686,20 @@ export type SolicitacaoOrcamentoUpdateManyWithoutSolicitanteNestedInput = {
   deleteMany?: Prisma.SolicitacaoOrcamentoScalarWhereInput | Prisma.SolicitacaoOrcamentoScalarWhereInput[]
 }
 
+export type SolicitacaoOrcamentoUpdateManyWithoutImportadoPorNestedInput = {
+  create?: Prisma.XOR<Prisma.SolicitacaoOrcamentoCreateWithoutImportadoPorInput, Prisma.SolicitacaoOrcamentoUncheckedCreateWithoutImportadoPorInput> | Prisma.SolicitacaoOrcamentoCreateWithoutImportadoPorInput[] | Prisma.SolicitacaoOrcamentoUncheckedCreateWithoutImportadoPorInput[]
+  connectOrCreate?: Prisma.SolicitacaoOrcamentoCreateOrConnectWithoutImportadoPorInput | Prisma.SolicitacaoOrcamentoCreateOrConnectWithoutImportadoPorInput[]
+  upsert?: Prisma.SolicitacaoOrcamentoUpsertWithWhereUniqueWithoutImportadoPorInput | Prisma.SolicitacaoOrcamentoUpsertWithWhereUniqueWithoutImportadoPorInput[]
+  createMany?: Prisma.SolicitacaoOrcamentoCreateManyImportadoPorInputEnvelope
+  set?: Prisma.SolicitacaoOrcamentoWhereUniqueInput | Prisma.SolicitacaoOrcamentoWhereUniqueInput[]
+  disconnect?: Prisma.SolicitacaoOrcamentoWhereUniqueInput | Prisma.SolicitacaoOrcamentoWhereUniqueInput[]
+  delete?: Prisma.SolicitacaoOrcamentoWhereUniqueInput | Prisma.SolicitacaoOrcamentoWhereUniqueInput[]
+  connect?: Prisma.SolicitacaoOrcamentoWhereUniqueInput | Prisma.SolicitacaoOrcamentoWhereUniqueInput[]
+  update?: Prisma.SolicitacaoOrcamentoUpdateWithWhereUniqueWithoutImportadoPorInput | Prisma.SolicitacaoOrcamentoUpdateWithWhereUniqueWithoutImportadoPorInput[]
+  updateMany?: Prisma.SolicitacaoOrcamentoUpdateManyWithWhereWithoutImportadoPorInput | Prisma.SolicitacaoOrcamentoUpdateManyWithWhereWithoutImportadoPorInput[]
+  deleteMany?: Prisma.SolicitacaoOrcamentoScalarWhereInput | Prisma.SolicitacaoOrcamentoScalarWhereInput[]
+}
+
 export type SolicitacaoOrcamentoUncheckedUpdateManyWithoutSolicitanteNestedInput = {
   create?: Prisma.XOR<Prisma.SolicitacaoOrcamentoCreateWithoutSolicitanteInput, Prisma.SolicitacaoOrcamentoUncheckedCreateWithoutSolicitanteInput> | Prisma.SolicitacaoOrcamentoCreateWithoutSolicitanteInput[] | Prisma.SolicitacaoOrcamentoUncheckedCreateWithoutSolicitanteInput[]
   connectOrCreate?: Prisma.SolicitacaoOrcamentoCreateOrConnectWithoutSolicitanteInput | Prisma.SolicitacaoOrcamentoCreateOrConnectWithoutSolicitanteInput[]
@@ -552,6 +711,20 @@ export type SolicitacaoOrcamentoUncheckedUpdateManyWithoutSolicitanteNestedInput
   connect?: Prisma.SolicitacaoOrcamentoWhereUniqueInput | Prisma.SolicitacaoOrcamentoWhereUniqueInput[]
   update?: Prisma.SolicitacaoOrcamentoUpdateWithWhereUniqueWithoutSolicitanteInput | Prisma.SolicitacaoOrcamentoUpdateWithWhereUniqueWithoutSolicitanteInput[]
   updateMany?: Prisma.SolicitacaoOrcamentoUpdateManyWithWhereWithoutSolicitanteInput | Prisma.SolicitacaoOrcamentoUpdateManyWithWhereWithoutSolicitanteInput[]
+  deleteMany?: Prisma.SolicitacaoOrcamentoScalarWhereInput | Prisma.SolicitacaoOrcamentoScalarWhereInput[]
+}
+
+export type SolicitacaoOrcamentoUncheckedUpdateManyWithoutImportadoPorNestedInput = {
+  create?: Prisma.XOR<Prisma.SolicitacaoOrcamentoCreateWithoutImportadoPorInput, Prisma.SolicitacaoOrcamentoUncheckedCreateWithoutImportadoPorInput> | Prisma.SolicitacaoOrcamentoCreateWithoutImportadoPorInput[] | Prisma.SolicitacaoOrcamentoUncheckedCreateWithoutImportadoPorInput[]
+  connectOrCreate?: Prisma.SolicitacaoOrcamentoCreateOrConnectWithoutImportadoPorInput | Prisma.SolicitacaoOrcamentoCreateOrConnectWithoutImportadoPorInput[]
+  upsert?: Prisma.SolicitacaoOrcamentoUpsertWithWhereUniqueWithoutImportadoPorInput | Prisma.SolicitacaoOrcamentoUpsertWithWhereUniqueWithoutImportadoPorInput[]
+  createMany?: Prisma.SolicitacaoOrcamentoCreateManyImportadoPorInputEnvelope
+  set?: Prisma.SolicitacaoOrcamentoWhereUniqueInput | Prisma.SolicitacaoOrcamentoWhereUniqueInput[]
+  disconnect?: Prisma.SolicitacaoOrcamentoWhereUniqueInput | Prisma.SolicitacaoOrcamentoWhereUniqueInput[]
+  delete?: Prisma.SolicitacaoOrcamentoWhereUniqueInput | Prisma.SolicitacaoOrcamentoWhereUniqueInput[]
+  connect?: Prisma.SolicitacaoOrcamentoWhereUniqueInput | Prisma.SolicitacaoOrcamentoWhereUniqueInput[]
+  update?: Prisma.SolicitacaoOrcamentoUpdateWithWhereUniqueWithoutImportadoPorInput | Prisma.SolicitacaoOrcamentoUpdateWithWhereUniqueWithoutImportadoPorInput[]
+  updateMany?: Prisma.SolicitacaoOrcamentoUpdateManyWithWhereWithoutImportadoPorInput | Prisma.SolicitacaoOrcamentoUpdateManyWithWhereWithoutImportadoPorInput[]
   deleteMany?: Prisma.SolicitacaoOrcamentoScalarWhereInput | Prisma.SolicitacaoOrcamentoScalarWhereInput[]
 }
 
@@ -605,6 +778,20 @@ export type NullableDateTimeFieldUpdateOperationsInput = {
   set?: Date | string | null
 }
 
+export type SolicitacaoOrcamentoCreateNestedOneWithoutImportacoesTemporariasInput = {
+  create?: Prisma.XOR<Prisma.SolicitacaoOrcamentoCreateWithoutImportacoesTemporariasInput, Prisma.SolicitacaoOrcamentoUncheckedCreateWithoutImportacoesTemporariasInput>
+  connectOrCreate?: Prisma.SolicitacaoOrcamentoCreateOrConnectWithoutImportacoesTemporariasInput
+  connect?: Prisma.SolicitacaoOrcamentoWhereUniqueInput
+}
+
+export type SolicitacaoOrcamentoUpdateOneRequiredWithoutImportacoesTemporariasNestedInput = {
+  create?: Prisma.XOR<Prisma.SolicitacaoOrcamentoCreateWithoutImportacoesTemporariasInput, Prisma.SolicitacaoOrcamentoUncheckedCreateWithoutImportacoesTemporariasInput>
+  connectOrCreate?: Prisma.SolicitacaoOrcamentoCreateOrConnectWithoutImportacoesTemporariasInput
+  upsert?: Prisma.SolicitacaoOrcamentoUpsertWithoutImportacoesTemporariasInput
+  connect?: Prisma.SolicitacaoOrcamentoWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.SolicitacaoOrcamentoUpdateToOneWithWhereWithoutImportacoesTemporariasInput, Prisma.SolicitacaoOrcamentoUpdateWithoutImportacoesTemporariasInput>, Prisma.SolicitacaoOrcamentoUncheckedUpdateWithoutImportacoesTemporariasInput>
+}
+
 export type SolicitacaoOrcamentoCreateNestedOneWithoutItensInput = {
   create?: Prisma.XOR<Prisma.SolicitacaoOrcamentoCreateWithoutItensInput, Prisma.SolicitacaoOrcamentoUncheckedCreateWithoutItensInput>
   connectOrCreate?: Prisma.SolicitacaoOrcamentoCreateOrConnectWithoutItensInput
@@ -629,8 +816,14 @@ export type SolicitacaoOrcamentoCreateWithoutSolicitanteInput = {
   criadoEm?: Date | string
   emailEnviadoEm?: Date | string | null
   whatsappEnviadoEm?: Date | string | null
+  validadeCotacao?: Date | string | null
+  prazoEntregaDias?: number | null
+  observacoesCotacao?: string | null
+  importadoEm?: Date | string | null
   fornecedor: Prisma.FornecedorCreateNestedOneWithoutSolicitacoesOrcamentoInput
+  importadoPor?: Prisma.UsuarioCreateNestedOneWithoutImportacoesOrcamentoInput
   itens?: Prisma.ItemSolicitacaoOrcamentoCreateNestedManyWithoutSolicitacaoInput
+  importacoesTemporarias?: Prisma.ImportacaoOrcamentoCreateNestedManyWithoutSolicitacaoInput
 }
 
 export type SolicitacaoOrcamentoUncheckedCreateWithoutSolicitanteInput = {
@@ -644,7 +837,13 @@ export type SolicitacaoOrcamentoUncheckedCreateWithoutSolicitanteInput = {
   criadoEm?: Date | string
   emailEnviadoEm?: Date | string | null
   whatsappEnviadoEm?: Date | string | null
+  validadeCotacao?: Date | string | null
+  prazoEntregaDias?: number | null
+  observacoesCotacao?: string | null
+  importadoEm?: Date | string | null
+  importadoPorId?: number | null
   itens?: Prisma.ItemSolicitacaoOrcamentoUncheckedCreateNestedManyWithoutSolicitacaoInput
+  importacoesTemporarias?: Prisma.ImportacaoOrcamentoUncheckedCreateNestedManyWithoutSolicitacaoInput
 }
 
 export type SolicitacaoOrcamentoCreateOrConnectWithoutSolicitanteInput = {
@@ -654,6 +853,56 @@ export type SolicitacaoOrcamentoCreateOrConnectWithoutSolicitanteInput = {
 
 export type SolicitacaoOrcamentoCreateManySolicitanteInputEnvelope = {
   data: Prisma.SolicitacaoOrcamentoCreateManySolicitanteInput | Prisma.SolicitacaoOrcamentoCreateManySolicitanteInput[]
+  skipDuplicates?: boolean
+}
+
+export type SolicitacaoOrcamentoCreateWithoutImportadoPorInput = {
+  id?: string
+  situacaoFiltro: string
+  emailStatus?: $Enums.EstadoEnvioOrcamento
+  whatsappStatus?: $Enums.EstadoEnvioOrcamento
+  emailErro?: string | null
+  whatsappErro?: string | null
+  criadoEm?: Date | string
+  emailEnviadoEm?: Date | string | null
+  whatsappEnviadoEm?: Date | string | null
+  validadeCotacao?: Date | string | null
+  prazoEntregaDias?: number | null
+  observacoesCotacao?: string | null
+  importadoEm?: Date | string | null
+  fornecedor: Prisma.FornecedorCreateNestedOneWithoutSolicitacoesOrcamentoInput
+  solicitante: Prisma.UsuarioCreateNestedOneWithoutSolicitacoesOrcamentoInput
+  itens?: Prisma.ItemSolicitacaoOrcamentoCreateNestedManyWithoutSolicitacaoInput
+  importacoesTemporarias?: Prisma.ImportacaoOrcamentoCreateNestedManyWithoutSolicitacaoInput
+}
+
+export type SolicitacaoOrcamentoUncheckedCreateWithoutImportadoPorInput = {
+  id?: string
+  fornecedorId: number
+  solicitanteId: number
+  situacaoFiltro: string
+  emailStatus?: $Enums.EstadoEnvioOrcamento
+  whatsappStatus?: $Enums.EstadoEnvioOrcamento
+  emailErro?: string | null
+  whatsappErro?: string | null
+  criadoEm?: Date | string
+  emailEnviadoEm?: Date | string | null
+  whatsappEnviadoEm?: Date | string | null
+  validadeCotacao?: Date | string | null
+  prazoEntregaDias?: number | null
+  observacoesCotacao?: string | null
+  importadoEm?: Date | string | null
+  itens?: Prisma.ItemSolicitacaoOrcamentoUncheckedCreateNestedManyWithoutSolicitacaoInput
+  importacoesTemporarias?: Prisma.ImportacaoOrcamentoUncheckedCreateNestedManyWithoutSolicitacaoInput
+}
+
+export type SolicitacaoOrcamentoCreateOrConnectWithoutImportadoPorInput = {
+  where: Prisma.SolicitacaoOrcamentoWhereUniqueInput
+  create: Prisma.XOR<Prisma.SolicitacaoOrcamentoCreateWithoutImportadoPorInput, Prisma.SolicitacaoOrcamentoUncheckedCreateWithoutImportadoPorInput>
+}
+
+export type SolicitacaoOrcamentoCreateManyImportadoPorInputEnvelope = {
+  data: Prisma.SolicitacaoOrcamentoCreateManyImportadoPorInput | Prisma.SolicitacaoOrcamentoCreateManyImportadoPorInput[]
   skipDuplicates?: boolean
 }
 
@@ -688,6 +937,27 @@ export type SolicitacaoOrcamentoScalarWhereInput = {
   criadoEm?: Prisma.DateTimeFilter<"SolicitacaoOrcamento"> | Date | string
   emailEnviadoEm?: Prisma.DateTimeNullableFilter<"SolicitacaoOrcamento"> | Date | string | null
   whatsappEnviadoEm?: Prisma.DateTimeNullableFilter<"SolicitacaoOrcamento"> | Date | string | null
+  validadeCotacao?: Prisma.DateTimeNullableFilter<"SolicitacaoOrcamento"> | Date | string | null
+  prazoEntregaDias?: Prisma.IntNullableFilter<"SolicitacaoOrcamento"> | number | null
+  observacoesCotacao?: Prisma.StringNullableFilter<"SolicitacaoOrcamento"> | string | null
+  importadoEm?: Prisma.DateTimeNullableFilter<"SolicitacaoOrcamento"> | Date | string | null
+  importadoPorId?: Prisma.IntNullableFilter<"SolicitacaoOrcamento"> | number | null
+}
+
+export type SolicitacaoOrcamentoUpsertWithWhereUniqueWithoutImportadoPorInput = {
+  where: Prisma.SolicitacaoOrcamentoWhereUniqueInput
+  update: Prisma.XOR<Prisma.SolicitacaoOrcamentoUpdateWithoutImportadoPorInput, Prisma.SolicitacaoOrcamentoUncheckedUpdateWithoutImportadoPorInput>
+  create: Prisma.XOR<Prisma.SolicitacaoOrcamentoCreateWithoutImportadoPorInput, Prisma.SolicitacaoOrcamentoUncheckedCreateWithoutImportadoPorInput>
+}
+
+export type SolicitacaoOrcamentoUpdateWithWhereUniqueWithoutImportadoPorInput = {
+  where: Prisma.SolicitacaoOrcamentoWhereUniqueInput
+  data: Prisma.XOR<Prisma.SolicitacaoOrcamentoUpdateWithoutImportadoPorInput, Prisma.SolicitacaoOrcamentoUncheckedUpdateWithoutImportadoPorInput>
+}
+
+export type SolicitacaoOrcamentoUpdateManyWithWhereWithoutImportadoPorInput = {
+  where: Prisma.SolicitacaoOrcamentoScalarWhereInput
+  data: Prisma.XOR<Prisma.SolicitacaoOrcamentoUpdateManyMutationInput, Prisma.SolicitacaoOrcamentoUncheckedUpdateManyWithoutImportadoPorInput>
 }
 
 export type SolicitacaoOrcamentoCreateWithoutFornecedorInput = {
@@ -700,8 +970,14 @@ export type SolicitacaoOrcamentoCreateWithoutFornecedorInput = {
   criadoEm?: Date | string
   emailEnviadoEm?: Date | string | null
   whatsappEnviadoEm?: Date | string | null
+  validadeCotacao?: Date | string | null
+  prazoEntregaDias?: number | null
+  observacoesCotacao?: string | null
+  importadoEm?: Date | string | null
   solicitante: Prisma.UsuarioCreateNestedOneWithoutSolicitacoesOrcamentoInput
+  importadoPor?: Prisma.UsuarioCreateNestedOneWithoutImportacoesOrcamentoInput
   itens?: Prisma.ItemSolicitacaoOrcamentoCreateNestedManyWithoutSolicitacaoInput
+  importacoesTemporarias?: Prisma.ImportacaoOrcamentoCreateNestedManyWithoutSolicitacaoInput
 }
 
 export type SolicitacaoOrcamentoUncheckedCreateWithoutFornecedorInput = {
@@ -715,7 +991,13 @@ export type SolicitacaoOrcamentoUncheckedCreateWithoutFornecedorInput = {
   criadoEm?: Date | string
   emailEnviadoEm?: Date | string | null
   whatsappEnviadoEm?: Date | string | null
+  validadeCotacao?: Date | string | null
+  prazoEntregaDias?: number | null
+  observacoesCotacao?: string | null
+  importadoEm?: Date | string | null
+  importadoPorId?: number | null
   itens?: Prisma.ItemSolicitacaoOrcamentoUncheckedCreateNestedManyWithoutSolicitacaoInput
+  importacoesTemporarias?: Prisma.ImportacaoOrcamentoUncheckedCreateNestedManyWithoutSolicitacaoInput
 }
 
 export type SolicitacaoOrcamentoCreateOrConnectWithoutFornecedorInput = {
@@ -744,6 +1026,102 @@ export type SolicitacaoOrcamentoUpdateManyWithWhereWithoutFornecedorInput = {
   data: Prisma.XOR<Prisma.SolicitacaoOrcamentoUpdateManyMutationInput, Prisma.SolicitacaoOrcamentoUncheckedUpdateManyWithoutFornecedorInput>
 }
 
+export type SolicitacaoOrcamentoCreateWithoutImportacoesTemporariasInput = {
+  id?: string
+  situacaoFiltro: string
+  emailStatus?: $Enums.EstadoEnvioOrcamento
+  whatsappStatus?: $Enums.EstadoEnvioOrcamento
+  emailErro?: string | null
+  whatsappErro?: string | null
+  criadoEm?: Date | string
+  emailEnviadoEm?: Date | string | null
+  whatsappEnviadoEm?: Date | string | null
+  validadeCotacao?: Date | string | null
+  prazoEntregaDias?: number | null
+  observacoesCotacao?: string | null
+  importadoEm?: Date | string | null
+  fornecedor: Prisma.FornecedorCreateNestedOneWithoutSolicitacoesOrcamentoInput
+  solicitante: Prisma.UsuarioCreateNestedOneWithoutSolicitacoesOrcamentoInput
+  importadoPor?: Prisma.UsuarioCreateNestedOneWithoutImportacoesOrcamentoInput
+  itens?: Prisma.ItemSolicitacaoOrcamentoCreateNestedManyWithoutSolicitacaoInput
+}
+
+export type SolicitacaoOrcamentoUncheckedCreateWithoutImportacoesTemporariasInput = {
+  id?: string
+  fornecedorId: number
+  solicitanteId: number
+  situacaoFiltro: string
+  emailStatus?: $Enums.EstadoEnvioOrcamento
+  whatsappStatus?: $Enums.EstadoEnvioOrcamento
+  emailErro?: string | null
+  whatsappErro?: string | null
+  criadoEm?: Date | string
+  emailEnviadoEm?: Date | string | null
+  whatsappEnviadoEm?: Date | string | null
+  validadeCotacao?: Date | string | null
+  prazoEntregaDias?: number | null
+  observacoesCotacao?: string | null
+  importadoEm?: Date | string | null
+  importadoPorId?: number | null
+  itens?: Prisma.ItemSolicitacaoOrcamentoUncheckedCreateNestedManyWithoutSolicitacaoInput
+}
+
+export type SolicitacaoOrcamentoCreateOrConnectWithoutImportacoesTemporariasInput = {
+  where: Prisma.SolicitacaoOrcamentoWhereUniqueInput
+  create: Prisma.XOR<Prisma.SolicitacaoOrcamentoCreateWithoutImportacoesTemporariasInput, Prisma.SolicitacaoOrcamentoUncheckedCreateWithoutImportacoesTemporariasInput>
+}
+
+export type SolicitacaoOrcamentoUpsertWithoutImportacoesTemporariasInput = {
+  update: Prisma.XOR<Prisma.SolicitacaoOrcamentoUpdateWithoutImportacoesTemporariasInput, Prisma.SolicitacaoOrcamentoUncheckedUpdateWithoutImportacoesTemporariasInput>
+  create: Prisma.XOR<Prisma.SolicitacaoOrcamentoCreateWithoutImportacoesTemporariasInput, Prisma.SolicitacaoOrcamentoUncheckedCreateWithoutImportacoesTemporariasInput>
+  where?: Prisma.SolicitacaoOrcamentoWhereInput
+}
+
+export type SolicitacaoOrcamentoUpdateToOneWithWhereWithoutImportacoesTemporariasInput = {
+  where?: Prisma.SolicitacaoOrcamentoWhereInput
+  data: Prisma.XOR<Prisma.SolicitacaoOrcamentoUpdateWithoutImportacoesTemporariasInput, Prisma.SolicitacaoOrcamentoUncheckedUpdateWithoutImportacoesTemporariasInput>
+}
+
+export type SolicitacaoOrcamentoUpdateWithoutImportacoesTemporariasInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  situacaoFiltro?: Prisma.StringFieldUpdateOperationsInput | string
+  emailStatus?: Prisma.EnumEstadoEnvioOrcamentoFieldUpdateOperationsInput | $Enums.EstadoEnvioOrcamento
+  whatsappStatus?: Prisma.EnumEstadoEnvioOrcamentoFieldUpdateOperationsInput | $Enums.EstadoEnvioOrcamento
+  emailErro?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsappErro?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  emailEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  whatsappEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validadeCotacao?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  observacoesCotacao?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  importadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  fornecedor?: Prisma.FornecedorUpdateOneRequiredWithoutSolicitacoesOrcamentoNestedInput
+  solicitante?: Prisma.UsuarioUpdateOneRequiredWithoutSolicitacoesOrcamentoNestedInput
+  importadoPor?: Prisma.UsuarioUpdateOneWithoutImportacoesOrcamentoNestedInput
+  itens?: Prisma.ItemSolicitacaoOrcamentoUpdateManyWithoutSolicitacaoNestedInput
+}
+
+export type SolicitacaoOrcamentoUncheckedUpdateWithoutImportacoesTemporariasInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  fornecedorId?: Prisma.IntFieldUpdateOperationsInput | number
+  solicitanteId?: Prisma.IntFieldUpdateOperationsInput | number
+  situacaoFiltro?: Prisma.StringFieldUpdateOperationsInput | string
+  emailStatus?: Prisma.EnumEstadoEnvioOrcamentoFieldUpdateOperationsInput | $Enums.EstadoEnvioOrcamento
+  whatsappStatus?: Prisma.EnumEstadoEnvioOrcamentoFieldUpdateOperationsInput | $Enums.EstadoEnvioOrcamento
+  emailErro?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsappErro?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  emailEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  whatsappEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validadeCotacao?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  observacoesCotacao?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  importadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  importadoPorId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  itens?: Prisma.ItemSolicitacaoOrcamentoUncheckedUpdateManyWithoutSolicitacaoNestedInput
+}
+
 export type SolicitacaoOrcamentoCreateWithoutItensInput = {
   id?: string
   situacaoFiltro: string
@@ -754,8 +1132,14 @@ export type SolicitacaoOrcamentoCreateWithoutItensInput = {
   criadoEm?: Date | string
   emailEnviadoEm?: Date | string | null
   whatsappEnviadoEm?: Date | string | null
+  validadeCotacao?: Date | string | null
+  prazoEntregaDias?: number | null
+  observacoesCotacao?: string | null
+  importadoEm?: Date | string | null
   fornecedor: Prisma.FornecedorCreateNestedOneWithoutSolicitacoesOrcamentoInput
   solicitante: Prisma.UsuarioCreateNestedOneWithoutSolicitacoesOrcamentoInput
+  importadoPor?: Prisma.UsuarioCreateNestedOneWithoutImportacoesOrcamentoInput
+  importacoesTemporarias?: Prisma.ImportacaoOrcamentoCreateNestedManyWithoutSolicitacaoInput
 }
 
 export type SolicitacaoOrcamentoUncheckedCreateWithoutItensInput = {
@@ -770,6 +1154,12 @@ export type SolicitacaoOrcamentoUncheckedCreateWithoutItensInput = {
   criadoEm?: Date | string
   emailEnviadoEm?: Date | string | null
   whatsappEnviadoEm?: Date | string | null
+  validadeCotacao?: Date | string | null
+  prazoEntregaDias?: number | null
+  observacoesCotacao?: string | null
+  importadoEm?: Date | string | null
+  importadoPorId?: number | null
+  importacoesTemporarias?: Prisma.ImportacaoOrcamentoUncheckedCreateNestedManyWithoutSolicitacaoInput
 }
 
 export type SolicitacaoOrcamentoCreateOrConnectWithoutItensInput = {
@@ -798,8 +1188,14 @@ export type SolicitacaoOrcamentoUpdateWithoutItensInput = {
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   emailEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   whatsappEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validadeCotacao?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  observacoesCotacao?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  importadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   fornecedor?: Prisma.FornecedorUpdateOneRequiredWithoutSolicitacoesOrcamentoNestedInput
   solicitante?: Prisma.UsuarioUpdateOneRequiredWithoutSolicitacoesOrcamentoNestedInput
+  importadoPor?: Prisma.UsuarioUpdateOneWithoutImportacoesOrcamentoNestedInput
+  importacoesTemporarias?: Prisma.ImportacaoOrcamentoUpdateManyWithoutSolicitacaoNestedInput
 }
 
 export type SolicitacaoOrcamentoUncheckedUpdateWithoutItensInput = {
@@ -814,6 +1210,12 @@ export type SolicitacaoOrcamentoUncheckedUpdateWithoutItensInput = {
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   emailEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   whatsappEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validadeCotacao?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  observacoesCotacao?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  importadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  importadoPorId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  importacoesTemporarias?: Prisma.ImportacaoOrcamentoUncheckedUpdateManyWithoutSolicitacaoNestedInput
 }
 
 export type SolicitacaoOrcamentoCreateManySolicitanteInput = {
@@ -827,6 +1229,29 @@ export type SolicitacaoOrcamentoCreateManySolicitanteInput = {
   criadoEm?: Date | string
   emailEnviadoEm?: Date | string | null
   whatsappEnviadoEm?: Date | string | null
+  validadeCotacao?: Date | string | null
+  prazoEntregaDias?: number | null
+  observacoesCotacao?: string | null
+  importadoEm?: Date | string | null
+  importadoPorId?: number | null
+}
+
+export type SolicitacaoOrcamentoCreateManyImportadoPorInput = {
+  id?: string
+  fornecedorId: number
+  solicitanteId: number
+  situacaoFiltro: string
+  emailStatus?: $Enums.EstadoEnvioOrcamento
+  whatsappStatus?: $Enums.EstadoEnvioOrcamento
+  emailErro?: string | null
+  whatsappErro?: string | null
+  criadoEm?: Date | string
+  emailEnviadoEm?: Date | string | null
+  whatsappEnviadoEm?: Date | string | null
+  validadeCotacao?: Date | string | null
+  prazoEntregaDias?: number | null
+  observacoesCotacao?: string | null
+  importadoEm?: Date | string | null
 }
 
 export type SolicitacaoOrcamentoUpdateWithoutSolicitanteInput = {
@@ -839,8 +1264,14 @@ export type SolicitacaoOrcamentoUpdateWithoutSolicitanteInput = {
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   emailEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   whatsappEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validadeCotacao?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  observacoesCotacao?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  importadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   fornecedor?: Prisma.FornecedorUpdateOneRequiredWithoutSolicitacoesOrcamentoNestedInput
+  importadoPor?: Prisma.UsuarioUpdateOneWithoutImportacoesOrcamentoNestedInput
   itens?: Prisma.ItemSolicitacaoOrcamentoUpdateManyWithoutSolicitacaoNestedInput
+  importacoesTemporarias?: Prisma.ImportacaoOrcamentoUpdateManyWithoutSolicitacaoNestedInput
 }
 
 export type SolicitacaoOrcamentoUncheckedUpdateWithoutSolicitanteInput = {
@@ -854,7 +1285,13 @@ export type SolicitacaoOrcamentoUncheckedUpdateWithoutSolicitanteInput = {
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   emailEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   whatsappEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validadeCotacao?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  observacoesCotacao?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  importadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  importadoPorId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   itens?: Prisma.ItemSolicitacaoOrcamentoUncheckedUpdateManyWithoutSolicitacaoNestedInput
+  importacoesTemporarias?: Prisma.ImportacaoOrcamentoUncheckedUpdateManyWithoutSolicitacaoNestedInput
 }
 
 export type SolicitacaoOrcamentoUncheckedUpdateManyWithoutSolicitanteInput = {
@@ -868,6 +1305,69 @@ export type SolicitacaoOrcamentoUncheckedUpdateManyWithoutSolicitanteInput = {
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   emailEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   whatsappEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validadeCotacao?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  observacoesCotacao?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  importadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  importadoPorId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+}
+
+export type SolicitacaoOrcamentoUpdateWithoutImportadoPorInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  situacaoFiltro?: Prisma.StringFieldUpdateOperationsInput | string
+  emailStatus?: Prisma.EnumEstadoEnvioOrcamentoFieldUpdateOperationsInput | $Enums.EstadoEnvioOrcamento
+  whatsappStatus?: Prisma.EnumEstadoEnvioOrcamentoFieldUpdateOperationsInput | $Enums.EstadoEnvioOrcamento
+  emailErro?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsappErro?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  emailEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  whatsappEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validadeCotacao?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  observacoesCotacao?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  importadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  fornecedor?: Prisma.FornecedorUpdateOneRequiredWithoutSolicitacoesOrcamentoNestedInput
+  solicitante?: Prisma.UsuarioUpdateOneRequiredWithoutSolicitacoesOrcamentoNestedInput
+  itens?: Prisma.ItemSolicitacaoOrcamentoUpdateManyWithoutSolicitacaoNestedInput
+  importacoesTemporarias?: Prisma.ImportacaoOrcamentoUpdateManyWithoutSolicitacaoNestedInput
+}
+
+export type SolicitacaoOrcamentoUncheckedUpdateWithoutImportadoPorInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  fornecedorId?: Prisma.IntFieldUpdateOperationsInput | number
+  solicitanteId?: Prisma.IntFieldUpdateOperationsInput | number
+  situacaoFiltro?: Prisma.StringFieldUpdateOperationsInput | string
+  emailStatus?: Prisma.EnumEstadoEnvioOrcamentoFieldUpdateOperationsInput | $Enums.EstadoEnvioOrcamento
+  whatsappStatus?: Prisma.EnumEstadoEnvioOrcamentoFieldUpdateOperationsInput | $Enums.EstadoEnvioOrcamento
+  emailErro?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsappErro?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  emailEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  whatsappEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validadeCotacao?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  observacoesCotacao?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  importadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  itens?: Prisma.ItemSolicitacaoOrcamentoUncheckedUpdateManyWithoutSolicitacaoNestedInput
+  importacoesTemporarias?: Prisma.ImportacaoOrcamentoUncheckedUpdateManyWithoutSolicitacaoNestedInput
+}
+
+export type SolicitacaoOrcamentoUncheckedUpdateManyWithoutImportadoPorInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  fornecedorId?: Prisma.IntFieldUpdateOperationsInput | number
+  solicitanteId?: Prisma.IntFieldUpdateOperationsInput | number
+  situacaoFiltro?: Prisma.StringFieldUpdateOperationsInput | string
+  emailStatus?: Prisma.EnumEstadoEnvioOrcamentoFieldUpdateOperationsInput | $Enums.EstadoEnvioOrcamento
+  whatsappStatus?: Prisma.EnumEstadoEnvioOrcamentoFieldUpdateOperationsInput | $Enums.EstadoEnvioOrcamento
+  emailErro?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsappErro?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  emailEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  whatsappEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validadeCotacao?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  observacoesCotacao?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  importadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type SolicitacaoOrcamentoCreateManyFornecedorInput = {
@@ -881,6 +1381,11 @@ export type SolicitacaoOrcamentoCreateManyFornecedorInput = {
   criadoEm?: Date | string
   emailEnviadoEm?: Date | string | null
   whatsappEnviadoEm?: Date | string | null
+  validadeCotacao?: Date | string | null
+  prazoEntregaDias?: number | null
+  observacoesCotacao?: string | null
+  importadoEm?: Date | string | null
+  importadoPorId?: number | null
 }
 
 export type SolicitacaoOrcamentoUpdateWithoutFornecedorInput = {
@@ -893,8 +1398,14 @@ export type SolicitacaoOrcamentoUpdateWithoutFornecedorInput = {
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   emailEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   whatsappEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validadeCotacao?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  observacoesCotacao?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  importadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   solicitante?: Prisma.UsuarioUpdateOneRequiredWithoutSolicitacoesOrcamentoNestedInput
+  importadoPor?: Prisma.UsuarioUpdateOneWithoutImportacoesOrcamentoNestedInput
   itens?: Prisma.ItemSolicitacaoOrcamentoUpdateManyWithoutSolicitacaoNestedInput
+  importacoesTemporarias?: Prisma.ImportacaoOrcamentoUpdateManyWithoutSolicitacaoNestedInput
 }
 
 export type SolicitacaoOrcamentoUncheckedUpdateWithoutFornecedorInput = {
@@ -908,7 +1419,13 @@ export type SolicitacaoOrcamentoUncheckedUpdateWithoutFornecedorInput = {
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   emailEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   whatsappEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validadeCotacao?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  observacoesCotacao?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  importadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  importadoPorId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   itens?: Prisma.ItemSolicitacaoOrcamentoUncheckedUpdateManyWithoutSolicitacaoNestedInput
+  importacoesTemporarias?: Prisma.ImportacaoOrcamentoUncheckedUpdateManyWithoutSolicitacaoNestedInput
 }
 
 export type SolicitacaoOrcamentoUncheckedUpdateManyWithoutFornecedorInput = {
@@ -922,6 +1439,11 @@ export type SolicitacaoOrcamentoUncheckedUpdateManyWithoutFornecedorInput = {
   criadoEm?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   emailEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   whatsappEnviadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validadeCotacao?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  prazoEntregaDias?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  observacoesCotacao?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  importadoEm?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  importadoPorId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 
@@ -931,10 +1453,12 @@ export type SolicitacaoOrcamentoUncheckedUpdateManyWithoutFornecedorInput = {
 
 export type SolicitacaoOrcamentoCountOutputType = {
   itens: number
+  importacoesTemporarias: number
 }
 
 export type SolicitacaoOrcamentoCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   itens?: boolean | SolicitacaoOrcamentoCountOutputTypeCountItensArgs
+  importacoesTemporarias?: boolean | SolicitacaoOrcamentoCountOutputTypeCountImportacoesTemporariasArgs
 }
 
 /**
@@ -954,6 +1478,13 @@ export type SolicitacaoOrcamentoCountOutputTypeCountItensArgs<ExtArgs extends ru
   where?: Prisma.ItemSolicitacaoOrcamentoWhereInput
 }
 
+/**
+ * SolicitacaoOrcamentoCountOutputType without action
+ */
+export type SolicitacaoOrcamentoCountOutputTypeCountImportacoesTemporariasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ImportacaoOrcamentoWhereInput
+}
+
 
 export type SolicitacaoOrcamentoSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -967,9 +1498,16 @@ export type SolicitacaoOrcamentoSelect<ExtArgs extends runtime.Types.Extensions.
   criadoEm?: boolean
   emailEnviadoEm?: boolean
   whatsappEnviadoEm?: boolean
+  validadeCotacao?: boolean
+  prazoEntregaDias?: boolean
+  observacoesCotacao?: boolean
+  importadoEm?: boolean
+  importadoPorId?: boolean
   fornecedor?: boolean | Prisma.FornecedorDefaultArgs<ExtArgs>
   solicitante?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
+  importadoPor?: boolean | Prisma.SolicitacaoOrcamento$importadoPorArgs<ExtArgs>
   itens?: boolean | Prisma.SolicitacaoOrcamento$itensArgs<ExtArgs>
+  importacoesTemporarias?: boolean | Prisma.SolicitacaoOrcamento$importacoesTemporariasArgs<ExtArgs>
   _count?: boolean | Prisma.SolicitacaoOrcamentoCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["solicitacaoOrcamento"]>
 
@@ -985,8 +1523,14 @@ export type SolicitacaoOrcamentoSelectCreateManyAndReturn<ExtArgs extends runtim
   criadoEm?: boolean
   emailEnviadoEm?: boolean
   whatsappEnviadoEm?: boolean
+  validadeCotacao?: boolean
+  prazoEntregaDias?: boolean
+  observacoesCotacao?: boolean
+  importadoEm?: boolean
+  importadoPorId?: boolean
   fornecedor?: boolean | Prisma.FornecedorDefaultArgs<ExtArgs>
   solicitante?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
+  importadoPor?: boolean | Prisma.SolicitacaoOrcamento$importadoPorArgs<ExtArgs>
 }, ExtArgs["result"]["solicitacaoOrcamento"]>
 
 export type SolicitacaoOrcamentoSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1001,8 +1545,14 @@ export type SolicitacaoOrcamentoSelectUpdateManyAndReturn<ExtArgs extends runtim
   criadoEm?: boolean
   emailEnviadoEm?: boolean
   whatsappEnviadoEm?: boolean
+  validadeCotacao?: boolean
+  prazoEntregaDias?: boolean
+  observacoesCotacao?: boolean
+  importadoEm?: boolean
+  importadoPorId?: boolean
   fornecedor?: boolean | Prisma.FornecedorDefaultArgs<ExtArgs>
   solicitante?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
+  importadoPor?: boolean | Prisma.SolicitacaoOrcamento$importadoPorArgs<ExtArgs>
 }, ExtArgs["result"]["solicitacaoOrcamento"]>
 
 export type SolicitacaoOrcamentoSelectScalar = {
@@ -1017,22 +1567,31 @@ export type SolicitacaoOrcamentoSelectScalar = {
   criadoEm?: boolean
   emailEnviadoEm?: boolean
   whatsappEnviadoEm?: boolean
+  validadeCotacao?: boolean
+  prazoEntregaDias?: boolean
+  observacoesCotacao?: boolean
+  importadoEm?: boolean
+  importadoPorId?: boolean
 }
 
-export type SolicitacaoOrcamentoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "fornecedorId" | "solicitanteId" | "situacaoFiltro" | "emailStatus" | "whatsappStatus" | "emailErro" | "whatsappErro" | "criadoEm" | "emailEnviadoEm" | "whatsappEnviadoEm", ExtArgs["result"]["solicitacaoOrcamento"]>
+export type SolicitacaoOrcamentoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "fornecedorId" | "solicitanteId" | "situacaoFiltro" | "emailStatus" | "whatsappStatus" | "emailErro" | "whatsappErro" | "criadoEm" | "emailEnviadoEm" | "whatsappEnviadoEm" | "validadeCotacao" | "prazoEntregaDias" | "observacoesCotacao" | "importadoEm" | "importadoPorId", ExtArgs["result"]["solicitacaoOrcamento"]>
 export type SolicitacaoOrcamentoInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   fornecedor?: boolean | Prisma.FornecedorDefaultArgs<ExtArgs>
   solicitante?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
+  importadoPor?: boolean | Prisma.SolicitacaoOrcamento$importadoPorArgs<ExtArgs>
   itens?: boolean | Prisma.SolicitacaoOrcamento$itensArgs<ExtArgs>
+  importacoesTemporarias?: boolean | Prisma.SolicitacaoOrcamento$importacoesTemporariasArgs<ExtArgs>
   _count?: boolean | Prisma.SolicitacaoOrcamentoCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type SolicitacaoOrcamentoIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   fornecedor?: boolean | Prisma.FornecedorDefaultArgs<ExtArgs>
   solicitante?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
+  importadoPor?: boolean | Prisma.SolicitacaoOrcamento$importadoPorArgs<ExtArgs>
 }
 export type SolicitacaoOrcamentoIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   fornecedor?: boolean | Prisma.FornecedorDefaultArgs<ExtArgs>
   solicitante?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
+  importadoPor?: boolean | Prisma.SolicitacaoOrcamento$importadoPorArgs<ExtArgs>
 }
 
 export type $SolicitacaoOrcamentoPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1040,7 +1599,9 @@ export type $SolicitacaoOrcamentoPayload<ExtArgs extends runtime.Types.Extension
   objects: {
     fornecedor: Prisma.$FornecedorPayload<ExtArgs>
     solicitante: Prisma.$UsuarioPayload<ExtArgs>
+    importadoPor: Prisma.$UsuarioPayload<ExtArgs> | null
     itens: Prisma.$ItemSolicitacaoOrcamentoPayload<ExtArgs>[]
+    importacoesTemporarias: Prisma.$ImportacaoOrcamentoPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1054,6 +1615,11 @@ export type $SolicitacaoOrcamentoPayload<ExtArgs extends runtime.Types.Extension
     criadoEm: Date
     emailEnviadoEm: Date | null
     whatsappEnviadoEm: Date | null
+    validadeCotacao: Date | null
+    prazoEntregaDias: number | null
+    observacoesCotacao: string | null
+    importadoEm: Date | null
+    importadoPorId: number | null
   }, ExtArgs["result"]["solicitacaoOrcamento"]>
   composites: {}
 }
@@ -1450,7 +2016,9 @@ export interface Prisma__SolicitacaoOrcamentoClient<T, Null = never, ExtArgs ext
   readonly [Symbol.toStringTag]: "PrismaPromise"
   fornecedor<T extends Prisma.FornecedorDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FornecedorDefaultArgs<ExtArgs>>): Prisma.Prisma__FornecedorClient<runtime.Types.Result.GetResult<Prisma.$FornecedorPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   solicitante<T extends Prisma.UsuarioDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UsuarioDefaultArgs<ExtArgs>>): Prisma.Prisma__UsuarioClient<runtime.Types.Result.GetResult<Prisma.$UsuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  importadoPor<T extends Prisma.SolicitacaoOrcamento$importadoPorArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SolicitacaoOrcamento$importadoPorArgs<ExtArgs>>): Prisma.Prisma__UsuarioClient<runtime.Types.Result.GetResult<Prisma.$UsuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   itens<T extends Prisma.SolicitacaoOrcamento$itensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SolicitacaoOrcamento$itensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ItemSolicitacaoOrcamentoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  importacoesTemporarias<T extends Prisma.SolicitacaoOrcamento$importacoesTemporariasArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SolicitacaoOrcamento$importacoesTemporariasArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ImportacaoOrcamentoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1491,6 +2059,11 @@ export interface SolicitacaoOrcamentoFieldRefs {
   readonly criadoEm: Prisma.FieldRef<"SolicitacaoOrcamento", 'DateTime'>
   readonly emailEnviadoEm: Prisma.FieldRef<"SolicitacaoOrcamento", 'DateTime'>
   readonly whatsappEnviadoEm: Prisma.FieldRef<"SolicitacaoOrcamento", 'DateTime'>
+  readonly validadeCotacao: Prisma.FieldRef<"SolicitacaoOrcamento", 'DateTime'>
+  readonly prazoEntregaDias: Prisma.FieldRef<"SolicitacaoOrcamento", 'Int'>
+  readonly observacoesCotacao: Prisma.FieldRef<"SolicitacaoOrcamento", 'String'>
+  readonly importadoEm: Prisma.FieldRef<"SolicitacaoOrcamento", 'DateTime'>
+  readonly importadoPorId: Prisma.FieldRef<"SolicitacaoOrcamento", 'Int'>
 }
     
 
@@ -1892,6 +2465,25 @@ export type SolicitacaoOrcamentoDeleteManyArgs<ExtArgs extends runtime.Types.Ext
 }
 
 /**
+ * SolicitacaoOrcamento.importadoPor
+ */
+export type SolicitacaoOrcamento$importadoPorArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Usuario
+   */
+  select?: Prisma.UsuarioSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Usuario
+   */
+  omit?: Prisma.UsuarioOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UsuarioInclude<ExtArgs> | null
+  where?: Prisma.UsuarioWhereInput
+}
+
+/**
  * SolicitacaoOrcamento.itens
  */
 export type SolicitacaoOrcamento$itensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1913,6 +2505,30 @@ export type SolicitacaoOrcamento$itensArgs<ExtArgs extends runtime.Types.Extensi
   take?: number
   skip?: number
   distinct?: Prisma.ItemSolicitacaoOrcamentoScalarFieldEnum | Prisma.ItemSolicitacaoOrcamentoScalarFieldEnum[]
+}
+
+/**
+ * SolicitacaoOrcamento.importacoesTemporarias
+ */
+export type SolicitacaoOrcamento$importacoesTemporariasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ImportacaoOrcamento
+   */
+  select?: Prisma.ImportacaoOrcamentoSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ImportacaoOrcamento
+   */
+  omit?: Prisma.ImportacaoOrcamentoOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ImportacaoOrcamentoInclude<ExtArgs> | null
+  where?: Prisma.ImportacaoOrcamentoWhereInput
+  orderBy?: Prisma.ImportacaoOrcamentoOrderByWithRelationInput | Prisma.ImportacaoOrcamentoOrderByWithRelationInput[]
+  cursor?: Prisma.ImportacaoOrcamentoWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ImportacaoOrcamentoScalarFieldEnum | Prisma.ImportacaoOrcamentoScalarFieldEnum[]
 }
 
 /**

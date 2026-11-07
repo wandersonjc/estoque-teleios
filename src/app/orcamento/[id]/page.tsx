@@ -3,7 +3,14 @@ import { notFound } from "next/navigation";
 
 import BotaoAcao from "@/components/BotaoAcao";
 import { IconeExcluir, IconeLapis } from "@/components/icones";
-import { formatarDataHoraBr, formatarQuantidade } from "@/app/produtos/tipos";
+import {
+  formatarDataHoraBr,
+  formatarQuantidade,
+} from "@/app/produtos/tipos";
+import {
+  dataHojeIso,
+  formatarMoedaOpcional,
+} from "@/app/fornecedores/tipos";
 import { EstadoEnvioOrcamento } from "@/generated/prisma/enums";
 import { exigirPermissao } from "@/lib/autorizacao";
 import prisma from "@/lib/prisma";
@@ -24,6 +31,15 @@ function rotuloStatus(status: EstadoEnvioOrcamento): string {
     case "NAO_SOLICITADO":
       return "Não solicitado";
   }
+}
+
+function formatarDataCotacao(data: Date): string {
+  return new Intl.DateTimeFormat("pt-BR", {
+    timeZone: "UTC",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(data);
 }
 
 export default async function DetalheOrcamentoPage({
@@ -48,6 +64,9 @@ export default async function DetalheOrcamentoPage({
       itens: {
         orderBy: { produtoNome: "asc" },
         include: {
+          historicoPreco: {
+            select: { precoInformado: true, unidadeInformada: true },
+          },
           produto: {
             select: {
               embalagens: {
@@ -74,6 +93,10 @@ export default async function DetalheOrcamentoPage({
     alteravel && usuario.permissoes.has("orcamentos.orcamento.editar");
   const podeExcluir =
     alteravel && usuario.permissoes.has("orcamentos.orcamento.excluir");
+  const validadeVencida =
+    solicitacao.validadeCotacao !== null &&
+    solicitacao.validadeCotacao.toISOString().slice(0, 10) <
+      dataHojeIso();
 
   return (
     <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-5">
@@ -149,8 +172,45 @@ export default async function DetalheOrcamentoPage({
           <h2 className="text-xs font-medium uppercase tracking-wide text-zinc-500">
             Importação
           </h2>
-          <p className="mt-1 font-medium text-zinc-900">Não importado</p>
+          <p className="mt-1 font-medium text-zinc-900">
+            {solicitacao.importadoEm
+              ? `Importado em ${formatarDataHoraBr(solicitacao.importadoEm)}`
+              : "Não importado"}
+          </p>
         </div>
+        {solicitacao.validadeCotacao && (
+          <div>
+            <h2 className="text-xs font-medium uppercase tracking-wide text-zinc-500">
+              Validade da cotação
+            </h2>
+            <p
+              className={`mt-1 font-medium ${validadeVencida ? "text-red-700" : "text-zinc-900"}`}
+            >
+              {formatarDataCotacao(solicitacao.validadeCotacao)}
+              {validadeVencida ? " · Vencida" : " · Vigente"}
+            </p>
+          </div>
+        )}
+        {solicitacao.prazoEntregaDias !== null && (
+          <div>
+            <h2 className="text-xs font-medium uppercase tracking-wide text-zinc-500">
+              Prazo de entrega
+            </h2>
+            <p className="mt-1 font-medium text-zinc-900">
+              {solicitacao.prazoEntregaDias} dias
+            </p>
+          </div>
+        )}
+        {solicitacao.observacoesCotacao && (
+          <div className="sm:col-span-2 lg:col-span-4">
+            <h2 className="text-xs font-medium uppercase tracking-wide text-zinc-500">
+              Observações da cotação
+            </h2>
+            <p className="mt-1 whitespace-pre-wrap text-zinc-900">
+              {solicitacao.observacoesCotacao}
+            </p>
+          </div>
+        )}
         <div>
           <h2 className="text-xs font-medium uppercase tracking-wide text-zinc-500">
             E-mail
@@ -182,13 +242,16 @@ export default async function DetalheOrcamentoPage({
           Produtos solicitados ({solicitacao.itens.length})
         </h2>
         <div className="mt-3 overflow-x-auto rounded-xl border border-zinc-200 bg-white">
-          <table className="w-full min-w-[700px] border-collapse text-left text-sm">
+          <table className="w-full min-w-[1100px] border-collapse text-left text-sm">
             <thead className="bg-zinc-50 text-zinc-600">
               <tr className="border-b border-zinc-200">
                 <th scope="col" className="px-3 py-3 font-semibold">Produto</th>
                 <th scope="col" className="px-3 py-3 font-semibold">Quantidade solicitada</th>
                 <th scope="col" className="px-3 py-3 font-semibold">Unidade solicitada</th>
                 <th scope="col" className="px-3 py-3 font-semibold">Quantidade</th>
+                <th scope="col" className="px-3 py-3 font-semibold">Disponibilidade</th>
+                <th scope="col" className="px-3 py-3 font-semibold">Quantidade disponível</th>
+                <th scope="col" className="px-3 py-3 font-semibold">Preço informado</th>
               </tr>
             </thead>
             <tbody>
@@ -254,6 +317,25 @@ export default async function DetalheOrcamentoPage({
                         ))}
                     </div>
                   </td>
+                  <td className="px-3 py-3 text-zinc-700">
+                    {item.disponibilidade === "TOTAL"
+                      ? "Total"
+                      : item.disponibilidade === "PARCIAL"
+                        ? "Parcial"
+                        : item.disponibilidade === "INDISPONIVEL"
+                          ? "Indisponível"
+                          : "—"}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3 text-zinc-700">
+                    {item.quantidadeDisponivel === null
+                      ? "—"
+                      : `${formatarQuantidade(item.quantidadeDisponivel.toNumber())} ${item.unidadeInformada}`}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3 text-zinc-700">
+                    {item.historicoPreco
+                      ? `${formatarMoedaOpcional(item.historicoPreco.precoInformado)} / ${item.historicoPreco.unidadeInformada ?? item.unidadeInformada}`
+                      : "—"}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -268,6 +350,12 @@ export default async function DetalheOrcamentoPage({
         <p className="mt-4 rounded-lg border border-blue-100 bg-blue-50 p-3 text-sm text-blue-900">
           Esta solicitação já foi enviada ou está com envio em andamento e está
           disponível somente para visualização.
+        </p>
+      )}
+      {solicitacao.importadoEm && validadeVencida && (
+        <p className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+          Esta cotação está vencida e seus preços não podem ser usados para
+          montar novos pedidos de compra.
         </p>
       )}
     </main>

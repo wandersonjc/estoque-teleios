@@ -214,7 +214,7 @@ async function criarPlanilha(
   planilha.addRow(["Solicitação de orçamento", solicitacao.id]);
   planilha.addRow(["Fornecedor", solicitacao.fornecedor.nome]);
   planilha.addRow([
-    "Preencha preço, disponibilidade (total, parcial com quantidade ou indisponível), prazo, validade e observações.",
+    "Preencha preço, prazo, validade e observações. Em quantidade disponível, deixe vazio se conseguir atender a quantidade solicitada, informe a quantidade se o atendimento for parcial ou 0 se estiver indisponível.",
   ]);
   planilha.addRow([]);
   planilha.getCell("D1").value = "Validade da cotação (preencher)";
@@ -244,10 +244,10 @@ async function criarPlanilha(
     "ID produto",
     "Código ERP",
     "Produto",
-    "Quantidade solicitada",
     "Unidade solicitada",
+    "Quantidade solicitada",
+    "Quantidade disponível (preencher se menor que a solicitada; 0 se indisponível)",
     "Preço por unidade solicitada (preencher)",
-    "Disponibilidade (total, parcial com quantidade ou indisponível)",
   ]);
 
   for (const item of solicitacao.itens) {
@@ -257,14 +257,15 @@ async function criarPlanilha(
       item.produtoId,
       item.codigoERP ?? "",
       item.produtoNome,
-      Number(item.quantidade),
       item.unidade,
+      Number(item.quantidade),
       "",
       "",
     ]);
   }
 
   const cabecalho = planilha.getRow(5);
+  cabecalho.height = 36;
   cabecalho.font = { bold: true, color: { argb: "FFFFFFFF" } };
   cabecalho.fill = {
     type: "pattern",
@@ -273,7 +274,7 @@ async function criarPlanilha(
   };
   cabecalho.alignment = { vertical: "middle", wrapText: true };
   planilha.views = [{ state: "frozen", ySplit: 5 }];
-  const larguras = [38, 38, 12, 38, 38, 20, 20, 34, 54];
+  const larguras = [38, 38, 12, 24, 38, 20, 26, 46, 34];
   larguras.forEach((largura, indice) => {
     planilha.getColumn(indice + 1).width = largura;
   });

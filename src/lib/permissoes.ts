@@ -396,6 +396,14 @@ export const CATALOGO_DE_PERMISSOES: PermissaoCatalogo[] = [
     ordem: 1090,
   },
   {
+    codigo: "orcamentos.orcamento.importar",
+    modulo: "Orçamento",
+    funcionalidade: "Resposta do fornecedor",
+    operacao: "Importar",
+    descricao: "Importar a planilha respondida pelo fornecedor e registrar a cotação",
+    ordem: 1100,
+  },
+  {
     codigo: "pedidos.pedido.receber",
     modulo: "Pedidos de compra",
     funcionalidade: "Pedido",

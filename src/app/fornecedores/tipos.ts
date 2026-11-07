@@ -141,6 +141,7 @@ export const ROTULO_ORIGEM_PRECO: Record<OrigemPrecoTela, string> = {
 };
 
 export type PrecoAtual = {
+  id: number;
   produtoId: number;
   fornecedorId: number;
   precoUnitario: string;
@@ -286,6 +287,7 @@ export function precosAtuais(
     const atual = mapa.get(chave);
     if (atual && Number(atual.precoUnitario) <= Number(precoUnitario)) continue;
     mapa.set(chave, {
+      id: item.id,
       produtoId: item.produtoId,
       fornecedorId: item.fornecedorId,
       precoUnitario,

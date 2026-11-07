@@ -64,6 +64,15 @@ export const EstadoEnvioOrcamento = {
 export type EstadoEnvioOrcamento = (typeof EstadoEnvioOrcamento)[keyof typeof EstadoEnvioOrcamento]
 
 
+export const DisponibilidadeOrcamento = {
+  TOTAL: 'TOTAL',
+  PARCIAL: 'PARCIAL',
+  INDISPONIVEL: 'INDISPONIVEL'
+} as const
+
+export type DisponibilidadeOrcamento = (typeof DisponibilidadeOrcamento)[keyof typeof DisponibilidadeOrcamento]
+
+
 export const StatusTransferencia = {
   PENDENTE: 'PENDENTE',
   EM_TRANSITO: 'EM_TRANSITO',
