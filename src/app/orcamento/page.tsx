@@ -33,6 +33,8 @@ type ColunaOrdenacao = (typeof COLUNAS_ORDENACAO)[number];
 type Direcao = "asc" | "desc";
 type ParametrosBusca = {
   busca: string;
+  dataInicio: string;
+  dataFim: string;
   statusEmail: string;
   statusWhatsApp: string;
   tamanho: number;
@@ -74,12 +76,31 @@ function ehStatusEnvio(valor: string): valor is EstadoEnvioOrcamento {
   return STATUS_ENVIO.some((status) => status === valor);
 }
 
+function ehDataValida(valor: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(valor)) return false;
+  const data = new Date(`${valor}T00:00:00.000Z`);
+  return !Number.isNaN(data.getTime()) && data.toISOString().slice(0, 10) === valor;
+}
+
+function proximoDia(valor: string): string {
+  const data = new Date(`${valor}T00:00:00.000Z`);
+  data.setUTCDate(data.getUTCDate() + 1);
+  return data.toISOString().slice(0, 10);
+}
+
 export default async function PaginaOrcamento({
   searchParams,
 }: PageProps<"/orcamento">) {
   const usuario = await exigirPermissao("orcamentos.orcamento.consultar");
   const parametrosUrl = await searchParams;
   const busca = parametro(parametrosUrl.busca).trim();
+  const dataInicioInformada = parametro(parametrosUrl.dataInicio);
+  const dataFimInformada = parametro(parametrosUrl.dataFim);
+  const dataInicio = ehDataValida(dataInicioInformada)
+    ? dataInicioInformada
+    : "";
+  const dataFim = ehDataValida(dataFimInformada) ? dataFimInformada : "";
+  const periodoInvalido = Boolean(dataInicio && dataFim && dataInicio > dataFim);
   const statusEmailInformado = parametro(parametrosUrl.statusEmail);
   const statusWhatsAppInformado = parametro(parametrosUrl.statusWhatsApp);
   const statusEmail = ehStatusEnvio(statusEmailInformado)
@@ -111,6 +132,16 @@ export default async function PaginaOrcamento({
   const where: SolicitacaoOrcamentoWhereInput = {};
   if (statusEmail) where.emailStatus = statusEmail;
   if (statusWhatsApp) where.whatsappStatus = statusWhatsApp;
+  if (!periodoInvalido && (dataInicio || dataFim)) {
+    where.criadoEm = {
+      ...(dataInicio
+        ? { gte: new Date(`${dataInicio}T00:00:00-03:00`) }
+        : {}),
+      ...(dataFim
+        ? { lt: new Date(`${proximoDia(dataFim)}T00:00:00-03:00`) }
+        : {}),
+    };
+  }
   if (busca) {
     const buscaId = busca.replace(/^ORC-/i, "");
     const buscaUuidCompleto =
@@ -159,6 +190,8 @@ export default async function PaginaOrcamento({
 
   const filtros: ParametrosBusca = {
     busca,
+    dataInicio,
+    dataFim,
     statusEmail,
     statusWhatsApp,
     tamanho,
@@ -171,6 +204,8 @@ export default async function PaginaOrcamento({
   ): string {
     const query = new URLSearchParams();
     if (filtros.busca) query.set("busca", filtros.busca);
+    if (filtros.dataInicio) query.set("dataInicio", filtros.dataInicio);
+    if (filtros.dataFim) query.set("dataFim", filtros.dataFim);
     if (filtros.statusEmail) query.set("statusEmail", filtros.statusEmail);
     if (filtros.statusWhatsApp) {
       query.set("statusWhatsApp", filtros.statusWhatsApp);
@@ -251,6 +286,8 @@ export default async function PaginaOrcamento({
 
       <BuscaFiltrosOrcamentos
         busca={busca}
+        dataInicio={dataInicio}
+        dataFim={dataFim}
         statusEmail={statusEmail}
         statusWhatsApp={statusWhatsApp}
         tamanho={tamanho}
@@ -270,6 +307,11 @@ export default async function PaginaOrcamento({
                 ? "Nenhuma solicitação encontrada."
                 : `${total} solicitação(ões) — página ${pagina} de ${totalPaginas}`}
             </p>
+            {periodoInvalido && (
+              <p role="alert" className="mt-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+                A data inicial não pode ser posterior à data final.
+              </p>
+            )}
             {parametro(parametrosUrl.erro) === "solicitacao-ja-enviada" && (
               <p role="alert" className="mt-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
                 A solicitação não pode ser alterada ou excluída porque o envio foi iniciado ou confirmado.

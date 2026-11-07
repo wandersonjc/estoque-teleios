@@ -15,6 +15,8 @@ import type { EstadoEnvioOrcamento } from "./tipos";
 type Props = {
   resumo: ReactNode;
   busca: string;
+  dataInicio: string;
+  dataFim: string;
   statusEmail: EstadoEnvioOrcamento | "";
   statusWhatsApp: EstadoEnvioOrcamento | "";
   tamanho: number;
@@ -29,6 +31,8 @@ const TAMANHOS_PAGINA = [10, 25, 50, 75, 100] as const;
 export default function BuscaFiltrosOrcamentos({
   resumo,
   busca,
+  dataInicio,
+  dataFim,
   statusEmail,
   statusWhatsApp,
   tamanho,
@@ -138,6 +142,36 @@ export default function BuscaFiltrosOrcamentos({
             </div>
             <div className="flex flex-col gap-1">
               <label
+                htmlFor="filtro-data-inicio-orcamento"
+                className="text-sm font-medium text-zinc-800"
+              >
+                Data inicial
+              </label>
+              <input
+                id="filtro-data-inicio-orcamento"
+                name="dataInicio"
+                type="date"
+                defaultValue={dataInicio}
+                className="h-11 w-full rounded-lg border border-zinc-300 bg-white px-3 text-base"
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label
+                htmlFor="filtro-data-fim-orcamento"
+                className="text-sm font-medium text-zinc-800"
+              >
+                Data final
+              </label>
+              <input
+                id="filtro-data-fim-orcamento"
+                name="dataFim"
+                type="date"
+                defaultValue={dataFim}
+                className="h-11 w-full rounded-lg border border-zinc-300 bg-white px-3 text-base"
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label
                 htmlFor="filtro-email-orcamento"
                 className="text-sm font-medium text-zinc-800"
               >
@@ -184,7 +218,7 @@ export default function BuscaFiltrosOrcamentos({
                 ))}
               </select>
             </div>
-            <div className="flex items-end gap-3 sm:col-span-2 lg:col-span-4">
+            <div className="flex items-end gap-3 sm:col-span-2 lg:col-span-2">
               <label className="flex h-11 items-center gap-2 text-sm text-zinc-800">
                 Exibir
                 <select
