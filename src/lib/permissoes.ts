@@ -367,8 +367,8 @@ export const CATALOGO_DE_PERMISSOES: PermissaoCatalogo[] = [
     codigo: "orcamentos.orcamento.consultar",
     modulo: "Orçamento",
     funcionalidade: "Solicitação de orçamento",
-    operacao: "Consultar",
-    descricao: "Consultar produtos e iniciar solicitações de orçamento para fornecedores",
+    operacao: "Visualizar",
+    descricao: "Visualizar a lista e os detalhes das solicitações de orçamento",
     ordem: 1060,
   },
   {
@@ -378,6 +378,22 @@ export const CATALOGO_DE_PERMISSOES: PermissaoCatalogo[] = [
     operacao: "Enviar",
     descricao: "Enviar planilhas de cotação por e-mail e WhatsApp aos fornecedores vinculados",
     ordem: 1070,
+  },
+  {
+    codigo: "orcamentos.orcamento.editar",
+    modulo: "Orçamento",
+    funcionalidade: "Solicitação de orçamento",
+    operacao: "Editar",
+    descricao: "Editar itens, quantidades e unidades de solicitações ainda não enviadas",
+    ordem: 1080,
+  },
+  {
+    codigo: "orcamentos.orcamento.excluir",
+    modulo: "Orçamento",
+    funcionalidade: "Solicitação de orçamento",
+    operacao: "Excluir",
+    descricao: "Excluir solicitações de orçamento ainda não enviadas",
+    ordem: 1090,
   },
   {
     codigo: "pedidos.pedido.receber",

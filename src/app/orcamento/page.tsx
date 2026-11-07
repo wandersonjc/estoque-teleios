@@ -225,6 +225,8 @@ export default async function PaginaOrcamento({
   }
 
   const podeEnviar = usuario.permissoes.has("orcamentos.orcamento.enviar");
+  const podeEditar = usuario.permissoes.has("orcamentos.orcamento.editar");
+  const podeExcluir = usuario.permissoes.has("orcamentos.orcamento.excluir");
 
   return (
     <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-5">
@@ -316,7 +318,7 @@ export default async function PaginaOrcamento({
             <tbody>
               {solicitacoes.map((solicitacao) => {
                 const editavel =
-                  podeEnviar &&
+                  (podeEditar || podeExcluir) &&
                   solicitacaoEditavel(
                     solicitacao.emailStatus,
                     solicitacao.whatsappStatus
@@ -357,7 +359,7 @@ export default async function PaginaOrcamento({
                   </td>
                   <td className="px-3 py-3">
                     <div className="flex items-center gap-2">
-                      {editavel && (
+                      {editavel && podeEditar && (
                         <>
                           <LinkAcaoComCarregamento
                             href={`/orcamento/${solicitacao.id}/editar`}
@@ -368,22 +370,24 @@ export default async function PaginaOrcamento({
                           >
                             <IconeLapis className="h-4 w-4" />
                           </LinkAcaoComCarregamento>
-                          <form action={excluirSolicitacaoOrcamento}>
-                            <input
-                              type="hidden"
-                              name="id"
-                              value={solicitacao.id}
-                            />
-                            <BotaoAcao
-                              confirmacao={`Excluir o orçamento para ${solicitacao.fornecedor.nome}? Esta ação não pode ser desfeita.`}
-                              ariaLabel={`Excluir orçamento para ${solicitacao.fornecedor.nome}`}
-                              title="Excluir orçamento"
-                              className="flex h-10 w-10 items-center justify-center rounded-lg border border-red-200 text-red-700 hover:bg-red-50"
-                            >
-                              <IconeExcluir className="h-4 w-4" />
-                            </BotaoAcao>
-                          </form>
                         </>
+                      )}
+                      {editavel && podeExcluir && (
+                        <form action={excluirSolicitacaoOrcamento}>
+                          <input
+                            type="hidden"
+                            name="id"
+                            value={solicitacao.id}
+                          />
+                          <BotaoAcao
+                            confirmacao={`Excluir o orçamento para ${solicitacao.fornecedor.nome}? Esta ação não pode ser desfeita.`}
+                            ariaLabel={`Excluir orçamento para ${solicitacao.fornecedor.nome}`}
+                            title="Excluir orçamento"
+                            className="flex h-10 w-10 items-center justify-center rounded-lg border border-red-200 text-red-700 hover:bg-red-50"
+                          >
+                            <IconeExcluir className="h-4 w-4" />
+                          </BotaoAcao>
+                        </form>
                       )}
                       <LinkAcaoComCarregamento
                         href={`/orcamento/${solicitacao.id}`}

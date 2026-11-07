@@ -708,7 +708,7 @@ export async function enviarOrcamentos(
 export async function editarSolicitacaoOrcamento(
   entradaBruta: unknown
 ): Promise<{ erro?: string }> {
-  const atual = await verificarPermissao("orcamentos.orcamento.enviar");
+  const atual = await verificarPermissao("orcamentos.orcamento.editar");
   if (!atual) return { erro: MENSAGEM_SEM_PERMISSAO };
 
   const entrada = lerEntradaEdicao(entradaBruta);
@@ -918,7 +918,7 @@ export async function editarSolicitacaoOrcamento(
 export async function excluirSolicitacaoOrcamento(
   formData: FormData
 ): Promise<void> {
-  const atual = await verificarPermissao("orcamentos.orcamento.enviar");
+  const atual = await verificarPermissao("orcamentos.orcamento.excluir");
   if (!atual) redirect("/acesso-negado");
 
   const id = formData.get("id");

@@ -132,8 +132,13 @@ no frontend.
 O cadastro do fornecedor precisa conter e-mail e/ou WhatsApp válidos para cada
 canal escolhido. A solicitação e as quantidades convertidas para a unidade-base
 ficam registradas mesmo quando um canal falha; os resultados são exibidos por
-fornecedor. Conceda as permissões `orcamentos.orcamento.consultar` e
-`orcamentos.orcamento.enviar` em **Permissões** aos usuários que usarão o módulo.
+fornecedor. Conceda as permissões `orcamentos.orcamento.consultar` (visualizar)
+e `orcamentos.orcamento.enviar` aos usuários que usarão essas funções. Para
+permitir edição e exclusão de solicitações ainda não enviadas, conceda também
+`orcamentos.orcamento.editar` e `orcamentos.orcamento.excluir`, respectivamente.
+Sincronize as permissões novas com `npm run db:sync-permissoes` e depois
+conceda-as individualmente na tela **Permissões**; elas não são habilitadas
+automaticamente.
 
 A planilha enviada ao fornecedor mostra o preço por unidade solicitada (isto é,
 por unidade ou embalagem escolhida na solicitação, não por unidade-base) e

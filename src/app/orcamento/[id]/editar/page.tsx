@@ -32,7 +32,7 @@ export default async function EditarOrcamentoPage({
   params: Promise<{ id: string }>;
 }) {
   const usuario = await exigirPermissao("orcamentos.orcamento.consultar");
-  if (!usuario.permissoes.has("orcamentos.orcamento.enviar")) {
+  if (!usuario.permissoes.has("orcamentos.orcamento.editar")) {
     redirect("/acesso-negado");
   }
   const { id } = await params;
