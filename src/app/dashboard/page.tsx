@@ -229,7 +229,7 @@ export default async function DashboardPage() {
         <p className="text-sm font-medium text-blue-100">Visão geral</p>
         <h1 className="mt-1 text-2xl font-semibold sm:text-3xl">Dashboard</h1>
         <p className="mt-2 text-sm text-blue-100 sm:text-base">
-          Olá, {usuario.nome}. Acompanhe os principais dados do sistema.
+          Olá, {usuario.nome}. Acompanhe os principais indicadores do sistema.
         </p>
       </header>
 
