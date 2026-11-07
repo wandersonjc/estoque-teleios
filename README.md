@@ -101,6 +101,17 @@ Não compartilhe nem publique a chave da API.
 
 ### Solicitações de orçamento
 
+No menu **Orçamento**, a rota `/orcamento` mostra o histórico de solicitações
+com busca, filtros de status por canal, ordenação e paginação. Use **Novo
+orçamento** para abrir `/orcamento/novo` e enviar uma nova cotação. A lista
+informa o usuário que criou, a data, o status de e-mail e WhatsApp e se houve
+importação. Como essa funcionalidade ainda não foi implementada, as solicitações
+aparecem como **Não importado**. Cada linha corresponde a um fornecedor, mesmo
+quando a cotação contém muitos produtos. Solicitações que não foram enviadas
+nem estão com envio pendente podem ser editadas (itens, quantidades e unidades)
+ou excluídas por usuários com permissão de envio; solicitações enviadas ficam
+somente para visualização.
+
 O módulo Orçamento envia uma planilha `.xlsx` individual a cada fornecedor ativo
 vinculado aos produtos selecionados. Para e-mail, reutiliza as configurações
 Brevo acima. Para WhatsApp pela API externa da Z-API, configure a URL de

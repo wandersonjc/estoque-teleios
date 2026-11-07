@@ -3,6 +3,7 @@
 import ExcelJS from "exceljs";
 import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 import { Prisma } from "@/generated/prisma/client";
 import {
@@ -19,6 +20,7 @@ import type {
   RespostaEnvioOrcamento,
   ResultadoEnvioOrcamento,
 } from "./tipos";
+import { solicitacaoEditavel } from "./tipos";
 
 type DadosFornecedor = {
   id: number;
@@ -52,6 +54,51 @@ type EntradaEnvio = {
   enviarWhatsApp: boolean;
   situacaoFiltro: string;
 };
+
+type ItemEdicaoOrcamento = {
+  produtoId: number;
+  quantidade: string;
+  unidade: string;
+};
+
+function lerEntradaEdicao(
+  valor: unknown
+): { id: string; itens: ItemEdicaoOrcamento[] } | null {
+  if (typeof valor !== "object" || valor === null || Array.isArray(valor)) {
+    return null;
+  }
+  const entrada = valor as {
+    id?: unknown;
+    itens?: unknown;
+  };
+  if (
+    typeof entrada.id !== "string" ||
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      entrada.id
+    ) ||
+    !Array.isArray(entrada.itens) ||
+    entrada.itens.length === 0 ||
+    entrada.itens.length > 500 ||
+    entrada.itens.some(
+      (item) =>
+        typeof item !== "object" ||
+        item === null ||
+        !Number.isSafeInteger(item.produtoId) ||
+        item.produtoId <= 0 ||
+        typeof item.quantidade !== "string" ||
+        item.quantidade.length > 30 ||
+        typeof item.unidade !== "string" ||
+        item.unidade.length > 50
+    )
+  ) {
+    return null;
+  }
+  const itens = entrada.itens as ItemEdicaoOrcamento[];
+  if (new Set(itens.map((item) => item.produtoId)).size !== itens.length) {
+    return null;
+  }
+  return { id: entrada.id, itens };
+}
 
 function erroDeValidacao(mensagem: string): RespostaEnvioOrcamento {
   return { erro: mensagem };
@@ -656,4 +703,279 @@ export async function enviarOrcamentos(
 
   revalidatePath("/orcamento");
   return { resultados };
+}
+
+export async function editarSolicitacaoOrcamento(
+  entradaBruta: unknown
+): Promise<{ erro?: string }> {
+  const atual = await verificarPermissao("orcamentos.orcamento.enviar");
+  if (!atual) return { erro: MENSAGEM_SEM_PERMISSAO };
+
+  const entrada = lerEntradaEdicao(entradaBruta);
+  if (!entrada) {
+    return { erro: "Os dados da solicitação são inválidos." };
+  }
+
+  const solicitacao = await prisma.solicitacaoOrcamento.findUnique({
+    where: { id: entrada.id },
+    include: {
+      itens: true,
+      fornecedor: { select: { nome: true } },
+    },
+  });
+  if (!solicitacao) return { erro: "A solicitação não foi encontrada." };
+  if (
+    !solicitacaoEditavel(
+      solicitacao.emailStatus,
+      solicitacao.whatsappStatus
+    )
+  ) {
+    return {
+      erro: "Esta solicitação não pode ser alterada porque o envio foi iniciado ou confirmado.",
+    };
+  }
+
+  const existentesPorProduto = new Map(
+    solicitacao.itens.map((item) => [item.produtoId, item])
+  );
+  const idsParaValidar = entrada.itens
+    .filter((item) => item.unidade !== "SNAPSHOT")
+    .map((item) => item.produtoId);
+  const produtos =
+    idsParaValidar.length === 0
+      ? []
+      : await prisma.produto.findMany({
+          where: {
+            id: { in: idsParaValidar },
+            ativo: true,
+            configuracaoCompra: { isNot: null },
+            fornecedores: {
+              some: {
+                fornecedorId: solicitacao.fornecedorId,
+                ativo: true,
+                fornecedor: { is: { ativo: true } },
+              },
+            },
+          },
+          select: {
+            id: true,
+            nome: true,
+            codigoErp: true,
+            unidade: true,
+            embalagens: {
+              select: { id: true, unidade: true, quantidadeBase: true },
+            },
+            fornecedores: {
+              where: {
+                fornecedorId: solicitacao.fornecedorId,
+                ativo: true,
+                fornecedor: { is: { ativo: true } },
+              },
+              select: { codigoNoFornecedor: true },
+            },
+          },
+        });
+  const produtosPorId = new Map(produtos.map((produto) => [produto.id, produto]));
+  if (produtos.length !== new Set(idsParaValidar).size) {
+    return {
+      erro: "Um ou mais produtos não estão mais ativos ou vinculados a este fornecedor.",
+    };
+  }
+
+  const itensAtualizados: {
+    id: string;
+    produtoId: number;
+    produtoNome: string;
+    codigoErp: string | null;
+    codigoFornecedor: string | null;
+    quantidadeInformada: Prisma.Decimal;
+    unidadeInformada: string;
+    fatorConversao: Prisma.Decimal;
+    quantidadeBase: Prisma.Decimal;
+    unidadeBase: string;
+  }[] = [];
+
+  for (const item of entrada.itens) {
+    const existente = existentesPorProduto.get(item.produtoId);
+    const produto = produtosPorId.get(item.produtoId);
+    if (item.unidade === "SNAPSHOT" && !existente) {
+      return { erro: "A unidade original só pode ser mantida nos itens existentes." };
+    }
+    if (item.unidade !== "SNAPSHOT" && !produto) {
+      return { erro: "Um ou mais produtos não estão disponíveis para este fornecedor." };
+    }
+
+    let unidadeInformada: string;
+    let unidadeBase: string;
+    let fator: Prisma.Decimal;
+    let produtoNome: string;
+    let codigoErp: string | null;
+    let codigoFornecedor: string | null;
+    if (item.unidade === "SNAPSHOT" && existente) {
+      unidadeInformada = existente.unidadeInformada;
+      unidadeBase = existente.unidadeBase;
+      fator = existente.fatorConversao;
+      produtoNome = existente.produtoNome;
+      codigoErp = existente.codigoErp;
+      codigoFornecedor = existente.codigoFornecedor;
+    } else if (produto) {
+      unidadeBase = produto.unidade;
+      produtoNome = produto.nome;
+      codigoErp = produto.codigoErp;
+      codigoFornecedor =
+        produto.fornecedores[0]?.codigoNoFornecedor ?? null;
+      if (item.unidade === "BASE") {
+        unidadeInformada = produto.unidade;
+        fator = new Prisma.Decimal(1);
+      } else {
+        const match = /^EMB:(\d+)$/.exec(item.unidade);
+        const embalagem = match
+          ? produto.embalagens.find(
+              (opcao) => opcao.id === Number(match[1])
+            )
+          : undefined;
+        if (!embalagem || embalagem.quantidadeBase.lte(0)) {
+          return {
+            erro: `A embalagem escolhida para "${produto.nome}" não é válida.`,
+          };
+        }
+        unidadeInformada = embalagem.unidade;
+        fator = embalagem.quantidadeBase;
+      }
+    } else {
+      return { erro: "Não foi possível validar um dos itens da solicitação." };
+    }
+
+    const quantidadeBase = converterQuantidadeBase(item.quantidade, fator);
+    const quantidadeInformada = normalizarDecimal(item.quantidade);
+    if (!quantidadeBase || quantidadeInformada === null) {
+      return {
+        erro: `Informe uma quantidade válida para "${produtoNome}" e confira a conversão para a unidade-base.`,
+      };
+    }
+    itensAtualizados.push({
+      id: existente?.id ?? randomUUID(),
+      produtoId: item.produtoId,
+      produtoNome,
+      codigoErp,
+      codigoFornecedor,
+      quantidadeInformada: new Prisma.Decimal(quantidadeInformada),
+      unidadeInformada,
+      fatorConversao: fator,
+      quantidadeBase,
+      unidadeBase,
+    });
+  }
+
+  const atualizada = await prisma.$transaction(async (tx) => {
+    const bloqueio = await tx.solicitacaoOrcamento.updateMany({
+      where: {
+        id: entrada.id,
+        emailStatus: { notIn: ["ENVIADO", "PENDENTE"] },
+        whatsappStatus: { notIn: ["ENVIADO", "PENDENTE"] },
+      },
+      data: { situacaoFiltro: solicitacao.situacaoFiltro },
+    });
+    if (bloqueio.count !== 1) return false;
+
+    await tx.itemSolicitacaoOrcamento.deleteMany({
+      where: { solicitacaoId: entrada.id },
+    });
+    await tx.itemSolicitacaoOrcamento.createMany({
+      data: itensAtualizados.map((item) => ({
+        ...item,
+        solicitacaoId: entrada.id,
+      })),
+    });
+    await registrarLog(
+      {
+        modulo: "ORCAMENTOS",
+        acao: "ALTERAR",
+        descricao: `Solicitação de orçamento alterada para ${solicitacao.fornecedor.nome}`,
+        dados: {
+          solicitacaoId: entrada.id,
+          fornecedorId: solicitacao.fornecedorId,
+          quantidadeItens: itensAtualizados.length,
+        },
+        usuarioId: atual.id,
+      },
+      tx
+    );
+    return true;
+  });
+
+  if (!atualizada) {
+    return {
+      erro: "Esta solicitação não pode mais ser alterada porque o envio foi iniciado ou confirmado.",
+    };
+  }
+  revalidatePath("/orcamento");
+  revalidatePath(`/orcamento/${entrada.id}`);
+  revalidatePath(`/orcamento/${entrada.id}/editar`);
+  return {};
+}
+
+export async function excluirSolicitacaoOrcamento(
+  formData: FormData
+): Promise<void> {
+  const atual = await verificarPermissao("orcamentos.orcamento.enviar");
+  if (!atual) redirect("/acesso-negado");
+
+  const id = formData.get("id");
+  if (
+    typeof id !== "string" ||
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      id
+    )
+  ) {
+    redirect("/orcamento?erro=solicitacao-invalida");
+  }
+
+  const solicitacao = await prisma.solicitacaoOrcamento.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      fornecedor: { select: { nome: true } },
+      emailStatus: true,
+      whatsappStatus: true,
+      situacaoFiltro: true,
+    },
+  });
+  if (!solicitacao) redirect("/orcamento?erro=solicitacao-nao-encontrada");
+  if (
+    !solicitacaoEditavel(
+      solicitacao.emailStatus,
+      solicitacao.whatsappStatus
+    )
+  ) {
+    redirect("/orcamento?erro=solicitacao-ja-enviada");
+  }
+
+  const excluida = await prisma.$transaction(async (tx) => {
+    const bloqueio = await tx.solicitacaoOrcamento.updateMany({
+      where: {
+        id,
+        emailStatus: { notIn: ["ENVIADO", "PENDENTE"] },
+        whatsappStatus: { notIn: ["ENVIADO", "PENDENTE"] },
+      },
+      data: { situacaoFiltro: solicitacao.situacaoFiltro },
+    });
+    if (bloqueio.count !== 1) return false;
+    await tx.solicitacaoOrcamento.delete({ where: { id } });
+    await registrarLog(
+      {
+        modulo: "ORCAMENTOS",
+        acao: "EXCLUIR",
+        descricao: `Solicitação de orçamento para ${solicitacao.fornecedor.nome} excluída`,
+        dados: { solicitacaoId: id },
+        usuarioId: atual.id,
+      },
+      tx
+    );
+    return true;
+  });
+  if (!excluida) redirect("/orcamento?erro=solicitacao-ja-enviada");
+
+  revalidatePath("/orcamento");
+  redirect("/orcamento");
 }

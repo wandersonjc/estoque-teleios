@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 
 import {
   formatarQuantidade,
@@ -72,6 +72,7 @@ function valorQuantidade(texto: string): number {
 }
 
 export default function FormularioOrcamento({ linhas, podeEnviar }: Props) {
+  const dialogoResultado = useRef<HTMLDialogElement>(null);
   const [busca, setBusca] = useState("");
   const [filtroSituacao, setFiltroSituacao] =
     useState<FiltroSituacao>("CRITICOS_COMPRAR");
@@ -85,6 +86,12 @@ export default function FormularioOrcamento({ linhas, podeEnviar }: Props) {
     ResultadoEnvioOrcamento[] | null
   >(null);
   const [ocupado, iniciarTransicao] = useTransition();
+
+  useEffect(() => {
+    if (resultados !== null && !dialogoResultado.current?.open) {
+      dialogoResultado.current?.showModal();
+    }
+  }, [resultados]);
 
   const linhasVisiveis = useMemo(() => {
     const termo = busca.trim().toLocaleLowerCase("pt-BR");
@@ -428,39 +435,70 @@ export default function FormularioOrcamento({ linhas, podeEnviar }: Props) {
         </p>
       )}
 
-      {resultados && (
-        <section className="rounded-xl border border-zinc-200 bg-white p-4">
-          <h2 className="text-base font-semibold text-zinc-900">
-            Resultado do envio
-          </h2>
-          <p className="mt-1 text-sm text-zinc-600">
-            A solicitação e os itens foram armazenados para uma futura importação
-            da resposta do fornecedor.
-          </p>
-          <ul className="mt-3 divide-y divide-zinc-100">
-            {resultados.map((resultado) => (
-              <li key={resultado.id} className="py-3 first:pt-0 last:pb-0">
-                <p className="font-medium text-zinc-900">
-                  {resultado.fornecedor} · {resultado.quantidadeItens} produto(s)
+      <dialog
+        ref={dialogoResultado}
+        aria-labelledby="titulo-resultado-orcamento"
+        onClose={() => setResultados(null)}
+        className="m-auto max-h-[min(85dvh,48rem)] w-[min(42rem,calc(100%-2rem))] overflow-hidden rounded-xl border border-zinc-200 bg-white p-0 text-zinc-900 backdrop:bg-zinc-950/50"
+      >
+        {resultados && (
+          <div className="flex max-h-[min(85dvh,48rem)] flex-col">
+            <header className="flex items-start justify-between gap-4 border-b border-zinc-200 p-4">
+              <div>
+                <h2
+                  id="titulo-resultado-orcamento"
+                  className="text-base font-semibold"
+                >
+                  Resultado do envio
+                </h2>
+                <p className="mt-1 text-sm text-zinc-600">
+                  A solicitação e os itens foram armazenados para uma futura
+                  importação da resposta do fornecedor.
                 </p>
-                <p className="mt-1 break-all text-xs text-zinc-500">
-                  Solicitação: {resultado.id}
-                </p>
-                <div className="mt-2 grid grid-cols-1 gap-1 text-sm sm:grid-cols-2">
-                  <p className={classeEstadoEnvio(resultado.email.status)}>
-                    E-mail: {ROTULO_ESTADO_ENVIO[resultado.email.status]}
-                    {resultado.email.detalhe && ` — ${resultado.email.detalhe}`}
+              </div>
+              <button
+                type="button"
+                aria-label="Fechar resultado do envio"
+                onClick={() => dialogoResultado.current?.close()}
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-zinc-600 hover:bg-zinc-100"
+              >
+                <span aria-hidden="true">×</span>
+              </button>
+            </header>
+            <ul className="overflow-y-auto divide-y divide-zinc-100 px-4">
+              {resultados.map((resultado) => (
+                <li key={resultado.id} className="py-3">
+                  <p className="font-medium text-zinc-900">
+                    {resultado.fornecedor} · {resultado.quantidadeItens} produto(s)
                   </p>
-                  <p className={classeEstadoEnvio(resultado.whatsapp.status)}>
-                    WhatsApp: {ROTULO_ESTADO_ENVIO[resultado.whatsapp.status]}
-                    {resultado.whatsapp.detalhe && ` — ${resultado.whatsapp.detalhe}`}
+                  <p className="mt-1 break-all text-xs text-zinc-500">
+                    Solicitação: {resultado.id}
                   </p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
+                  <div className="mt-2 grid grid-cols-1 gap-1 text-sm sm:grid-cols-2">
+                    <p className={classeEstadoEnvio(resultado.email.status)}>
+                      E-mail: {ROTULO_ESTADO_ENVIO[resultado.email.status]}
+                      {resultado.email.detalhe && ` — ${resultado.email.detalhe}`}
+                    </p>
+                    <p className={classeEstadoEnvio(resultado.whatsapp.status)}>
+                      WhatsApp: {ROTULO_ESTADO_ENVIO[resultado.whatsapp.status]}
+                      {resultado.whatsapp.detalhe && ` — ${resultado.whatsapp.detalhe}`}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+            <footer className="flex justify-end border-t border-zinc-200 p-4">
+              <button
+                type="button"
+                onClick={() => dialogoResultado.current?.close()}
+                className="flex h-10 items-center justify-center rounded-lg bg-[#002855] px-5 text-sm font-medium text-white hover:bg-[#124b7e]"
+              >
+                Fechar
+              </button>
+            </footer>
+          </div>
+        )}
+      </dialog>
     </div>
   );
 }

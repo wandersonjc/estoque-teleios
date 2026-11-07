@@ -29,6 +29,18 @@ export type EstadoEnvioOrcamento =
   | "ENVIADO"
   | "FALHOU";
 
+export function solicitacaoEditavel(
+  email: EstadoEnvioOrcamento,
+  whatsapp: EstadoEnvioOrcamento
+): boolean {
+  return (
+    email !== "ENVIADO" &&
+    whatsapp !== "ENVIADO" &&
+    email !== "PENDENTE" &&
+    whatsapp !== "PENDENTE"
+  );
+}
+
 export type ResultadoEnvioOrcamento = {
   id: string;
   fornecedor: string;
