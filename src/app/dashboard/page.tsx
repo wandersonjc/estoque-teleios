@@ -4,7 +4,6 @@ import {
   IconeArmazem,
   IconeCaixa,
   IconeDocumento,
-  IconeUser,
 } from "@/components/icones";
 import { Prisma } from "@/generated/prisma/client";
 import { calcularIndicadoresReposicao } from "@/lib/calculos-reposicao";
@@ -32,7 +31,6 @@ export default async function DashboardPage() {
     totalProdutos,
     produtosReposicao,
     fornecedores,
-    usuarios,
     locais,
   ] = await Promise.all([
       podeConsultarProdutos
@@ -65,9 +63,6 @@ export default async function DashboardPage() {
         : Promise.resolve(null),
       pode(PERMISSOES.fornecedores)
         ? prisma.fornecedor.count({ where: { ativo: true } })
-        : Promise.resolve(null),
-      pode(PERMISSOES.usuarios)
-        ? prisma.usuario.count({ where: { ativo: true } })
         : Promise.resolve(null),
       pode(PERMISSOES.locais)
         ? prisma.localEstoque.count()
@@ -192,15 +187,6 @@ export default async function DashboardPage() {
       detalhe: "Fornecedores disponíveis",
       href: "/fornecedores",
       Icone: IconeArmazem,
-    });
-  }
-  if (usuarios !== null) {
-    estatisticas.push({
-      titulo: "Usuários ativos",
-      valor: usuarios.toLocaleString("pt-BR"),
-      detalhe: "Contas ativas no sistema",
-      href: "/usuarios",
-      Icone: IconeUser,
     });
   }
   if (locais !== null) {
